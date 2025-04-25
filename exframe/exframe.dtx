@@ -1,0 +1,4494 @@
+% \iffalse
+%
+% exframe.dtx Copyright (C) 2011-2019 Niklas Beisert
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Niklas Beisert.
+%
+% This work consists of the files exframe.dtx and exframe.ins
+% and the derived files exframe.sty and exfsmp1.tex.
+%
+%<package|sample1>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
+%<package>\ProvidesPackage{exframe}[2019/01/16 v3.0 Framework for Exercise Problems]
+%<sample1>\ProvidesFile{exfsmp1.tex}[2019/01/16 v3.0 sample 1 for exframe]
+%<*driver>
+\def\thedate#1{2019/01/16}\def\theversion#1{v3.0}
+\ProvidesFile{exframe.dtx}[\thedate{} \theversion{} exframe reference manual file]
+\PassOptionsToClass{10pt,a4paper}{article}
+\documentclass{ltxdoc}
+
+\usepackage[margin=35mm]{geometry}
+\usepackage{hyperref}
+\usepackage{hyperxmp}
+\usepackage[usenames]{color}
+
+\hypersetup{colorlinks=true}
+\hypersetup{pdfstartview=FitH}
+\hypersetup{pdfpagemode=UseNone}
+\hypersetup{pdfsource={}}
+\hypersetup{pdflang={en-UK}}
+\hypersetup{pdfcopyright={Copyright 2010-2019 Niklas Beisert.
+  This work may be distributed and/or modified under the
+  conditions of the LaTeX Project Public License, either version 1.3
+  of this license or (at your option) any later version.}}
+\hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
+\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K,
+  Wolfgang-Pauli-Strasse 27}}
+\hypersetup{pdfcontactpostcode={8093}}
+\hypersetup{pdfcontactcity={Zurich}}
+\hypersetup{pdfcontactcountry={Switzerland}}
+\hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
+\hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
+
+\newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
+
+\parskip1ex
+\parindent0pt
+\let\olditemize\itemize
+\def\itemize{\olditemize\parskip0pt}
+
+\begin{document}
+
+\title{The \textsf{exframe} Package}
+\hypersetup{pdftitle={The exframe Package}}
+\author{Niklas Beisert\\[2ex]
+  Institut f\"ur Theoretische Physik\\
+  Eidgen\"ossische Technische Hochschule Z\"urich\\
+  Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
+  \href{mailto:nbeisert@itp.phys.ethz.ch}
+  {\texttt{nbeisert@itp.phys.ethz.ch}}}
+\hypersetup{pdfauthor={Niklas Beisert}}
+\hypersetup{pdfsubject={Manual for the LaTeX2e Package exframe}}
+\date{\thedate{}, \theversion{}}
+\maketitle
+
+\begin{abstract}\noindent
+\textsf{exframe} is a \LaTeXe{} package
+which provides a general purpose framework to describe and typeset
+exercises and exam questions along with their solutions.
+The package features mechanisms
+to hide or postpone solutions,
+to assign and handle points,
+to collect problems on exercise sheets,
+to store and use metadata
+and to implement a consistent numbering.
+It also provides a very flexible interface for configuring and customising
+the formatting, layout and representation of the exercise content.
+\end{abstract}
+
+\begingroup
+\parskip0ex
+\tableofcontents
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+This package provides a framework to describe and typeset
+exercises (homework problems, classroom exercises, quizzes, exam questions,
+exercise questions in books and lecture notes, \ldots)
+and their solutions or answers.
+The aim of this package is to set up a few \LaTeX{} environments
+into which questions and corresponding answers can be filled conveniently.
+The main task of the package is to manage the text and data
+that are provided in the source document,
+perform some common operations on them,
+and then output the content appropriately.
+The package has the following goals, tasks and features:
+%
+\begin{itemize}
+\item
+The package is designed with generality in mind.
+It is meant to be usable in many different situations.
+The primary target is science and education, but it may well
+be useful in other areas.
+
+\item
+The package defines a basic functional layout for the output
+and provides many options to reshape the layout and formatting
+according to the author's needs and wishes.
+
+\item
+The package can handle two layers of exercises:
+main problems and subproblems.
+The use of subproblems is optional.
+
+\item
+The display of solutions can be configured:
+Solutions can be hidden for a hand-out version of exercise sheets.
+When displayed, they may appear immediately,
+collectively after the problem,
+at the end of each sheet or at some manually defined location.
+
+\item
+The package can handle exercise sheets which combine several exercise problems:
+A \LaTeX{} document can consist of an individual sheet
+or of a collection of sheets (e.g.\ spanning a lecture course).
+In the latter case, the document files can be set up
+such that single sheets as well as a collection of all sheets
+can be compiled; the package \textsf{childdoc} may be of assistance.
+
+\item
+The package can handle points to be credited:
+Points will be displayed according to the layout.
+Overall points for a problem or a sheet can be added automatically.
+Points can also be stored and used elsewhere.
+
+\item
+The package provides an interface to specify exercise metadata
+(author, source, \ldots):
+Some basic types of metadata are predefined and more specific metadata
+categories can be added.
+
+\item
+The package can use alternative counters for equations
+within solutions (and problems). This is to ensure a consistent
+numbering independently of whether solutions are output or not.
+\end{itemize}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Usage}
+\label{sec:usage}
+
+To use the package \textsf{exframe} add the command
+%
+\begin{center}
+|\usepackage{exframe}|
+\end{center}
+%
+to the preamble of the \LaTeX{} document.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Exercise Environments}
+\label{sec:environments}
+
+The package provides four environments
+to describe the main entities of exercise problems.
+Additional information on the exercises can be provided
+in the optional arguments to these environments
+which will be discussed in the following sections.
+Furthermore, a limited set of commands
+is provided for control and extra features,
+see the sections below for details.
+
+\DescribeEnv{problem}
+The |problem| environment describes
+an exercise problem:
+%
+\begin{center}
+\begin{tabular}{l}
+|\begin{problem}[|\textit{opts}|]|\\
+|  |\textit{problem text and subproblems}\\
+|\end{problem}|
+\end{tabular}
+\end{center}
+%
+As one of the many available options \textit{opts},
+one can provide a title for the exercise by
+specifying |title={|\textit{title}|}|.
+If no title is given, the problem number will be displayed instead.
+See \secref{sec:metadata} and \secref{sec:points}
+for a description of the available options.
+
+\DescribeEnv{subproblem}
+The |subproblem| environment describes
+a subproblem, part or an individual question of an exercise problem:
+%
+\begin{center}
+\begin{tabular}{l}
+|\begin{subproblem}[|\textit{opts}|]|\\
+|  |\textit{subproblem text}\\
+|\end{subproblem}|
+\end{tabular}
+\end{center}
+%
+A |subproblem| block must be contained within a |problem| block
+(however, a |problem| block need not contain |subproblem| blocks).
+
+\DescribeEnv{solution}
+The |solution| environment describes
+the solution to a problem or a subproblem:
+\begin{center}
+\begin{tabular}{l}
+|\begin{solution}[|\textit{opts}|]|\\
+|  |\textit{solution text}\\
+|\end{solution}|
+\end{tabular}
+\end{center}
+%
+A |solution| block should be at the end of a |subproblem| or |problem| block
+(it is not mandatory to provide a |solution|).
+It can be contained within the corresponding block or it can follow it.
+Depending on the choice of solution display, see \secref{sec:solutions},
+the output may have a slightly different layout.
+In terms of logic, it is preferred
+to define a solution \emph{within} the corresponding block;
+this may also have some technical advantages and produce
+a slightly better result in terms of layout.
+
+\DescribeEnv{sheet}
+The |sheet| environment describes an exercise sheet:
+%
+\begin{center}
+\begin{tabular}{l}
+|\begin{sheet}[|\textit{opts}|]|\\
+|  |\textit{sheet text and problems}\\
+|\end{sheet}|
+\end{tabular}
+\end{center}
+%
+A sheet typically contains one or several problems
+(it is not mandatory to group problems into a |sheet|).
+There may or may not be additional auxiliary text introducing the problems.
+A header will be added to the sheet according to the specified layout.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Solution Display}
+\label{sec:solutions}
+
+There are several options to control the output of solutions.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{solutions}
+Most importantly, the display of solutions
+can be disabled or enabled altogether:
+%
+\begin{center}
+|\exercisesetup{solutions|[|=true|\textbar|false|]|}|
+\end{center}
+%
+Solutions are hidden by default,
+and their display needs to be activated explicitly
+(it suffices to specify the option |solutions| without the value |true|).
+It is also possible to control the display
+by an analogous package option |solutions|,
+see \secref{sec:options} for further information.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\ifsolutions}
+The display of solutions is reflected by the conditional |\ifsolutions|.
+As the hiding of solutions is performed automatically,
+the conditional would typically be used to change some details,
+e.g.\ for adjusting titles:
+%
+\begin{center}
+|\ifsolutions Solutions\||else Exercises\||fi|
+\end{center}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{solutionequation}
+As solutions can contain numbered equations
+while the display of solutions can be switched on and off,
+it is important to assign a different counter for equations within solutions
+in order for the equation numbers to be stable.
+A separate counter for equations within solutions is enabled by default.
+It can be disabled by:
+%
+\begin{center}
+|\exercisestyle{solutionequation=false}|
+\end{center}
+%
+This option prepends the letter `S' to equation
+numbers within solutions which are counted separately;
+the display can be configured differently, see \secref{sec:layout}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{solutionbelow}
+\DescribeMacro{\insertsolutions}
+The package allows to collect solutions
+and defer their display to particular locations:
+%
+\begin{center}
+|\exercisestyle{solutionbelow=|\textit{pos}|}|
+\end{center}
+%
+The available choices for \textit{pos} are
+to display solutions where they are defined (|here|),
+defer them to the end of the current subproblem (|subproblem|),
+problem (|problem|) or sheet (|sheet|)
+or display them at a manually chosen location (|manual|).
+Note that typically solutions are defined at the end of a (sub)problem
+and therefore the choice |here| is similar to (|sub|)|problem|.
+The latter form, however, makes sure that a solution is positioned
+\emph{after} the (sub)problem block
+such that it does not inherit the layout (e.g.\ indentation)
+of the latter even if it is defined within this block.
+In |manual| mode, all solutions are collected (with appropriate headers)
+until they are output by the directive |\insertsolutions|.
+If no solutions are stored in the buffer
+(or if the mode is not |manual|), |\insertsolutions| has no effect.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\readsolutions}
+Another option to handle solutions is to write them to a file
+for later use.
+Writing to a file is initiated by:
+%
+\begin{center}
+|\writesolutions[|\textit{filename}|]|
+\end{center}
+%
+The optional argument describes the filename as \textit{filename}|.sol|;
+no argument defaults to the main tex filename as |\jobname.sol|.
+This mode overrides the |solutionbelow| behaviour described above;
+all subsequent solutions are written to the file.
+The file is closed by |\closesolutions| and the display of solutions
+returns to manual mode.
+It is not necessary to close a file as it will be closed
+automatically by reading from a file, writing to another file
+or by the end of the document.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\readsolutions}
+Solutions are read from a file by:
+%
+\begin{center}
+|\readsolutions[|\textit{filename}|]|
+\end{center}
+%
+This command outputs a sectional title
+and reads the file via |\input{|\textit{filename}|.sol}|.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Metadata}
+\label{sec:metadata}
+
+In a collection of exercise problems
+it makes sense to keep track of metadata
+for the overall collection as well as for individual problems
+and potentially display some of them.
+The framework defines a standard set of metadata fields
+and offers functionality to add more specialised metadata fields.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\exercisedata}
+Global metadata is specified by the command:
+%
+\begin{center}
+|\exercisedata{|\textit{data}|}|
+\end{center}
+%
+The argument \textit{data}
+is a comma-separated list of metadata specifications
+in the form \textit{key}|={|\textit{value}|}|.
+The standard set of global metadata keys consists of:
+%
+\begin{itemize}
+\item |author|:
+principal author(s) of the exercise collection;
+also invokes the \LaTeX{} command |\author|;
+will be written to pdf documents.
+\item |title|:
+title of the exercise collection;
+also invokes the \LaTeX{} command |\title|;
+will be written to pdf documents.
+\item |date|:
+date of the exercise collection;
+also invokes the \LaTeX{} command |\date|;
+will be written to pdf documents.
+\item |subject|:
+subject area of the exercise collection;
+will be written to pdf documents.
+\item |keyword|:
+keyword(s) for the exercise collection;
+will be written to pdf documents.
+\item |course|:
+title of the course (class, lecture, module, \ldots)
+for the exercise collection.
+\item |institution|:
+institution (school, department, institute, university, \ldots)
+offering the course or exercise collection.
+\item |instructor|:
+instructor(s) for the course or exercise;
+this field refers to person(s) who organise
+the corresponding course or exercises
+whereas |author| refers to the principal creator of the material.
+\item |period|:
+period (year, season, date, term identifier, \ldots)
+of the corresponding course.
+\item |material|:
+type of material
+(exercises, homework assignments, exam, quizzes, solutions, \ldots).
+\end{itemize}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\defexercisedata}
+Additional custom fields for global metadata can be created with:
+%
+\begin{center}
+|\defexercisedata{|\textit{key}|}|
+\end{center}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\getexercisedata}
+\DescribeMacro{\exercisedataempty}
+Global metadata should typically be specified
+somewhere at the top of the main document,
+and it can be inserted wherever needed.
+There are two commands to read and process metadata.
+To insert the value of metadata field \textit{key} use:
+%
+\begin{center}
+|\getexercisedata{|\textit{key}|}|
+\end{center}
+%
+In some situations the output should depend on whether
+a metadata has been filled
+(e.g.\ to fill a default value or to display something else instead).
+This can be checked with the conditional:
+%
+\begin{center}
+|\exercisedataempty{|\textit{key}|}|%
+  |{|\textit{empty code}|}{|\textit{filled code}|}|
+\end{center}
+%
+The \textit{empty code} is executed if no value
+or an empty value has been specified;
+otherwise the \textit{filled code} is executed.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{sheet}
+\DescribeMacro{problem}
+The package offers a similar mechanism to describe and use metadata
+for sheets and problems:
+%
+\begin{center}
+|\begin{sheet}[|\textit{opts}|]|
+|\begin{problem}[|\textit{opts}|]|
+\end{center}
+%
+The argument \textit{opt}
+is a comma-separated list which can contain metadata specifications
+in the form \textit{key}|={|\textit{value}|}|.
+The standard set of metadata keys for sheets consists of:
+%
+\begin{itemize}
+\item |due|:
+indication of the due date for the exercise sheet.
+\item |handout|:
+indication of the handout date for the exercise sheet.
+\item |title|:
+specifies a title for the sheet;
+when reading value (see below), returns composed title;
+untitled sheets will be displayed by their number;
+title will be written to pdf documents.
+\item |rawtitle| (for reading only):
+contains the raw title as specified by |title|.
+\item |author|:
+author(s) of the sheet;
+will be written to pdf documents.
+\item |editor|:
+editor(s) of the sheet; this field refers to a person
+who makes adjustments to the sheet
+whereas |author| refers to the creator of the sheet.
+\item |editdate|:
+indication of the date when the sheet was last edited.
+\end{itemize}
+%
+The standard set of metadata keys for problems consists of:
+%
+\begin{itemize}
+\item |title|:
+specifies a title for the problem;
+when reading value (see below), returns composed title;
+untitled problems will be displayed by their number.
+\item |rawtitle| (for reading only):
+contains the raw title as specified by |title|.
+\end{itemize}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\defsheetdata}
+\DescribeMacro{\getsheetdata}
+\DescribeMacro{\sheetdataempty}
+\DescribeMacro{\defproblemdata}
+\DescribeMacro{\getproblemdata}
+\DescribeMacro{\problemdataempty}
+Metadata for sheets can be used in the same way as the global metadata.
+The following directives are analogous to |\defexecisesdata|,
+|\getproblemdata| and |\problemdataempty|:
+%
+\begin{center}
+\begin{tabular}{l}
+|\defsheetdata{|\textit{key}|}|\\
+|\getsheetdata{|\textit{key}|}|\\
+|\sheetdataempty{|\textit{key}|}|%
+  |{|\textit{empty code}|}{|\textit{filled code}|}|\\[1ex]
+|\defproblemdata{|\textit{key}|}|\\
+|\getproblemdata{|\textit{key}|}|\\
+|\problemdataempty{|\textit{key}|}|%
+  |{|\textit{empty code}|}{|\textit{filled code}|}|
+\end{tabular}
+\end{center}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{pdfdata}
+\DescribeMacro{\writeexercisedata}
+The most relevant metadata can be written to
+the metadata section of pdf files
+(using pdf\LaTeX{} and the package \textsf{hyperref}
+whenever loaded).
+This feature is configured by:
+%
+\begin{center}
+|\exercisesetup{pdfdata|[|=auto|\textbar|manual|%
+  \textbar|sheet|\textbar|off|]|}|
+\end{center}
+%
+The option |auto| writes the global metadata
+|title|, |author|, |subject| and |keyword|
+to the corresponding fields in the pdf file.
+To make this work, these must be defined before the
+|\begin{document}| directive.
+The option |manual| allows to manually write these metadata
+by the command |\writeexercisedata|.
+It should be issued after the metadata have been set,
+but before any content is written to the pdf file.
+In other words, it can be anywhere in the document preamble
+directly after |\begin{document}|,
+or following a couple of content-free definitions at the beginning
+of the document body (in case the metadata should be set
+within the document body for some reason).
+The option |sheet| writes out the metadata
+at the beginning of the first |sheet| environment
+(which should follow |\begin{document}| without any content in between).
+This option is primarily for filling the
+|author| and |title| fields with metadata
+of a sheet rather than a collection of exercises.
+Note that if no |author| is defined for the sheet,
+the global metadata |author| is used.
+The option |off| disables all writing of metadata.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{problem}
+\DescribeMacro{subproblem}
+\DescribeMacro{solution}
+There is an additional mechanism to keep track of metadata
+for problems, subproblems and solutions
+which can be displayed in the opening line of these entities.
+Displayed metadata serve two purposes:
+they are used to describe the quality of a problem
+or they are intended for internal documentation purposes.
+Their output can be controlled individually,
+e.g.\ only in development versions of a document.
+Note that specifying a key more than once
+will display the content multiple times
+in the order in which they are encountered.
+Displayed metadata are specified
+at the top of the corresponding environment:
+%
+\begin{center}
+\begin{tabular}{l}
+|\begin{problem}[|\textit{opts}|]|\\
+|\begin{subproblem}[|\textit{opts}|]|\\
+|\begin{solution}[|\textit{opts}|]|
+\end{tabular}
+\end{center}
+%
+
+The standard set of displayed metadata keys consists of:
+%
+\begin{itemize}
+\item |author|:
+author(s) of the problem (or subproblem, solution).
+\item |editor|:
+editor(s) of the problem; this field refers to a person
+who has made adjustments to the problem
+whereas |author| refers to the creator of the problem.
+\item |source|:
+source of the problem;
+in case the problem has been taken from elsewhere
+(conceptually or literally).
+\item |difficulty|:
+indication of the level of difficulty of the problem.
+\item |keyword|:
+keyword(s) for the problem;
+\item |comment|:
+some comment on the problem.
+\item |optional|
+(enabled by default):
+whether addressing the problem is mandatory or optional;
+by default the text will be displayed after the title
+in italic shape.
+\end{itemize}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{extdata}
+Further displayed metadata keys
+are defined by the package option |extdata|, see \secref{sec:options}:
+%
+\begin{itemize}
+\item |review|:
+field to review the aspects of the problem
+(quality, length, appropriateness, difficulty, \ldots).
+\item |recycle|:
+indication of previous instances where this problem was used.
+\item |timesolve|:
+indication of the time needed to solve this problem (or subproblem).
+\item |timepresent|:
+indication of the time needed to present this problem
+(or subproblem, solution).
+\end{itemize}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\showprobleminfo}
+The display of the above metadata fields for a problem
+(or subproblem, solution) is controlled by:
+%
+\begin{center}
+|\showprobleminfo{|\textit{keys}|}|
+\end{center}
+%
+Here \textit{keys} is a comma-separated list of keys to
+be activated (\textit{key} or \textit{key}|=true|)
+or deactivated (\textit{key}|=false|).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\defprobleminfo}
+Displayable metadata can be defined or adjusted by:
+%
+\begin{center}
+|\defprobleminfo{|\textit{key}|}{|\textit{code}|}|
+\end{center}
+%
+Here \textit{key} specifies the metadata field and
+\textit{code} the code to display this type of metadata
+where the argument |#1| represents the data to be displayed.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{insertprobleminfo}
+\DescribeMacro{insertsubprobleminfo}
+\DescribeMacro{insertsolutioninfo}
+\DescribeMacro{\addprobleminfo}
+\DescribeMacro{\addprobleminfo*}
+Additional information can be injected into the opening line
+of problems and solutions by the definitions:
+%
+\begin{center}
+\begin{tabular}{l}
+|\exerciseconfig{insertprobleminfo}{|\textit{code}|}|\\
+|\exerciseconfig{insertsubprobleminfo}{|\textit{code}|}|\\
+|\exerciseconfig{insertsolutioninfo}{|\textit{code}|}|
+\end{tabular}
+\end{center}
+%
+The hook code \textit{code} will be called after processing
+the environment arguments. Information can be added to the opening line by:
+%
+\begin{center}
+\begin{tabular}{l}
+|\addprobleminfo{|\textit{info}|}|\\
+|\addprobleminfo*{|\textit{info}|}|
+\end{tabular}
+\end{center}
+%
+The unstarred command adds information at the end of the opening line,
+the starred version at the beginning (but after the title or identifier).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Points}
+\label{sec:points}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{points}
+Exercise problems or certain parts of them
+can be credited with points (credits, awards, \ldots).
+The package provides an interface to specify and manage such points.
+Points are declared by the option |points=|\textit{points}
+for the environments |sheet|, |problem| and |subproblem|.
+These numbers will be printed to the opening line of
+problems and subproblems.
+
+Note that the points should normally be integer numbers.
+Fractional points are permissible as well,
+but the internal storage by the \TeX{} engine is somewhat limited,
+so that only fractions with powers of two as denominators
+(.5, multiples of .25, .125, .0625, \ldots) are reliable.
+More general fractional decimal numbers such as multiples of 0.2
+will be subject to rounding errors and will not display nicely.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{pointsat}
+\DescribeMacro{subpointsat}
+The location where points of problems and subproblems
+shall be displayed can be adjusted individually by:
+%
+\begin{center}
+\begin{tabular}{l}
+|\problemstyle{points=start|\textbar|start*|\textbar|margin|%
+  \textbar|end|\textbar|manual|\textbar|off}|\\
+|\problemstyle{subpoints=start|\textbar|start*|\textbar|margin|%
+  \textbar|end|\textbar|manual|\textbar|off}|
+\end{tabular}
+\end{center}
+%
+The default values are |start| and |end| for problems and subproblems,
+respectively.
+The option |start| displays points at
+the very end of the opening line;
+the option |start*| displays them at the start of it.
+The option |end| displays points at the end of the
+problem or subproblem text.
+The option |margin| displays points in the margin.
+The option |manual| displays points at a manually chosen location
+specified by the directive |\showpoints|.
+Note that |\showpoints| can also be used for the option |end|
+to display the points prematurely
+(e.g.\ if the text ends with a displayed equation,
+it may make sense to display the points just before the equation).
+The option |off| disables the display of points.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\getsheetdata}
+Points for sheets are only stored by the package;
+they must displayed manually.
+Within the corresponding |sheet| environment
+the points can be accessed by:
+%
+\begin{center}
+|\getsheetdata{points}|
+\end{center}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\getsheetpoints}
+\DescribeMacro{\getproblempoints}
+The package allows to read the point totals
+for other sheets and problems:
+%
+\begin{center}
+\begin{tabular}{l}
+|\getsheetpoints{|\textit{tag}|}|\\
+|\getproblempoints{|\textit{tag}|}|
+\end{tabular}
+\end{center}
+%
+Here \textit{tag} is the tag assigned to the corresponding sheet or problem,
+see \secref{sec:labels}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\awardpoints}
+Grading instructions with points to be awarded
+can be specified in the solution text by:
+%
+\begin{center}
+\begin{tabular}{l}
+|\awardpoints[|\textit{details}|]{|\textit{points}|}|\\
+|\awardpoints*[|\textit{details}|]{|\textit{points}|}|
+\end{tabular}
+\end{center}
+%
+Here \textit{details} is an optional text with further details,
+e.g.\ to explain under which conditions
+these points are to be awarded.
+The starred form is used to specify optional points or alternative paths
+with alternative grading instructions.
+These points will be marked and not be used for the computation of a total.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{warntext}
+The package attempts to add up
+the points of subproblems to the problem total
+and likewise the points of problems to the sheet total.
+The package also performs some sanity checks on the provided numbers:
+If points are specified for both subproblems and problems
+or for both problems and sheets, they will be compared.
+Also the points within solutions (excluding optional or alternative points)
+are added up and compared to the corresponding problem or subproblem.
+Furthermore the package checks whether points
+are defined for all subproblems within a problem
+or all problems within a sheet.
+Mismatches are reported as package warnings.
+As point mismatches can be rather severe,
+there is an option to write such warnings directly into
+the output document (to be removed before distribution):
+%
+\begin{center}
+|\exercisesetup{warntext|[|=true|\textbar|false|]|}|
+\end{center}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{fracpoints}
+The package offers pretty display of fractional points
+with denominators 2, 4 and 8 by writing the decimal part
+as a fraction, e.g.\ 1.75 $\to$ 1$^3\mskip-4mu/\mskip-2mu_4$.
+This feature is enabled by:
+%
+\begin{center}
+|\exercisestyle{fracpoints}|
+\end{center}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Labels and Tags}
+\label{sec:labels}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{label}
+\LaTeX{} provides labels to make references to remote parts of the text.
+Labels can be set as usual by |\label{|\textit{label}|}| within the
+|problem|, |subproblems| and |sheet| environments.
+Alternatively, they can be specified
+as the environment option:
+%
+\begin{center}
+|label={|\textit{label}|}|
+\end{center}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{tag}
+\DescribeMacro{\sheettag}
+\DescribeMacro{\problemtag}
+The package provides an additional mechanism to tag sheets and problems.
+Each |sheet| and each |problem| can be assigned a unique tag \textit{tag} by
+the environment option:
+%
+\begin{center}
+|tag={|\textit{tag}|}|
+\end{center}
+%
+This tag is used for reading point totals
+as described in \secref{sec:points}.
+Furthermore, the macro |\sheettag| or |\problemtag|
+is set to the tag \textit{tag} within the current environment.
+If no tag is specified it matches the number of the sheet or problem;
+note that this number can change by reordering sheets and problems
+and therefore it should not be used to identify the entity from
+other parts of the document.
+
+A useful application for tags is to encapsulate labels
+within individual sheets and problems
+which are part of a collection of exercises.
+Labels which are composed as
+|\sheettag-|\textit{label} or
+|\problemtag-|\textit{label}
+can be considered local and will not clash with labels
+defined within a different environment.
+Within the same sheet or problem, local labels can be accessed
+by the same construction.
+They can also be accessed from remote parts of the document by fully
+expanding |\sheettag| or |\problemtag| for the desired target environment.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{autolabelsheet}
+\DescribeMacro{autolabelproblem}
+If unique tags are specified, the package can automatically create labels
+for sheets (|sheet:|\textit{tag}) and problems (|prob:|\textit{tag}) by:
+%
+\begin{center}
+\begin{tabular}{l}
+|\exercisesetup{autolabelsheet|[|=true|\textbar|false|]|}|\\
+|\exercisesetup{autolabelproblem|[|=true|\textbar|false|]|}|
+\end{tabular}
+\end{center}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Layout}
+\label{sec:layout}
+
+The package provides a large number of parameters to adjust the
+display of exercises to a desired layout.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\exerciseconfig}
+Configuration settings are declared and modified by the command:
+%
+\begin{center}
+|\exerciseconfig{|\textit{key}|}[|\textit{narg}|]{|\textit{value}|}|
+\end{center}
+%
+Here \textit{key} is a key and \textit{value} is its assigned value.
+Configuration options can also be macros with arguments in which case
+\textit{narg} is the number of arguments and \textit{value}
+is the macro definition using arguments |#|\textit{n}.
+The command |\exerciseconfig| therefore is analogous to
+|\|(|re|)|newcommand| except that the definitions are
+encapsulated by the package and any previous definition
+is overwritten without checking.
+
+\DescribeMacro{\exerciseconfigappend}
+\DescribeMacro{\exerciseconfigprepend}
+In some cases it may be useful to be able to
+append or prepend to a (parameterless) definition by:
+%
+\begin{center}
+\begin{tabular}{l}
+|\exerciseconfigappend{|\textit{key}|}{|\textit{value}|}|\\
+|\exerciseconfigprepend{|\textit{key}|}{|\textit{value}|}|
+\end{tabular}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\getexerciseconfig}
+\DescribeMacro{\exerciseconfigempty}
+Configuration definitions can be read by:
+%
+\begin{center}
+|\getexerciseconfig{|\textit{key}|}|[\textit{arguments}]
+\end{center}
+%
+The number of arguments after |{|\textit{key}|}|
+must match the optional argument \textit{nargs} of the definition.
+Furthermore, it can be checked whether a configuration definition
+is empty:
+%
+\begin{center}
+|\exerciseconfigempty{|\textit{key}|}|%
+  |{|\textit{empty code}|}{|\textit{filled code}|}|
+\end{center}
+%
+The \textit{empty code} is executed if no value
+or an empty value has been specified.
+Otherwise the \textit{filled code} is executed.
+
+The package defines numerous layout configuration options.
+They are listed along with their original definition
+and a brief description in \secref{sec:imp-config}.
+They include options to:
+%
+\begin{itemize}
+\item
+adjust the language for the principal entities of this package
+like `sheet(s)', `problem(s)', `solution(s)', `points(s)';
+\item
+adjust the fonts styles of various parts of the text;
+\item
+adjust the spacing above, below, between various elements;
+\item
+define code to process data and insert text at various locations;
+\item
+compose text to be used in various situations;
+\item
+adjust the appearance of counters;
+\item
+adjust some other behaviour of the package.
+\end{itemize}
+%
+The following will highlight only few examples.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{insertsheettitle}
+An important setting is:
+%
+\begin{center}
+|\exerciseconfig{insertsheettitle}{|\textit{code}|}|
+\end{center}
+%
+The code \textit{code} is meant to print the title
+or header of an exercise sheet.
+The minimalistic default code |\centerline{\getsheetdata{title}}|
+merely prints the sheet title ``Sheet \#'' at the centre of a line.
+Commonly, one would replace this by a more elaborate header
+(potentially with some more information,
+appealing layout, logos, \ldots).
+In order to design a header template,
+it makes sense to retrieve data
+via |\getexercisedata| and |\getsheetdata|
+described in \secref{sec:metadata}.
+Likewise |\exercisedataempty| and |\sheetdataempty|
+can be used to display default values or alternative data
+if some particular data is not provided.
+An example is given by the |plainheader| extended style option
+defined in \secref{sec:imp-styles}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{composetitleproblem}
+Another noteworthy example is |composetitleproblem|
+to compose the title for a problem. It takes two parameters,
+the number and the title.
+The (somewhat simplified) default declaration is:
+%
+\begin{center}
+\begin{tabular}{l}
+|\exerciseconfig{composetitleproblem}[2]{\exerciseifempty{#2}|\\
+|  {\getexerciseconfig{termproblem}|\\
+|   \getexerciseconfig{composeitemproblem}{#1}}|\\
+|  {\getexerciseconfig{composeitemproblem}{#1} #2}}|
+\end{tabular}
+\end{center}
+%
+This checks whether the title is empty.
+If no title is given use ``Problem \#.'',
+otherwise use ``\#. \textit{title}''.
+Here the term ``Problem'' is made abstract
+by the configuration |termproblem|
+(e.g.\ to support internationalisation)
+and the problem number is further composed obtained by
+the configuration |composeitemproblem|
+which takes the bare number as argument
+and returns it followed by a dot.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\exerciseifempty}
+\DescribeMacro{\exerciseifnotempty}
+Handy conditionals command to check
+whether an expression \textit{expr} is empty (or pure whitespace) is:
+%
+\begin{center}
+\begin{tabular}{l}
+|\exerciseifempty{|\textit{expr}|}|%
+  |{|\textit{empty code}|}{|\textit{filled code}|}|\\
+|\exerciseifnotempty{|\textit{expr}|}|%
+  |{|\textit{filled code}|}|
+\end{tabular}
+\end{center}
+%
+Their main purpose is to test
+whether some provided expression \textit{expt} is empty.
+They expand to the common \TeX{} constructs
+|\if&#1&#2\else#3\fi| and |\if&#1&\else#2\fi|
+which work assuming that \textit{expr} is not too exotic
+(e.g.\ it should not start with the character `|&|'
+and other special \TeX{} characters or macros are potentially dangerous).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Exercise Styles}
+\label{sec:styles}
+
+The package provides a mechanism to define exercise styles
+which customise the display of exercises in some coordinated fashion.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\exercisestyle}
+Style(s) are activated by the command:
+%
+\begin{center}
+|\exercisestyle{|\textit{styles}|}|
+\end{center}
+%
+Here \textit{styles} is a comma-separated list of styles,
+where each style is given by a pair \textit{style}[|={|\textit{argument}|}|].
+The package defines a couple of standard styles:
+%
+\begin{itemize}
+\item |solutionbelow=|\textit{pos}
+(can take values |here|, |subproblem|, |problem|, |sheet| and |manual|;
+initially set to |subproblem|) --
+positions the solutions below the indicated blocks;
+see \secref{sec:solutions} for details.
+
+\item |pointsat=|\textit{pos}
+(can take values |start|, |start*|, |margin|, |end| and |manual|;
+initially set to |start|) --
+displays points in problems at the indicated location;
+see \secref{sec:points} for details.
+
+\item |subpointsat=|\textit{pos}
+(can take values |start|, |start*|, |margin|, |end| and |manual|;
+initially set to |end|) --
+displays points in subproblems at the indicated location;
+see \secref{sec:points} for details.
+
+\item |problemby={|\textit{counter}|}| --
+number problems with the prefix \textit{counter},
+i.e.\ reset the problem counter whenever \textit{counter} increases
+and use a composite label \textit{counter}|.|\textit{problem}
+to identify problems.
+
+\item |equationby={|\textit{counter}|}| --
+number the dedicated equation counters for sheets, problems and solutions
+with the prefix \textit{counter}.
+
+\item |problembysheet| --
+number problems by sheet.
+
+\item |equationbysheet| --
+number equations by sheet.
+
+\item |pagebysheet| --
+number pages by sheet and denote pages by \textit{sheet}|.|\textit{page};
+this style is useful to generate stable page numbers for
+a collection of sheets.
+
+\item |sheetequation|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+use a dedicated equation counter within sheets.
+
+\item |problemequation|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+use a dedicated equation counter within problems.
+
+\item |solutionequation|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |true|) --
+use a dedicated equation counter within solutions.
+
+\item |fracpoints|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+display fractional points for denominators 2, 4, 8;
+see \secref{sec:points} for details.
+
+\item |twoside|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+enable/disable two-sided layout;
+in two-sided layout, sheets will start on odd pages
+and empty pages are added at the end of sheets
+to produce an even number of pages.
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{extstyle}
+Further exercise styles
+are defined by the package option |extstyle|, see \secref{sec:options}:
+%
+\begin{itemize}
+\item |plainheader| --
+define a plain sheet header to display
+some essential exercise and sheet data:
+|course|, |institution|, |instructor|, |period| (optional), sheet |title|,
+see \secref{sec:metadata};
+the line below the header, font styles and spaces can be adjusted,
+see the definition in \secref{sec:imp-styles}.
+
+\item |contents| --
+display sheets and problems in the table of contents
+(as sections and subsections).
+
+\item |solutionsf| --
+display solutions in sans serif font family.
+
+\item |solutiondimproblem| --
+dim the problem text whenever solutions are displayed.
+
+\item |solutionsep| --
+separate the solutions from the remaining text by horizontal lines.
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\defexercisestyle}
+Custom styles can be defined by:
+%
+\begin{center}
+\begin{tabular}{l}
+|\defexercisestyle{|\textit{style}|}{|\textit{init}|}|\\
+|\defexercisestylearg[|\textit{default}|]{|\textit{style}|}{|\textit{init}|}|
+\end{tabular}
+\end{center}
+%
+This feature can be used to predefine certain aspects of
+the exercises layout.
+For example, different default page layouts could be declared in this way.
+The first version declares a style which is
+initialised by the code \textit{item} upon activation by
+|\exercisestyle{|\textit{style}[|=true|]|}|.
+Note that |\exercisestyle{|\textit{style}|=false}| does nothing.
+The second version declares a style which is activated by
+|\exercisestyle{|\textit{style}[|={|\textit{arg}|}|]|}|
+and which calls \textit{item} with the argument |#1| referring to \textit{arg}
+(or \textit{default} if no argument is given).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Package Options}
+\label{sec:options}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\exercisesetup}
+Features and options of general nature can be selected by the commands:
+%
+\begin{center}
+\begin{tabular}{rl}
+&|\usepackage[|\textit{opts}|]{exframe}|
+\\
+or&|\PassOptionsToPackage{|\textit{opts}|}{exframe}|
+\\
+or&|\exercisesetup{|\textit{opts}|}|
+\end{tabular}
+\end{center}
+%
+|\PassOptionsToPackage| must be used before |\usepackage|;
+|\exercisesetup| must be used afterwards.
+\textit{opts} is a comma-separated list of options.
+
+The following options are available only when
+loading the package, i.e.\ they will not work
+within |\exercisesetup|:
+%
+\begin{itemize}
+\item |extdata|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+define some more advanced metadata entries.
+
+\item |extstyle|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+define some more advanced styles.
+
+\item |problemenv=|\textit{name} --
+redefine environment name |problem|.
+This and the following alike options may be useful in
+quickly adjusting existing sources to
+the \textsf{exframe} framework
+if the original framework works similarly
+and no special features are used.
+Otherwise, it is highly advisable to leave the
+names of environments and counters
+defined by the package untouched.
+
+\item |subproblemenv=|\textit{name} --
+redefine environment name |subproblem|.
+
+\item |solutionenv=|\textit{name} --
+redefine environment name |solution|.
+
+\item |sheetenv=|\textit{name} --
+redefine environment name |sheet|.
+
+\item |problemcounter=|\textit{name} --
+redefine counter name |problem|.
+
+\item |subproblemcounter=|\textit{name} --
+redefine counter name |subproblem|.
+
+\item |solutioncounter=|\textit{name} --
+redefine counter name |solution|.
+
+\item |sheetcounter=|\textit{name} --
+redefine counter name |sheet|.
+
+\end{itemize}
+%
+
+The following options can be specified by all three methods described above:
+%
+\begin{itemize}
+\item |solutions|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+Enable/disable display of solutions.
+Sets the conditional |\ifsolutions| accordingly.
+
+\item |pdfdata|[|=auto|\textbar|manual|\textbar|sheet|\textbar|off|]
+(no value implies |auto|, initially set to |auto|) --
+control writing most relevant metadata to pdf files;
+has no effect without package \textsf{hyperref}.
+
+\item |lineno|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+enable/disable writing of line numbers as comments
+into solution files.
+
+\item |twoside|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+enable/disable two-sided layout;
+see \secref{sec:styles} for details.
+
+\item |solutionhref|[|=true|\textbar|true|]
+(no value implies |true|, initially set to |false|) --
+enable/disable use of hyper-references from solutions
+to the corresponding problems;
+has no effect without package \textsf{hyperref}.
+
+\item |warntext|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+enable/disable writing of relevant warning messages
+(points mismatch, point sums require update)
+into the document output for easier detection.
+
+\item |autolabelsheet|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+enable/disable automatically assigning labels
+(|sheet:\sheettag|; can be adjusted)
+to sheets according to their tag |\sheettag|.
+
+\item |autolabelproblem|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+enable/disable automatically assigning labels
+(|prob:\problemtag|; can be adjusted)
+to problems according to their tag |\problemtag|.
+
+\end{itemize}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Information}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Copyright}
+
+Copyright \copyright{} 2011--2019 Niklas Beisert
+
+This work may be distributed and/or modified under the
+conditions of the \LaTeX{} Project Public License, either version 1.3
+of this license or (at your option) any later version.
+The latest version of this license is in
+  \url{http://www.latex-project.org/lppl.txt}
+and version 1.3 or later is part of all distributions of \LaTeX{}
+version 2005/12/01 or later.
+
+This work has the LPPL maintenance status `maintained'.
+
+The Current Maintainer of this work is Niklas Beisert.
+
+This work consists of the files |README.txt|, |exframe.ins| and |exframe.dtx|
+as well as the derived files |exframe.sty|, |exfsmp1.tex| and |exframe.pdf|.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Files and Installation}
+
+The package consists of the files:
+%
+\begin{center}
+\begin{tabular}{ll}
+    |README.txt|   & readme file \\
+    |exframe.ins|  & installation file \\
+    |exframe.dtx|  & source file \\
+    |exframe.sty|  & package file \\
+    |exfsmp1.tex|  & sample file \\
+    |exframe.pdf|  & manual
+\end{tabular}
+\end{center}
+%
+The distribution consists of the files
+|README.txt|, |exframe.ins| and |exframe.dtx|.
+%
+\begin{itemize}
+\item
+Run (pdf)\LaTeX{} on |exframe.dtx|
+to compile the manual |exframe.pdf| (this file).
+\item
+Run \LaTeX{} on |exframe.ins| to create the package |exframe.sty|
+and the sample |exfsmp1.tex|.
+Copy the file |exframe.sty| to an appropriate directory of your \LaTeX{}
+distribution, e.g.\ \textit{texmf-root}|/tex/latex/exframe|.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Related Packages}
+
+The package makes use of other packages available at CTAN:
+\begin{itemize}
+\item
+This package relies on some functionality of the package \textsf{verbatim}
+to read verbatim code from the \LaTeX{} source without expansion of macros.
+Compatibility with the \textsf{verbatim} package
+has been tested with v1.5q (2014/10/28).
+\item
+This package uses the package
+\href{http://ctan.org/pkg/xkeyval}{\textsf{xkeyval}}
+to process the options for the package, environments and macros.
+Compatibility with the \textsf{xkeyval} package
+has been tested with v2.7a (2014/12/03).
+\item
+This package can use the package
+\href{http://ctan.org/pkg/hyperref}{\textsf{hyperref}}
+to include hyperlinks between problems and solutions.
+Compatibility with the \textsf{hyperref} package
+has been tested with v6.88e (2018/11/30).
+\item
+This package can use the package
+\href{http://ctan.org/pkg/amstext}{\textsf{amstext}}
+(which is automatically loaded by \textsf{amsmath})
+to display text within equations.
+Compatibility with the \textsf{amstext} package
+has been tested with v2.01 (2000/06/29).
+\item
+This package uses the command |\currfilename|
+provided by the package \textsf{currfile} (if available and loaded)
+to indicate the \LaTeX{} source file in the generated metapost file.
+Compatibility with the \textsf{currfile} package
+has been tested with v0.7c (2015/04/23).
+\item
+This package cooperates well with the package
+\href{http://ctan.org/pkg/childdoc}{\textsf{childdoc}}
+to produce individual sheets, single problems
+as well as a collection of all exercises.
+\end{itemize}
+
+There are several other \LaTeX{} packages
+which offer a similar functionality
+varying largely in scope and sophistication:
+%
+\begin{itemize}
+\item
+The package \href{http://ctan.org/pkg/exsheets}{\textsf{exsheets}}
+and its successor \href{http://ctan.org/pkg/xsim}{\textsf{xsim}}
+provide a \LaTeX{} 3 style for typesetting exercises with solutions.
+They offer options to
+hide or delay solutions,
+print only specific problems,
+deal with points
+specify metadata,
+handle exercise collections,
+as well as some more specific options.
+They allow to adjust the layout and choose among predefined ones.
+\item
+The package \href{http://ctan.org/pkg/exercise}{\textsf{exercise}}
+provides a style for typesetting exercises with solutions.
+It offers many options to
+hide or delay solutions,
+print only specific problems,
+specify some metadata
+as well as some more specific options.
+It allows to customise the layout.
+\item
+The package \href{http://ctan.org/pkg/exercises}{\textsf{exercises}}
+provides a style for typesetting exercises with solutions.
+It offers options to hide solutions and deal with points.
+It allows basic customisation of the layout.
+\item
+The package \href{http://ctan.org/pkg/exam}{\textsf{exam}}
+provides a document class for typesetting exams conveniently.
+It offers many options to hide solutions, deal with points
+and deal with other exam-specific tasks.
+It allows to adjust the layout and choose among predefined ones.
+\item
+The package \href{http://ctan.org/pkg/probsoln}{\textsf{probsoln}}
+provides a style for typesetting exercises with solutions
+which are stored in a collection.
+It offers options to
+hide solutions
+and to assemble problems from an external collection.
+\item
+The packages
+\href{http://ctan.org/pkg/uebungsblatt}{\textsf{uebungsblatt}},
+\href{http://ctan.org/pkg/uassign}{\textsf{uassign}},
+\href{http://ctan.org/pkg/mathexam}{\textsf{mathexam}},
+\href{http://ctan.org/pkg/exsol}{\textsf{exsol}},
+\href{https://github.com/mbauman/homework}{\textsf{homework}},
+\href{https://gist.github.com/jhwilson/1278588}{\textsf{jhwhw}}
+provide basic functionality for somewhat more particular situations.
+\end{itemize}
+%
+See CTAN categories
+\href{http://ctan.org/topic/exercise}{\textsf{exercise}}
+and \href{http://ctan.org/topic/exam}{\textsf{exam}}
+for further up-to-date packages.
+
+The philosophy of the present package is to
+define a low-level framework to describe exercises with solutions
+to be used in various situations.
+The aim is to provide the means to describe the content
+(problems, solutions, sheets) in a simple fashion
+and separate it from the various layout definitions and choices
+which will define the appearance of the content.
+The interface was designed to reduce potential conflict
+with other packages and definitions.
+The package itself does not define an elaborate layout,
+but it provides means to adjust it in many ways and
+to predefine custom layout schemes.
+The package offers most of the functionality of the above packages,
+but (presently) misses out on some more advanced features,
+see \secref{sec:suggestions}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Feature Suggestions}
+\label{sec:suggestions}
+
+The following is a list of features which may be useful for future
+versions of this package:
+%
+\begin{itemize}
+\item
+Option to hide problem text while maintaining access to embedded solutions
+(for a version containing only solutions)
+or to postpone problems (for collecting them in an exercises section):
+this is difficult to implement because the problem block
+cannot simply be discarded, but must be scanned very carefully
+for the embedded solution.
+\item
+Provide an example with multiple sheets in the same document
+such that the sheet can be compiled individually or as a collection.
+\item
+Define structures for multiple-choice questions.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v3.0:} 2019/01/16
+
+\begin{itemize}
+\item
+renamed to |exframe.sty|
+\item
+first version published on CTAN
+\item
+overhaul and streamline interface
+\item
+solution processing remodelled
+\item
+changed metadata handling
+\item
+changed and generalised points handling
+\item
+generalised sectioning layout
+\item
+changed layout specification model
+\item
+insert hyperlinks using \textsf{hyperref}
+\item
+manual, example and installation package added
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v2.0 -- v2.6:} 2014/10/03 -- 2018/11/05
+
+\begin{itemize}
+\item
+changed metadata interface
+\item
+broadened scope
+\item
+added more layout options
+\item
+added more metadata
+\item
+added sheet and problem tags
+\item
+add and remember points
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1 -- v1.6:} 2014/08/07 -- 2014/09/14
+
+\begin{itemize}
+\item
+renamed to |nbprob.sty|
+\item
+added metadata
+\item
+added points
+\item
+added layout configuration
+\item
+removed specific macros
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.0 -- v1.02:} 2011/09/23 -- 2013/03/17
+
+\begin{itemize}
+\item
+first version as |problems.cls|
+\item
+dedicated layout and macros for author's exercise sheets
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+
+\settowidth\MacroIndent{\rmfamily\scriptsize 0000\ }
+
+ \DocInput{exframe.dtx}
+
+\end{document}
+%</driver>
+% \fi
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Sample Files}
+% \label{sec:sample}
+%
+% This section provides examples of how to use
+% some of the \textsf{exframe} features.
+% The resulting layout will be somewhat messy
+% due to a random selection of features\ldots
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Single Exercise Sheet}
+% \label{sec:sample1}
+%\iffalse
+%<*sample1>
+%\fi
+%
+% The first (and presently only) example
+% describes a single exercise sheet.
+% The other sheet of the series would be declared
+% in independent documents.
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Preamble.}
+%
+% Standard document class:
+%    \begin{macrocode}
+\documentclass[12pt]{article}
+%    \end{macrocode}
+
+% Use package \textsf{geometry} to set the page layout;
+% adjust the paragraph shape:
+%    \begin{macrocode}
+\usepackage{geometry}
+\geometry{layout=a4paper}
+\geometry{paper=a4paper}
+\geometry{margin=2.5cm}
+\parindent0pt
+\parskip0.5ex
+%    \end{macrocode}
+
+% Include \textsf{amsmath}, \textsf{hyperref}
+% and the \textsf{exframe} package:
+%    \begin{macrocode}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage[extstyle]{exframe}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Solutions Switch.}
+%
+% It will be useful to have the switch to turn on/off
+% the display of solutions near the top
+% of the source file, potentially with the opposite setting commented out:
+%    \begin{macrocode}
+\exercisesetup{solutions=true}
+%%\exercisesetup{solutions=false}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Layout Declarations.}
+%
+% The following layout declarations adjust the general layout
+% of exercise sheets. They may as well be moved into an include file.
+%
+% Declare a header for exercise sheets
+% to display several relevant pieces of data;
+% display points total:
+%    \begin{macrocode}
+\exercisestyle{plainheader}
+\exerciseconfig{composeheaderbelowright}{\getsheetdata{points}}%
+%    \end{macrocode}
+
+% Redefine the appearance of some counters;
+% sheets should be labelled by capital roman numerals,
+% subproblems by lowercase roman numerals;
+% declare the widest subproblem item to be expected:
+%    \begin{macrocode}
+\exerciseconfig{countersheet}{\Roman{sheet}}
+\exerciseconfig{countersubproblem}{\roman{subproblem})}
+\exerciseconfig{countersubproblemmax}{vii)}
+%    \end{macrocode}
+
+% Redefine the terms to be used for sheet(s);
+% here, a German version:
+%    \begin{macrocode}
+\exerciseconfig{termsheet}{\"Ubungsblatt}
+\exerciseconfig{termsheets}{\"Ubungsbl\"atter}
+%    \end{macrocode}
+
+% Display points for problems in the margin;
+% change margin display to use the left margin;
+% use the abbreviated form `$n$p.':
+%    \begin{macrocode}
+\exercisestyle{pointsat=margin}
+\reversemarginpar
+\exerciseconfig{composepointsmargin}[1]{#1p.}
+%    \end{macrocode}
+
+% Change the basic font style for all titles to be bold sans-serif:
+%    \begin{macrocode}
+\exerciseconfig{styletitle}{\sffamily\bfseries}
+%    \end{macrocode}
+
+% Add a significant amount of space below problems:
+%    \begin{macrocode}
+\exerciseconfig{skipproblembelow}{1.5cm}
+%    \end{macrocode}
+
+% Display half points as fractions:
+%    \begin{macrocode}
+\exercisestyle{fracpoints}
+%    \end{macrocode}
+% Show solutions below each problem
+% (may try alternatives |subproblem| or |sheet|):
+%    \begin{macrocode}
+\exercisestyle{solutionbelow=problem}
+%    \end{macrocode}
+% Separate solutions by horizontal lines (extended style):
+%    \begin{macrocode}
+\exercisestyle{solutionsep}
+%    \end{macrocode}
+
+% Add course name to sheet title metadata:
+%    \begin{macrocode}
+\exerciseconfig{composemetasheet}[2]{\getexercisedata{course},
+  \exerciseifempty{#2}{\getexerciseconfig{termsheet} #1}{#2}}
+%    \end{macrocode}
+
+% Set title and author for pdf metadata:
+%    \begin{macrocode}
+\exercisesetup{pdfdata=sheet}
+\exercisedata{title=%
+  {\getexercisedata{course}, \getexercisedata{material}}}
+\exercisedata{author=%
+  {\getexercisedata{instructor}, \getexercisedata{institution}}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Exercise Series Data.}
+%
+% Set some data on the current series:
+%    \begin{macrocode}
+\exercisedata{institution={Katharinen-Volksschule}}
+\exercisedata{course={Mathematik}}
+\exercisedata{instructor={J.\ G.\ B\"uttner}}
+\exercisedata{period={ca.\ 1786}}
+\exercisedata{material={\"Ubungsaufgaben}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Body.}
+%
+%    \begin{macrocode}
+\begin{document}
+%    \end{macrocode}
+
+% Start sheet number 5:
+%    \begin{macrocode}
+\begin{sheet}[number=5]
+%    \end{macrocode}
+
+% Start a problem with a title:
+%    \begin{macrocode}
+\begin{problem}[title={Sums}]
+%    \end{macrocode}
+
+% Some introduction to the problem:
+%    \begin{macrocode}
+This problem deals with sums and series.
+%    \end{macrocode}
+
+% A subproblem with a local label:
+%    \begin{macrocode}
+\begin{subproblem}[points=2,difficulty=simple,label={\problemtag-simplesum}]
+Compute the sum
+\showpoints
+\begin{equation}
+1+2+3.
+\end{equation}
+%    \end{macrocode}
+
+% Provide a solution for the subproblem (within the subproblem block):
+%    \begin{macrocode}
+\begin{solution}
+The result is
+\begin{equation}
+1+2+3=6.
+\end{equation}
+\end{solution}
+%    \end{macrocode}
+
+% End subproblem:
+%    \begin{macrocode}
+\end{subproblem}
+%    \end{macrocode}
+
+% Another subproblem:
+%    \begin{macrocode}
+\begin{subproblem}[points=97,difficulty=lengthy]
+Compute the sum
+\begin{equation}
+1+2+3+\ldots+98+99+100.
+\end{equation}
+Keep calm and calculate!
+%%That ought to keep him occupied for a while
+\end{subproblem}
+%    \end{macrocode}
+
+% Provide a solution for the previous subproblem
+% (layout may differ slightly from declaration within);
+% declare author:
+%    \begin{macrocode}
+\begin{solution}[author={C.\ F.\ Gau\ss}]
+We use the result $1+2+3=6$ from part \ref{\problemtag-simplesum}
+to jumpstart the calculation. The remaining sums yield
+\awardpoints[1 for each remaining sum]{97}
+\begin{equation}
+6+4+5+\ldots+99+100=5050.
+\end{equation}
+Alternatively the summands can be grouped into pairs as follows:
+\begin{align}
+1+100&=101,\\
+2+99&=101,\\
+3+98&=101,\\
+\ldots &\nonumber\\
+50+51&=101.
+\end{align}
+These amount to 50 times the same number 101.
+Therefore the sum equals
+\begin{equation}
+1+2+\ldots+99+100=50\cdot 101=5050.
+\end{equation}
+\textit{Ligget se!} \awardpoints*{97}
+\end{solution}
+%    \end{macrocode}
+
+% Some text between subproblems:
+%    \begin{macrocode}
+You may give the final part a try:
+%    \end{macrocode}
+
+% Final subproblem; this one is optional:
+%    \begin{macrocode}
+\begin{subproblem}[optional={optional}, difficulty={requires inspiration}]
+Compute the series
+\begin{equation}
+1+2+3+\ldots
+\end{equation}
+%    \end{macrocode}
+
+% Provide a solution:
+%    \begin{macrocode}
+\begin{solution}
+The series is divergent, so the result is $\infty$ \awardpoints*{1}.
+\par
+However, after subtracting the divergent part,
+the result clearly is
+\begin{equation}
+\zeta(-1)=-\frac{1}{12}\,,
+\end{equation}
+where the zeta-function $\zeta(s)$ is defined by
+\begin{equation}
+\zeta(s):=\sum_{k=1}^\infty \frac{1}{k^s}\,.
+\end{equation}
+This definition holds only for $s>1$ where the sum is convergent,
+but one can continue the complex analytic function to $s<0$
+\awardpoints*{1.5}.
+\par
+Another way of understanding the result
+is to use the indefinite summation formula
+for arbitrary exponent $s$ in the summand
+(which also follows from the Euler--MacLaurin formula)
+\begin{equation}
+\sum_n n^s
+= \frac{n^{s+1}}{s+1}
+ -\sum_{j=0}^s  \frac{\zeta(j-s)\,s!}{(s-j)!\,j!}\,n^j
+= \ldots - \zeta(-s)\,n^0.
+\end{equation}
+Curiously, the constant term with $j=0$ is just the desired result
+but with the wrong sign
+(in fact, the constant term of an indefinite sum is ambiguous;
+for the claim we merely set $j=0$
+in the expression which holds for others values of $j$)
+\awardpoints*{0.5}.
+In order to understand the sign,
+we propose that the above formula describes the regularised result
+for the sum with limits $+\infty$ and $n$
+\begin{equation}
+\sum_{k=+\infty}^n k^s
+\simeq \frac{n^{s+1}}{s+1}
+ -\sum_{j=0}^s  \frac{\zeta(j-s)\,s!}{(s-j)!\,j!}\,n^j.
+\end{equation}
+Then we flip the summation limits of the desired sum
+to bring it into the above form
+\awardpoints*{0.5}
+\begin{equation}
+\sum_{k=1}^\infty k^s
+= -\sum_{k=\infty}^0 k^s
+\simeq \zeta(-s).
+\end{equation}
+\end{solution}
+%    \end{macrocode}
+
+% End subproblem:
+%    \begin{macrocode}
+\end{subproblem}
+%    \end{macrocode}
+
+% End problem:
+%    \begin{macrocode}
+\end{problem}
+%    \end{macrocode}
+
+% Another problem; this one is untitled:
+%    \begin{macrocode}
+\begin{problem}[points=1, difficulty=insane]
+Show that the equation
+\begin{equation}
+a^3+b^3=c^3
+\end{equation}
+has no positive integer solutions.
+\end{problem}
+%    \end{macrocode}
+
+% A solution can also follow a problem
+% (but the layout may be slightly different,
+% e.g.\ here the space below the problem will
+% appear before the solution):
+%    \begin{macrocode}
+\begin{solution}
+\normalmarginpar
+This is beyond the scope of this example.
+\marginpar{\footnotesize\raggedright does not fit here.\par}
+\end{solution}
+%    \end{macrocode}
+
+% End sheet:
+%    \begin{macrocode}
+\end{sheet}
+%    \end{macrocode}
+
+% End of document body:
+%    \begin{macrocode}
+\end{document}
+%    \end{macrocode}
+%\iffalse
+%</sample1>
+%\fi
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Implementation}
+% \label{sec:implementation}
+%\iffalse
+%<*package>
+%\fi
+%
+% This section describes the package |exframe.sty|.
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{General Definitions}
+% \label{sec:imp-def}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Required Packages.}
+%
+% The package loads the package
+% \textsf{verbatim} and \textsf{xkeyval}
+% if not yet present.
+% \textsf{verbatim} is used for solution block reading
+% and \textsf{xkeyval} is used for extended options processing:
+%    \begin{macrocode}
+\RequirePackage{verbatim}
+\RequirePackage{xkeyval}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{General Definitions.}
+%
+% \macro{\exf@empty}
+% Define an empty macro for comparison by |\ifx|:
+%    \begin{macrocode}
+\def\exf@empty{}
+%    \end{macrocode}
+
+% \macro{\exf@tmpdim}
+% Define a length for temporary storage:
+%    \begin{macrocode}
+\newlength\exf@tmpdim
+%    \end{macrocode}
+
+% \macro{\exf@exptwo}
+% A macro to conveniently expand the third token in line:
+%    \begin{macrocode}
+\def\exf@exptwo#1{\expandafter#1\expandafter}
+%    \end{macrocode}
+% \macro{\exf@exparg}
+% A macro to conveniently expand the first token
+% of an argument following arbitrary code:
+%    \begin{macrocode}
+\long\def\exf@expswitch#1#2{#2{#1}}
+\long\def\exf@exparg#1#2{\exf@exptwo\exf@expswitch{#2}{#1}}
+%    \end{macrocode}
+% \macro{\exf@csdo}
+% \macro{\exf@csdotwo}
+% Some macros to conveniently expand |\csname| arguments
+% before expanding the macro:
+%    \begin{macrocode}
+\def\exf@csdo#1#2{\expandafter#1\csname#2\endcsname}
+\def\exf@csdotwo#1#2#3{\exf@exptwo#1#2\csname#3\endcsname}
+%    \end{macrocode}
+
+% \macro{\exf@append@def}
+% \macro{\exf@prepend@def}
+% Add definitions to macros (after or before original content):
+%    \begin{macrocode}
+\long\def\exf@append@def#1#2{\exf@exptwo\def#1\expandafter{#1#2}}
+\long\def\exf@prepend@switch#1#2#3{#2{#3#1}}
+\long\def\exf@prepend@def#1#2{\exf@exptwo\exf@prepend@switch{#1}{\def#1}{#2}}
+%    \end{macrocode}
+
+% \macro{\exf@expsetkeys}
+% A version of |\setkeys| from \textsf{xkeyval} which expands first:
+%    \begin{macrocode}
+\newcommand{\exf@expsetkeys}[2]{\edef\exf@tmp{#2}%
+  \exf@exparg{\setkeys{#1}}{\exf@tmp}}
+%    \end{macrocode}
+
+% \macro{\exf@href}
+% Display text with hyperreference passed by macro |#1|
+% (in case \textsf{hyperref} is loaded
+% and the reference is defined and not empty):
+%    \begin{macrocode}
+\newcommand{\exf@href}[2]{%
+  \ifdefined#1\ifx#1\exf@empty#2\else%
+   \ifdefined\hyperlink\protect\hyperlink{#1}{#2}\else#2\fi\fi\else#2\fi}
+%    \end{macrocode}
+
+% \macro{\exf@text}
+% \macro{\exf@ensuretext}
+% Two macros to display text in math mode.
+% |exf@text| is a wrapper for |\text| of \textsf{amstext}
+% in case the latter package is loaded.
+% |exf@ensuretext| makes sure the text is set in text mode
+% or within an |\mbox| in math math:
+%    \begin{macrocode}
+\newcommand{\exf@text}[1]{\ifdefined\text\text{#1}\else#1\fi}
+\newcommand{\exf@ensuretext}[1]{\ifmmode\mbox{#1}\else#1\fi}
+%    \end{macrocode}
+
+% \macro{\exf@addcontentsline}
+% Add a line to the table of contents unless macro in argument |#1| is empty:
+%    \begin{macrocode}
+\newcommand{\exf@addcontentsline}[2]{%
+  \ifx#1\exf@empty\else\addcontentsline{toc}{#1}{#2}\fi}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Package Setup}
+% \label{sec:imp-setup}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Initialisation Options.}
+%
+% \macro{exframe.sty}
+% Some setup options are available while loading the package only.
+%
+% Configure names of main environments and counters:
+%    \begin{macrocode}
+\def\exf@problemname{problem}
+\def\exf@subproblemname{sub\exf@problemname}
+\def\exf@solutionname{solution}
+\def\exf@sheetname{sheet}
+\def\exf@problemcounter{problem}
+\def\exf@subproblemcounter{sub\exf@problemcounter}
+\def\exf@solutioncounter{solution}
+\def\exf@sheetcounter{sheet}
+\define@key{exframe.sty}{problemenv}{\def\exf@problemname{#1}}
+\define@key{exframe.sty}{subproblemenv}{\def\exf@subproblemname{#1}}
+\define@key{exframe.sty}{solutionenv}{\def\exf@solutionname{#1}}
+\define@key{exframe.sty}{sheetenv}{\def\exf@sheetname{#1}}
+\define@key{exframe.sty}{problemcounter}{\def\exf@problemcounter{#1}}
+\define@key{exframe.sty}{subproblemcounter}{\def\exf@subproblemcounter{#1}}
+\define@key{exframe.sty}{solutioncounter}{\def\exf@solutioncounter{#1}}
+\define@key{exframe.sty}{sheetcounter}{\def\exf@sheetcounter{#1}}
+%    \end{macrocode}
+
+% Whether to provide some extended configuration options
+% (available while loading only):
+%    \begin{macrocode}
+\define@boolkey{exframe.sty}[exf@]{extdata}[true]{}
+\define@boolkey{exframe.sty}[exf@]{extstyle}[true]{}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Setup Options.}
+%
+% \macro{exf@setup}
+% All remaining setup options are available
+% also when the package is already loaded.
+%
+% Main switch for solutions:
+%    \begin{macrocode}
+\define@boolkey{exf@setup}[]{solutions}[true]{}
+%    \end{macrocode}
+% Switch for writing pdf metadata:
+%    \begin{macrocode}
+\define@choicekey{exf@setup}{pdfdata}%
+  {auto,manual,sheet,off}[auto]{\def\exf@metadata{#1}}
+\def\exf@metadata{auto}
+%    \end{macrocode}
+% Write line number indicators to output file:
+%    \begin{macrocode}
+\define@boolkey{exf@setup}[exf@]{lineno}[true]{}
+%    \end{macrocode}
+% Prepare two-sided sheets:
+%    \begin{macrocode}
+\define@boolkey{exf@setup}[exf@]{twoside}[true]{}
+%    \end{macrocode}
+% Generate hyperreferences from solutions to corresponding problems:
+%    \begin{macrocode}
+\define@boolkey{exf@setup}[exf@]{solutionhref}[true]{}
+\exf@solutionhreftrue
+%    \end{macrocode}
+% Automatically generate labels for sheets and problems:
+%    \begin{macrocode}
+\define@boolkey{exf@setup}[exf@]{autolabelsheet}[true]{}
+\define@boolkey{exf@setup}[exf@]{autolabelproblem}[true]{}
+%    \end{macrocode}
+% Write warning message to document for better detection of inconsistencies:
+%    \begin{macrocode}
+\define@boolkey{exf@setup}[exf@]{warntext}[true]{}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Processing.}
+%
+% Process global options while loading package:
+%    \begin{macrocode}
+\ProcessOptionsX<exframe.sty,exf@setup>
+%    \end{macrocode}
+
+% \macro{\exercisesetup}
+% Configure package when package is already loaded:
+%    \begin{macrocode}
+\newcommand{\exercisesetup}[1]{\exf@expsetkeys{exf@setup}{#1}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Configuration}
+% \label{sec:imp-config}
+%
+% This section defines and describes the various configuration options
+% provided by the package. It also serves as a manual,
+% and most code can be recycled and adjusted for individual configurations:
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Definitions.}
+%
+% \macro{\exerciseconfig}
+% Set a configuration macro;
+% store definition in |exf@config@#2|;
+% use |\newcommand| for macros with arguments,
+% but (non-long) |\def| for plain definitions:
+%    \begin{macrocode}
+\newcommand{\exerciseconfig}[1]{%
+  \@ifnextchar[{\exf@configopt{#1}}{\exf@confignoopt{#1}}}
+\long\def\exf@configopt#1[#2]#3{%
+  \exf@csdo\def{exf@config@#1}{}%
+  \exf@csdo\renewcommand{exf@config@#1}[#2]{#3}}%
+\long\def\exf@confignoopt#1#2{\exf@csdo\def{exf@config@#1}{#2}}
+%    \end{macrocode}
+% \macro{\exerciseconfigappend}
+% \macro{\exerciseconfigprepend}
+% Append to a (parameterless) configuration macro:
+%    \begin{macrocode}
+\newcommand{\exerciseconfigappend}[2]{%
+  \exf@csdo\exf@append@def{exf@config@#1}{#2}}
+\newcommand{\exerciseconfigprepend}[2]{%
+  \exf@csdo\exf@prepend@def{exf@config@#1}{#2}}
+%    \end{macrocode}
+% \macro{\getexerciseconfig}
+% Get configuration macro:
+%    \begin{macrocode}
+\newcommand{\getexerciseconfig}[1]{\csname exf@config@#1\endcsname}
+%    \end{macrocode}
+% \macro{\exerciseconfigempty}
+% Test whether configuration macro |#1| is empty;
+% execute |#2| if empty, otherwise execute |#3|:
+%    \begin{macrocode}
+\newcommand{\exerciseconfigempty}[3]{\exf@csdo\ifx{exf@config@#1}\exf@empty%
+  #2\else#3\fi}
+%    \end{macrocode}
+
+% \macro{\exerciseifemtpy}
+% \macro{\exerciseifnotempty}
+% Code to test whether |#1| (expanded) is empty;
+% execute |#2| if empty, otherwise execute |#3|:
+%    \begin{macrocode}
+\long\def\exerciseifempty#1#2#3{\if&#1&#2\else#3\fi}
+\long\def\exerciseifnotempty#1#2{\if&#1&\else#2\fi}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Terms.}
+%
+% \macro{term...}
+% Terms for sheet, problem, solution and points
+% (for adjustment or internationalisation):
+%    \begin{macrocode}
+\exerciseconfig{termsheet}{Sheet}
+\exerciseconfig{termsheets}{Sheets}
+\exerciseconfig{termproblem}{Problem}
+\exerciseconfig{termproblems}{Problems}
+\exerciseconfig{termsolution}{Solution}
+\exerciseconfig{termsolutions}{Solutions}
+\exerciseconfig{termpoint}{point}
+\exerciseconfig{termpoints}{points}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Formatting Styles.}
+%
+% \macro{style...}
+% Formatting styles to be applied for various parts of text.
+% Different styles will be applied in sequence from more general
+% to more specific.
+%
+% Basic style for all exercise text:
+%    \begin{macrocode}
+\exerciseconfig{styletext}{\normalfont}
+%    \end{macrocode}
+% Style for problems:
+%    \begin{macrocode}
+\exerciseconfig{styletextproblem}{}
+%    \end{macrocode}
+% Style for solutions:
+%    \begin{macrocode}
+\exerciseconfig{styletextsolution}{\footnotesize}
+%    \end{macrocode}
+% Basic style for titles:
+%    \begin{macrocode}
+\exerciseconfig{styletitle}{\bfseries}
+%    \end{macrocode}
+% Style for problem titles:
+%    \begin{macrocode}
+\exerciseconfig{styletitleproblem}{\large}
+%    \end{macrocode}
+% Style for subproblem titles:
+%    \begin{macrocode}
+\exerciseconfig{styletitlesubproblem}{}
+%    \end{macrocode}
+% Style for solution titles:
+%    \begin{macrocode}
+\exerciseconfig{styletitlesolution}{}
+%    \end{macrocode}
+% Style for problem section title in solution block:
+%    \begin{macrocode}
+\exerciseconfig{styletitlesolutionsproblem}{\small}
+%    \end{macrocode}
+% Style for solution block title:
+%    \begin{macrocode}
+\exerciseconfig{styletitlesolutions}{\normalsize}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Spacing.}
+%
+% \macro{skip...}
+% Spaces related to various elements.
+% Vertical space is typically combined with space declared elsewhere
+% using |\addvspace|.
+%
+% Space above problem environment:
+%    \begin{macrocode}
+\exerciseconfig{skipproblemabove}{3.25ex plus 1ex minus 1.5ex}
+%    \end{macrocode}
+% Space below problem environment:
+%    \begin{macrocode}
+\exerciseconfig{skipproblembelow}{3pt plus 1pt minus 1pt}
+%    \end{macrocode}
+% Space below or after problem title;
+% positive numbers generate vertical space
+% (problem body is started in new paragraph),
+% negative numbers generate horizontal space
+% (problem body continues on opening line):
+%    \begin{macrocode}
+\exerciseconfig{skipproblemtitle}{3pt plus 1pt minus 1pt}
+%    \end{macrocode}
+% Horizontal space between items in the problem opening line:
+%    \begin{macrocode}
+\exerciseconfig{skipprobleminfo}{0.5em}
+%    \end{macrocode}
+% Space for problem item and indentation;
+% |0pt| means no indentation and direct display of title;
+% positive numbers define an absolute amount;
+% |-1pt| (or any negative number) computes the amount of indentation
+% from the width of (standard) item plus separator:
+%    \begin{macrocode}
+\exerciseconfig{skipproblemitem}{0pt}
+%    \end{macrocode}
+
+% Spaces related to subproblem environment;
+% analogous to spaces related to problem environment,
+% see above:
+%    \begin{macrocode}
+\exerciseconfig{skipsubproblemabove}{1.5ex plus 0.5ex minus 1ex}
+\exerciseconfig{skipsubproblembelow}{1.5ex plus 0.5ex minus 1ex}
+\exerciseconfig{skipsubproblemtitle}{-1em}
+\exerciseconfig{skipsubprobleminfo}{0.25em}
+\exerciseconfig{skipsubproblemitem}{-1pt}
+%    \end{macrocode}
+
+% Spaces related to solution environment;
+% analogous to spaces related to problem environment,
+%    \begin{macrocode}
+\exerciseconfig{skipsolutionabove}{0ex}
+\exerciseconfig{skipsolutionbelow}{1.5ex plus 0.5ex minus 1ex}
+\exerciseconfig{skipsolutiontitle}{-0.5em}
+\exerciseconfig{skipsolutioninfo}{0.25em}
+%    \end{macrocode}
+% |skipsolutionitem| and |skipsolutionitemsub|
+% are analogous to |skipproblemitem| described above;
+% they apply to solutions corresponding to problems and subproblems,
+% respectively:
+%    \begin{macrocode}
+\exerciseconfig{skipsolutionitem}{0pt}
+\exerciseconfig{skipsolutionitemsub}{0pt}
+%    \end{macrocode}
+
+% Spaces related to blocks of solutions;
+% space above and below a solution block:
+%    \begin{macrocode}
+\exerciseconfig{skipsolutionsabove}{1.5ex plus 0.5ex minus 1ex}
+\exerciseconfig{skipsolutionsbelow}{1.5ex plus 0.5ex minus 1ex}
+%    \end{macrocode}
+% Space following problem titles in a solution block:
+%    \begin{macrocode}
+\exerciseconfig{skipsolutionsproblem}{1.0ex plus 0ex minus 0.5ex}
+%    \end{macrocode}
+% Space following title of a solution block:
+%    \begin{macrocode}
+\exerciseconfig{skipsolutionstitle}{1.0ex plus 0ex minus 0.5ex}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Hook Code.}
+%
+% \macro{insert...}
+% Code to process data and to insert text at various points of processing.
+%
+% Code to generate the title for a sheet;
+% minimalistic default to display the sheet title:
+%    \begin{macrocode}
+\exerciseconfig{insertsheettitle}{\centerline{\getsheetdata{title}}}
+%    \end{macrocode}
+% Code to clear the page at the start and at the end of a new sheet:
+%    \begin{macrocode}
+\exerciseconfig{insertsheetclearpage}{\exercisecleardoublepage}
+%    \end{macrocode}
+% Code to insert before a sheet is displayed:
+%    \begin{macrocode}
+\exerciseconfig{insertsheetbefore}{}
+%    \end{macrocode}
+% Code to insert after a sheet is displayed:
+%    \begin{macrocode}
+\exerciseconfig{insertsheetafter}{}
+%    \end{macrocode}
+% Code to insert before a solution block is displayed:
+%    \begin{macrocode}
+\exerciseconfig{insertsolutionsbefore}{}
+%    \end{macrocode}
+% Code to insert after a solution block is displayed:
+%    \begin{macrocode}
+\exerciseconfig{insertsolutionsafter}{}
+%    \end{macrocode}
+% Code to insert before a problem is displayed:
+%    \begin{macrocode}
+\exerciseconfig{insertproblembefore}{}
+%    \end{macrocode}
+% Code to insert after a problem is displayed:
+%    \begin{macrocode}
+\exerciseconfig{insertproblemafter}{}
+%    \end{macrocode}
+% Code to insert text into the problem opening line
+% by means of |\addprobleminfo|:
+%    \begin{macrocode}
+\exerciseconfig{insertprobleminfo}{}
+%    \end{macrocode}
+% Analogous definitions for subproblems:
+%    \begin{macrocode}
+\exerciseconfig{insertsubproblembefore}{}
+\exerciseconfig{insertsubproblemafter}{}
+\exerciseconfig{insertsubprobleminfo}{}
+%    \end{macrocode}
+% Analogous definitions for solutions:
+%    \begin{macrocode}
+\exerciseconfig{insertsolutionbefore}{}
+\exerciseconfig{insertsolutionafter}{}
+\exerciseconfig{insertsolutioninfo}{}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Text Composition for Environments.}
+%
+% \macro{compose...}
+% Macros to generate text for various situations.
+% Preferably the output is plain text without formatting,
+% but in some situations it may be required to
+% address formatting in these macros.
+%
+% Default separator for items:
+%    \begin{macrocode}
+\exerciseconfig{composeitemsep}{\ }
+%    \end{macrocode}
+% Compose sheet title;
+% arguments are sheet number and raw title (empty if not specified);
+% default is ``Sheet |#1|'' or given title ``|#2|'':
+%    \begin{macrocode}
+\exerciseconfig{composetitlesheet}[2]%
+  {\exerciseifempty{#2}{\getexerciseconfig{termsheet} #1}{#2}}
+%    \end{macrocode}
+% Compose sheet title for pdf metadata;
+% arguments are sheet number and raw title:
+%    \begin{macrocode}
+\exerciseconfig{composemetasheet}[2]%
+  {\getexerciseconfig{composetitlesheet}{#1}{#2}}
+%    \end{macrocode}
+% Compose sheet title for table of contents;
+% arguments are sheet number and raw title:
+%    \begin{macrocode}
+\exerciseconfig{composetocsheet}[2]%
+  {\exerciseifempty{#2}{\getexerciseconfig{termsheet} #1}{#1. #2}}
+%    \end{macrocode}
+% Compose problem item; argument is problem number:
+%    \begin{macrocode}
+\exerciseconfig{composeitemproblem}[1]{#1.}
+%    \end{macrocode}
+% Problem item separator:
+%    \begin{macrocode}
+\exerciseconfig{composeitemproblemsep}%
+  {\getexerciseconfig{composeitemsep}}
+%    \end{macrocode}
+% Compose problem title;
+% arguments are problem number (empty if item is split off)
+% and raw title (empty if not specified);
+% default is ``Problem |#1|.'' or ``|#1|. |#2|'':
+%    \begin{macrocode}
+\exerciseconfig{composetitleproblem}[2]{\exerciseifempty{#1}%
+   {\exerciseifempty{#2}{}{#2}}%
+   {\exerciseifempty{#2}{\getexerciseconfig{termproblem}\ %
+     \getexerciseconfig{composeitemproblem}{#1}}%
+    {\getexerciseconfig{composeitemproblem}{#1} #2}}}
+%    \end{macrocode}
+% Compose problem title for table of contents;
+% arguments are problem number and raw title:
+%    \begin{macrocode}
+\exerciseconfig{composetocproblem}[2]%
+  {\exerciseifempty{#2}{\getexerciseconfig{termproblem} #1}{#1. #2}}
+%    \end{macrocode}
+% Compose subproblem item; argument is subproblem number:
+%    \begin{macrocode}
+\exerciseconfig{composeitemsubproblem}[1]{#1}
+%    \end{macrocode}
+% Subproblem item separator:
+%    \begin{macrocode}
+\exerciseconfig{composeitemsubproblemsep}%
+  {\getexerciseconfig{composeitemsep}}
+%    \end{macrocode}
+% Compose subproblem title;
+% argument is subproblem number:
+%    \begin{macrocode}
+\exerciseconfig{composetitlesubproblem}[1]{#1}
+%    \end{macrocode}
+% Compose solution item; argument is problem or subproblem number:
+%    \begin{macrocode}
+\exerciseconfig{composeitemsolution}[2]{#1.}
+\exerciseconfig{composeitemsolutionsub}[2]{#2}
+%    \end{macrocode}
+% Solution item separator:
+%    \begin{macrocode}
+\exerciseconfig{composeitemsolutionsep}%
+  {\getexerciseconfig{composeitemsep}}
+%    \end{macrocode}
+% Compose title for single solution;
+% arguments are corresponding problem and subproblem number:
+%    \begin{macrocode}
+\exerciseconfig{composetitlesolutionsingle}[2]%
+  {\getexerciseconfig{termsolution}:}
+%    \end{macrocode}
+% Compose title for one out of several solutions;
+% arguments are corresponding problem and subproblem number:
+%    \begin{macrocode}
+\exerciseconfig{composetitlesolutionmulti}[2]{#2}
+%    \end{macrocode}
+% Compose table of contents line for solution;
+% arguments are problem number and raw title:
+%    \begin{macrocode}
+\exerciseconfig{composetocsolution}[2]%
+  {\getexerciseconfig{composetocproblem}{#1}{#2}}
+%    \end{macrocode}
+% Compose title for solution block:
+%    \begin{macrocode}
+\exerciseconfig{composetitlesolutions}%
+  {\getexerciseconfig{termsolutions}}
+%    \end{macrocode}
+% Compose table of contents line for solution block:
+%    \begin{macrocode}
+\exerciseconfig{composetocsolutions}%
+  {\getexerciseconfig{composetitlesolutions}}
+%    \end{macrocode}
+% Compose sectional title for solution following a single problem;
+% arguments are problem number and raw title:
+%    \begin{macrocode}
+\exerciseconfig{composetitlesolutionsproblemsingle}[2]%
+  {\getexerciseconfig{termsolution}}
+%    \end{macrocode}
+% Compose sectional title for solution of one problem within a block;
+% arguments are problem number and raw title:
+%    \begin{macrocode}
+\exerciseconfig{composetitlesolutionsproblemmulti}[2]%
+  {\exerciseifempty{#2}{\getexerciseconfig{termproblem} #1}{#1. #2}}
+%    \end{macrocode}
+% Compose label:
+%    \begin{macrocode}
+\exerciseconfig{composeitemsolution}[2]{#1#2}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Points.}
+%
+% Compose number of points:
+%    \begin{macrocode}
+\exerciseconfig{composepointsnum}[1]{#1}
+%    \end{macrocode}
+% Compose number of points followed by `points';
+% use singular `point' for $1$:
+%    \begin{macrocode}
+\exerciseconfig{composepoints}[1]{\getexerciseconfig{composepointsnum}{#1}~%
+  \ifdim #1pt=1pt\getexerciseconfig{termpoint}%
+  \else\getexerciseconfig{termpoints}\fi}
+%    \end{macrocode}
+% Compose points declaration for use in opening line:
+%    \begin{macrocode}
+\exerciseconfig{composepointsstart}[1]{(\getexerciseconfig{composepoints}{#1})}
+%    \end{macrocode}
+% Compose points declaration for use in margin:
+%    \begin{macrocode}
+\exerciseconfig{composepointsmargin}[1]{\getexerciseconfig{composepoints}{#1}}
+%    \end{macrocode}
+% Compose points declaration for use in text:
+%    \begin{macrocode}
+\exerciseconfig{composepointsbody}[1]{(\getexerciseconfig{composepoints}{#1})}
+%    \end{macrocode}
+% Compose points declaration for use in sheet data:
+%    \begin{macrocode}
+\exerciseconfig{composepointssheet}[1]{%
+  \exerciseifnotempty{#1}{\getexerciseconfig{composepoints}{#1}}}
+%    \end{macrocode}
+% Compose points declaration for solution with comment:
+%    \begin{macrocode}
+\exerciseconfig{composepointsaward}[2]%
+  {(\getexerciseconfig{composepoints}{#1}\exerciseifnotempty{#2}{; #2})}
+%    \end{macrocode}
+% Compose alternative points for solution declaration with comment:
+%    \begin{macrocode}
+\exerciseconfig{composepointsawardalt}[2]%
+  {(\getexerciseconfig{composepoints}{#1}*\exerciseifnotempty{#2}{; #2})}
+%    \end{macrocode}
+
+% Display points in the margin:
+%    \begin{macrocode}
+\exerciseconfig{insertpointsmargin}[1]{\marginpar{\footnotesize #1}}
+%    \end{macrocode}
+
+% Display warning about points mismatch:
+%    \begin{macrocode}
+\exerciseconfig{insertwarnpoints}[3]
+  {\textbf{points mismatch for #1 (#2 determined vs.\ #3 given)}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Counters.}
+%
+% Define counter display via configuration interface:
+%    \begin{macrocode}
+\exerciseconfig{countersheet}{\arabic{\exf@sheetcounter}}
+\exerciseconfig{counterproblem}{\arabic{\exf@problemcounter}}
+\exerciseconfig{counterproblemmax}{10}
+\exerciseconfig{countersubproblem}{\alph{\exf@subproblemcounter})}
+\exerciseconfig{countersubproblemmax}{m)}
+\exerciseconfig{countersheetequation}{\arabic{equation}}
+\exerciseconfig{counterproblemequation}{P\arabic{equation}}
+\exerciseconfig{countersolutionequation}{S\arabic{equation}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Further Definitions.}
+%
+% \macro{label...}
+% Templates for automatic generation of labels from tags:
+%    \begin{macrocode}
+\exerciseconfig{labelsheet}[1]{sheet:#1}
+\exerciseconfig{labelproblem}[1]{prob:#1}
+%    \end{macrocode}
+
+% \macro{toclevel...}
+% Table of contents levels for sheets, problems,
+% solutions of problems and solution blocks;
+% empty means no writing to table of contents:
+%    \begin{macrocode}
+\exerciseconfig{toclevelsheet}{}
+\exerciseconfig{toclevelproblem}{}
+\exerciseconfig{toclevelsolution}{}
+\exerciseconfig{toclevelsolutions}{}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Styles}
+% \label{sec:imp-styles}
+%
+% Styles are meant as a way to adjust
+% several configuration options at the same time
+% to achieve a consistent layout in some regard.
+% Useful examples can be found among the
+% extended exercise styles.
+% They can serve a starting point for further
+% custom styles.
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Exercise Styles Code.}
+%
+% \macro{\defexercisestylearg}
+% Define a style with an argument:
+%    \begin{macrocode}
+\newcommand{\defexercisestylearg}[3][]{%
+  \def\exf@tmp{#1}\ifx\exf@tmp\exf@empty%
+   \define@key{exf@style}{#2}{#3}\else%
+   \define@key{exf@style}{#2}[#1]{#3}\fi}
+%    \end{macrocode}
+% \macro{\defexercisestyle}
+% Define a style with a boolean argument;
+% execute code onlf if true:
+%    \begin{macrocode}
+\newcommand{\defexercisestyle}[2]{%
+  \exf@csdotwo\long\def{exf@style@code@#1}{#2}%
+  \exf@exparg{\define@boolkey{exf@style}[exf@style@]{#1}[true]}%
+   {\csname ifexf@style@#1\endcsname\csname exf@style@code@#1\endcsname\fi}}
+%    \end{macrocode}
+% \macro{\exercisestyle}
+% Process styles:
+%    \begin{macrocode}
+\newcommand{\exercisestyle}[1]{\exf@expsetkeys{exf@style}{#1}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Default Exercise Styles.}
+%
+% \macro{solutionbelow}
+% Choose location for solutions:
+%    \begin{macrocode}
+\def\exf@solutionbelow{subproblem}
+\define@choicekey{exf@style}{solutionbelow}%
+  {here,subproblem,problem,sheet,manual}{\def\exf@solutionbelow{#1}}
+%    \end{macrocode}
+% Conditionals to compare solution locations:
+%    \begin{macrocode}
+\newcommand{\exf@solbelowis}[2]%
+  {\def\exf@tmp{#1}\ifx\exf@solutionbelow\exf@tmp#2\fi}
+%    \end{macrocode}
+%
+% \macro{sheetequation}
+% \macro{problemequation}
+% \macro{solutionequation}
+% Use separate equation counters for sheets, problems and solutions:
+%    \begin{macrocode}
+\defexercisestyle{sheetequation}{}
+\defexercisestyle{problemequation}{}
+\defexercisestyle{solutionequation}{}
+\exf@style@solutionequationtrue
+%    \end{macrocode}
+%
+% \macro{pointsat}
+% \macro{subpointsat}
+% Choose where points of problems and subproblems are displayed:
+%    \begin{macrocode}
+\def\exf@pointsat{start}
+\define@choicekey{exf@style}{pointsat}%
+  {start,start*,margin,end,manual,off}{\def\exf@pointsat{#1}}
+\def\exf@subpointsat{end}
+\define@choicekey{exf@style}{subpointsat}%
+  {start,start*,margin,end,manual,off}{\def\exf@subpointsat{#1}}
+%    \end{macrocode}
+% Conditionals to compare point locations:
+%    \begin{macrocode}
+\newcommand{\exf@pointsatis}[2]%
+  {\def\exf@tmp{#1}\ifx\exf@pointsat\exf@tmp#2\fi}
+\newcommand{\exf@subpointsatis}[2]%
+  {\def\exf@tmp{#1}\ifx\exf@subpointsat\exf@tmp#2\fi}
+%    \end{macrocode}
+%
+% \macro{problemby}
+% \macro{equationby}
+% Declare problems or equations as subcounter of other counter:
+%    \begin{macrocode}
+\defexercisestylearg{problemby}{\exf@numberproblemwithin{#1}}
+\defexercisestylearg{equationby}{\exf@numberequationwithin{#1}}
+%    \end{macrocode}
+%
+% \macro{pagebysheet}
+% \macro{problembysheet}
+% \macro{equationbysheet}
+% Number pages, problems or equations by sheet:
+%    \begin{macrocode}
+\defexercisestyle{pagebysheet}{%
+  \def\thepage{\csname the\exf@sheetcounter\endcsname.\arabic{page}}%
+  \def\theHpage{\csname theH\exf@sheetcounter\endcsname.\arabic{page}}%
+  \exerciseconfigappend{insertsheetbefore}{\setcounter{page}{1}}}
+\defexercisestyle{problembysheet}%
+  {\exf@numberproblemwithin{\exf@sheetcounter}}
+\defexercisestyle{equationbysheet}%
+  {\exf@numberequationwithin{\exf@sheetcounter}}
+%    \end{macrocode}
+%
+% \macro{fracpoints}
+% Use vulgar fractions to display binary fractional points:
+%    \begin{macrocode}
+\defexercisestyle{fracpoints}%
+  {\exerciseconfig{composepointsnum}[1]{\exf@nicefrac{##1}}}
+%    \end{macrocode}
+%
+% \macro{twoside}
+% Use two-sided layout for sheets:
+%    \begin{macrocode}
+\defexercisestylearg[true]{twoside}{\exercisesetup{twoside={#1}}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Extended Exercise Styles.}
+%
+% Declare more specific styles:
+%    \begin{macrocode}
+\ifexf@extstyle
+%    \end{macrocode}
+%
+% \macro{contents}
+% Add sheets and problems to table of contents:
+%    \begin{macrocode}
+\defexercisestyle{contents}{%
+  \exerciseconfig{toclevelsheet}{section}%
+  \exerciseconfig{toclevelproblem}{subsection}}
+%    \end{macrocode}
+% \macro{solutionsf}
+% Use sans serif font for solutions:
+%    \begin{macrocode}
+\defexercisestyle{solutionsf}{%
+  \exerciseconfigappend{styletextsolution}{\sffamily\let\itshape\slshape}}
+%    \end{macrocode}
+% \macro{solutiondimproblem}
+% Dim problem text if solutions are displayed:
+%    \begin{macrocode}
+\defexercisestyle{solutiondimproblem}{%
+  \RequirePackage{color}%
+  \exerciseconfigappend{styletextsolution}{\color[gray]{0}}%
+  \exerciseconfigappend{styletextproblem}{\color[gray]{0.2}}}
+%    \end{macrocode}
+% \macro{solutionsep}
+% Separate solutions by horizontal lines:
+%    \begin{macrocode}
+\defexercisestyle{solutionsep}{%
+  \exerciseconfig{insertsolutionsbefore}{\hrule\nopagebreak[3]\vspace{0.5ex}}%
+  \exerciseconfig{insertsolutionsafter}{\nopagebreak[3]\vspace{1.0ex}\hrule}}
+%    \end{macrocode}
+% \macro{plainheader}
+% Declare a simple sheet header with some configurable options;
+% the configuration options |styleheader...| define font styles,
+% |skipheaderbelow| the space below the header and
+% |composeheaderbelow...| some auxiliary text to be displayed
+% on the line below the header:
+%    \begin{macrocode}
+\defexercisestyle{plainheader}{%
+  \exerciseconfig{styleheadertitle}{\Large\bfseries}%
+  \exerciseconfig{styleheadercourse}{\sffamily}%
+  \exerciseconfig{styleheaderbelow}{\footnotesize}%
+  \exerciseconfig{skipheaderbelow}{3ex}%
+  \exerciseconfig{composeheaderbelowleft}{}%
+  \exerciseconfig{composeheaderbelowright}{}%
+  \exerciseconfig{composeheaderbelowcenter}{}%
+  \exerciseconfig{insertsheettitle}{\noindent%
+   \begin{minipage}{\textwidth}%
+   {\getexerciseconfig{styleheadertitle}%
+    \makebox[0pt][l]{\getexercisedata{course}}%
+    \hfill\makebox[0pt][r]{\getsheetdata{title}}\par}%
+   {\getexerciseconfig{styleheadercourse}%
+    \makebox[0pt][l]{\getexercisedata{institution}%
+     \exercisedataempty{period}{}{, \getexercisedata{period}}}%
+    \hfill\makebox[0pt][r]{\getexercisedata{instructor}}%
+    \vphantom{g}\par}%
+   \hrule%
+   {\def\tmp{}%
+    \exerciseconfigempty{composeheaderbelowleft}{}{\def\tmp{.}}%
+    \exerciseconfigempty{composeheaderbelowcenter}{}{\def\tmp{.}}%
+    \exerciseconfigempty{composeheaderbelowright}{}{\def\tmp{.}}%
+    \exerciseifnotempty{\tmp}%
+     {\getexerciseconfig{styleheaderbelow}\vphantom{\^A}%
+      \makebox[0pt][l]{\getexerciseconfig{composeheaderbelowleft}}%
+      \hfill\makebox[0pt][c]{\getexerciseconfig{composeheaderbelowcenter}}%
+      \hfill\makebox[0pt][r]{\getexerciseconfig{composeheaderbelowright}}%
+      \vspace*{-\baselineskip}\vspace*{-\parskip}\par}}%
+   \end{minipage}%
+   \par\addvspace{\getexerciseconfig{skipheaderbelow}}}}
+%    \end{macrocode}
+%
+% Done with extended styles:
+%    \begin{macrocode}
+\fi
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Metadata}
+% \label{sec:imp-metadata}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Global Metadata Code.}
+%
+% \macro{\defexercisedata}
+% Declare global metadata field
+% by defining a key \textit{key} in category |exf@data|
+% that stores the chosen value in |\exf@data@|\textit{key}:
+%    \begin{macrocode}
+\newcommand{\defexercisedata}[1]{%
+  \exf@csdo\def{exf@data@#1}{}%
+  \define@key{exf@data}{#1}%
+   {\exf@csdo\gdef{exf@data@#1}{##1}}}
+%    \end{macrocode}
+% \macro{\exercisedata}
+% Process key-value pairs:
+%    \begin{macrocode}
+\newcommand{\exercisedata}[1]{\setkeys{exf@data}{#1}}
+%    \end{macrocode}
+% \macro{\getexercisedata}
+% Read global metadata:
+%    \begin{macrocode}
+\newcommand{\getexercisedata}[1]{\csname exf@data@#1\endcsname}
+%    \end{macrocode}
+% \macro{\exercisedataempty}
+% Check whether the field is empty:
+%    \begin{macrocode}
+\newcommand{\exercisedataempty}[3]{\exf@csdo\ifx{exf@data@#1}\exf@empty%
+  #2\else#3\fi}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Global Metadata Declarations.}
+%
+% Declare fields corresponding to standard pdf metadata:
+%    \begin{macrocode}
+\defexercisedata{author}
+\defexercisedata{title}
+\defexercisedata{subject}
+\defexercisedata{keyword}
+%    \end{macrocode}
+% Declare additional general purpose fields:
+%    \begin{macrocode}
+\defexercisedata{date}
+%    \end{macrocode}
+% Declare metadata related to courses:
+%    \begin{macrocode}
+\defexercisedata{instructor}
+\defexercisedata{course}
+\defexercisedata{institution}
+\defexercisedata{period}
+\defexercisedata{material}
+%    \end{macrocode}
+% Overwrite standard definitions for |author|, |title|, |date|
+% to also fill ordinary \LaTeX{} structures:
+%    \begin{macrocode}
+\define@key{exf@data}{author}{\gdef\exf@data@author{#1}\author{#1}}
+\define@key{exf@data}{title}{\gdef\exf@data@title{#1}\title{#1}}
+\define@key{exf@data}{date}{\gdef\exf@data@date{#1}\date{#1}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Sheet Metadata.}
+%
+% \macro{\defsheetdata}
+% Declare sheet metadata field
+% by defining a key \textit{key} in category |exf@sheet|
+% that stores the chosen value in |\exf@data@sheet@|\textit{key}:
+%    \begin{macrocode}
+\newcommand{\defsheetdata}[1]{%
+  \exf@csdo\def{exf@data@sheet@#1}{}%
+  \define@key{exf@sheet}{#1}%
+   {\exf@csdo\def{exf@data@sheet@#1}{##1}}}
+%    \end{macrocode}
+% \macro{\getsheetdata}
+% Read global metadata:
+%    \begin{macrocode}
+\newcommand{\getsheetdata}[1]{\csname exf@data@sheet@#1\endcsname}
+%    \end{macrocode}
+% \macro{\sheetdataempty}
+% Check whether the field is empty:
+%    \begin{macrocode}
+\newcommand{\sheetdataempty}[3]{\exf@csdo\ifx{exf@data@sheet@#1}\exf@empty%
+  #2\else#3\fi}
+%    \end{macrocode}
+
+% Declare general purpose fields:
+%    \begin{macrocode}
+\defsheetdata{due}
+\defsheetdata{handout}
+\defsheetdata{editdate}
+\defsheetdata{author}
+\defsheetdata{editor}
+%    \end{macrocode}
+
+% Special title processing:
+%    \begin{macrocode}
+\def\exf@data@sheet@rawtitle{}
+\define@key{exf@sheet}{title}{\def\exf@data@sheet@rawtitle{#1}}
+\def\exf@data@sheet@title{\exf@config@composetitlesheet%
+  {\csname the\exf@sheetcounter\endcsname}{\exf@data@sheet@rawtitle}}%
+%    \end{macrocode}
+% Special points processing:
+%    \begin{macrocode}
+\def\exf@data@sheet@rawpoints{}
+\def\exf@data@sheet@points{\exf@config@composepointssheet%
+  {\exf@data@sheet@rawpoints}}%
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Problem Metadata.}
+%
+% \macro{\defproblemdata}
+% Declare sheet metadata field
+% by defining a key \textit{key} in category |exf@problem|
+% that stores the chosen value in |\exf@data@problem@|\textit{key}:
+%    \begin{macrocode}
+\newcommand{\defproblemdata}[1]{%
+  \exf@csdo\def{exf@data@problem@#1}{}%
+  \define@key{exf@problem}{#1}%
+   {\exf@csdo\def{exf@data@problem@#1}{##1}}}
+%    \end{macrocode}
+% \macro{\getproblemdata}
+% Read global metadata:
+%    \begin{macrocode}
+\newcommand{\getproblemdata}[1]{\csname exf@data@problem@#1\endcsname}
+%    \end{macrocode}
+% \macro{\problemdataempty}
+% Check whether the field is empty:
+%    \begin{macrocode}
+\newcommand{\problemdataempty}[3]{\exf@csdo\ifx{exf@data@problem@#1}\exf@empty%
+  #2\else#3\fi}
+%    \end{macrocode}
+
+% Special title processing:
+%    \begin{macrocode}
+\def\exf@data@problem@rawtitle{}
+\define@key{exf@problem}{title}{\def\exf@data@problem@rawtitle{#1}}
+\def\exf@data@problem@title{\exf@config@composetitleproblem{%
+ \csname the\exf@problemcounter\endcsname}{\exf@data@problem@rawtitle}}%
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Problem Info Code.}
+%
+% \macro{\exf@section}
+% Write out problem opening line followed by some amount of skip
+% (positive dimensions add vertical space,
+% negative dimensions add horizontal space);
+% protected expand argument if in horizontal mode
+% (because it will be held until text is output
+% and some definitions may become invalid):
+%    \begin{macrocode}
+\newcommand{\exf@section}[2]{\setlength\exf@tmpdim{#1}%
+  \ifdim\exf@tmpdim<0pt%
+   \protected@edef\exf@tmp{#2}%
+  \else%
+   \def\exf@tmp{#2}%
+  \fi%
+  \exf@exparg{\@startsection{}{}{0pt}{0pt}{#1}{}*}{\exf@tmp}}
+%    \end{macrocode}
+
+% \macro{\exf@init@intro}
+% Clean info buffer, define amount of skip between items:
+%    \begin{macrocode}
+\newcommand{\exf@init@intro}[1]%
+  {\def\exf@intro{}\def\exf@introitem{}\def\exf@intro@skip{#1}}
+%    \end{macrocode}
+% \macro{\exf@append@intro}
+% Append to info buffer:
+%    \begin{macrocode}
+\newcommand{\exf@append@intro}[1]%
+  {\exf@append@def\exf@intro{#1\hspace{\exf@intro@skip}}}
+%    \end{macrocode}
+% \macro{\exf@prepend@intro}
+% Prepend to info buffer:
+%    \begin{macrocode}
+\newcommand{\exf@prepend@intro}[1]%
+  {\exf@prepend@def\exf@intro{#1\hspace{\exf@intro@skip}}}
+%    \end{macrocode}
+% \macro{\exf@write@intro}
+% Compose opening line:
+%    \begin{macrocode}
+\newcommand{\exf@write@intro}[1]{%
+  \ifx\exf@intro\exf@empty%
+   \exf@section{0pt}{\exf@introitem}%
+  \else%
+   \exf@section{#1}{\exf@introitem\exf@intro\unskip}%
+  \fi}%
+%    \end{macrocode}
+
+% \macro{\addprobleminfo}
+% Interface to append or prepend to info buffer:
+%    \begin{macrocode}
+\newcommand{\addprobleminfo}{\@ifstar\exf@prepend@intro\exf@append@intro}
+%    \end{macrocode}
+
+% \macro{\exf@addinfoswitch}
+% Add a switch for displaying problem info:
+%    \begin{macrocode}
+\newcommand{\exf@addinfoswitch}[1]%
+  {\define@boolkey{exf@infoswitch}[exf@showdata@]{#1}[true]{}}
+%    \end{macrocode}
+% \macro{\defprobleminfo}
+% Declare a problem info field,
+% add corresponding info switch,
+% process key-value pair if switch activated:
+%    \begin{macrocode}
+\newcommand{\defprobleminfo}[2]{%
+  \exf@addinfoswitch{#1}%
+  \exerciseconfig{compose@probleminfo@#1}[1]{#2}%
+  \exf@exparg{\define@key{exf@probleminfo}{#1}}%
+   {\csname ifexf@showdata@#1\endcsname\exf@append@intro{%
+    \csname exf@config@compose@probleminfo@#1\endcsname{##1}}\fi}}
+%    \end{macrocode}
+% \macro{\showprobleminfo}
+% Process info switches, expand argument first:
+%    \begin{macrocode}
+\newcommand{\showprobleminfo}[1]{\exf@expsetkeys{exf@infoswitch}{#1}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Problem Info Declarations.}
+%
+% Declare general purpose fields:
+%    \begin{macrocode}
+\defprobleminfo{optional}{\emph{#1:}}
+\showprobleminfo{optional}
+\defprobleminfo{difficulty}{(#1)}
+%    \end{macrocode}
+
+% Declare fields for internal information (mostly):
+%    \begin{macrocode}
+\defprobleminfo{comment}{#1}
+\defprobleminfo{author}{$\langle$#1$\rangle$}
+\defprobleminfo{editor}{$\{$#1$\}$}
+\defprobleminfo{source}{[#1]}
+\defprobleminfo{keyword}{\#(#1)}
+%    \end{macrocode}
+
+% Declare more specific fields:
+%    \begin{macrocode}
+\ifexf@extdata
+\defprobleminfo{review}{#1}
+\defprobleminfo{recycle}{[[#1]]}
+\defprobleminfo{timesolve}{\{#1\}}
+\defprobleminfo{timepresent}{\{\!\{#1\}\!\}}
+\fi
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Write Metadata to PDF Files.}
+%
+% \macro{\exf@writemetadata}
+% Write Metadata to PDF Files in case \textsf{hyperref} is available,
+% choose between global and sheet version, pass through unfilled values:
+%    \begin{macrocode}
+\newcommand{\exf@writemetadata}[1]{%
+  \ifdefined\hypersetup%
+   \def\exf@tmp{#1}\ifx\exf@tmp\exf@empty%
+%    \end{macrocode}
+% Write global author and title:
+%    \begin{macrocode}
+    \ifx\exf@data@author\exf@empty\else%
+     \hypersetup{pdfauthor={\exf@data@author}}\fi%
+    \ifx\exf@data@title\exf@empty\else%
+     \hypersetup{pdftitle={\exf@data@title}}\fi%
+   \else%
+%    \end{macrocode}
+% Write sheet author (if available) and compose sheet title:
+%    \begin{macrocode}
+    \ifx\exf@data@sheet@author\exf@empty%
+     \ifx\exf@data@author\exf@empty\else%
+      \hypersetup{pdfauthor={\exf@data@author}}\fi%
+    \else\hypersetup{pdfauthor={\exf@data@sheet@author}}\fi%
+    \hypersetup{pdftitle={\exf@config@composemetasheet%
+     {\csname the\exf@sheetcounter\endcsname}{\exf@data@sheet@rawtitle}}}%
+   \fi%
+%    \end{macrocode}
+% Write subject and keywords:
+%    \begin{macrocode}
+   \ifx\exf@data@subject\exf@empty\else%
+    \hypersetup{pdfsubject={\exf@data@subject}}\fi%
+   \ifx\exf@data@keyword\exf@empty\else%
+    \hypersetup{pdfkeywords={\exf@data@keyword}}\fi%
+  \fi%
+%    \end{macrocode}
+% Do not write again:
+%    \begin{macrocode}
+  \gdef\exf@metadata{off}}
+%    \end{macrocode}
+
+% Automatic writing at |\begin{document}|:
+%    \begin{macrocode}
+\AtBeginDocument{\def\exf@tmp{auto}\ifx\exf@metadata\exf@tmp%
+  \exf@writemetadata{}\fi}
+%    \end{macrocode}
+
+% \macro{\writeexercisedata}
+% Write metadata manually:
+%    \begin{macrocode}
+\newcommand{\writeexercisedata}{\def\exf@tmp{manual}\ifx\exf@metadata\exf@tmp%
+  \exf@writemetadata{}\fi}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Counters}
+% \label{sec:imp-counter}
+%
+% \macro{sheet}
+% \macro{problem}
+% \macro{subproblem}
+% \macro{solution}
+% Define main counters (with customised names if necessary)
+% and equation counters:
+%    \begin{macrocode}
+\newcounter{\exf@sheetcounter}
+\newcounter{\exf@problemcounter}
+\newcounter{\exf@subproblemcounter}[\exf@problemcounter]
+\newcounter{\exf@solutioncounter}[\exf@problemcounter]
+\newcount\exf@eqsav
+\newcounter{exf@sheetequation}
+\newcounter{exf@problemequation}
+\newcounter{exf@solutionequation}
+%    \end{macrocode}
+
+% Implement counter display;
+% take care of corresponding \textsf{hyperref} labels:
+%    \begin{macrocode}
+\exf@csdo\def{the\exf@sheetcounter}{\exf@config@countersheet}
+\exf@csdo\def{the\exf@problemcounter}{\exf@config@counterproblem}
+\exf@csdo\def{the\exf@subproblemcounter}{\exf@config@countersubproblem}
+\def\theexf@sheetequation{\exf@config@countersheetequation}
+\def\theHexf@sheetequation{sheet.\arabic{equation}}
+\def\theexf@problemequation{\exf@config@counterproblemequation}
+\def\theHexf@problemequation{prob.\arabic{equation}}
+\def\theexf@solutionequation{\exf@config@countersolutionequation}
+\def\theHexf@solutionequation{sol.\arabic{equation}}
+%    \end{macrocode}
+
+% \macro{\exf@numberproblemwithin}
+% Declare problem counter as subcounter of |#1|:
+%    \begin{macrocode}
+\newcommand{\exf@numberproblemwithin}[1]{%
+  \@addtoreset{\exf@problemcounter}{#1}%
+  \exf@csdo\def{the\exf@problemcounter}%
+   {\csname the#1\endcsname.\exf@config@counterproblem}}
+%    \end{macrocode}
+
+% \macro{\exf@numberequationwithin}
+% Declare various new equation counters as subcounter of |#1|;
+% take care of corresponding \textsf{hyperref} labels:
+%    \begin{macrocode}
+\newcommand{\exf@numberequationwithin}[1]{%
+  \@addtoreset{exf@sheetequation}{#1}%
+  \def\theexf@sheetequation%
+   {\csname the#1\endcsname.\exf@config@countersheetequation}%
+  \def\theHexf@sheetequation%
+   {\csname theH#1\endcsname.sheet.\arabic{equation}}%
+  \@addtoreset{exf@problemequation}{#1}%
+  \def\theexf@problemequation%
+   {\csname the#1\endcsname.\exf@config@counterproblemequation}%
+  \def\theHexf@problemequation%
+   {\csname theH#1\endcsname.prob.\arabic{equation}}%
+  \@addtoreset{exf@solutionequation}{#1}%
+  \def\theexf@solutionequation%
+   {\csname the#1\endcsname.\exf@config@countersolutionequation}%
+  \def\theHexf@solutionequation%
+   {\csname theH#1\endcsname.sol.\arabic{equation}}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Buffers}
+% \label{sec:imp-buffer}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{File Output.}
+%
+% \macro{\ifexf@infile}
+% Conditional whether an output file is presently in use:
+%    \begin{macrocode}
+\newif\ifexf@infile\exf@infilefalse
+%    \end{macrocode}
+% \macro{\exf@out}
+% Reserve file handle:
+%    \begin{macrocode}
+\newwrite\exf@out
+%    \end{macrocode}
+
+% \macro{\exf@writeline}
+% Write a line to the file:
+%    \begin{macrocode}
+\newcommand{\exf@writeline}[1]{\immediate\write\exf@out{#1}}
+%    \end{macrocode}
+
+% \macro{\exf@linesep}
+% Return a separator line:
+%    \begin{macrocode}
+\newcommand{\exf@linesep}%
+  {\@percentchar---------------------------------------}
+%    \end{macrocode}
+% \macro{\exf@lineno}
+% Return current position in source file;
+% display line number and source file name
+% (if available via package \textsf{currfile}):
+%    \begin{macrocode}
+\newcommand{\exf@lineno}{\@percentchar%
+  \ifdefined\currfilename\currfilename\space\fi%
+  l.\the\inputlineno}
+%    \end{macrocode}
+
+% \macro{\exf@startfile}
+% Open a new file |#1.sol| (do nothing if already open);
+% indicate source, switch to manual solution display mode:
+%    \begin{macrocode}
+\newcommand{\exf@startfile}[1]{%
+  \ifexf@infile\else%
+   \global\exf@infiletrue%
+   \gdef\exf@solutionbelow{manual}%
+   \edef\exf@tmp{#1}%
+   \immediate\openout\exf@out\exf@tmp.sol%
+   \exf@writeline{\@percentchar%
+    generated from file `\jobname' by exframe.sty}%
+   \ifexf@lineno\exf@writeline{\exf@lineno}\fi%
+   \exf@writeline{}%
+  \fi}
+%    \end{macrocode}
+
+% \macro{\exf@closefile}
+% Close file (if open);
+% indicate position, close and reset variables:
+%    \begin{macrocode}
+\newcommand{\exf@closefile}{%
+  \ifexf@infile%
+   \ifexf@lineno%
+    \exf@writeline{\exf@linesep}\exf@writeline{\exf@lineno}\fi%
+   \exf@writeline{\@backslashchar endinput}%
+   \immediate\closeout\exf@out%
+   \global\exf@infilefalse%
+  \fi}
+%    \end{macrocode}
+
+% Make sure to properly close file at the end:
+%    \begin{macrocode}
+\AtEndDocument{\exf@closefile}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Solution Buffer.}
+%
+% \macro{\exf@buf}
+% \macro{\ifexf@bufclean}
+% Declare a token buffer for storing the solutions
+% and a conditional indicating whether the buffer has been used:
+%    \begin{macrocode}
+\newtoks\exf@buf
+\newif\ifexf@bufclean\exf@bufcleantrue
+%    \end{macrocode}
+
+% \macro{\exf@clearbuf}
+% Clear solution buffer and mark clean:
+%    \begin{macrocode}
+\def\exf@clearbuf{\global\exf@bufcleantrue\global\exf@buf={}}
+%    \end{macrocode}
+% \macro{\exf@append@buf}
+% Append tokens to buffer:
+%    \begin{macrocode}
+\def\exf@append@buf#1{\global\exf@buf=\expandafter{\the\exf@buf#1}}
+%    \end{macrocode}
+% \macro{\exf@addbufline}
+% Add a protected expanded line to the buffer:
+%    \begin{macrocode}
+\def\exf@addbufline#1{{\protected@edef\exf@tmp{#1}%
+  \exf@exptwo\exf@append@buf{\exf@tmp^^J}}}
+%    \end{macrocode}
+
+% \macro{\exf@sourcebuf}
+% Source the solution buffer into the document:
+%    \begin{macrocode}
+\def\exf@sourcebuf{\exf@exptwo\scantokens{\the\exf@buf}}
+%    \end{macrocode}
+% \macro{\exf@writebuf}
+% Write the buffer into the solution file:
+%    \begin{macrocode}
+\def\exf@writebuf{\exf@writeline{\the\exf@buf}}
+%    \end{macrocode}
+
+% \macro{\exf@verbatim}
+% Start reading the buffer from the environment body:
+%    \begin{macrocode}
+\newcommand{\exf@verbatim}{%
+  \begingroup%
+  \@bsphack%
+  \let\do\@makeother\dospecials%
+  \catcode`\^^M\active%
+  \def\verbatim@processline{\exf@exptwo\exf@append@buf{\the\verbatim@line^^J}}%
+  \verbatim@start}
+%    \end{macrocode}
+
+% \macro{\exf@endverbatim}
+% Stop reading the buffer:
+%    \begin{macrocode}
+\newcommand{\exf@endverbatim}{\@esphack\endgroup}
+%    \end{macrocode}
+
+% \macro{\exf@scanblock}
+% Scan an optional argument from a verbatim block;
+% allow for an empty block and an empty first line;
+% argument |#1| is macro to be called eventually:
+%    \begin{macrocode}
+\def\exf@scanblock#1{%
+%    \end{macrocode}
+% Check for empty first line:
+%    \begin{macrocode}
+  \@ifnextchar\par{\exf@scanblock@par{#1}}{\exf@scanblock@sel{#1}}}
+%    \end{macrocode}
+% Handle empty first line, implies no optional argument:
+%    \begin{macrocode}
+\long\def\exf@scanblock@par#1\par{\exf@scanblock@sel{#1}[]}
+%    \end{macrocode}
+% Check for optional argument (|[|) and for block ending (|\end|):
+%    \begin{macrocode}
+\def\exf@scanblock@sel#1{\@ifnextchar[{\exf@scanblock@opt{#1}}%
+  {\@ifnextchar\end{\exf@scanblock@end{#1}}{\exf@scanblock@noopt{#1}}}}
+%    \end{macrocode}
+% Handle empty block, hopefully environment matches (otherwise?!):
+%    \begin{macrocode}
+\def\exf@scanblock@end#1\end#2{%
+  \def\exf@tmp{#2}\ifx\exf@tmp\@currenvir%
+    \def\exf@verbatim{}\def\exf@endverbatim{}%
+  \fi%
+  #1{}{\scantokens{\end{#2}}}}
+%    \end{macrocode}
+% Pass on without and with optional argument;
+% pass on optional argument and any token scanned prematurely:
+%    \begin{macrocode}
+\def\exf@scanblock@noopt#1#2{#1{}{\scantokens#2}}
+\def\exf@scanblock@opt#1[#2]{#1{#2}{}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Points}
+% \label{sec:imp-points}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Binary Rational Numbers.}
+%
+% \macro{\exf@splitsign}
+% \macro{\exf@splitdecimal}
+% Split a decimal float number into sign, integer and fractional part:
+%    \begin{macrocode}
+\def\exf@splitsign#1-#2-#3&{\def\exf@splitnum{#1#2}\def\exf@splitminus{#3}}
+\def\exf@splitdecimal#1.#2.#3&{\def\exf@splitint{#1}\def\exf@splitdec{#2}}
+%    \end{macrocode}
+
+% \macro{\exf@nicefrac}
+% Display a float number as a fraction
+% with denominators 2, 4 or 8 when possible;
+% first split number, complete missing zeros and handle cases:
+%    \begin{macrocode}
+\newcommand{\exf@nicefrac}[1]{%
+  \edef\exf@tmp{#1}%
+  \expandafter\exf@splitsign\exf@tmp--&%
+  \expandafter\exf@splitdecimal\exf@splitnum..&%
+  \if&\exf@splitint&\def\exf@splitint{0}\fi%
+  \if&\exf@splitdec&\def\exf@splitdec{0}\fi%
+  \def\exf@tmp{\exf@splitint.\exf@splitdec}%
+  \ifnum\exf@splitdec=0\def\exf@tmp{\exf@splitint}\fi%
+  \ifnum\exf@splitdec=5\def\exf@tmp{\exf@intfrac{\exf@splitint}{1}{2}}\fi%
+  \ifnum\exf@splitdec=25\def\exf@tmp{\exf@intfrac{\exf@splitint}{1}{4}}\fi%
+  \ifnum\exf@splitdec=75\def\exf@tmp{\exf@intfrac{\exf@splitint}{3}{4}}\fi%
+  \ifnum\exf@splitdec=125\def\exf@tmp{\exf@intfrac{\exf@splitint}{1}{8}}\fi%
+  \ifnum\exf@splitdec=375\def\exf@tmp{\exf@intfrac{\exf@splitint}{3}{8}}\fi%
+  \ifnum\exf@splitdec=625\def\exf@tmp{\exf@intfrac{\exf@splitint}{5}{8}}\fi%
+  \ifnum\exf@splitdec=875\def\exf@tmp{\exf@intfrac{\exf@splitint}{7}{8}}\fi%
+  \ifx\exf@splitminus\exf@empty\else$\exf@splitminus$\fi\exf@tmp%
+}
+%    \end{macrocode}
+
+% \macro{\exf@intfrac}
+% Display a vulgar fraction
+% such as 12$^3\mskip-4mu/\mskip-2mu_4$:
+%    \begin{macrocode}
+\newcommand{\exf@intfrac}[3]{%
+  \ifnum#1=0\else#1\fi%
+  \ifnum#2=0\else$%
+   ^{\exf@text{#2}}%
+   \mskip-4mu/\mskip-2mu%
+   _{\exf@text{#3}}$\fi}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Sheet Points Code.}
+%
+% \macro{\exf@sheet@points@dim}
+% Declare a metric register to sum overall points on a sheet;
+% equate unit |pt| to a point:
+%    \begin{macrocode}
+\newlength{\exf@sheet@points@dim}
+%    \end{macrocode}
+% \macro{\exf@notesheetpoints}
+% Store a sheet point number in a macro:
+%    \begin{macrocode}
+\newcommand{\exf@notesheetpoints}[2]{%
+  \exf@csdo\gdef{exf@sheetpoints@#1}{#2}}
+%    \end{macrocode}
+% Make sure the macros in code written to the |.aux| file exist:
+%    \begin{macrocode}
+\AtBeginDocument{\immediate\write\@auxout{%
+  \string\providecommand{\string\exf@notesheetpoints}[2]{}}}
+%    \end{macrocode}
+% \macro{\exf@writesheetpoints}
+% Write sheet points to the |.aux| file:
+%    \begin{macrocode}
+\newcommand{\exf@writesheetpoints}[1]%
+  {\immediate\write\@auxout{\string\exf@notesheetpoints{\sheettag}{#1}}}
+%    \end{macrocode}
+% \macro{\getsheetpoints}
+% Read sheet points stored in |.aux| file:
+%    \begin{macrocode}
+\newcommand{\getsheetpoints}[1]{\ifcsname exf@sheetpoints@#1\endcsname%
+  \csname exf@sheetpoints@#1\endcsname\else 0\fi}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Problem Points Code.}
+%
+% \macro{\exf@problem@points@dim}
+% Declare a metric register to sum overall points in a problem;
+% equate unit |pt| to a point:
+%    \begin{macrocode}
+\newlength{\exf@problem@points@dim}
+%    \end{macrocode}
+% \macro{\exf@noteproblempoints}
+% Store a problem point number in a macro:
+%    \begin{macrocode}
+\newcommand{\exf@noteproblempoints}[2]{%
+  \exf@csdo\gdef{exf@problempoints@#1}{#2}}
+%    \end{macrocode}
+% Make sure the macros written to the |.aux| file exist:
+%    \begin{macrocode}
+\AtBeginDocument{\immediate\write\@auxout{%
+  \string\providecommand{\string\exf@noteproblempoints}[2]{}}}
+%    \end{macrocode}
+% \macro{\exf@writeproblempoints}
+% Write problem points to the |.aux| file:
+%    \begin{macrocode}
+\newcommand{\exf@writeproblempoints}[1]%
+  {\immediate\write\@auxout{\string\exf@noteproblempoints{\problemtag}{#1}}}
+%    \end{macrocode}
+% \macro{\getproblempoints}
+% Read problem points stored in |.aux| file:
+%    \begin{macrocode}
+\newcommand{\getproblempoints}[1]{\ifcsname exf@problempoints@#1\endcsname%
+  \csname exf@problempoints@#1\endcsname\else 0\fi}
+%    \end{macrocode}
+
+% \macro{\showpoints}
+% Show points within a problem or subproblem:
+%    \begin{macrocode}
+\newcommand{\showpoints}{%
+  \ifdefined\exf@in@subproblem%
+   \ifdefined\exf@subproblem@points%
+    \exf@ensuretext{\exf@config@composepointsbody{\exf@subproblem@points}}%
+    \global\let\exf@subproblem@points\@undefined%
+   \fi%
+  \else\ifdefined\exf@in@problem%
+   \ifdefined\exf@problem@pointsshow%
+    \exf@ensuretext{\exf@config@composepointsbody{\exf@problem@pointsshow}}%
+    \global\let\exf@problem@pointsshow\@undefined%
+   \fi%
+  \fi\fi}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Solution Points Code.}
+%
+% \macro{\exf@solution@points@dim}
+% Declare a metric register to sum overall (mandatory) points in a solution;
+% equate unit |pt| to a point:
+%    \begin{macrocode}
+\newlength{\exf@solution@points@dim}
+%    \end{macrocode}
+
+% \macro{\exf@awardpointsalt}
+% Award points for alternative or optional solution;
+% does not count towards solution total:
+%    \begin{macrocode}
+\newcommand{\exf@awardpointsalt}[2][]{%
+  \exf@ensuretext{\exf@config@composepointsawardalt{#2}{#1}}}
+%    \end{macrocode}
+% \macro{\exf@awardpointsreg}
+% Award points for regular solution;
+% counts towards solution total:
+%    \begin{macrocode}
+\newcommand{\exf@awardpointsreg}[2][]{%
+  \global\addtolength{\exf@solution@points@dim}{#2 pt}%
+  \exf@ensuretext{\exf@config@composepointsaward{#2}{#1}}}
+%    \end{macrocode}
+% \macro{\awardpoints}
+% Award points within solution with optional starred form:
+%    \begin{macrocode}
+\newcommand{\awardpoints}{\@ifstar\exf@awardpointsalt\exf@awardpointsreg}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Environments}
+% \label{sec:imp-env}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Sheets.}
+%
+% \macro{exf@sheet}
+% Define options for |sheet| environment:
+%    \begin{macrocode}
+\define@key{exf@sheet}{points}{\def\exf@points@given{#1}}
+\define@key{exf@sheet}{number}{\setcounter{\exf@sheetcounter}{#1}}
+\define@key{exf@sheet}{label}{\def\exf@label{#1}}
+\define@key{exf@sheet}{tag}{\def\sheettag{#1}}
+%    \end{macrocode}
+
+% \macro{sheet}
+% Define |sheet| environment (potentially using custom name):
+%    \begin{macrocode}
+\newenvironment{\exf@sheetname}[1][]{%
+%    \end{macrocode}
+% Insert hook code to clear page, step counter:
+%    \begin{macrocode}
+  \exf@config@insertsheetclearpage%
+  \refstepcounter{\exf@sheetcounter}%
+%    \end{macrocode}
+% Use equation counter for sheets:
+%    \begin{macrocode}
+  \ifexf@style@sheetequation%
+   \exf@eqsav\value{equation}%
+   \setcounter{equation}{\value{exf@sheetequation}}%
+   \let\theequation\theexf@sheetequation%
+   \let\theHequation\theHexf@sheetequation%
+  \fi%
+%    \end{macrocode}
+% Reset optional arguments, process arguments:
+%    \begin{macrocode}
+  \let\exf@points@given\@undefined%
+  \def\sheettag{\csname the\exf@sheetcounter\endcsname}%
+  \setlength{\exf@sheet@points@dim}{0pt}%
+  \let\exf@label\@undefined%
+  \setkeys{exf@sheet}{#1}%
+%    \end{macrocode}
+% Process automatic and manual labels:
+%    \begin{macrocode}
+  \ifexf@autolabelsheet\label{\exf@config@labelsheet{\sheettag}}\fi%
+  \ifdefined\exf@label\label{\exf@label}\fi%
+%    \end{macrocode}
+% Set points from explicit input or from |.aux| storage:
+%    \begin{macrocode}
+  \ifdefined\exf@points@given%
+   \let\exf@data@sheet@rawpoints\exf@points@given%
+  \else\ifcsname exf@sheetpoints@\sheettag\endcsname%
+   \exf@csdotwo\let\exf@data@sheet@rawpoints{exf@sheetpoints@\sheettag}%
+  \fi\fi%
+%    \end{macrocode}
+% Process metadata:
+%    \begin{macrocode}
+  \def\exf@tmp{sheet}\ifx\exf@metadata\exf@tmp%
+   \exf@writemetadata{sheet}\fi%
+%    \end{macrocode}
+% Insert hook code:
+%    \begin{macrocode}
+  \exf@config@insertsheetbefore%
+%    \end{macrocode}
+% Add table of contents line:
+%    \begin{macrocode}
+  \ifx\exf@config@toclevelsheet\exf@empty\else%
+   \ifdefined\phantomsection\phantomsection\fi\fi%
+  \exf@addcontentsline{\exf@config@toclevelsheet}%
+   {\exf@config@composetocsheet{\csname the\exf@sheetcounter\endcsname}%
+    {\exf@data@sheet@rawtitle}}%
+%    \end{macrocode}
+% Write sheet title:
+%    \begin{macrocode}
+  \exf@config@insertsheettitle}%
+%    \end{macrocode}
+% End of environment;
+% perform sanity check on total points if given explicitly:
+%    \begin{macrocode}
+ {\ifdefined\exf@points@given%
+   \ifdim\exf@sheet@points@dim=0pt\else%
+    \ifdim\exf@sheet@points@dim=\exf@data@sheet@rawpoints pt\else%
+     \PackageWarning{exframe}{points mismatch for %
+      \exf@sheetname\space\csname the\exf@sheetcounter\endcsname}%
+     \ifexf@warntext\exf@config@insertwarnpoints{\exf@sheetname}%
+      {\strip@pt\exf@sheet@points@dim}{\exf@data@sheet@rawpoints}\fi%
+   \fi\fi%
+%    \end{macrocode}
+% Test whether points have changed since last compile:
+%    \begin{macrocode}
+  \else%
+   \ifx\exf@data@sheet@rawpoints\exf@empty\else%
+    \ifdim\exf@sheet@points@dim=\exf@data@sheet@rawpoints pt\else%
+     \PackageWarning{exframe}{points changed for %
+      \exf@sheetname\space\csname the\exf@sheetcounter\endcsname;
+      rerun to fix}%
+     \ifexf@warntext\exf@config@insertwarnpoints{\exf@sheetname}%
+      {\strip@pt\exf@sheet@points@dim}{\exf@data@sheet@rawpoints}\fi%
+   \fi\fi%
+%    \end{macrocode}
+% Store points if not given explicitly:
+%    \begin{macrocode}
+   \ifdim\exf@sheet@points@dim=0pt%
+    \def\exf@data@sheet@rawpoints{}%
+   \else%
+    \edef\exf@data@sheet@rawpoints{\strip@pt\exf@sheet@points@dim}%
+   \fi%
+  \fi%
+%    \end{macrocode}
+% Write sheet points to |.aux| file:
+%    \begin{macrocode}
+  \ifx\exf@data@sheet@rawpoints\exf@empty\else%
+   \exf@writesheetpoints{\exf@data@sheet@rawpoints}%
+  \fi%
+%    \end{macrocode}
+% Insert solutions:
+%    \begin{macrocode}
+  \exf@solbelowis{sheet}{\insertsolutions}%
+%    \end{macrocode}
+% Insert hook code:
+%    \begin{macrocode}
+  \exf@config@insertsheetafter%
+  \exf@config@insertsheetclearpage%
+%    \end{macrocode}
+% Restore original equation counter:
+%    \begin{macrocode}
+  \ifexf@style@sheetequation%
+   \setcounter{exf@sheetequation}{\value{equation}}%
+   \setcounter{equation}{\exf@eqsav}%
+  \fi%
+%    \end{macrocode}
+% Done:
+%    \begin{macrocode}
+  \ignorespacesafterend}
+%    \end{macrocode}
+
+% \macro{\exercisecleardoublepage}
+% Clear the current page, clear even page with a totally empty page:
+%    \begin{macrocode}
+\newcommand{\exercisecleardoublepage}{%
+  \clearpage\ifexf@twoside\ifodd\value{page}\else%
+  \thispagestyle{empty}\hbox{}\newpage\fi\fi}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Problems.}
+%
+% \macro{\ifexf@problem@solnewsec}
+% Conditional to mark whether problem has been encountered:
+%    \begin{macrocode}
+\newif\ifexf@problem@solnewsec\exf@problem@solnewsectrue
+%    \end{macrocode}
+
+% \macro{exf@problem}
+% Define options for |problem| environment:
+%    \begin{macrocode}
+\define@key{exf@problem}{points}{\def\exf@points@given{#1}}
+\define@key{exf@problem}{label}{\def\exf@label{#1}}
+\define@key{exf@problem}{tag}{\def\problemtag{#1}}
+\define@key{exf@problem}{sollabel}{\xdef\exf@sollabel{#1}}
+%    \end{macrocode}
+
+% \macro{problem}
+% Define |problem| environment (potentially using custom name):
+%    \begin{macrocode}
+\newenvironment{\exf@problemname}[1][]{%
+%    \end{macrocode}
+% Start with new paragraph, set text style, add vspace and step counter:
+%    \begin{macrocode}
+  \par\exf@config@styletext%
+  \addvspace{\exf@config@skipproblemabove}%
+  \refstepcounter{\exf@problemcounter}%
+%    \end{macrocode}
+% Insert hook code, remember that a new problem was encountered:
+%    \begin{macrocode}
+  \exf@config@insertproblembefore%
+  \global\exf@problem@solnewsectrue%
+%    \end{macrocode}
+% Use equation counter for problems:
+%    \begin{macrocode}
+  \ifexf@style@problemequation%
+   \exf@eqsav\value{equation}%
+   \setcounter{equation}{\value{exf@problemequation}}%
+   \let\theequation\theexf@problemequation%
+   \let\theHequation\theHexf@problemequation%
+  \fi%
+%    \end{macrocode}
+% Start a block, mark in problem, initialise variables,
+% process arguments:
+%    \begin{macrocode}
+  \begingroup%
+  \def\exf@in@problem{}%
+  \exf@init@intro{\exf@config@skipprobleminfo}%
+  \def\problemtag{\csname the\exf@problemcounter\endcsname}%
+  \let\exf@points@given\@undefined%
+  \let\exf@label\@undefined%
+  \global\let\exf@sollabel\@undefined%
+  \setlength{\exf@problem@points@dim}{0pt}%
+  \setkeys{exf@problem,exf@probleminfo}{#1}%
+%    \end{macrocode}
+% Process automatic and manual labels:
+%    \begin{macrocode}
+  \ifexf@autolabelproblem\label{\exf@config@labelproblem{\problemtag}}\fi%
+  \ifdefined\exf@label\label{\exf@label}\fi%
+%    \end{macrocode}
+% Remember problem counter, title for solutions:
+%    \begin{macrocode}
+  \xdef\exf@prevprob{\csname the\exf@problemcounter\endcsname}%
+  \ifcsname theH\exf@problemcounter\endcsname%
+   \xdef\exf@prevprobhref{\exf@problemcounter.%
+    \csname theH\exf@problemcounter\endcsname}%
+  \fi%
+  \ifx\exf@data@problem@rawtitle\exf@empty%
+    \global\let\exf@prevprobtitle\@undefined%
+  \else%
+    \xdef\exf@prevprobtitle{\exf@data@problem@rawtitle}\fi%
+  \global\let\exf@prevsubprob\@undefined%
+  \global\let\exf@prevsubprobhref\@undefined%
+%    \end{macrocode}
+% Set points from explicit input or from |.aux| storage:
+%    \begin{macrocode}
+  \let\exf@problem@points\@undefined%
+  \ifdefined\exf@points@given%
+   \let\exf@problem@points\exf@points@given%
+  \else%
+   \ifcsname exf@problempoints@\problemtag\endcsname%
+    \exf@csdotwo\let\exf@problem@points{exf@problempoints@\problemtag}%
+  \fi\fi%
+  \global\let\exf@prevpoints\exf@problem@points%
+  \let\exf@problem@pointsshow\@undefined%
+  \ifdefined\exf@problem@points\ifdim\exf@problem@points pt=0pt\else%
+   \let\exf@problem@pointsshow\exf@problem@points%
+  \fi\fi%
+%    \end{macrocode}
+% Disable points display if desired:
+%    \begin{macrocode}
+  \exf@pointsatis{off}{\let\exf@problem@pointsshow\@undefined}%
+%    \end{macrocode}
+% Display points in opening line if desired;
+% expand points into argument and remove points:
+%    \begin{macrocode}
+  \exf@pointsatis{start}{\ifdefined\exf@problem@pointsshow%
+   \exf@exptwo\exf@append@intro{\expandafter%
+    \exf@config@composepointsstart\expandafter{\exf@problem@pointsshow}}%
+   \let\exf@problem@pointsshow\@undefined\fi}%
+  \exf@pointsatis{start*}{\ifdefined\exf@problem@pointsshow%
+   \exf@exptwo\exf@prepend@intro{\expandafter%
+    \exf@config@composepointsstart\expandafter{\exf@problem@pointsshow}}%
+   \let\exf@problem@pointsshow\@undefined\fi}%
+%    \end{macrocode}
+% Insert hook code, set problem body style:
+%    \begin{macrocode}
+  \exf@config@insertprobleminfo%
+  \exf@config@styletextproblem%
+%    \end{macrocode}
+% Write title without item:
+%    \begin{macrocode}
+  \ifdim\exf@config@skipproblemitem=0pt%
+   \exf@prepend@intro{{%
+    \exf@config@styletitle\exf@config@styletitleproblem%
+    \exf@config@composetitleproblem{\csname the\exf@problemcounter\endcsname}%
+     {\exf@data@problem@rawtitle}}}%
+%    \end{macrocode}
+% Write item with fixed total width or item width plus space:
+%    \begin{macrocode}
+  \else%
+   \ifdim\exf@config@skipproblemitem>0pt%
+    \setlength\exf@tmpdim{\exf@config@skipproblemitem}%
+   \else%
+    \settowidth\exf@tmpdim{%
+     \exf@config@styletitle\exf@config@styletitleproblem%
+     \exf@config@composeitemproblem{\exf@config@counterproblemmax}%
+     \exf@config@composeitemproblemsep}%
+   \fi%
+%    \end{macrocode}
+% Set up indentation:
+%    \begin{macrocode}
+   \advance\leftskip\exf@tmpdim%
+   \advance\linewidth -\exf@tmpdim%
+   \advance\@totalleftmargin\exf@tmpdim%
+%    \end{macrocode}
+% Define item label:
+%    \begin{macrocode}
+   \def\exf@introitem{\makebox[0cm][r]{%
+    \exf@config@styletitle\exf@config@styletitleproblem%
+    \exf@config@composeitemproblem{\csname the\exf@problemcounter\endcsname}%
+     \exf@config@composeitemproblemsep}}%
+%    \end{macrocode}
+% Compose title:
+%    \begin{macrocode}
+   \ifx\exf@data@problem@rawtitle\exf@empty\else%
+    \exf@prepend@intro{{%
+     \exf@config@styletitle\exf@config@styletitleproblem%
+     \exf@config@composetitleproblem{\exf@empty}{\exf@data@problem@rawtitle}}}%
+   \fi%
+  \fi%
+%    \end{macrocode}
+% Write points into margin if desired;
+% expand points into argument and remove points:
+%    \begin{macrocode}
+  \exf@pointsatis{margin}{\ifdefined\exf@problem@pointsshow%
+   \expandafter\exf@prepend@def\expandafter\exf@intro\expandafter%
+    {\expandafter\protect\expandafter%
+     \exf@config@insertpointsmargin\expandafter{\expandafter%
+      \exf@config@composepointsmargin\expandafter{\exf@problem@pointsshow}}}%
+   \let\exf@problem@pointsshow\@undefined\fi}%
+%    \end{macrocode}
+% Write out opening line:
+%    \begin{macrocode}
+  \exf@write@intro{\exf@config@skipproblemtitle}%
+%    \end{macrocode}
+% Add table of contents line:
+%    \begin{macrocode}
+  \exf@addcontentsline{\exf@config@toclevelproblem}%
+   {\exf@config@composetocproblem{\csname the\exf@problemcounter\endcsname}%
+    {\exf@data@problem@rawtitle}}%
+%    \end{macrocode}
+% Done:
+%    \begin{macrocode}
+  \@afterindentfalse}%
+%    \end{macrocode}
+% End environment, show points if desired:
+%    \begin{macrocode}
+ {\exf@pointsatis{end}{\showpoints}%
+%    \end{macrocode}
+% Perform sanity checks on total points if given explicitly:
+%    \begin{macrocode}
+  \ifdefined\exf@points@given%
+   \ifdim\exf@problem@points@dim=0pt\else%
+    \ifdim\exf@problem@points@dim=\exf@problem@points pt\else%
+     \PackageWarning{exframe}{points mismatch for %
+      \exf@problemname\space\csname the\exf@problemcounter\endcsname}%
+     \ifexf@warntext\exf@config@insertwarnpoints{\exf@problemname}%
+      {\strip@pt\exf@problem@points@dim}{\exf@problem@points}\fi%
+   \fi\fi%
+%    \end{macrocode}
+% Warn if calculated total points have changed:
+%    \begin{macrocode}
+  \else%
+   \ifdefined\exf@problem@points%
+    \ifdim\exf@problem@points@dim=\exf@problem@points pt\else%
+     \PackageWarning{exframe}{points changed for %
+      \exf@problemname\space\csname the\exf@problemcounter\endcsname;
+      rerun to fix}%
+     \ifexf@warntext\exf@config@insertwarnpoints{\exf@problemname}%
+      {\strip@pt\exf@problem@points@dim}{\exf@problem@points}\fi%
+   \fi\fi%
+%    \end{macrocode}
+% Read computed total points, check whether zero:
+%    \begin{macrocode}
+   \ifdim\exf@problem@points@dim=0pt%
+    \let\exf@problem@points\@undefined%
+   \else%
+    \edef\exf@problem@points{\strip@pt\exf@problem@points@dim}%
+   \fi%
+  \fi%
+%    \end{macrocode}
+% Write points to |.aux| file; add to sheet total:
+%    \begin{macrocode}
+  \ifdefined\exf@problem@points%
+   \exf@writeproblempoints{\exf@problem@points}%
+   \global\addtolength{\exf@sheet@points@dim}{\exf@problem@points pt}%
+  \fi%
+%    \end{macrocode}
+% Warn if some but not all problems on sheet declare points:
+%    \begin{macrocode}
+  \ifdefined\exf@problem@points\else\ifdim\exf@sheet@points@dim=0pt\else%
+   \PackageWarning{exframe}{no points defined for \exf@problemname}%
+  \fi\fi%
+%    \end{macrocode}
+% End paragraph, insert hook code, vertical skip:
+%    \begin{macrocode}
+  \par\endgroup%
+  \exf@config@insertproblemafter%
+  \addvspace{\exf@config@skipproblembelow}%
+%    \end{macrocode}
+% Display solution if desired:
+%    \begin{macrocode}
+  \exf@solbelowis{problem}{%
+   \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}}%
+%    \end{macrocode}
+% Solutions to subproblems should be declared within problem block:
+%    \begin{macrocode}
+  \global\let\exf@prevsubprob\@undefined%
+  \global\let\exf@prevsubprobhref\@undefined%
+%    \end{macrocode}
+% Restore original equation counter:
+%    \begin{macrocode}
+  \ifexf@style@problemequation%
+   \setcounter{exf@problemequation}{\value{equation}}%
+   \setcounter{equation}{\exf@eqsav}%
+  \fi%
+%    \end{macrocode}
+% Done:
+%    \begin{macrocode}
+  \ignorespacesafterend}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Subproblems.}
+%
+% \macro{exf@subproblem}
+% Define options for |subproblem| environment:
+%    \begin{macrocode}
+\define@key{exf@subproblem}{points}{\def\exf@subproblem@points{#1}}
+\define@key{exf@subproblem}{label}{\def\exf@label{#1}}
+%    \end{macrocode}
+
+% \macro{subproblem}
+% Define |subproblem| environment (potentially using custom name):
+%    \begin{macrocode}
+\newenvironment{\exf@subproblemname}[1][]{%
+%    \end{macrocode}
+% Start with new paragraph, set text style, add vspace and step counter:
+%    \begin{macrocode}
+  \par%
+  {\exf@config@styletext\addvspace{\exf@config@skipsubproblemabove}}%
+  \refstepcounter{\exf@subproblemcounter}%
+%    \end{macrocode}
+% Insert hook code:
+%    \begin{macrocode}
+  \exf@config@insertsubproblembefore%
+%    \end{macrocode}
+% Remember subproblem counter for solution:
+%    \begin{macrocode}
+  \xdef\exf@prevsubprob{\csname the\exf@subproblemcounter\endcsname}%
+  \ifcsname theH\exf@subproblemcounter\endcsname%
+   \xdef\exf@prevsubprobhref{\exf@subproblemcounter.%
+    \csname theH\exf@subproblemcounter\endcsname}%
+  \fi%
+%    \end{macrocode}
+% Start a block, mark in subproblem, initialise variables,
+% process arguments:
+%    \begin{macrocode}
+  \begingroup%
+  \def\exf@in@subproblem{}%
+  \exf@init@intro{\exf@config@skipsubprobleminfo}%
+  \let\exf@subproblem@points\@undefined%
+  \let\exf@label\@undefined%
+  \setkeys{exf@subproblem,exf@probleminfo}{#1}%
+%    \end{macrocode}
+% Process manual label:
+%    \begin{macrocode}
+  \ifdefined\exf@label\label{\exf@label}\fi%
+%    \end{macrocode}
+% Add given points to problem total:
+%    \begin{macrocode}
+  \ifdefined\exf@subproblem@points%
+   \global\let\exf@prevpoints\exf@subproblem@points%
+   \global\addtolength{\exf@problem@points@dim}{\exf@subproblem@points pt}%
+%    \end{macrocode}
+% Warn if no points given for present subproblem but previously:
+%    \begin{macrocode}
+  \else%
+   \ifdim\exf@problem@points@dim=0pt\else%
+    \PackageWarning{exframe}{no points defined for \exf@subproblemname}%
+   \fi%
+  \fi%
+%    \end{macrocode}
+% Disable points display if desired:
+%    \begin{macrocode}
+  \exf@subpointsatis{off}{\let\exf@subproblem@points\@undefined}%
+%    \end{macrocode}
+% Display points in opening line if desired;
+% expand points into argument and remove points:
+%    \begin{macrocode}
+  \exf@subpointsatis{start}{\ifdefined\exf@subproblem@points%
+   \exf@exptwo\exf@append@intro{\expandafter%
+    \exf@config@composepointsstart\expandafter{\exf@subproblem@points}}%
+   \let\exf@subproblem@points\@undefined\fi}%
+  \exf@subpointsatis{start*}{\ifdefined\exf@subproblem@points%
+   \exf@exptwo\exf@prepend@intro{\expandafter%
+    \exf@config@composepointsstart\expandafter{\exf@subproblem@points}}%
+   \let\exf@subproblem@points\@undefined\fi}%
+%    \end{macrocode}
+% Insert hook code:
+%    \begin{macrocode}
+  \exf@config@insertsubprobleminfo%
+%    \end{macrocode}
+% Write opening line without item:
+%    \begin{macrocode}
+  \ifdim\exf@config@skipsubproblemitem=0pt%
+   \exf@prepend@intro{{%
+    \exf@config@styletitle\exf@config@styletitlesubproblem%
+    \exf@config@composetitlesubproblem{%
+     \csname the\exf@subproblemcounter\endcsname}}}%
+%    \end{macrocode}
+% Write item with fixed total width or item width plus space:
+%    \begin{macrocode}
+  \else%
+   \ifdim\exf@config@skipsubproblemitem>0pt%
+    \setlength\exf@tmpdim{\exf@config@skipsubproblemitem}%
+   \else%
+    \settowidth\exf@tmpdim{%
+     \exf@config@styletitle\exf@config@styletitlesubproblem%
+     \exf@config@composeitemsubproblem{\exf@config@countersubproblemmax}%
+     \exf@config@composeitemsubproblemsep}%
+   \fi%
+%    \end{macrocode}
+% Set up indentation:
+%    \begin{macrocode}
+   \advance\leftskip\exf@tmpdim%
+   \advance\linewidth -\exf@tmpdim%
+   \advance\@totalleftmargin\exf@tmpdim%
+%    \end{macrocode}
+% Define item label:
+%    \begin{macrocode}
+   \def\exf@introitem{\makebox[0cm][r]{%
+    \exf@config@styletitle\exf@config@styletitlesubproblem%
+    \exf@config@composeitemsubproblem%
+     {\csname the\exf@subproblemcounter\endcsname}%
+    \exf@config@composeitemsubproblemsep}}%
+  \fi%
+%    \end{macrocode}
+% Write points into margin if desired;
+% expand points into argument and remove points:
+%    \begin{macrocode}
+  \exf@subpointsatis{margin}{\ifdefined\exf@subproblem@points%
+   \expandafter\exf@prepend@def\expandafter\exf@intro\expandafter%
+    {\expandafter\protect\expandafter%
+     \exf@config@insertpointsmargin\expandafter{\expandafter%
+      \exf@config@composepointsmargin\expandafter{\exf@subproblem@points}}}%
+   \let\exf@subproblem@points\@undefined\fi}%
+%    \end{macrocode}
+% Write out opening line:
+%    \begin{macrocode}
+  \exf@write@intro{\exf@config@skipsubproblemtitle}%
+%    \end{macrocode}
+% Done:
+%    \begin{macrocode}
+  \@afterindentfalse}%
+%    \end{macrocode}
+% End environment, show points if desired, end paragraph:
+%    \begin{macrocode}
+ {\exf@subpointsatis{end}{\showpoints}%
+  \par\endgroup%
+%    \end{macrocode}
+% Vertical skip, insert hook code:
+%    \begin{macrocode}
+  {\exf@config@styletext\addvspace{\exf@config@skipsubproblembelow}}%
+  \exf@config@insertsubproblemafter%
+%    \end{macrocode}
+% Display solution if desired:
+%    \begin{macrocode}
+  \exf@solbelowis{subproblem}{\exf@showsolutions%
+   {\exf@config@composetitlesolutionsingle}{}}%
+%    \end{macrocode}
+% Done:
+%    \begin{macrocode}
+  \ignorespacesafterend}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Print Solutions.}
+%
+% \macro{exf@solution}
+% Define options for |solution| environment:
+%    \begin{macrocode}
+\define@key{exf@solution}{prob}{\def\exf@solprob{#1}}
+\define@key{exf@solution}{subprob}{\def\exf@solsubprob{#1}}
+\define@key{exf@solution}{problemtag}{\def\problemtag{#1}}
+\define@key{exf@solution}{sheettag}{\def\sheettag{#1}}
+\define@key{exf@solution}{href}{\def\exf@solhref{#1}}
+\define@key{exf@solution}{label}{\def\exf@label{#1}}
+\define@key{exf@solution}{points}{\def\exf@solution@points{#1}}
+\define@key{exf@solution}{probtitle}{\def\exf@solprobtitle{#1}}
+%    \end{macrocode}
+
+% \macro{printsolution}
+% Define |printsolution| environment
+% to display a previously read |solution| block;
+% this works analogously to |problem| and |subproblem|:
+%    \begin{macrocode}
+\newenvironment{printsolution}[1]{%
+%    \end{macrocode}
+% Start new paragraph, add vertical space, insert hook code:
+%    \begin{macrocode}
+  \par%
+  {\exf@config@styletext\addvspace{\exf@config@skipsolutionabove}}%
+  \exf@config@insertsolutionbefore%
+%    \end{macrocode}
+% Use equation counter for solutions:
+%    \begin{macrocode}
+  \ifexf@style@solutionequation%
+   \exf@eqsav\value{equation}%
+   \setcounter{equation}{\value{exf@solutionequation}}%
+   \let\theequation\theexf@solutionequation%
+   \let\theHequation\theHexf@solutionequation%
+  \fi%
+%    \end{macrocode}
+% Start a block, initialise variables, process arguments:
+%    \begin{macrocode}
+  \begingroup%
+  \def\exf@solprob{}%
+  \def\exf@solsubprob{}%
+  \let\exf@label\@undefined%
+  \setlength{\exf@solution@points@dim}{0pt}%
+  \def\exf@solhref{}%
+  \exf@init@intro{\exf@config@skipsolutioninfo}%
+  \setkeys{exf@solution,exf@probleminfo}{#1}%
+%    \end{macrocode}
+% Set solution counter to reflect associated problem:
+%    \begin{macrocode}
+  \exf@csdo\def{the\exf@solutioncounter}%
+   {\exf@config@composeitemsolution{\exf@solprob}{\exf@solsubprob}}%
+  \refstepcounter{\exf@solutioncounter}%
+%    \end{macrocode}
+% Set label:
+%    \begin{macrocode}
+  \ifdefined\exf@label\label{\exf@label}\fi%
+%    \end{macrocode}
+% Insert hook code, set solution body style:
+%    \begin{macrocode}
+  \exf@config@insertsolutioninfo%
+  \exf@config@styletext\exf@config@styletextsolution%
+%    \end{macrocode}
+% Determine solution for problem or subproblem:
+%    \begin{macrocode}
+  \ifx\exf@solsubprob\exf@empty%
+   \let\exf@tmp\exf@config@skipsolutionitem%
+  \else%
+   \let\exf@tmp\exf@config@skipsolutionitemsub%
+  \fi%
+%    \end{macrocode}
+% Write title without item:
+%    \begin{macrocode}
+  \ifdim\exf@tmp=0pt%
+   \protected@edef\exf@solution@title{%
+    \exf@composetitle{\exf@solprob}{\exf@solsubprob}}%
+   \ifx\exf@solution@title\exf@empty\else%
+    \exf@prepend@intro{{%
+     \exf@config@styletitle\exf@config@styletitlesolution%
+     \ifexf@solutionhref\exf@href{\exf@solhref}%
+      {\exf@solution@title}\else\exf@solution@title\fi}}%
+   \fi%
+%    \end{macrocode}
+% Write item with fixed total width or item width plus space:
+%    \begin{macrocode}
+  \else%
+   \ifdim\exf@tmp>0pt%
+    \setlength\exf@tmpdim{\exf@tmp}%
+   \else%
+    \settowidth\exf@tmpdim{%
+     \exf@config@styletitle\exf@config@styletitlesolution%
+     \ifx\exf@solsubprob\exf@empty%
+      \exf@config@composeitemsolution{\exf@config@counterproblemmax}%
+       {\exf@config@countersubproblemmax}%
+     \else%
+      \exf@config@composeitemsolutionsub{\exf@config@counterproblemmax}%
+       {\exf@config@countersubproblemmax}%
+     \fi\exf@config@composeitemsolutionsep}%
+   \fi%
+%    \end{macrocode}
+% Set up indentation:
+%    \begin{macrocode}
+   \advance\leftskip\exf@tmpdim%
+   \advance\linewidth -\exf@tmpdim%
+   \advance\@totalleftmargin\exf@tmpdim%
+%    \end{macrocode}
+% Set item label up depending on problem or subproblem:
+%    \begin{macrocode}
+   \ifx\exf@solsubprob\exf@empty%
+    \protected@edef\exf@solution@item%
+     {\exf@config@composeitemsolution{\exf@solprob}{\exf@empty}}%
+   \else%
+    \protected@edef\exf@solution@item%
+     {\exf@config@composeitemsolutionsub{\exf@solprob}{\exf@solsubprob}}%
+   \fi%
+%    \end{macrocode}
+% Define item label:
+%    \begin{macrocode}
+   \def\exf@introitem{\makebox[0cm][r]{%
+    \exf@config@styletitle\exf@config@styletitlesubproblem%
+    \ifexf@solutionhref\exf@href{\exf@solhref}{\exf@solution@item}%
+    \else\exf@solution@item\fi%
+    \exf@config@composeitemproblemsep}}%
+  \fi%
+%    \end{macrocode}
+% Write out opening line:
+%    \begin{macrocode}
+  \exf@write@intro{\exf@config@skipsolutiontitle}%
+%    \end{macrocode}
+% Done:
+%    \begin{macrocode}
+  \@afterindentfalse}%
+%    \end{macrocode}
+% End environment, show points if desired, perform sanity check:
+%    \begin{macrocode}
+ {\ifdefined\exf@solution@points\ifdim\exf@solution@points@dim=0pt\else%
+   \ifdim\exf@solution@points@dim=\exf@solution@points pt\else%
+    \PackageWarning{exframe}{points mismatch in \exf@solutionname}%
+    \ifexf@warntext\exf@config@insertwarnpoints{\exf@solutionname}%
+     {\strip@pt\exf@solution@points@dim}{\exf@solution@points}\fi%
+  \fi\fi\fi%
+%    \end{macrocode}
+% End paragraph, vertical skip, insert hook code:
+%    \begin{macrocode}
+  \par\endgroup%
+  {\exf@config@styletext\addvspace{\exf@config@skipsolutionbelow}}%
+  \exf@config@insertsolutionafter%
+%    \end{macrocode}
+% Restore original equation counter:
+%    \begin{macrocode}
+  \ifexf@style@solutionequation%
+   \setcounter{exf@solutionequation}{\value{equation}}%
+   \setcounter{equation}{\exf@eqsav}%
+  \fi%
+%    \end{macrocode}
+% Done:
+%    \begin{macrocode}
+  \ignorespacesafterend}
+%    \end{macrocode}
+
+% \macro{\solutionssection}
+% Define a section for a problem within a block with multiple solutions:
+%    \begin{macrocode}
+\newcommand{\solutionssection}[1]{\begingroup%
+%    \end{macrocode}
+% Initialise variables, process arguments:
+%    \begin{macrocode}
+  \def\exf@solprob{}%
+  \def\exf@solsubprob{}%
+  \def\exf@solprobtitle{}%
+  \let\exf@label\@undefined%
+  \let\exf@solhref\@undefined%
+  \setkeys{exf@solution}{#1}%
+%    \end{macrocode}
+% Select title (and table of contents entry)
+% corresponding to multiple problems vs. single problem:
+%    \begin{macrocode}
+  \let\exf@composetitle\exf@config@composetitlesolutionsproblemmulti%
+  \def\exf@solutionstoc{\exf@addcontentsline{\exf@config@toclevelsolution}%
+    {\exf@config@composetocsolution{\exf@solprob}{\exf@solprobtitle}}}%
+  \exf@solbelowis{problem}{\let\exf@composetitle%
+    \exf@config@composetitlesolutionsproblemsingle}%
+%    \end{macrocode}
+% Write section line:
+%    \begin{macrocode}
+  \exf@solutionssection{\exf@config@styletitlesolutionsproblem}%
+   {\exf@composetitle{\exf@solprob}{\exf@solprobtitle}}%
+   {\exf@config@skipsolutionsproblem}%
+   {\exf@solutionstoc}{\exf@label}{\exf@solhref}%
+  \endgroup}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Read Solution Block to Buffer.}
+%
+% \macro{solution}
+% Define |solution| environment (potentially using custom name);
+% pass on to |exf@scansolution| environment via
+% |\exf@scanblock| mechanism:
+%    \begin{macrocode}
+\newenvironment{\exf@solutionname}%
+  {\exf@scanblock{\exf@scansolution}}{\endexf@scansolution}%
+%    \end{macrocode}
+
+% \macro{exf@scansolution}
+% Define |exf@scansolution| to read solution to buffer and process:
+%    \begin{macrocode}
+\newenvironment{exf@scansolution}[2]{%
+%    \end{macrocode}
+% If solution is to be displayed immediately,
+% make sure to display points first:
+%    \begin{macrocode}
+  \exf@solbelowis{here}{\showpoints}%
+  \global\exf@bufcleanfalse%
+%    \end{macrocode}
+% If this is the first solution within a new section,
+% display section heading:
+%    \begin{macrocode}
+  \ifexf@problem@solnewsec%
+   \def\exf@probarg{\ifdefined\exf@prevprob prob={\exf@prevprob}\fi%
+    \ifdefined\exf@prevprobtitle,probtitle={\exf@prevprobtitle}\fi%
+    \ifdefined\exf@prevprobhref,href={\exf@prevprobhref}\fi%
+    \ifdefined\exf@sollabel,label={\exf@sollabel}\fi}%
+   \exf@solbelowis{here}{\let\exf@probarg\@undefined}%
+   \exf@solbelowis{subproblem}{\let\exf@probarg\@undefined}%
+   \ifdefined\exf@probarg%
+    \ifexf@lineno\exf@addbufline{\exf@linesep}\exf@addbufline{\exf@lineno}\fi%
+    \exf@addbufline{\@backslashchar solutionssection{\exf@probarg}}%
+    \exf@addbufline{}%
+   \fi%
+   \global\exf@problem@solnewsecfalse%
+  \fi%
+%    \end{macrocode}
+% Write separator to buffer:
+%    \begin{macrocode}
+  \ifexf@lineno\exf@addbufline{\exf@linesep}\exf@addbufline{\exf@lineno}\fi%
+%    \end{macrocode}
+% Declare additional arguments to |printsolution|
+% to describe corresponding problem and tags:
+%    \begin{macrocode}
+  \def\exf@subprobarg{%
+    \ifdefined\exf@prevprob prob={\exf@prevprob},\fi%
+    \ifdefined\exf@prevsubprob%
+     subprob={\exf@prevsubprob},%
+     \ifdefined\exf@prevsubprobhref href={\exf@prevsubprobhref},\fi%
+    \else%
+     \ifdefined\exf@prevprobhref href={\exf@prevprobhref},\fi%
+    \fi%
+    \ifdefined\exf@prevpoints points={\exf@prevpoints},\fi%
+    \ifdefined\sheettag sheettag={\sheettag},\fi%
+    \ifdefined\problemtag problemtag={\problemtag},\fi}%
+%    \end{macrocode}
+% Write |printsolution| opening to buffer:
+%    \begin{macrocode}
+  \exf@addbufline{\@backslashchar begin{printsolution}{\exf@subprobarg#1}}%
+%    \end{macrocode}
+% Clean up:
+%    \begin{macrocode}
+  \global\let\exf@prevsubprob\@undefined%
+  \global\let\exf@prevsubprobhref\@undefined%
+  \global\let\exf@prevpoints\@undefined%
+%    \end{macrocode}
+% Verbatim read block to buffer:
+%    \begin{macrocode}
+  \exf@verbatim#2}%
+%    \end{macrocode}
+% End environment; stop reading buffer:
+%    \begin{macrocode}
+ {\exf@endverbatim%
+%    \end{macrocode}
+% Write |printsolution| closing to buffer:
+%    \begin{macrocode}
+  \exf@addbufline{\@backslashchar end{printsolution}}%
+%    \end{macrocode}
+% Write buffer to file if output file open:
+%    \begin{macrocode}
+  \ifexf@infile%
+   \exf@writebuf%
+   \exf@clearbuf%
+  \fi%
+%    \end{macrocode}
+% Drop buffer if solutions not to be displayed:
+%    \begin{macrocode}
+  \ifsolutions\else\exf@clearbuf\fi%
+%    \end{macrocode}
+% Display solution immediately in various cases:
+%    \begin{macrocode}
+  \exf@solbelowis{here}{\exf@showsolutions%
+   {\exf@config@composetitlesolutionsingle}{}}%
+  \exf@solbelowis{subproblem}{\ifdefined\exf@in@subproblem\else%
+   \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}\fi}%
+  \exf@solbelowis{problem}{\ifdefined\exf@in@problem\else%
+   \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}\fi}%
+%    \end{macrocode}
+% Done:
+%    \begin{macrocode}
+  \ignorespacesafterend}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Solution Block Handling.}
+%
+% \macro{\exf@solutionssection}
+% Output solutions section:
+%    \begin{macrocode}
+\newcommand{\exf@solutionssection}[6]{%
+%    \end{macrocode}
+% Check whether title is empty:
+%    \begin{macrocode}
+  \protected@edef\exf@solutionstitleexp{#2}%
+  \ifx\exf@solutionstitleexp\exf@empty\else%
+%    \end{macrocode}
+% Define a label:
+%    \begin{macrocode}
+   \ifdefined#5%
+    \exf@csdo\def{the\exf@solutioncounter}%
+     {\exf@config@composeitemsolution{\exf@solprob}{\exf@solsubprob}}%
+    \refstepcounter{\exf@solutioncounter}\label{#5}%
+   \fi%
+%    \end{macrocode}
+% Output section line:
+%    \begin{macrocode}
+   \exf@section{#3}{\exf@config@styletitle\exf@config@styletitlesolution#1%
+    \ifexf@solutionhref\exf@href{#6}{\exf@solutionstitleexp}%
+    \else\exf@solutionstitleexp\fi}#4%
+  \fi}
+%    \end{macrocode}
+
+% \macro{\exf@solutionstitle}
+% Compose the title for a solution section:
+%    \begin{macrocode}
+\newcommand{\exf@solutionstitle}{\exf@solutionssection%
+  {\exf@config@styletitlesolutions}{%
+   \exf@config@composetitlesolutions}{\exf@config@skipsolutionstitle}%
+   {\exf@addcontentsline{\exf@config@toclevelsolutions}%
+    {\exf@config@composetocsolutions}}{\@undefined}{\@undefined}}
+%    \end{macrocode}
+
+% \macro{\exf@showsolutions}
+% Output solutions in buffer:
+%    \begin{macrocode}
+\newcommand{\exf@showsolutions}[2]{%
+%    \end{macrocode}
+% Do nothing if buffer is empty (avoid titles):
+%    \begin{macrocode}
+  \ifexf@bufclean\else\begingroup%
+%    \end{macrocode}
+% Set solution body style; add vertical space; insert hook code:
+%    \begin{macrocode}
+   \par\exf@config@styletext\addvspace{\exf@config@skipsolutionsabove}%
+   \exf@config@styletextsolution%
+   \exf@config@insertsolutionsbefore%
+   \let\exf@composetitle#1%
+   #2%
+%    \end{macrocode}
+% Source and clear buffer:
+%    \begin{macrocode}
+   \exf@sourcebuf%
+   \exf@clearbuf%
+%    \end{macrocode}
+% Ignore most recent skip; insert hook code;
+% close paragraph; add vertical space:
+%    \begin{macrocode}
+   \removelastskip%
+   \exf@config@insertsolutionsafter%
+   \par\exf@config@styletext\addvspace{\exf@config@skipsolutionbelow}%
+  \endgroup\fi}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Solutions Buffer Interface.}
+%
+% \macro{\writesolutions}
+% Open a file |#1.sol| for writing solutions;
+% default is present main file name:
+%    \begin{macrocode}
+\newcommand{\writesolutions}[1][\jobname]{\exf@closefile\exf@startfile{#1}}
+%    \end{macrocode}
+
+% \macro{\closesolutions}
+% Close output file (if open):
+%    \begin{macrocode}
+\newcommand{\closesolutions}{\exf@closefile}
+%    \end{macrocode}
+
+% \macro{\readsolutions}
+% Read solutions from file |#1.sol|;
+% default is present main file name;
+% switch layout and add heading:
+%    \begin{macrocode}
+\newcommand{\readsolutions}[1][\jobname]{\exf@closefile%
+  \ifsolutions\begingroup%
+   \exf@config@styletext\exf@config@styletextsolution%
+   \let\exf@config@composetitlesolution\exf@config@composetitlesolutionmulti%
+   \exf@solutionstitle%
+   \input{#1.sol}%
+  \endgroup\fi}
+%    \end{macrocode}
+
+% \macro{\insertsolutions}
+% Show solution buffer:
+%    \begin{macrocode}
+\newcommand{\insertsolutions}{\exf@showsolutions%
+  {\exf@config@composetitlesolutionmulti}{\exf@solutionstitle}}
+%    \end{macrocode}
+
+%\iffalse
+%</package>
+%\fi
+%
+\endinput

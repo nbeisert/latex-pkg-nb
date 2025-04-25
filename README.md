@@ -7,6 +7,7 @@ The repository consists of the packages:
 
 * [collref](https://ctan.org/pkg/collref)
 * [mpostinl](https://ctan.org/pkg/mpostinl)
+* [exframe](https://ctan.org/pkg/exframe)
 
 The packages in this repository may be distributed and/or modified
 under the conditions spelled out in the corresponding subdirectories

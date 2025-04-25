@@ -1,4 +1,4 @@
-PACKAGES = collref mpostinl
+PACKAGES = collref mpostinl exframe
 TARGETS = all touch clean clean-all clean-bak
 
 $(TARGETS): $(PACKAGES)

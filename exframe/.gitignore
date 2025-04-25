@@ -1,0 +1,10 @@
+#exclude all files
+*
+
+#include relevant files
+!/.gitignore
+!/Makefile
+!/exframe.dtx
+!/exframe.ins
+!/exframe.sty
+!/README.txt
