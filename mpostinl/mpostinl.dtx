@@ -18,10 +18,10 @@
 % and the derived files mpostinl.sty and mpinlsmp.tex
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mpostinl}[2018/01/17 v1.21 metapost inline figures]
-%<sample>\ProvidesFile{mpinlsmp.tex}[2018/01/17 v1.21 sample for mpostinl]
+%<package>\ProvidesPackage{mpostinl}[2018/02/09 v1.3 metapost inline figures]
+%<sample>\ProvidesFile{mpinlsmp.tex}[2018/02/09 v1.3 sample for mpostinl]
 %<*driver>
-%\ProvidesFile{mpostinl.drv}[2018/01/17 v1.21 mpostinl reference manual file]
+%\ProvidesFile{mpostinl.drv}[2018/02/09 v1.3 mpostinl reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -62,7 +62,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package mpostinl}}
-\date{17 January 2018, \textsf{v1.21}}
+\date{9 February 2018, \textsf{v1.3}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -347,7 +347,7 @@ Either avoid leading empty lines and empty bodies
 or use empty optional arguments: |\begin{mpostfig}[]|.
 
 \item
-Lines starting with a single `|%|' are ignored and 
+Lines starting with a single `|%|' are ignored and
 do not appear in the metapost file.
 Double `|%%|' or leading spaces preserve comments in the metapost file.
 
@@ -457,6 +457,16 @@ Requires shell escapes to work properly.
 (no value implies |true|, initially set to |false|) --
 Enable/disable secondary metapost compilation.
 Some metapost files may require this to produce the intended output.
+
+\item |clean|[|=true|$\vert$|false|]
+(no value implies |true|, initially set to |true|) --
+Enable/disable cleaning of figure files prior to compilation.
+A dummy figure will be shown in case metapost cannot generate a figure.
+
+\item |checksum|[|=true|$\vert$|false|]
+(no value implies |true|, initially set to |false|) --
+Enable/disable update detection.
+Compiles figures only if the metapost code has changed.
 
 \item |fonts|[|=true|$\vert$|false|]
 (no value implies |true|, initially set to |false|) --
@@ -675,11 +685,19 @@ In particular, this may be desirable
 if the \LaTeX{} source is uploaded to a repository
 or passed on to a publisher.
 
-By default the package checks whether the generated files
+The package can check whether the generated files
 change with respect to the previous \LaTeX{} pass,
 and only modified files are compiled thereupon.
-This check can be disabled by setting the option
-|checksum| to |false|, in which case all files are compiled.
+This check can be enabled by setting the option
+|checksum| to |true|.
+Note that under some conditions
+(in particular, if the previous \LaTeX{} pass
+produced compile errors),
+figures may not get compiled even though the source changed.
+In that case you can trigger compilation
+by deleting the generated metapost source or figures
+or by introducing further changes to the metapost code.
+By default all files are compiled.
 
 When the metapost file compiles with errors,
 one can inspect the generated metapost file.
@@ -1175,10 +1193,25 @@ to the usual \TeX{} philosophy.
 %\item
 %an environment to pass tex commands to mpost and also compile them locally
 %probably have to write to file and subsequently input the file
+%perhaps could use \scantokens!
+%\item
+%improve detection of changed figure files?
+%allow to declare extra include files for update detection
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.3:} 2018/02/09
+
+\begin{itemize}
+\item
+new |clean| option to initialise figure files
+with dummy figures to show \MP{} compiler errors
+\item
+|checksum| behaviour improved
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.21:} 2018/01/17
@@ -1344,6 +1377,7 @@ basic functionality
 %% some sample package options:
 %% \mpostsetup{write=false}
 %% \mpostsetup{compile=false}
+\mpostsetup{checksum}
 \mpostsetup{now}
 %% \mpostsetup{nowall}
 \mpostsetup{lineno}
@@ -1839,6 +1873,8 @@ filename: \mpostgetname{sec8}
 \newif\ifmpi@write\mpi@writetrue
 \newif\ifmpi@compile\mpi@compiletrue
 \newif\ifmpi@twice\mpi@twicefalse
+\newif\ifmpi@clean\mpi@cleantrue
+\newif\ifmpi@checksum\mpi@checksumfalse
 \newif\ifmpi@lineno\mpi@linenofalse
 \newif\ifmpi@labelnames\mpi@labelnamesfalse
 \newif\ifmpi@nowactive\mpi@nowactivefalse
@@ -1846,7 +1882,6 @@ filename: \mpostgetname{sec8}
 \newif\ifmpi@nowkeep\mpi@nowkeepfalse
 \newif\ifmpi@include\mpi@includefalse
 \newif\ifmpi@defglobal\mpi@defglobalfalse
-\newif\ifmpi@checksum\mpi@checksumtrue
 %    \end{macrocode}
 
 % \begin{macro}{\mpi@mpostmem}
@@ -1889,6 +1924,7 @@ filename: \mpostgetname{sec8}
 \define@key{\mpi@group}{latex}[true]{\csname mpi@latex#1\endcsname}
 \define@key{\mpi@group}{compile}[true]{\csname mpi@compile#1\endcsname}
 \define@key{\mpi@group}{twice}[true]{\csname mpi@twice#1\endcsname}
+\define@key{\mpi@group}{clean}[true]{\csname mpi@clean#1\endcsname}
 \define@key{\mpi@group}{checksum}[true]{\csname mpi@checksum#1\endcsname}
 \define@key{\mpi@group}{fonts}[true]{\csname mpi@fonts#1\endcsname}
 \define@key{\mpi@group}{prologues}[]{\def\mpi@prologues{#1}}
@@ -2288,12 +2324,11 @@ filename: \mpostgetname{sec8}
 % \begin{macro}{\mpi@getchecksum}
 % Compute the MD5 checksum for a metapost file and store in macro:
 %    \begin{macrocode}
-\newcommand{\mpi@getchecksum}[2]{%
-  \IfFileExists{#2}{\xdef#1{\pdfmdfivesum file{#2}}}{\global\let#1=\@undefined}%
+\newcommand{\mpi@getchecksum}[3]{%
+  \IfFileExists{#3}{#1\edef#2{\pdfmdfivesum file{#3}}}{#1\let#2=\@undefined}%
 }
 %    \end{macrocode}
 % \end{macro}
-
 
 % \begin{macro}{\mpi@startfile}
 % Start a new file if not already open:
@@ -2310,13 +2345,16 @@ filename: \mpostgetname{sec8}
 % Compute checksum of old file:
 %    \begin{macrocode}
     \ifmpi@checksum\ifmpi@inclmod\else%
-      \mpi@getchecksum{\mpi@checksum@before}{\mpostfilename.mp}%
+      \mpi@getchecksum{\global}{\mpi@checksum@before}{\mpostfilename.mp}%
     \fi\fi%
+    \ifmpi@checksum\global\mpi@filemodfalse\else\global\mpi@filemodtrue\fi%
+    \ifmpi@inclmod\global\mpi@filemodtrue\fi%
 %    \end{macrocode}
 % Open file for writing, prepare and write header to file:
 %    \begin{macrocode}
     \global\mpi@infiletrue%
     \global\mpi@showinfilefalse%
+    \gdef\mpi@filelist{}%
     \ifmpi@write\immediate\openout\mpi@out\mpostfilename.mp\fi%
     \mpi@clearbuf%
     \mpi@beginfile%
@@ -2405,6 +2443,40 @@ filename: \mpostgetname{sec8}
 %    \end{macrocode}
 % \end{macro}
 
+% \begin{macro}{\mpi@cleanfile}
+% Write a mps file containing a plain cross:
+%    \begin{macrocode}
+\newcommand{\mpi@cleanfile}[1]{%
+  \immediate\openout\mpi@outnow#1%
+  \immediate\write\mpi@outnow{%
+    \@percentchar!PS-Adobe-3.0 EPSF-3.0^^J%
+    \@percentchar\@percentchar Title: missing figure file^^J%
+    \@percentchar\@percentchar Creator: mpostinl.sty^^J%
+    \@percentchar\@percentchar BoundingBox: -36 -22 36 22^^J%
+    \@percentchar\@percentchar EndComments^^J%
+    \@percentchar\@percentchar Page: 1 1^^J%
+    0 setgray 0 1.5 dtransform truncate idtransform setlinewidth pop^^J%
+    [] 0 setdash 1 setlinecap 1 setlinejoin 10 setmiterlimit^^J%
+    newpath -35 21 moveto 35 -21 lineto stroke^^J%
+    newpath -35 -21 moveto 35 21 lineto stroke^^J%
+    \@percentchar\@percentchar EOF}%
+  \immediate\closeout\mpi@outnow%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\mpi@cleanfiles}
+% Clean all figure files prior to compilation:
+%    \begin{macrocode}
+\newcommand{\mpi@cleanfiles}[1]{%
+  \begingroup\def\mpi@tmp{#1}%
+  \ifx\mpi@tmp\mpi@empty\else\def\mpi@tmp{\mpi@cleanfiles}%
+    \mpi@cleanfile{#1}\fi%
+  \expandafter\endgroup\mpi@tmp%
+}
+%    \end{macrocode}
+% \end{macro}
+
 % \begin{macro}{\mpi@closefile}
 % Close the file, compile and reset:
 %    \begin{macrocode}
@@ -2427,21 +2499,20 @@ filename: \mpostgetname{sec8}
 %    \end{macrocode}
 % Determine whether file has changed:
 %    \begin{macrocode}
-    \mpi@filemodtrue%
-    \ifmpi@checksum\ifmpi@inclmod\else%
-      \mpi@getchecksum{\mpi@checksum@after}{\mpostfilename.mp}%
-      \ifx\mpi@checksum@before\mpi@checksum@after%
-        \mpi@filemodfalse%
-      \else%
-        \ifmpi@include\mpi@inclmodtrue\fi%
-      \fi%
-    \fi\fi%
+    \ifmpi@filemod\else%
+      \mpi@getchecksum{}{\mpi@checksum@after}{\mpostfilename.mp}%
+      \ifx\mpi@checksum@before\mpi@checksum@after\else\mpi@filemodtrue\fi%
+    \fi%
+    \ifmpi@include\ifmpi@filemod\global\mpi@inclmodtrue\fi\fi%
 %    \end{macrocode}
 % Compile if file has changed and if it contains figures.
 % Activate warning if file has changed and figures were displayed
 % during composition:
 %    \begin{macrocode}
-    \ifmpi@filemod\ifmpi@inbody\mpi@compile{\mpostfilename.mp}\fi\fi%
+    \ifmpi@filemod\ifmpi@inbody%
+      \ifmpi@clean\expandafter\mpi@cleanfiles\mpi@filelist{}\fi%
+      \mpi@compile{\mpostfilename.mp}%
+    \fi\fi%
     \ifmpi@filemod\ifmpi@showinfile\global\mpi@warnmodtrue\fi\fi%
 %    \end{macrocode}
 % Reset variables:
@@ -2482,6 +2553,7 @@ filename: \mpostgetname{sec8}
     \mpi@endfile%
     \immediate\write\mpi@outnow{\the\mpi@buf}%
     \immediate\closeout\mpi@outnow%
+    \ifmpi@clean\mpi@cleanfile{\mpi@figfile}\fi%
     \mpi@compile{\mpi@nowname.mp}%
   \fi\fi\fi%
 }
@@ -2551,7 +2623,7 @@ filename: \mpostgetname{sec8}
     \mpi@addbuf{verbatimtex}%
   \fi%
   \mpi@verbatim%
-}%
+}
 %    \end{macrocode}
 % Postprocessing; add `|etex|' if in \TeX{} mode,
 % add to appropriate buffer(s).
@@ -2640,17 +2712,35 @@ filename: \mpostgetname{sec8}
   \mpi@putlineno%
   \mpi@beginfig{\mpi@figfile}%
   \mpi@verbatim%
-}%
+}
 %    \end{macrocode}
-% Postprocessing; end figure block, add to buffer,
+% Postprocessing; end figure block, add to buffer, add file to list,
 % process immediately if desired:
 %    \begin{macrocode}
 {%
   \mpi@endverbatim%
   \mpi@endfig%
   \mpi@writebuf%
+  \xdef\mpi@filelist{\mpi@filelist{\mpi@figfile}}%
   \ifmpi@now%
     \mpi@processnow%
+  \fi%
+%    \end{macrocode}
+% Force compile if output file does not exist, is empty or equals dummy figure:
+%    \begin{macrocode}
+  \ifmpi@filemod\else%
+    \mpi@getchecksum{}{\mpi@tmpa}{\mpi@figfile}%
+    \ifdefined\mpi@tmpa%
+      \edef\mpi@tmpa{\scantokens\expandafter{\mpi@tmpa\noexpand}}%
+      \def\mpi@tmpb{965DFFE32ABB43CC14C58E254B4D660E}%
+      \ifx\mpi@tmpa\mpi@tmpb\global\mpi@filemodtrue\fi%
+      \def\mpi@tmpb{D78A5F2EE4B244260ECD6A0E89ADC9CE}%
+      \ifx\mpi@tmpa\mpi@tmpb\global\mpi@filemodtrue\fi%
+      \def\mpi@tmpb{D41D8CD98F00B204E9800998ECF8427E}%
+      \ifx\mpi@tmpa\mpi@tmpb\global\mpi@filemodtrue\fi%
+    \else%
+      \global\mpi@filemodtrue%
+    \fi
   \fi%
 %    \end{macrocode}
 % Display figure.

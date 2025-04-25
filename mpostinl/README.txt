@@ -1,4 +1,4 @@
-mpostinl v1.21
+mpostinl v1.3
 Copyright 2010-2018 Niklas Beisert
 
 mpostinl is a LaTeX2e package

@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{mpostinl}[2018/01/17 v1.21 metapost inline figures]
+\ProvidesPackage{mpostinl}[2018/02/09 v1.3 metapost inline figures]
 
 \RequirePackage{verbatim}
 \RequirePackage{graphicx}
@@ -38,6 +38,8 @@
 \newif\ifmpi@write\mpi@writetrue
 \newif\ifmpi@compile\mpi@compiletrue
 \newif\ifmpi@twice\mpi@twicefalse
+\newif\ifmpi@clean\mpi@cleantrue
+\newif\ifmpi@checksum\mpi@checksumfalse
 \newif\ifmpi@lineno\mpi@linenofalse
 \newif\ifmpi@labelnames\mpi@labelnamesfalse
 \newif\ifmpi@nowactive\mpi@nowactivefalse
@@ -45,7 +47,6 @@
 \newif\ifmpi@nowkeep\mpi@nowkeepfalse
 \newif\ifmpi@include\mpi@includefalse
 \newif\ifmpi@defglobal\mpi@defglobalfalse
-\newif\ifmpi@checksum\mpi@checksumtrue
 
 \def\mpi@mpostmem{}
 \def\mpi@mpostcompiler{}
@@ -66,6 +67,7 @@
 \define@key{\mpi@group}{latex}[true]{\csname mpi@latex#1\endcsname}
 \define@key{\mpi@group}{compile}[true]{\csname mpi@compile#1\endcsname}
 \define@key{\mpi@group}{twice}[true]{\csname mpi@twice#1\endcsname}
+\define@key{\mpi@group}{clean}[true]{\csname mpi@clean#1\endcsname}
 \define@key{\mpi@group}{checksum}[true]{\csname mpi@checksum#1\endcsname}
 \define@key{\mpi@group}{fonts}[true]{\csname mpi@fonts#1\endcsname}
 \define@key{\mpi@group}{prologues}[]{\def\mpi@prologues{#1}}
@@ -267,8 +269,8 @@
   \fi%
 }
 
-\newcommand{\mpi@getchecksum}[2]{%
-  \IfFileExists{#2}{\xdef#1{\pdfmdfivesum file{#2}}}{\global\let#1=\@undefined}%
+\newcommand{\mpi@getchecksum}[3]{%
+  \IfFileExists{#3}{#1\edef#2{\pdfmdfivesum file{#3}}}{#1\let#2=\@undefined}%
 }
 
 \newcommand{\mpi@startfile}{%
@@ -277,10 +279,13 @@
       \PackageError{mpostinl}{no filename provided to write to}{}%
     \fi%
     \ifmpi@checksum\ifmpi@inclmod\else%
-      \mpi@getchecksum{\mpi@checksum@before}{\mpostfilename.mp}%
+      \mpi@getchecksum{\global}{\mpi@checksum@before}{\mpostfilename.mp}%
     \fi\fi%
+    \ifmpi@checksum\global\mpi@filemodfalse\else\global\mpi@filemodtrue\fi%
+    \ifmpi@inclmod\global\mpi@filemodtrue\fi%
     \global\mpi@infiletrue%
     \global\mpi@showinfilefalse%
+    \gdef\mpi@filelist{}%
     \ifmpi@write\immediate\openout\mpi@out\mpostfilename.mp\fi%
     \mpi@clearbuf%
     \mpi@beginfile%
@@ -336,6 +341,30 @@
   \fi\fi%
 }
 
+\newcommand{\mpi@cleanfile}[1]{%
+  \immediate\openout\mpi@outnow#1%
+  \immediate\write\mpi@outnow{%
+    \@percentchar!PS-Adobe-3.0 EPSF-3.0^^J%
+    \@percentchar\@percentchar Title: missing figure file^^J%
+    \@percentchar\@percentchar Creator: mpostinl.sty^^J%
+    \@percentchar\@percentchar BoundingBox: -36 -22 36 22^^J%
+    \@percentchar\@percentchar EndComments^^J%
+    \@percentchar\@percentchar Page: 1 1^^J%
+    0 setgray 0 1.5 dtransform truncate idtransform setlinewidth pop^^J%
+    [] 0 setdash 1 setlinecap 1 setlinejoin 10 setmiterlimit^^J%
+    newpath -35 21 moveto 35 -21 lineto stroke^^J%
+    newpath -35 -21 moveto 35 21 lineto stroke^^J%
+    \@percentchar\@percentchar EOF}%
+  \immediate\closeout\mpi@outnow%
+}
+
+\newcommand{\mpi@cleanfiles}[1]{%
+  \begingroup\def\mpi@tmp{#1}%
+  \ifx\mpi@tmp\mpi@empty\else\def\mpi@tmp{\mpi@cleanfiles}%
+    \mpi@cleanfile{#1}\fi%
+  \expandafter\endgroup\mpi@tmp%
+}
+
 \newcommand{\mpi@closefile}{%
   \ifmpi@infile%
     \mpi@clearbuf%
@@ -346,16 +375,15 @@
     \mpi@endfile%
     \mpi@writebuf%
     \ifmpi@write\immediate\closeout\mpi@out\fi%
-    \mpi@filemodtrue%
-    \ifmpi@checksum\ifmpi@inclmod\else%
-      \mpi@getchecksum{\mpi@checksum@after}{\mpostfilename.mp}%
-      \ifx\mpi@checksum@before\mpi@checksum@after%
-        \mpi@filemodfalse%
-      \else%
-        \ifmpi@include\mpi@inclmodtrue\fi%
-      \fi%
+    \ifmpi@filemod\else%
+      \mpi@getchecksum{}{\mpi@checksum@after}{\mpostfilename.mp}%
+      \ifx\mpi@checksum@before\mpi@checksum@after\else\mpi@filemodtrue\fi%
+    \fi%
+    \ifmpi@include\ifmpi@filemod\global\mpi@inclmodtrue\fi\fi%
+    \ifmpi@filemod\ifmpi@inbody%
+      \ifmpi@clean\expandafter\mpi@cleanfiles\mpi@filelist{}\fi%
+      \mpi@compile{\mpostfilename.mp}%
     \fi\fi%
-    \ifmpi@filemod\ifmpi@inbody\mpi@compile{\mpostfilename.mp}\fi\fi%
     \ifmpi@filemod\ifmpi@showinfile\global\mpi@warnmodtrue\fi\fi%
     \global\mpi@infilefalse%
     \global\let\mpostfilename\mpi@empty%
@@ -379,6 +407,7 @@
     \mpi@endfile%
     \immediate\write\mpi@outnow{\the\mpi@buf}%
     \immediate\closeout\mpi@outnow%
+    \ifmpi@clean\mpi@cleanfile{\mpi@figfile}\fi%
     \mpi@compile{\mpi@nowname.mp}%
   \fi\fi\fi%
 }
@@ -413,7 +442,7 @@
     \mpi@addbuf{verbatimtex}%
   \fi%
   \mpi@verbatim%
-}%
+}
 {%
   \mpi@endverbatim%
   \ifmpi@deftex%
@@ -468,13 +497,28 @@
   \mpi@putlineno%
   \mpi@beginfig{\mpi@figfile}%
   \mpi@verbatim%
-}%
+}
 {%
   \mpi@endverbatim%
   \mpi@endfig%
   \mpi@writebuf%
+  \xdef\mpi@filelist{\mpi@filelist{\mpi@figfile}}%
   \ifmpi@now%
     \mpi@processnow%
+  \fi%
+  \ifmpi@filemod\else%
+    \mpi@getchecksum{}{\mpi@tmpa}{\mpi@figfile}%
+    \ifdefined\mpi@tmpa%
+      \edef\mpi@tmpa{\scantokens\expandafter{\mpi@tmpa\noexpand}}%
+      \def\mpi@tmpb{965DFFE32ABB43CC14C58E254B4D660E}%
+      \ifx\mpi@tmpa\mpi@tmpb\global\mpi@filemodtrue\fi%
+      \def\mpi@tmpb{D78A5F2EE4B244260ECD6A0E89ADC9CE}%
+      \ifx\mpi@tmpa\mpi@tmpb\global\mpi@filemodtrue\fi%
+      \def\mpi@tmpb{D41D8CD98F00B204E9800998ECF8427E}%
+      \ifx\mpi@tmpa\mpi@tmpb\global\mpi@filemodtrue\fi%
+    \else%
+      \global\mpi@filemodtrue%
+    \fi
   \fi%
   \ifmpi@figshow%
     \expandafter\mpi@graphics\mpi@figopt{\mpi@figfile}%
