@@ -9,6 +9,7 @@ The repository consists of the packages:
 * [mpostinl](https://ctan.org/pkg/mpostinl)
 * [exframe](https://ctan.org/pkg/exframe)
 * [graphbox](https://ctan.org/pkg/graphbox)
+* [delimset](https://ctan.org/pkg/delimset)
 
 The packages in this repository may be distributed and/or modified
 under the conditions spelled out in the corresponding subdirectories
