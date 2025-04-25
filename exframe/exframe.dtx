@@ -18,10 +18,10 @@
 % and the derived files exframe.sty and exfsmp1.tex.
 %
 %<package|sample1>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{exframe}[2019/01/16 v3.0 Framework for Exercise Problems]
-%<sample1>\ProvidesFile{exfsmp1.tex}[2019/01/16 v3.0 sample 1 for exframe]
+%<package>\ProvidesPackage{exframe}[2019/01/21 v3.1 Framework for Exercise Problems]
+%<sample1>\ProvidesFile{exfsmp1.tex}[2019/01/21 v3.1 sample 1 for exframe]
 %<*driver>
-\def\thedate#1{2019/01/16}\def\theversion#1{v3.0}
+\def\thedate#1{2019/01/21}\def\theversion#1{v3.1}
 \ProvidesFile{exframe.dtx}[\thedate{} \theversion{} exframe reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -323,10 +323,12 @@ problem (|problem|) or sheet (|sheet|)
 or display them at a manually chosen location (|manual|).
 Note that typically solutions are defined at the end of a (sub)problem
 and therefore the choice |here| is similar to (|sub|)|problem|.
-The latter form, however, makes sure that a solution is positioned
-\emph{after} the (sub)problem block
-such that it does not inherit the layout (e.g.\ indentation)
-of the latter even if it is defined within this block.
+The latter form, however, makes sure that a solution
+does not inherit the margin of the parent block.
+The alternate modes |problem*| and |subproblem*|
+positions the solution \emph{after} the (sub)problem block
+such that it does not inherit any layout,
+but also the no definitions made in the parent block.
 In |manual| mode, all solutions are collected (with appropriate headers)
 until they are output by the directive |\insertsolutions|.
 If no solutions are stored in the buffer
@@ -1043,7 +1045,7 @@ and returns it followed by a dot.
 \DescribeMacro{\exerciseifempty}
 \DescribeMacro{\exerciseifnotempty}
 Handy conditionals command to check
-whether an expression \textit{expr} is empty (or pure whitespace) is:
+whether an expression \textit{expr} is empty are:
 %
 \begin{center}
 \begin{tabular}{l}
@@ -1083,7 +1085,8 @@ The package defines a couple of standard styles:
 %
 \begin{itemize}
 \item |solutionbelow=|\textit{pos}
-(can take values |here|, |subproblem|, |problem|, |sheet| and |manual|;
+(can take values |here|, |subproblem|, |subproblem*|, |problem|, |problem*|,
+|sheet| and |manual|;
 initially set to |subproblem|) --
 positions the solutions below the indicated blocks;
 see \secref{sec:solutions} for details.
@@ -1114,7 +1117,10 @@ with the prefix \textit{counter}.
 number problems by sheet.
 
 \item |equationbysheet| --
-number equations by sheet.
+number dedicated equations for sheets, problems and solutions by sheet;
+note that the main equation counter is unaffected by this setting,
+it therefore makes sense to also activate the style |sheetequation|
+or use |\counterwithin{equation}{sheet}|.
 
 \item |pagebysheet| --
 number pages by sheet and denote pages by \textit{sheet}|.|\textit{page};
@@ -1515,6 +1521,18 @@ Define structures for multiple-choice questions.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v3.1:} 2019/01/21
+
+\begin{itemize}
+\item
+alternate placement modes for solutions
+\item
+fixed expansion of problem title
+\item
+reset font size for problem text
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v3.0:} 2019/01/16
@@ -2231,7 +2249,7 @@ This is beyond the scope of this example.
 %
 % Basic style for all exercise text:
 %    \begin{macrocode}
-\exerciseconfig{styletext}{\normalfont}
+\exerciseconfig{styletext}{\normalsize\normalfont}
 %    \end{macrocode}
 % Style for problems:
 %    \begin{macrocode}
@@ -2385,6 +2403,11 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
 \exerciseconfig{insertproblemafter}{}
 %    \end{macrocode}
+% Code to insert between a problem and its solution
+% (if style |solutionbelow| is |problem|):
+%    \begin{macrocode}
+\exerciseconfig{insertproblemsolution}{}
+%    \end{macrocode}
 % Code to insert text into the problem opening line
 % by means of |\addprobleminfo|:
 %    \begin{macrocode}
@@ -2395,6 +2418,7 @@ This is beyond the scope of this example.
 \exerciseconfig{insertsubproblembefore}{}
 \exerciseconfig{insertsubproblemafter}{}
 \exerciseconfig{insertsubprobleminfo}{}
+\exerciseconfig{insertsubproblemsolution}{}
 %    \end{macrocode}
 % Analogous definitions for solutions:
 %    \begin{macrocode}
@@ -2664,7 +2688,8 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
 \def\exf@solutionbelow{subproblem}
 \define@choicekey{exf@style}{solutionbelow}%
-  {here,subproblem,problem,sheet,manual}{\def\exf@solutionbelow{#1}}
+  {here,subproblem,subproblem*,problem,problem*,sheet,manual}%
+  {\def\exf@solutionbelow{#1}}
 %    \end{macrocode}
 % Conditionals to compare solution locations:
 %    \begin{macrocode}
@@ -2965,8 +2990,14 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \paragraph{Problem Info Code.}
+% \paragraph{Problem Block Code.}
 %
+% \macro{\exf@addmargin}
+% Define a length for block margin:
+%    \begin{macrocode}
+\newlength\exf@addmargin
+%    \end{macrocode}
+
 % \macro{\exf@section}
 % Write out problem opening line followed by some amount of skip
 % (positive dimensions add vertical space,
@@ -2984,11 +3015,12 @@ This is beyond the scope of this example.
   \exf@exparg{\@startsection{}{}{0pt}{0pt}{#1}{}*}{\exf@tmp}}
 %    \end{macrocode}
 
-% \macro{\exf@init@intro}
+% \macro{\exf@init@block}
 % Clean info buffer, define amount of skip between items:
 %    \begin{macrocode}
-\newcommand{\exf@init@intro}[1]%
-  {\def\exf@intro{}\def\exf@introitem{}\def\exf@intro@skip{#1}}
+\newcommand{\exf@init@block}[1]{%
+  \def\exf@intro{}\def\exf@intro@skip{#1}%
+  \exf@addmargin0pt\def\exf@introitem{}}
 %    \end{macrocode}
 % \macro{\exf@append@intro}
 % Append to info buffer:
@@ -3002,15 +3034,26 @@ This is beyond the scope of this example.
 \newcommand{\exf@prepend@intro}[1]%
   {\exf@prepend@def\exf@intro{#1\hspace{\exf@intro@skip}}}
 %    \end{macrocode}
-% \macro{\exf@write@intro}
-% Compose opening line:
+% \macro{\exf@open@block}
+% Open block, set margin, compose opening line:
 %    \begin{macrocode}
-\newcommand{\exf@write@intro}[1]{%
+\newcommand{\exf@open@block}[1]{%
+  \advance\leftskip\exf@addmargin%
+  \advance\linewidth-\exf@addmargin%
+  \advance\@totalleftmargin\exf@addmargin%
   \ifx\exf@intro\exf@empty%
    \exf@section{0pt}{\exf@introitem}%
   \else%
    \exf@section{#1}{\exf@introitem\exf@intro\unskip}%
   \fi}%
+%    \end{macrocode}
+% \macro{\exf@close@block}
+% Close block, undo margin:
+%    \begin{macrocode}
+\newcommand{\exf@close@block}{%
+  \advance\leftskip-\exf@addmargin%
+  \advance\linewidth\exf@addmargin%
+  \advance\@totalleftmargin-\exf@addmargin}%
 %    \end{macrocode}
 
 % \macro{\addprobleminfo}
@@ -3675,12 +3718,6 @@ This is beyond the scope of this example.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Problems.}
 %
-% \macro{\ifexf@problem@solnewsec}
-% Conditional to mark whether problem has been encountered:
-%    \begin{macrocode}
-\newif\ifexf@problem@solnewsec\exf@problem@solnewsectrue
-%    \end{macrocode}
-
 % \macro{exf@problem}
 % Define options for |problem| environment:
 %    \begin{macrocode}
@@ -3695,16 +3732,22 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
 \newenvironment{\exf@problemname}[1][]{%
 %    \end{macrocode}
-% Start with new paragraph, set text style, add vspace and step counter:
+% Start with new paragraph, set text style, add vspace:
 %    \begin{macrocode}
-  \par\exf@config@styletext%
-  \addvspace{\exf@config@skipproblemabove}%
+  \par\exf@config@styletext\addvspace{\exf@config@skipproblemabove}%
+%    \end{macrocode}
+% Step problem counter:
+%    \begin{macrocode}
   \refstepcounter{\exf@problemcounter}%
 %    \end{macrocode}
-% Insert hook code, remember that a new problem was encountered:
+% Insert hook code:
 %    \begin{macrocode}
   \exf@config@insertproblembefore%
-  \global\exf@problem@solnewsectrue%
+%    \end{macrocode}
+% Begin inner group, mark in problem:
+%    \begin{macrocode}
+  \begingroup%
+  \def\exf@in@problem{}%
 %    \end{macrocode}
 % Use equation counter for problems:
 %    \begin{macrocode}
@@ -3715,12 +3758,9 @@ This is beyond the scope of this example.
    \let\theHequation\theHexf@problemequation%
   \fi%
 %    \end{macrocode}
-% Start a block, mark in problem, initialise variables,
-% process arguments:
+% Initialise variables, process arguments:
 %    \begin{macrocode}
-  \begingroup%
-  \def\exf@in@problem{}%
-  \exf@init@intro{\exf@config@skipprobleminfo}%
+  \exf@init@block{\exf@config@skipprobleminfo}%
   \def\problemtag{\csname the\exf@problemcounter\endcsname}%
   \let\exf@points@given\@undefined%
   \let\exf@label\@undefined%
@@ -3733,8 +3773,9 @@ This is beyond the scope of this example.
   \ifexf@autolabelproblem\label{\exf@config@labelproblem{\problemtag}}\fi%
   \ifdefined\exf@label\label{\exf@label}\fi%
 %    \end{macrocode}
-% Remember problem counter, title for solutions:
+% Mark for new solution section; remember problem counter, title:
 %    \begin{macrocode}
+  \gdef\exf@problem@solnewsec{}%
   \xdef\exf@prevprob{\csname the\exf@problemcounter\endcsname}%
   \ifcsname theH\exf@problemcounter\endcsname%
    \xdef\exf@prevprobhref{\exf@problemcounter.%
@@ -3743,7 +3784,8 @@ This is beyond the scope of this example.
   \ifx\exf@data@problem@rawtitle\exf@empty%
     \global\let\exf@prevprobtitle\@undefined%
   \else%
-    \xdef\exf@prevprobtitle{\exf@data@problem@rawtitle}\fi%
+    \protected@xdef\exf@prevprobtitle{\exf@data@problem@rawtitle}%
+  \fi%
   \global\let\exf@prevsubprob\@undefined%
   \global\let\exf@prevsubprobhref\@undefined%
 %    \end{macrocode}
@@ -3795,19 +3837,13 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
   \else%
    \ifdim\exf@config@skipproblemitem>0pt%
-    \setlength\exf@tmpdim{\exf@config@skipproblemitem}%
+    \setlength\exf@addmargin{\exf@config@skipproblemitem}%
    \else%
-    \settowidth\exf@tmpdim{%
+    \settowidth\exf@addmargin{%
      \exf@config@styletitle\exf@config@styletitleproblem%
      \exf@config@composeitemproblem{\exf@config@counterproblemmax}%
      \exf@config@composeitemproblemsep}%
    \fi%
-%    \end{macrocode}
-% Set up indentation:
-%    \begin{macrocode}
-   \advance\leftskip\exf@tmpdim%
-   \advance\linewidth -\exf@tmpdim%
-   \advance\@totalleftmargin\exf@tmpdim%
 %    \end{macrocode}
 % Define item label:
 %    \begin{macrocode}
@@ -3837,7 +3873,7 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % Write out opening line:
 %    \begin{macrocode}
-  \exf@write@intro{\exf@config@skipproblemtitle}%
+  \exf@open@block{\exf@config@skipproblemtitle}%
 %    \end{macrocode}
 % Add table of contents line:
 %    \begin{macrocode}
@@ -3898,21 +3934,20 @@ This is beyond the scope of this example.
    \PackageWarning{exframe}{no points defined for \exf@problemname}%
   \fi\fi%
 %    \end{macrocode}
-% End paragraph, insert hook code, vertical skip:
+% Solutions to subproblems must be declared within problem block:
 %    \begin{macrocode}
-  \par\endgroup%
-  \exf@config@insertproblemafter%
-  \addvspace{\exf@config@skipproblembelow}%
+  \global\let\exf@prevsubprob\@undefined%
+  \global\let\exf@prevsubprobhref\@undefined%
+%    \end{macrocode}
+% End paragraph and block:
+%    \begin{macrocode}
+  \par\exf@close@block%
 %    \end{macrocode}
 % Display solution if desired:
 %    \begin{macrocode}
   \exf@solbelowis{problem}{%
+   \exf@config@insertproblemsolution%
    \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}}%
-%    \end{macrocode}
-% Solutions to subproblems should be declared within problem block:
-%    \begin{macrocode}
-  \global\let\exf@prevsubprob\@undefined%
-  \global\let\exf@prevsubprobhref\@undefined%
 %    \end{macrocode}
 % Restore original equation counter:
 %    \begin{macrocode}
@@ -3920,6 +3955,20 @@ This is beyond the scope of this example.
    \setcounter{exf@problemequation}{\value{equation}}%
    \setcounter{equation}{\exf@eqsav}%
   \fi%
+%    \end{macrocode}
+% End inner group:
+%    \begin{macrocode}
+  \endgroup%
+%    \end{macrocode}
+% Insert hook code, vertical skip:
+%    \begin{macrocode}
+  \exf@config@insertproblemafter%
+  \addvspace{\exf@config@skipproblembelow}%
+%    \end{macrocode}
+% Display solution if desired:
+%    \begin{macrocode}
+  \exf@solbelowis{problem*}{%
+   \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}}%
 %    \end{macrocode}
 % Done:
 %    \begin{macrocode}
@@ -3943,13 +3992,28 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % Start with new paragraph, set text style, add vspace and step counter:
 %    \begin{macrocode}
-  \par%
-  {\exf@config@styletext\addvspace{\exf@config@skipsubproblemabove}}%
+  \par{\exf@config@styletext\addvspace{\exf@config@skipsubproblemabove}}%
   \refstepcounter{\exf@subproblemcounter}%
 %    \end{macrocode}
 % Insert hook code:
 %    \begin{macrocode}
   \exf@config@insertsubproblembefore%
+%    \end{macrocode}
+% Start inner group, mark in subproblem:
+%    \begin{macrocode}
+  \begingroup%
+  \def\exf@in@subproblem{}%
+%    \end{macrocode}
+% Initialise variables, process arguments:
+%    \begin{macrocode}
+  \exf@init@block{\exf@config@skipsubprobleminfo}%
+  \let\exf@subproblem@points\@undefined%
+  \let\exf@label\@undefined%
+  \setkeys{exf@subproblem,exf@probleminfo}{#1}%
+%    \end{macrocode}
+% Process manual label:
+%    \begin{macrocode}
+  \ifdefined\exf@label\label{\exf@label}\fi%
 %    \end{macrocode}
 % Remember subproblem counter for solution:
 %    \begin{macrocode}
@@ -3958,20 +4022,6 @@ This is beyond the scope of this example.
    \xdef\exf@prevsubprobhref{\exf@subproblemcounter.%
     \csname theH\exf@subproblemcounter\endcsname}%
   \fi%
-%    \end{macrocode}
-% Start a block, mark in subproblem, initialise variables,
-% process arguments:
-%    \begin{macrocode}
-  \begingroup%
-  \def\exf@in@subproblem{}%
-  \exf@init@intro{\exf@config@skipsubprobleminfo}%
-  \let\exf@subproblem@points\@undefined%
-  \let\exf@label\@undefined%
-  \setkeys{exf@subproblem,exf@probleminfo}{#1}%
-%    \end{macrocode}
-% Process manual label:
-%    \begin{macrocode}
-  \ifdefined\exf@label\label{\exf@label}\fi%
 %    \end{macrocode}
 % Add given points to problem total:
 %    \begin{macrocode}
@@ -4019,19 +4069,13 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
   \else%
    \ifdim\exf@config@skipsubproblemitem>0pt%
-    \setlength\exf@tmpdim{\exf@config@skipsubproblemitem}%
+    \setlength\exf@addmargin{\exf@config@skipsubproblemitem}%
    \else%
-    \settowidth\exf@tmpdim{%
+    \settowidth\exf@addmargin{%
      \exf@config@styletitle\exf@config@styletitlesubproblem%
      \exf@config@composeitemsubproblem{\exf@config@countersubproblemmax}%
      \exf@config@composeitemsubproblemsep}%
    \fi%
-%    \end{macrocode}
-% Set up indentation:
-%    \begin{macrocode}
-   \advance\leftskip\exf@tmpdim%
-   \advance\linewidth -\exf@tmpdim%
-   \advance\@totalleftmargin\exf@tmpdim%
 %    \end{macrocode}
 % Define item label:
 %    \begin{macrocode}
@@ -4054,26 +4098,39 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % Write out opening line:
 %    \begin{macrocode}
-  \exf@write@intro{\exf@config@skipsubproblemtitle}%
+  \exf@open@block{\exf@config@skipsubproblemtitle}%
 %    \end{macrocode}
 % Done:
 %    \begin{macrocode}
   \@afterindentfalse}%
 %    \end{macrocode}
-% End environment, show points if desired, end paragraph:
+% End environment, show points if desired:
 %    \begin{macrocode}
  {\exf@subpointsatis{end}{\showpoints}%
-  \par\endgroup%
 %    \end{macrocode}
-% Vertical skip, insert hook code:
+% End paragraph and block:
 %    \begin{macrocode}
-  {\exf@config@styletext\addvspace{\exf@config@skipsubproblembelow}}%
-  \exf@config@insertsubproblemafter%
+  \par\exf@close@block%
 %    \end{macrocode}
 % Display solution if desired:
 %    \begin{macrocode}
-  \exf@solbelowis{subproblem}{\exf@showsolutions%
-   {\exf@config@composetitlesolutionsingle}{}}%
+  \exf@solbelowis{subproblem*}{%
+   \exf@config@insertsubproblemsolution%
+   \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}}%
+%    \end{macrocode}
+% End inner group:
+%    \begin{macrocode}
+  \endgroup%
+%    \end{macrocode}
+% Insert hook code, vertical skip:
+%    \begin{macrocode}
+  \exf@config@insertsubproblemafter%
+  {\exf@config@styletext\addvspace{\exf@config@skipsubproblembelow}}%
+%    \end{macrocode}
+% Display solution if desired:
+%    \begin{macrocode}
+  \exf@solbelowis{subproblem}{%
+   \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}}%
 %    \end{macrocode}
 % Done:
 %    \begin{macrocode}
@@ -4103,10 +4160,12 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
 \newenvironment{printsolution}[1]{%
 %    \end{macrocode}
-% Start new paragraph, add vertical space, insert hook code:
+% Start new paragraph, add vertical space:
 %    \begin{macrocode}
-  \par%
-  {\exf@config@styletext\addvspace{\exf@config@skipsolutionabove}}%
+  \par{\exf@config@styletext\addvspace{\exf@config@skipsolutionabove}}%
+%    \end{macrocode}
+% Insert hook code:
+%    \begin{macrocode}
   \exf@config@insertsolutionbefore%
 %    \end{macrocode}
 % Use equation counter for solutions:
@@ -4126,7 +4185,7 @@ This is beyond the scope of this example.
   \let\exf@label\@undefined%
   \setlength{\exf@solution@points@dim}{0pt}%
   \def\exf@solhref{}%
-  \exf@init@intro{\exf@config@skipsolutioninfo}%
+  \exf@init@block{\exf@config@skipsolutioninfo}%
   \setkeys{exf@solution,exf@probleminfo}{#1}%
 %    \end{macrocode}
 % Set solution counter to reflect associated problem:
@@ -4168,9 +4227,9 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
   \else%
    \ifdim\exf@tmp>0pt%
-    \setlength\exf@tmpdim{\exf@tmp}%
+    \setlength\exf@addmargin{\exf@tmp}%
    \else%
-    \settowidth\exf@tmpdim{%
+    \settowidth\exf@addmargin{%
      \exf@config@styletitle\exf@config@styletitlesolution%
      \ifx\exf@solsubprob\exf@empty%
       \exf@config@composeitemsolution{\exf@config@counterproblemmax}%
@@ -4180,12 +4239,6 @@ This is beyond the scope of this example.
        {\exf@config@countersubproblemmax}%
      \fi\exf@config@composeitemsolutionsep}%
    \fi%
-%    \end{macrocode}
-% Set up indentation:
-%    \begin{macrocode}
-   \advance\leftskip\exf@tmpdim%
-   \advance\linewidth -\exf@tmpdim%
-   \advance\@totalleftmargin\exf@tmpdim%
 %    \end{macrocode}
 % Set item label up depending on problem or subproblem:
 %    \begin{macrocode}
@@ -4208,7 +4261,7 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % Write out opening line:
 %    \begin{macrocode}
-  \exf@write@intro{\exf@config@skipsolutiontitle}%
+  \exf@open@block{\exf@config@skipsolutiontitle}%
 %    \end{macrocode}
 % Done:
 %    \begin{macrocode}
@@ -4223,11 +4276,9 @@ This is beyond the scope of this example.
      {\strip@pt\exf@solution@points@dim}{\exf@solution@points}\fi%
   \fi\fi\fi%
 %    \end{macrocode}
-% End paragraph, vertical skip, insert hook code:
+% End paragraph and block:
 %    \begin{macrocode}
-  \par\endgroup%
-  {\exf@config@styletext\addvspace{\exf@config@skipsolutionbelow}}%
-  \exf@config@insertsolutionafter%
+  \par\exf@close@block%
 %    \end{macrocode}
 % Restore original equation counter:
 %    \begin{macrocode}
@@ -4235,6 +4286,15 @@ This is beyond the scope of this example.
    \setcounter{exf@solutionequation}{\value{equation}}%
    \setcounter{equation}{\exf@eqsav}%
   \fi%
+%    \end{macrocode}
+% End inner group:
+%    \begin{macrocode}
+  \endgroup%
+%    \end{macrocode}
+% Vertical skip, insert hook code:
+%    \begin{macrocode}
+  {\exf@config@styletext\addvspace{\exf@config@skipsolutionbelow}}%
+  \exf@config@insertsolutionafter%
 %    \end{macrocode}
 % Done:
 %    \begin{macrocode}
@@ -4262,6 +4322,8 @@ This is beyond the scope of this example.
   \def\exf@solutionstoc{\exf@addcontentsline{\exf@config@toclevelsolution}%
     {\exf@config@composetocsolution{\exf@solprob}{\exf@solprobtitle}}}%
   \exf@solbelowis{problem}{\let\exf@composetitle%
+    \exf@config@composetitlesolutionsproblemsingle}%
+  \exf@solbelowis{problem*}{\let\exf@composetitle%
     \exf@config@composetitlesolutionsproblemsingle}%
 %    \end{macrocode}
 % Write section line:
@@ -4299,19 +4361,20 @@ This is beyond the scope of this example.
 % If this is the first solution within a new section,
 % display section heading:
 %    \begin{macrocode}
-  \ifexf@problem@solnewsec%
+  \ifdefined\exf@problem@solnewsec%
    \def\exf@probarg{\ifdefined\exf@prevprob prob={\exf@prevprob}\fi%
     \ifdefined\exf@prevprobtitle,probtitle={\exf@prevprobtitle}\fi%
     \ifdefined\exf@prevprobhref,href={\exf@prevprobhref}\fi%
     \ifdefined\exf@sollabel,label={\exf@sollabel}\fi}%
    \exf@solbelowis{here}{\let\exf@probarg\@undefined}%
    \exf@solbelowis{subproblem}{\let\exf@probarg\@undefined}%
+   \exf@solbelowis{subproblem*}{\let\exf@probarg\@undefined}%
    \ifdefined\exf@probarg%
     \ifexf@lineno\exf@addbufline{\exf@linesep}\exf@addbufline{\exf@lineno}\fi%
     \exf@addbufline{\@backslashchar solutionssection{\exf@probarg}}%
     \exf@addbufline{}%
    \fi%
-   \global\exf@problem@solnewsecfalse%
+   \global\let\exf@problem@solnewsec\@undefined%
   \fi%
 %    \end{macrocode}
 % Write separator to buffer:
@@ -4370,10 +4433,16 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
   \exf@solbelowis{here}{\exf@showsolutions%
    {\exf@config@composetitlesolutionsingle}{}}%
-  \exf@solbelowis{subproblem}{\ifdefined\exf@in@subproblem\else%
-   \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}\fi}%
-  \exf@solbelowis{problem}{\ifdefined\exf@in@problem\else%
-   \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}\fi}%
+  \ifdefined\exf@in@subproblem\else%
+   \exf@solbelowis{subproblem}{%
+    \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}}%
+   \exf@solbelowis{subproblem*}{%
+    \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}}\fi%
+  \ifdefined\exf@in@problem\else%
+   \exf@solbelowis{problem}{%
+    \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}}%
+   \exf@solbelowis{problem*}{%
+    \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}}\fi%
 %    \end{macrocode}
 % Done:
 %    \begin{macrocode}
