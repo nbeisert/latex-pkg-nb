@@ -18,10 +18,10 @@
 % and the derived files exframe.sty and exfsmp1.tex.
 %
 %<package|sample1>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{exframe}[2019/01/21 v3.1 Framework for Exercise Problems]
-%<sample1>\ProvidesFile{exfsmp1.tex}[2019/01/21 v3.1 sample 1 for exframe]
+%<package>\ProvidesPackage{exframe}[2019/04/15 v3.11 Framework for Exercise Problems]
+%<sample1>\ProvidesFile{exfsmp1.tex}[2019/04/15 v3.11 sample 1 for exframe]
 %<*driver>
-\def\thedate#1{2019/01/21}\def\theversion#1{v3.1}
+\def\thedate#1{2019/04/15}\def\theversion#1{v3.11}
 \ProvidesFile{exframe.dtx}[\thedate{} \theversion{} exframe reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -1433,7 +1433,7 @@ provide a \LaTeX{} 3 style for typesetting exercises with solutions.
 They offer options to
 hide or delay solutions,
 print only specific problems,
-deal with points
+deal with points,
 specify metadata,
 handle exercise collections,
 as well as some more specific options.
@@ -1517,10 +1517,28 @@ Provide an example with multiple sheets in the same document
 such that the sheet can be compiled individually or as a collection.
 \item
 Define structures for multiple-choice questions.
+\item
+Option to specify bonus points in parallel to regular points.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v3.11:} 2019/04/15
+
+\begin{itemize}
+\item
+fix interaction with 
+package \href{http://ctan.org/pkg/calc}{\textsf{calc}}
+(thanks to Johannes Hahn for bug report)
+\item
+fix style |fracpoints| in combination with some [|sub|]|pointsat| choices
+(thanks to Johannes Hahn for bug report)
+\item
+fix spacing for [|sub|]|pointsat=margin|
+(thanks to Johannes Hahn for bug report)
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v3.1:} 2019/01/21
@@ -2038,6 +2056,12 @@ This is beyond the scope of this example.
 \long\def\exf@append@def#1#2{\exf@exptwo\def#1\expandafter{#1#2}}
 \long\def\exf@prepend@switch#1#2#3{#2{#3#1}}
 \long\def\exf@prepend@def#1#2{\exf@exptwo\exf@prepend@switch{#1}{\def#1}{#2}}
+%    \end{macrocode}
+
+% \macro{\exf@gaddtolength}
+% Globally add to length:
+%    \begin{macrocode}
+\def\exf@gaddtolength#1#2{\global\advance#1 #2\relax}
 %    \end{macrocode}
 
 % \macro{\exf@expsetkeys}
@@ -2754,7 +2778,7 @@ This is beyond the scope of this example.
 % Use vulgar fractions to display binary fractional points:
 %    \begin{macrocode}
 \defexercisestyle{fracpoints}%
-  {\exerciseconfig{composepointsnum}[1]{\exf@nicefrac{##1}}}
+  {\exerciseconfig{composepointsnum}[1]{\protect\exf@nicefrac{##1}}}
 %    \end{macrocode}
 %
 % \macro{twoside}
@@ -3561,7 +3585,7 @@ This is beyond the scope of this example.
 % counts towards solution total:
 %    \begin{macrocode}
 \newcommand{\exf@awardpointsreg}[2][]{%
-  \global\addtolength{\exf@solution@points@dim}{#2 pt}%
+  \exf@gaddtolength{\exf@solution@points@dim}{#2 pt}%
   \exf@ensuretext{\exf@config@composepointsaward{#2}{#1}}}
 %    \end{macrocode}
 % \macro{\awardpoints}
@@ -3599,7 +3623,7 @@ This is beyond the scope of this example.
 % Use equation counter for sheets:
 %    \begin{macrocode}
   \ifexf@style@sheetequation%
-   \exf@eqsav\value{equation}%
+   \exf@eqsav\value{equation}\relax%
    \setcounter{equation}{\value{exf@sheetequation}}%
    \let\theequation\theexf@sheetequation%
    \let\theHequation\theHexf@sheetequation%
@@ -3752,7 +3776,7 @@ This is beyond the scope of this example.
 % Use equation counter for problems:
 %    \begin{macrocode}
   \ifexf@style@problemequation%
-   \exf@eqsav\value{equation}%
+   \exf@eqsav\value{equation}\relax%
    \setcounter{equation}{\value{exf@problemequation}}%
    \let\theequation\theexf@problemequation%
    \let\theHequation\theHexf@problemequation%
@@ -3865,7 +3889,7 @@ This is beyond the scope of this example.
 % expand points into argument and remove points:
 %    \begin{macrocode}
   \exf@pointsatis{margin}{\ifdefined\exf@problem@pointsshow%
-   \expandafter\exf@prepend@def\expandafter\exf@intro\expandafter%
+   \expandafter\exf@prepend@def\expandafter\exf@introitem\expandafter%
     {\expandafter\protect\expandafter%
      \exf@config@insertpointsmargin\expandafter{\expandafter%
       \exf@config@composepointsmargin\expandafter{\exf@problem@pointsshow}}}%
@@ -3925,7 +3949,7 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
   \ifdefined\exf@problem@points%
    \exf@writeproblempoints{\exf@problem@points}%
-   \global\addtolength{\exf@sheet@points@dim}{\exf@problem@points pt}%
+   \exf@gaddtolength{\exf@sheet@points@dim}{\exf@problem@points pt}%
   \fi%
 %    \end{macrocode}
 % Warn if some but not all problems on sheet declare points:
@@ -4027,7 +4051,7 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
   \ifdefined\exf@subproblem@points%
    \global\let\exf@prevpoints\exf@subproblem@points%
-   \global\addtolength{\exf@problem@points@dim}{\exf@subproblem@points pt}%
+   \exf@gaddtolength{\exf@problem@points@dim}{\exf@subproblem@points pt}%
 %    \end{macrocode}
 % Warn if no points given for present subproblem but previously:
 %    \begin{macrocode}
@@ -4090,7 +4114,7 @@ This is beyond the scope of this example.
 % expand points into argument and remove points:
 %    \begin{macrocode}
   \exf@subpointsatis{margin}{\ifdefined\exf@subproblem@points%
-   \expandafter\exf@prepend@def\expandafter\exf@intro\expandafter%
+   \expandafter\exf@prepend@def\expandafter\exf@introitem\expandafter%
     {\expandafter\protect\expandafter%
      \exf@config@insertpointsmargin\expandafter{\expandafter%
       \exf@config@composepointsmargin\expandafter{\exf@subproblem@points}}}%
@@ -4171,7 +4195,7 @@ This is beyond the scope of this example.
 % Use equation counter for solutions:
 %    \begin{macrocode}
   \ifexf@style@solutionequation%
-   \exf@eqsav\value{equation}%
+   \exf@eqsav\value{equation}\relax%
    \setcounter{equation}{\value{exf@solutionequation}}%
    \let\theequation\theexf@solutionequation%
    \let\theHequation\theHexf@solutionequation%

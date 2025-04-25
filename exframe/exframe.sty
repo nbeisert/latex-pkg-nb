@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{exframe}[2019/01/21 v3.1 Framework for Exercise Problems]
+\ProvidesPackage{exframe}[2019/04/15 v3.11 Framework for Exercise Problems]
 
 \RequirePackage{verbatim}
 \RequirePackage{xkeyval}
@@ -35,6 +35,8 @@
 \long\def\exf@append@def#1#2{\exf@exptwo\def#1\expandafter{#1#2}}
 \long\def\exf@prepend@switch#1#2#3{#2{#3#1}}
 \long\def\exf@prepend@def#1#2{\exf@exptwo\exf@prepend@switch{#1}{\def#1}{#2}}
+
+\def\exf@gaddtolength#1#2{\global\advance#1 #2\relax}
 
 \newcommand{\exf@expsetkeys}[2]{\edef\exf@tmp{#2}%
   \exf@exparg{\setkeys{#1}}{\exf@tmp}}
@@ -280,7 +282,7 @@
 \defexercisestyle{equationbysheet}%
   {\exf@numberequationwithin{\exf@sheetcounter}}
 \defexercisestyle{fracpoints}%
-  {\exerciseconfig{composepointsnum}[1]{\exf@nicefrac{##1}}}
+  {\exerciseconfig{composepointsnum}[1]{\protect\exf@nicefrac{##1}}}
 \defexercisestylearg[true]{twoside}{\exercisesetup{twoside={#1}}}
 
 \ifexf@extstyle
@@ -650,7 +652,7 @@
 \newcommand{\exf@awardpointsalt}[2][]{%
   \exf@ensuretext{\exf@config@composepointsawardalt{#2}{#1}}}
 \newcommand{\exf@awardpointsreg}[2][]{%
-  \global\addtolength{\exf@solution@points@dim}{#2 pt}%
+  \exf@gaddtolength{\exf@solution@points@dim}{#2 pt}%
   \exf@ensuretext{\exf@config@composepointsaward{#2}{#1}}}
 \newcommand{\awardpoints}{\@ifstar\exf@awardpointsalt\exf@awardpointsreg}
 
@@ -663,7 +665,7 @@
   \exf@config@insertsheetclearpage%
   \refstepcounter{\exf@sheetcounter}%
   \ifexf@style@sheetequation%
-   \exf@eqsav\value{equation}%
+   \exf@eqsav\value{equation}\relax%
    \setcounter{equation}{\value{exf@sheetequation}}%
    \let\theequation\theexf@sheetequation%
    \let\theHequation\theHexf@sheetequation%
@@ -740,7 +742,7 @@
   \begingroup%
   \def\exf@in@problem{}%
   \ifexf@style@problemequation%
-   \exf@eqsav\value{equation}%
+   \exf@eqsav\value{equation}\relax%
    \setcounter{equation}{\value{exf@problemequation}}%
    \let\theequation\theexf@problemequation%
    \let\theHequation\theHexf@problemequation%
@@ -815,7 +817,7 @@
    \fi%
   \fi%
   \exf@pointsatis{margin}{\ifdefined\exf@problem@pointsshow%
-   \expandafter\exf@prepend@def\expandafter\exf@intro\expandafter%
+   \expandafter\exf@prepend@def\expandafter\exf@introitem\expandafter%
     {\expandafter\protect\expandafter%
      \exf@config@insertpointsmargin\expandafter{\expandafter%
       \exf@config@composepointsmargin\expandafter{\exf@problem@pointsshow}}}%
@@ -851,7 +853,7 @@
   \fi%
   \ifdefined\exf@problem@points%
    \exf@writeproblempoints{\exf@problem@points}%
-   \global\addtolength{\exf@sheet@points@dim}{\exf@problem@points pt}%
+   \exf@gaddtolength{\exf@sheet@points@dim}{\exf@problem@points pt}%
   \fi%
   \ifdefined\exf@problem@points\else\ifdim\exf@sheet@points@dim=0pt\else%
    \PackageWarning{exframe}{no points defined for \exf@problemname}%
@@ -894,7 +896,7 @@
   \fi%
   \ifdefined\exf@subproblem@points%
    \global\let\exf@prevpoints\exf@subproblem@points%
-   \global\addtolength{\exf@problem@points@dim}{\exf@subproblem@points pt}%
+   \exf@gaddtolength{\exf@problem@points@dim}{\exf@subproblem@points pt}%
   \else%
    \ifdim\exf@problem@points@dim=0pt\else%
     \PackageWarning{exframe}{no points defined for \exf@subproblemname}%
@@ -931,7 +933,7 @@
     \exf@config@composeitemsubproblemsep}}%
   \fi%
   \exf@subpointsatis{margin}{\ifdefined\exf@subproblem@points%
-   \expandafter\exf@prepend@def\expandafter\exf@intro\expandafter%
+   \expandafter\exf@prepend@def\expandafter\exf@introitem\expandafter%
     {\expandafter\protect\expandafter%
      \exf@config@insertpointsmargin\expandafter{\expandafter%
       \exf@config@composepointsmargin\expandafter{\exf@subproblem@points}}}%
@@ -963,7 +965,7 @@
   \par{\exf@config@styletext\addvspace{\exf@config@skipsolutionabove}}%
   \exf@config@insertsolutionbefore%
   \ifexf@style@solutionequation%
-   \exf@eqsav\value{equation}%
+   \exf@eqsav\value{equation}\relax%
    \setcounter{equation}{\value{exf@solutionequation}}%
    \let\theequation\theexf@solutionequation%
    \let\theHequation\theHexf@solutionequation%
