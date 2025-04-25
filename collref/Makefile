@@ -28,4 +28,4 @@ clean-all: clean
 
 clean-bak: clean-all
 	rm -f collref.dtx.bak collref.sty.bak collref.ins.bak
-	rm -f README.bak Makefile.bak
+	rm -f README.txt.bak Makefile.bak

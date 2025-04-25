@@ -1,6 +1,6 @@
 % \iffalse
 %
-% collref.dtx Copyright (C) 2003-2014 Niklas Beisert
+% collref.dtx Copyright (C) 2003-2018 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -18,19 +18,33 @@
 % and the derived files collref.sty and collsamp.tex
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{collref}[2014/08/31 v2.0b Collect References]
-%<sample>\ProvidesFile{collsamp.tex}[2014/08/31 v2.0b Sample for Collect References]
+%<package>\ProvidesPackage{collref}[2018/01/17 v2.0c Collect References]
+%<sample>\ProvidesFile{collsamp.tex}[2018/01/17 v2.0c Sample for Collect References]
 %<*driver>
-%\ProvidesFile{collref.drv}[2014/08/31 v2.0b Collect References Manual file]
+%\ProvidesFile{collref.drv}[2018/01/17 v2.0c Collect References Manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
 \usepackage[margin=35mm]{geometry}
 \usepackage{hyperref}
+\usepackage{hyperxmp}
 
 \hypersetup{colorlinks=true}
 \hypersetup{pdfstartview=FitH}
 \hypersetup{pdfpagemode=UseNone}
+\hypersetup{pdfsource={}}
+\hypersetup{pdflang={en-UK}}
+\hypersetup{pdfcopyright={Copyright 2003-2018 Niklas Beisert.
+  This work may be distributed and/or modified under the
+  conditions of the LaTeX Project Public License, either version 1.3
+  of this license or (at your option) any later version.}}
+\hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
+\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K, Wolfgang-Pauli-Strasse 27}}
+\hypersetup{pdfcontactpostcode={8093}}
+\hypersetup{pdfcontactcity={Zurich}}
+\hypersetup{pdfcontactcountry={Switzerland}}
+\hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
+\hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
 \newenvironment{thebib}
 {\list{[\theenumi]}{\parsep0pt\usecounter{enumi}}}
@@ -39,17 +53,19 @@
 \begin{document}
 
 \title{The \textsf{collref} Package\thanks{%
-Earlier versions developed at: Max-Planck-Institut f\"ur Gravitationsphysik (Albert-Einstein-Institut), Potsdam, Germany;
+Earlier versions developed at: Max-Planck-Institut f\"ur Gravitationsphysik
+(Albert-Einstein-Institut), Potsdam, Germany;
 \texttt{AEI-2009-054}}}
 \hypersetup{pdftitle={The collref Package}}
 \author{Niklas Beisert\\[2ex]
-        Institut f\"ur Theoretische Physik\\
-        Eidgen\"ossische Technische Hochschule Z\"urich\\
-        Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
-        \href{mailto:nbeisert@itp.phys.ethz.ch}{\texttt{nbeisert@itp.phys.ethz.ch}}}
+  Institut f\"ur Theoretische Physik\\
+  Eidgen\"ossische Technische Hochschule Z\"urich\\
+  Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
+  \href{mailto:nbeisert@itp.phys.ethz.ch}
+  {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package collref}}
-\date{31 August 2014, \textsf{v2.0b}}
+\date{17 January 2018, \textsf{v2.0c}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -98,42 +114,6 @@ of |\bibitem| entries to match with
 the sequence of |\cite| blocks.
 This is most easily achieved through the use of \BibTeX{}
 with any \emph{unsorted} style.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Similar CTAN Packages.}
-
-The objective and some of the implementation
-of the \textsf{collref} package is similar to the
-CTAN packages \href{http://www.ctan.org/tex-archive/macros/latex/contrib/mcite/}{\textsf{mcite}} by Thorsten Ohl
-and \href{http://www.ctan.org/tex-archive/macros/latex/contrib/mciteplus/}{\textsf{mciteplus}} by Michael Shell,
-but the functionality is different is several respects:
-%
-\begin{itemize}
-\item
-\textsf{collref} is intended to work transparently:
-\LaTeX{} documents which compile with \textsf{collref}
-should also compile fine without invoking \textsf{collref}
-(obviously without collected references).
-The package decides automatically which references
-can be collapsed,
-no further interaction of the author is required.
-
-\textsf{mcite} and \textsf{mciteplus} leave the
-decision/duty to collapse certain references
-using the modified syntax |\cite{A,*B,*C}|.
-
-\item
-\textsf{mcite} and \textsf{mciteplus} are intended to handle punctuations
-in collapsed references correctly.
-This requires a specialised \BibTeX{} style.
-
-No effort is made in \textsf{collref} in this regard.
-Some minor modification in \texttt{collref.sty}
-together with a modified \BibTeX{} style
-might achieve basic punctuation features similar to \textsf{mcite}.
-\end{itemize}
-%
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -281,31 +261,138 @@ Standard \TeX/\LaTeX{} commands can be used to define such a block:
 Subsequently this block can be referenced with
 |\cite{|\textit{\ldots, $\backslash$blocklabel, \ldots}|}|.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Interaction with CTAN Packages.}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Information}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Copyright}
+
+\begingroup
+\parskip1ex
+\parindent0pt
+
+Copyright \copyright{} 2003--2018 Niklas Beisert
+
+This work may be distributed and/or modified under the
+conditions of the \LaTeX{} Project Public License, either version 1.3
+of this license or (at your option) any later version.
+The latest version of this license is in
+  \url{http://www.latex-project.org/lppl.txt}
+and version 1.3 or later is part of all distributions of \LaTeX{}
+version 2005/12/01 or later.
+
+This work has the LPPL maintenance status `maintained'.
+
+The Current Maintainer of this work is Niklas Beisert.
+
+This work consists of the files |README.txt|, |collref.ins| and |collref.dtx|
+as well as the derived files |collref.sty|, |collsamp.tex| and |collref.pdf|.
+
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Files and Installation}
+
+The package consists of the files
+%
+\begin{center}
+\begin{tabular}{ll}
+    |README.txt|  & readme file \\
+    |collref.ins| & installation file \\
+    |collref.dtx| & source file \\
+    |collref.sty| & package file \\
+    |collsamp.tex|& sample file \\
+    |collref.pdf| & manual
+\end{tabular}
+\end{center}
+%
+The distribution consists of the files
+|README.txt|, |collref.ins| and |collref.dtx|.
+%
+\begin{itemize}
+\item
+Run (pdf)\LaTeX{} on |collref.dtx|
+to compile the manual |collref.pdf| (this file).
+\item
+Run \LaTeX{} on |collref.ins| to create the package |collref.sty|
+and the sample |collsamp.tex|.
+Copy the file |collref.sty| to an appropriate directory of your \LaTeX{}
+distribution, e.g.\ \textit{texmf-root}|/tex/latex/collref|.
+Alternatively, you may copy |collref.sty| to the local directories of
+manuscripts for which you wish to use \textsf{collref}.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Related CTAN Packages}
+
+The objective and some of the implementation
+of the \textsf{collref} package is similar to the CTAN packages
+\href{http://www.ctan.org/pkg/mcite}
+{\textsf{mcite}} by Thorsten Ohl
+and \href{http://www.ctan.org/pkg/mciteplus}
+{\textsf{mciteplus}} by Michael Shell,
+but the functionality is different is several respects:
+%
+\begin{itemize}
+\item
+\textsf{collref} is intended to work transparently:
+\LaTeX{} documents which compile with \textsf{collref}
+should also compile fine without invoking \textsf{collref}
+(obviously without collected references).
+The package decides automatically which references
+can be collapsed,
+no further interaction of the author is required.
+
+\textsf{mcite} and \textsf{mciteplus} leave the
+decision/duty to collapse certain references
+using the modified syntax |\cite{A,*B,*C}|.
+
+\item
+\textsf{mcite} and \textsf{mciteplus} are intended to handle punctuations
+in collapsed references correctly.
+This requires a specialised \BibTeX{} style.
+
+No effort is made in \textsf{collref} in this regard.
+Some minor modification in \texttt{collref.sty}
+together with a modified \BibTeX{} style
+might achieve basic punctuation features similar to \textsf{mcite}.
+\end{itemize}
+%
 The package \textsf{collref} has been tested with other
 CTAN packages concerned with citations and the bibliography:
 %
 \begin{itemize}
-\item\textsf{cite}:
-\textsf{collref} works in conjunction with \textsf{cite}.
+\item
+\textsf{collref} works in conjunction with
+\href{http://www.ctan.org/pkg/cite}{\textsf{cite}}.
 Note that you must load \textsf{cite} \emph{before} \textsf{collref}
 so that the latter can pass the correctly reduced list of
 references down to \textsf{cite}.
 Tested with v5.1 and v5.3 (2010/09/10).
 
 \item
-\textsf{hyperref}:
-\textsf{collref} works in conjunction with \textsf{hyperref}.
+\textsf{collref} works in conjunction with
+\href{http://www.ctan.org/pkg/hyperref}{\textsf{hyperref}}.
 The two packages can be loaded in any sequence.
 Tested with v6.78s and v6.83m (2012/11/06).
 
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Feature Suggestions}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Revision History}
+\subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v2.0c:} 2018/01/17
+
+\begin{itemize}
+\item
+manual rearranged
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v2.0b:} 2014/08/31
@@ -323,8 +410,10 @@ minor internal changes
 \begin{itemize}
 \item
 proper punctuation added
+(thanks to Oleg Zhirov for suggestion)
 \item
 blocks of references enabled
+(thanks to Oleg Zhirov for suggestion)
 \item
 manual extended
 \end{itemize}
@@ -343,6 +432,7 @@ renamed package to \textsf{collref} due to name clash on CTAN
 first version published on CTAN
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v0.9:}
 
 \begin{itemize}
@@ -350,12 +440,6 @@ first version published on CTAN
 package named \textsf{collect}; unpublished
 \end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Acknowledgements}
-Thanks to Oleg Zhirov
-for suggesting proper punctuation
-and labels for blocks of references.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -366,68 +450,11 @@ and labels for blocks of references.
 \parskip1ex
 \parindent0pt
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Files and Installation}
-
-The package consists of the files
-%
-\begin{center}
-\begin{tabular}{ll}
-    |README|      & readme file \\
-    |collref.ins| & installation file \\
-    |collref.dtx| & source file \\
-    |collref.sty| & package file \\
-    |collsamp.tex|& sample file \\
-    |collref.pdf| & manual
-\end{tabular}
-\end{center}
-%
-The distribution consists of the files
-|README|, |collref.ins| and |collref.dtx|.
-%
-\begin{itemize}
-\item
-Run (pdf)\LaTeX{} on |collref.dtx| to compile the manual |collref.pdf| (this file).
-\item
-Run \LaTeX{} on |collref.ins| to create the package |collref.sty|
-and the sample |collsamp.tex|.
-Copy the file |collref.sty| to an appropriate directory of your \LaTeX{}
-distribution, e.g.\ \textit{texmf-root}|/tex/latex/collref|.
-Alternatively, you may copy |collref.sty| to the local directories of
-manuscripts for which you wish to use \textsf{collref}.
-\end{itemize}
-
  \DocInput{collref.dtx}
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Copyright}
-
-Copyright \copyright{} 2003--2014 Niklas Beisert
-
-This work may be distributed and/or modified under the
-conditions of the \LaTeX{} Project Public License, either version 1.3
-of this license or (at your option) any later version.
-The latest version of this license is in
-  \url{http://www.latex-project.org/lppl.txt}
-and version 1.3 or later is part of all distributions of \LaTeX{}
-version 2005/12/01 or later.
-
-This work has the LPPL maintenance status `maintained'.
-
-The Current Maintainer of this work is Niklas Beisert.
-
-This work consists of the files |README|, |collref.dtx| and |collref.ins|
-as well as the derived files |collref.sty|, |collsamp.tex|
-and |collref.pdf|.
-
 
 \end{document}
 %</driver>
 % \fi
-%
-%
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -440,9 +467,10 @@ and |collref.pdf|.
 %
 %    \begin{macrocode}
 \documentclass{article}
-%\usepackage{cite}
+
+%%\usepackage{cite}
 \usepackage[punctsep]{collref}
-%\usepackage{hyperref}
+%%\usepackage{hyperref}
 
 \begin{document}
 
@@ -485,8 +513,7 @@ and |collref.pdf|.
 % \end{thebib}
 % Note the different behaviour for references 5, 6 and 7
 % for which trailing whitespaces were not removed.
-
-
+%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Implementation}
@@ -495,7 +522,7 @@ and |collref.pdf|.
 %\fi
 %
 % In this section we describe the package |collref.sty|.
-%
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Internal Lists.}
 %
@@ -722,8 +749,9 @@ and |collref.pdf|.
   \xdef\nc@nextpunct{\nc@punct}%
 \ignorespaces}
 %    \end{macrocode}
+
 %\iffalse
 %</package>
 %\fi
-
+%
 \endinput
