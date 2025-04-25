@@ -6,6 +6,7 @@ Copyright 2003-2025 Niklas Beisert
 The repository consists of the packages:
 
 * [collref](https://ctan.org/pkg/collref)
+* [mpostinl](https://ctan.org/pkg/mpostinl)
 
 The packages in this repository may be distributed and/or modified
 under the conditions spelled out in the corresponding subdirectories

@@ -4,9 +4,7 @@
 #include relevant files
 !/.gitignore
 !/Makefile
-!/README.md
-!/LICENSE.md
-
-#include packages
-!/collref/
-!/mpostinl/
+!/mpostinl.dtx
+!/mpostinl.ins
+!/mpostinl.sty
+!/README
