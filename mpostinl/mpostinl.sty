@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{mpostinl}[2017/01/04 v1.0 metapost inline figures]
+\ProvidesPackage{mpostinl}[2017/02/27 v1.1 metapost inline figures]
 
 \RequirePackage{verbatim}
 \RequirePackage{graphicx}
@@ -29,7 +29,8 @@
 \def\mpostfilename{\jobname}
 \def\mpi@nowname{\jobname-tmp}
 \def\mpi@extension{mps}
-\def\mpi@template#1{\mpostfilename-#1.\mpi@extension}
+\def\mpi@template#1{\mpostfilename-#1%
+  \ifx\mpi@extension\mpi@empty\else.\fi\mpi@extension}
 
 \newcounter{mpi@count}
 \def\thempi@count{\arabic{mpi@count}}
@@ -49,8 +50,7 @@
 \newif\ifmpi@defglobal\mpi@defglobalfalse
 
 \def\mpi@mpostmem{}
-\def\mpi@mpostcompiler{mpost}
-\def\mpi@texcompiler{latex}
+\def\mpi@mpostcompiler{}
 \def\mpi@latexclass{article}
 \def\mpi@latexoptions{}
 \def\mpi@documentclass{\@backslashchar documentclass%
@@ -65,27 +65,24 @@
 \DeclareOption{final}{\mpi@draftfalse}
 \define@key{\mpi@group}{draft}[true]{\csname mpi@draft#1\endcsname}
 \define@key{\mpi@group}{write}[true]{\csname mpi@write#1\endcsname}
-\define@key{\mpi@group}{latex}[true]{\csname mpi@latex#1\endcsname%
-  \ifmpi@latex%
-    \def\mpi@texcompiler{latex}%
-  \else%
-    \def\mpi@texcompiler{tex}%
-  \fi}
+\define@key{\mpi@group}{latex}[true]{\csname mpi@latex#1\endcsname}
 \define@key{\mpi@group}{compile}[true]{\csname mpi@compile#1\endcsname}
 \define@key{\mpi@group}{twice}[true]{\csname mpi@twice#1\endcsname}
 \define@key{\mpi@group}{fonts}[true]{\csname mpi@fonts#1\endcsname}
+\define@key{\mpi@group}{prologues}[]{\def\mpi@prologues{#1}}
 \define@key{\mpi@group}{lineno}[true]{\csname mpi@lineno#1\endcsname}
 \define@key{\mpi@group}{labelnames}[true]{\csname mpi@labelnames#1\endcsname}
-\define@key{\mpi@group}{compiler}{\def\mpi@texcompiler{#1}}
-\define@key{\mpi@group}{mem}{\def\mpi@mpostmem{#1}}
-\define@key{\mpi@group}{command}{\def\mpi@mpostcompiler{#1}}
+\define@key{\mpi@group}{compiler}[]{\def\mpi@texcompiler{#1}}
+\define@key{\mpi@group}{format}[]{\def\mpi@texformat{#1}}
+\define@key{\mpi@group}{mem}[]{\def\mpi@mpostmem{#1}}
+\define@key{\mpi@group}{command}[]{\def\mpi@mpostcompiler{#1}}
 \define@key{\mpi@group}{class}{\def\mpi@latexclass{#1}}
-\define@key{\mpi@group}{classopt}{\def\mpi@latexoptions{[#1]}}
+\define@key{\mpi@group}{classopt}[]{\def\mpi@latexoptions{[#1]}}
 \define@key{\mpi@group}{now}[true]{\csname mpi@nowactive#1\endcsname}
 \define@key{\mpi@group}{nowall}[true]{\csname mpi@now#1\endcsname}
 \define@key{\mpi@group}{nowkeep}[true]{\csname mpi@nowkeep#1\endcsname}
 \define@key{\mpi@group}{globaldef}[true]{\csname mpi@defglobal#1\endcsname}
-\define@key{\mpi@group}{extension}{\def\mpi@extension{#1}}
+\define@key{\mpi@group}{extension}[]{\def\mpi@extension{#1}}
 \define@key{\mpi@group}{template}{\def\mpi@template##1{#1}}
 \define@key{\mpi@group}{numberwithin}{%
   \@addtoreset{mpi@count}{#1}%
@@ -105,7 +102,9 @@
 \newwrite\mpi@out
 \newwrite\mpi@outnow
 
-\def\mpi@write#1{\ifmpi@write\immediate\write\mpi@out{#1}\fi}
+\def\mpi@writebuf{\ifmpi@write\immediate\write\mpi@out{\the\mpi@buf}\fi}
+
+\def\mpi@writenow{\ifmpi@nowactive\mpi@addtoexp\mpi@nowbuf{\the\mpi@buf^^J}\fi}
 
 \newtoks\mpi@buf
 \newtoks\mpi@defbuf
@@ -131,8 +130,10 @@
     \mpi@ifeq{#1}{\@gobble}{}{%
       \mpi@ifeq{#2}{eps}{\def\mpi@tmp{\def\mpi@stripped{#1}}}{}%
       \mpi@ifeq{#2}{mps}{\def\mpi@tmp{\def\mpi@stripped{#1}}}{}%
-      \expandafter\mpi@ifeq\expandafter{\mpi@extension}{#2}%
-        {\def\mpi@tmp{\def\mpi@stripped{#1}}}{}%
+      \ifx\mpi@extension\mpi@empty\else%
+        \expandafter\mpi@ifeq\expandafter{\mpi@extension}{#2}%
+          {\def\mpi@tmp{\def\mpi@stripped{#1}}}{}%
+      \fi%
     }%
   }{\def\mpi@tmp{\mpi@stripfor{#1.#2}#3.}}%
   \expandafter\endgroup\mpi@tmp%
@@ -177,10 +178,10 @@
 
 \newcommand{\mpi@declaredoc}{%
   \ifmpi@latex%
-    \mpi@putlineno%
     \mpi@addbuf{verbatimtex}%
     \mpi@addbuf{\mpi@documentclass}%
     \mpi@addbuf{etex}%
+    \mpi@addbuf{}%
   \fi%
 }
 
@@ -202,19 +203,28 @@
   \fi%
 }
 
-\newcommand{\mpi@writehead}{%
-  \ifmpi@fonts\mpi@addbuf{prologues:=3;}\else\mpi@addbuf{prologues:=2;}\fi%
-  \ifmpi@draft\mpi@addbuf{draft:=1;}\fi%
-  \mpi@addbuf{}%
-  \mpi@putlineno%
-  \ifx\mpi@compiler\mpi@empty\else%
+\newcommand{\mpi@declareformat}{%
+  \let\mpi@tmp\mpi@texformat%
+  \ifx\mpi@tmp\@undefined\def\mpi@tmp{\ifmpi@latex latex\else tex\fi}\fi%
+  \ifx\mpi@tmp\mpi@empty\else%
     \mpi@addbuf{verbatimtex}%
-    \mpi@addbuf{\@percentchar &\mpi@texcompiler}%
+    \mpi@addbuf{\@percentchar &\mpi@tmp}%
     \mpi@addbuf{etex}%
     \mpi@addbuf{}%
   \fi%
-  \mpi@declaredoc%
+}
+
+\newcommand{\mpi@composehead}{%
+  \mpi@putlineno%
+  \let\mpi@tmp\mpi@prologues%
+  \ifx\mpi@tmp\@undefined\def\mpi@tmp{\ifmpi@latex 3\else 2\fi}\fi%
+  \ifx\mpi@tmp\mpi@empty\else%
+    \mpi@addbuf{prologues:=\mpi@tmp;}%
+  \fi%
+  \ifmpi@draft\mpi@addbuf{draft:=1;}\fi%
   \mpi@addbuf{}%
+  \mpi@declareformat%
+  \mpi@declaredoc%
 }
 
 \newcommand{\mpi@beginfile}{%
@@ -223,7 +233,7 @@
   \fi%
   \mpi@addbuf{\@percentchar generated from file `\jobname' by mpostinl.sty}%
   \ifmpi@include\else%
-    \mpi@writehead%
+    \mpi@composehead%
     \mpi@addbufexp{\the\mpi@defbuf}%
   \fi%
 }
@@ -244,17 +254,15 @@
     \ifmpi@write\immediate\openout\mpi@out\mpostfilename.mp\fi%
     \mpi@clearbuf%
     \mpi@beginfile%
-    \mpi@write{\the\mpi@buf}%
+    \mpi@writebuf%
     \ifmpi@include%
       \mpi@clearbuf%
       \mpi@putlineno%
       \mpi@addbuf{input \mpostfilename}%
       \mpi@addtoexp\mpi@defbuf{\the\mpi@buf^^J}%
     \else%
-      \ifmpi@nowactive%
-        \global\mpi@nowbuf={}%
-        \mpi@addtoexp\mpi@nowbuf{\the\mpi@buf^^J}%
-      \fi%
+      \global\mpi@nowbuf={}%
+      \mpi@writenow%
     \fi%
   \fi%
 }
@@ -265,23 +273,32 @@
     \global\mpi@inbodytrue%
     \mpi@clearbuf%
     \mpi@begindoc%
-    \mpi@write{\the\mpi@buf}%
-    \ifmpi@nowactive\mpi@addtoexp\mpi@nowbuf{\the\mpi@buf^^J}\fi%
+    \mpi@writebuf%
+    \mpi@writenow%
   \fi%
 }
 
 \newcommand{\mpi@compile}[1]{%
   \ifmpi@write\ifmpi@compile%
-    \def\mpi@imode{}%
-    \ifcase\the\interactionmode%
-      \def\mpi@imode{-interaction=batchmode}\or%
-      \def\mpi@imode{-interaction=nonstopmode}\or%
-      \def\mpi@imode{-interaction=scrollmode}\or%
-      \def\mpi@imode{-interaction=errorstopmode}\fi%
-    \def\mpi@execute{\mpi@mpostcompiler\space%
-      \mpi@imode\space%
-      \ifx\mpi@mpostmem\mpi@empty\else -mem=\mpi@mpostmem\space\fi%
-      -tex=\mpi@texcompiler\space#1}%
+    \ifx\mpi@mpostcompiler\mpi@empty%
+      \def\mpi@imode{}%
+      \ifcase\the\interactionmode%
+        \def\mpi@imode{-interaction=batchmode}\or%
+        \def\mpi@imode{-interaction=nonstopmode}\or%
+        \def\mpi@imode{-interaction=scrollmode}\or%
+        \def\mpi@imode{-interaction=errorstopmode}\fi%
+      \let\mpi@texswitch\mpi@texcompiler%
+      \ifx\mpi@texswitch\@undefined%
+        \def\mpi@texswitch{\ifmpi@latex latex\else tex\fi}%
+      \fi%
+      \def\mpi@execute{mpost\space%
+        \mpi@imode\space%
+        \ifx\mpi@mpostmem\mpi@empty\else -mem=\mpi@mpostmem\space\fi%
+        \ifx\mpi@texswitch\mpi@empty\else -tex=\mpi@texswitch\space\fi%
+        #1}%
+    \else%
+      \def\mpi@execute{\mpi@mpostcompiler\space#1}%
+    \fi%
     \immediate\write18{\mpi@execute}%
     \ifmpi@twice%
       \immediate\write18{\mpi@execute}%
@@ -297,7 +314,7 @@
       \mpi@addbuf{}%
     \fi%
     \mpi@endfile%
-    \mpi@write{\the\mpi@buf}%
+    \mpi@writebuf%
     \ifmpi@write\immediate\closeout\mpi@out\fi%
     \ifmpi@inbody\mpi@compile{\mpostfilename.mp}\fi%
     \global\mpi@infilefalse%
@@ -362,16 +379,12 @@
   \ifmpi@defglobal%
     \mpi@addtoexp\mpi@defbuf{\the\mpi@buf^^J}%
     \ifmpi@include\else\ifmpi@infile%
-      \mpi@write{\the\mpi@buf}%
-      \ifmpi@nowactive%
-        \mpi@addtoexp\mpi@nowbuf{\the\mpi@buf^^J}%
-      \fi%
+      \mpi@writebuf%
+      \mpi@writenow%
     \fi\fi%
   \else%
-    \mpi@write{\the\mpi@buf}%
-    \ifmpi@include\else\ifmpi@nowactive%
-      \mpi@addtoexp\mpi@nowbuf{\the\mpi@buf^^J}%
-    \fi\fi%
+    \mpi@writebuf%
+    \ifmpi@include\else\mpi@writenow\fi%
   \fi%
   \@esphack%
 }
@@ -416,7 +429,7 @@
 }%
 {%
   \mpi@endfig%
-  \mpi@write{\the\mpi@buf}%
+  \mpi@writebuf%
   \ifmpi@now%
     \mpi@processnow%
   \fi%

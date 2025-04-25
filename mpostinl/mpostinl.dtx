@@ -18,10 +18,10 @@
 % and the derived files mpostinl.sty and mpinlsmp.tex
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mpostinl}[2017/01/04 v1.0 metapost inline figures]
-%<sample>\ProvidesFile{mpinlsmp.tex}[2017/01/04 v1.0 sample for mpostinl]
+%<package>\ProvidesPackage{mpostinl}[2017/02/27 v1.1 metapost inline figures]
+%<sample>\ProvidesFile{mpinlsmp.tex}[2017/02/27 v1.1 sample for mpostinl]
 %<*driver>
-%\ProvidesFile{mpostinl.drv}[2017/01/04 v1.0 mpostinl reference manual file]
+%\ProvidesFile{mpostinl.drv}[2017/02/27 v1.1 mpostinl reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -48,7 +48,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package mpostinl}}
-\date{4 January 2017, \textsf{v1.0}}
+\date{27 February 2017, \textsf{v1.1}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -224,7 +224,7 @@ has been tested with v0.7c (2015/04/23).
 The package assumes a \TeX{} installation with \MP{}
 configured appropriately.
 Recent \textsf{texlive} and MiK\TeX{} distributions should work well.
-Compatibility with the \textsf{texlive} distribution 
+Compatibility with the \textsf{texlive} distribution
 has been tested with the 2016 issue containing
 pdf\TeX{} version 3.14159265-2.6-1.40.17
 and \MP{} version 1.9991.
@@ -276,7 +276,7 @@ is in the list of permissible commands):
 \end{center}
 In the MiK\TeX{} distribution the appropriate
 command line option is |-enable-write18|.
-In a \LaTeX{} font end this option may
+In a \LaTeX{} front end this option may
 be configurable in the preferences.
 If the shell escape is not available,
 the generated metapost file(s) \textit{filename}
@@ -448,7 +448,8 @@ in detail in the following sections:
 \begin{itemize}
 \item |draft|[|=true|$\vert$|false|]
 (no value implies |true|, initially set to |false|) --
-Enable/disable |draft| mode.
+Enable/disable |draft| mode by declaring |draft:=1|
+at the top of the metapost file.
 
 \item |final| --
 Same as |draft=false|.
@@ -475,6 +476,11 @@ encapsulated postscript files.
 This option may be required if figure files are
 used outside a \TeX{} environment,
 e.g.\ if the files are to be viewed or processed by |.eps| tools.
+Has no effect if |prologues| option is specified.
+
+\item |prologues=|\textit{value} --
+Declares |prologues:=|\textit{value} at the top of the metapost file.
+Set \textit{value} to empty to disable the |prologues| statement.
 
 \item |lineno|[|=true|$\vert$|false|]
 (no value implies |true|, initially set to |false|) --
@@ -503,12 +509,22 @@ not distinguish upper- and lowercase letters.
 (no value implies |true|, initially set to |true|) --
 Switch between \TeX{} (|false|) and \LaTeX{} (|true|)
 processing of labels.
-This will also set the |compiler| option appropriately.
+In \LaTeX{} mode a basic \LaTeX{} document structure is
+provided by the metapost file.
 
 \item |compiler=|\textit{compiler} --
-Set the compiler program for labels to \textit{compiler}.
-The initial setting is |tex| (in \TeX{} mode)
+Set the compiler program for labels to \textit{compiler}
+(command line option |-tex=|\textit{compiler} for \MP).
+The default is |tex| (in \TeX{} mode)
 or |latex| (in \LaTeX{} mode).
+Set \textit{compiler} to empty to specify no compiler.
+
+\item |format=|\textit{tag} --
+Write format tag |%&|%
+\textit{tag} to specify the compiler program for labels.
+The default is |tex| (in \TeX{} mode)
+or |latex| (in \LaTeX{} mode).
+Set \textit{tag} to empty to write no format tag.
 
 \item |class=|\textit{class}
 (initially set to |article|) --
@@ -522,9 +538,11 @@ No options are specified initially resulting in the |10pt| font set.
 \item |mem=|\textit{mem} --
 Set the metapost format file to \textit{mem}.
 
-\item |command=|\textit{command}
-(initially set to |mpost|) --
-Set the metapost command to \textit{command}.
+\item |command=|\textit{command} --
+Use \textit{command} to process the generated file(s).
+By default the \MP{} program |mpost| is invoked
+to compile the generated metapost files
+(with appropriate command line options).
 
 \item |now|[|=true|$\vert$|false|]
 (no value implies |true|, initially set to |false|) --
@@ -991,6 +1009,104 @@ For instance, to align a figure vertically with the centre of the line,
 you may use |\begin{mpostfig}[opt={align}]|
 or |\mpostuse[align]{|\textit{label}|}|.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Package \textsf{latexmp}.}
+
+The \MP{} package \textsf{latexmp} writes its own \LaTeX{} structure
+to the metapost file.
+Therefore \textsf{mpostinl} must not write the \LaTeX{} structure,
+but still use the |latex| compiler.
+Furthermore \textsf{latexmp} needs two \MP{} passes.
+The required options are:
+\begin{center}
+|\mpostsetup{latex=false,format,compiler=latex,twice}|
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Script \text{mplatex}.}
+
+The \MP{} processing script \textsf{mplatex} expects the default metapost
+file naming convention (\textit{filename}|.|\textit{nn})
+and no |prologues| statement.
+Moreover, it provides the \LaTeX{} structure.
+The required options are:
+%
+\begin{center}
+\begin{tabular}{l}
+|\mpostsetup{latex=false,format,prologues}|\\
+|\mpostsetup{template={\mpostfilename.#1}}|\\
+|\mpostsetup{command={mplatex |\textit{opt}|}}|
+\end{tabular}
+\end{center}
+%
+In \textit{opt} you can specify command line options for |mplatex|,
+e.g.\ to include \LaTeX{} packages.
+Make sure to enable full access to external programs,
+and that |mplatex| is in the path (or specify its location explicitly).
+Note that the file naming convention (\textit{filename}|.|\textit{nn})
+does not seem to work with pdf\LaTeX{}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Information}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Copyright}
+
+\begingroup
+\parskip1ex
+\parindent0pt
+
+Copyright \copyright{} 2010--2017 Niklas Beisert
+
+This work may be distributed and/or modified under the
+conditions of the \LaTeX{} Project Public License, either version 1.3
+of this license or (at your option) any later version.
+The latest version of this license is in
+  \url{http://www.latex-project.org/lppl.txt}
+and version 1.3 or later is part of all distributions of \LaTeX{}
+version 2005/12/01 or later.
+
+This work has the LPPL maintenance status `maintained'.
+
+The Current Maintainer of this work is Niklas Beisert.
+
+This work consists of the files |mpostinl.dtx| and |mpostinl.ins|
+and the derived files |mpostinl.sty| and |mpinlsmp.tex|
+
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Files and Installation}
+
+The package consists of the files:
+%
+\begin{center}
+\begin{tabular}{ll}
+    |README|       & readme file \\
+    |mpostinl.ins| & installation file \\
+    |mpostinl.dtx| & source file \\
+    |mpostinl.sty| & package file \\
+    |mpinlsmp.tex| & sample file \\
+    |mpostinl.pdf| & manual
+\end{tabular}
+\end{center}
+%
+The distribution consists of the files
+|README|, |mpostinl.ins| and |mpostinl.dtx|.
+%
+\begin{itemize}
+\item
+Run (pdf)\LaTeX{} on |mpostinl.dtx|
+to compile the manual |mpostinl.pdf| (this file).
+\item
+Run \LaTeX{} on |mpostinl.ins| to create the package |mpostinl.sty|
+and the sample |mpinlsmp.tex|.
+Copy the file |mpostinl.sty| to an appropriate directory of your \LaTeX{}
+distribution, e.g.\ \textit{texmf-root}|/tex/latex/mpostinl|.
+\end{itemize}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Feature Suggestions}
 \label{sec:suggestions}
@@ -1031,6 +1147,65 @@ such as diff. This feature is probably too difficult to implement.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1:} 2017/02/27
+
+\begin{itemize}
+\item
+improved compatibility with package \textsf{latexmp}
+and script \textsf{mplatex}
+(thanks to Walter Entenmann for encouragement and testing)
+\item
+options improved to fine-tune structures written to metapost files
+and to specify compiler programs
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.0:} 2017/01/04
+
+\begin{itemize}
+\item
+manual and install package
+\item
+first version published on CTAN
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v0.7--0.9:} 2016/11/15 -- 2017/01/04
+
+\begin{itemize}
+\item
+package options
+\item
+metapost environments simplified and renamed
+\item
+immediate and multiple file processing
+\item
+customisation options
+\item
+internal buffer processing
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v0.6--0.63:} 2015/07/11 -- 2016/10/03
+
+\begin{itemize}
+\item
+minor improvements
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v0.5:} 2010/11/01
+
+\begin{itemize}
+\item
+basic functionality
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
@@ -1039,59 +1214,7 @@ such as diff. This feature is probably too difficult to implement.
 \parskip1ex
 \parindent0pt
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Files and Installation}
-
-The package consists of the files:
-%
-\begin{center}
-\begin{tabular}{ll}
-    |README|       & readme file \\
-    |mpostinl.ins| & installation file \\
-    |mpostinl.dtx| & source file \\
-    |mpostinl.sty| & package file \\
-    |mpinlsmp.tex| & sample file \\
-    |mpostinl.pdf| & manual
-\end{tabular}
-\end{center}
-%
-The distribution consists of the files
-|README|, |mpostinl.ins| and |mpostinl.dtx|.
-%
-\begin{itemize}
-\item
-Run (pdf)\LaTeX{} on |mpostinl.dtx|
-to compile the manual |mpostinl.pdf| (this file).
-\item
-Run \LaTeX{} on |mpostinl.ins| to create the package |mpostinl.sty|
-and the sample |mpinlsmp.tex|.
-Copy the file |mpostinl.sty| to an appropriate directory of your \LaTeX{}
-distribution, e.g.\ \textit{texmf-root}|/tex/latex/mpostinl|.
-\end{itemize}
-
  \DocInput{mpostinl.dtx}
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Copyright}
-
-Copyright \copyright{} 2010--2017 Niklas Beisert
-
-This work may be distributed and/or modified under the
-conditions of the \LaTeX{} Project Public License, either version 1.3
-of this license or (at your option) any later version.
-The latest version of this license is in
-  \url{http://www.latex-project.org/lppl.txt}
-and version 1.3 or later is part of all distributions of \LaTeX{}
-version 2005/12/01 or later.
-
-This work has the LPPL maintenance status `maintained'.
-
-The Current Maintainer of this work is Niklas Beisert.
-
-This work consists of the files |mpostinl.dtx| and |mpostinl.ins|
-and the derived files |mpostinl.sty| and |mpinlsmp.tex|
 
 \end{document}
 %</driver>
@@ -1135,7 +1258,9 @@ and the derived files |mpostinl.sty| and |mpinlsmp.tex|
 % Include packages \textsf{currfile} and \textsf{graphbox} if available,
 % declare an alignment switch |\align| (if \textsf{graphbox} is available):
 %    \begin{macrocode}
+%% optional: add filename to position labels in metapost code
 \IfFileExists{currfile.sty}{\usepackage{currfile}}{}
+%% optional: tools to align graphics
 \IfFileExists{graphbox.sty}
   {\def\align{align}\usepackage{graphbox}}
   {\def\align{}}
@@ -1144,6 +1269,7 @@ and the derived files |mpostinl.sty| and |mpinlsmp.tex|
 % Enable immediate mode and line number indicators,
 % prepare some \textsf{mpostinl} options for testing:
 %    \begin{macrocode}
+%% some sample package options:
 %% \mpostsetup{write=false}
 %% \mpostsetup{compile=false}
 \mpostsetup{now}
@@ -1158,6 +1284,7 @@ and the derived files |mpostinl.sty| and |mpinlsmp.tex|
 % as we will be generating several metapost files later on,
 % make sure this statement in included in all of them:
 %    \begin{macrocode}
+%% declare packages to be used for processing labels:
 \begin{mpostdef}[tex,global]
 \usepackage[utf8]{inputenc}
 \end{mpostdef}
@@ -1167,6 +1294,7 @@ and the derived files |mpostinl.sty| and |mpinlsmp.tex|
 % as we will be generating several metapost files later on,
 % make sure this statement in included in all of them:
 %    \begin{macrocode}
+%% specify global definitions:
 \begin{mpostdef}[global]
 newinternal unit;
 unit:=1cm;
@@ -1625,7 +1753,8 @@ filename: \mpostgetname{sec8}
 \def\mpostfilename{\jobname}
 \def\mpi@nowname{\jobname-tmp}
 \def\mpi@extension{mps}
-\def\mpi@template#1{\mpostfilename-#1.\mpi@extension}
+\def\mpi@template#1{\mpostfilename-#1%
+  \ifx\mpi@extension\mpi@empty\else.\fi\mpi@extension}
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
@@ -1663,7 +1792,6 @@ filename: \mpostgetname{sec8}
 
 % \begin{macro}{\mpi@mpostmem}
 % \begin{macro}{\mpi@mpostcompiler}
-% \begin{macro}{\mpi@texcompiler}
 % \begin{macro}{\mpi@latexclass}
 % \begin{macro}{\mpi@latexoptions}
 % \begin{macro}{\mpi@documentclass}
@@ -1671,14 +1799,12 @@ filename: \mpostgetname{sec8}
 % \TeX{} or \LaTeX{}:
 %    \begin{macrocode}
 \def\mpi@mpostmem{}
-\def\mpi@mpostcompiler{mpost}
-\def\mpi@texcompiler{latex}
+\def\mpi@mpostcompiler{}
 \def\mpi@latexclass{article}
 \def\mpi@latexoptions{}
 \def\mpi@documentclass{\@backslashchar documentclass%
   \mpi@latexoptions{\mpi@latexclass}}
 %    \end{macrocode}
-% \end{macro}
 % \end{macro}
 % \end{macro}
 % \end{macro}
@@ -1701,27 +1827,24 @@ filename: \mpostgetname{sec8}
 \DeclareOption{final}{\mpi@draftfalse}
 \define@key{\mpi@group}{draft}[true]{\csname mpi@draft#1\endcsname}
 \define@key{\mpi@group}{write}[true]{\csname mpi@write#1\endcsname}
-\define@key{\mpi@group}{latex}[true]{\csname mpi@latex#1\endcsname%
-  \ifmpi@latex%
-    \def\mpi@texcompiler{latex}%
-  \else%
-    \def\mpi@texcompiler{tex}%
-  \fi}
+\define@key{\mpi@group}{latex}[true]{\csname mpi@latex#1\endcsname}
 \define@key{\mpi@group}{compile}[true]{\csname mpi@compile#1\endcsname}
 \define@key{\mpi@group}{twice}[true]{\csname mpi@twice#1\endcsname}
 \define@key{\mpi@group}{fonts}[true]{\csname mpi@fonts#1\endcsname}
+\define@key{\mpi@group}{prologues}[]{\def\mpi@prologues{#1}}
 \define@key{\mpi@group}{lineno}[true]{\csname mpi@lineno#1\endcsname}
 \define@key{\mpi@group}{labelnames}[true]{\csname mpi@labelnames#1\endcsname}
-\define@key{\mpi@group}{compiler}{\def\mpi@texcompiler{#1}}
-\define@key{\mpi@group}{mem}{\def\mpi@mpostmem{#1}}
-\define@key{\mpi@group}{command}{\def\mpi@mpostcompiler{#1}}
+\define@key{\mpi@group}{compiler}[]{\def\mpi@texcompiler{#1}}
+\define@key{\mpi@group}{format}[]{\def\mpi@texformat{#1}}
+\define@key{\mpi@group}{mem}[]{\def\mpi@mpostmem{#1}}
+\define@key{\mpi@group}{command}[]{\def\mpi@mpostcompiler{#1}}
 \define@key{\mpi@group}{class}{\def\mpi@latexclass{#1}}
-\define@key{\mpi@group}{classopt}{\def\mpi@latexoptions{[#1]}}
+\define@key{\mpi@group}{classopt}[]{\def\mpi@latexoptions{[#1]}}
 \define@key{\mpi@group}{now}[true]{\csname mpi@nowactive#1\endcsname}
 \define@key{\mpi@group}{nowall}[true]{\csname mpi@now#1\endcsname}
 \define@key{\mpi@group}{nowkeep}[true]{\csname mpi@nowkeep#1\endcsname}
 \define@key{\mpi@group}{globaldef}[true]{\csname mpi@defglobal#1\endcsname}
-\define@key{\mpi@group}{extension}{\def\mpi@extension{#1}}
+\define@key{\mpi@group}{extension}[]{\def\mpi@extension{#1}}
 \define@key{\mpi@group}{template}{\def\mpi@template##1{#1}}
 \define@key{\mpi@group}{numberwithin}{%
   \@addtoreset{mpi@count}{#1}%
@@ -1769,10 +1892,17 @@ filename: \mpostgetname{sec8}
 % \end{macro}
 % \end{macro}
 
-% \begin{macro}{\mpi@write}
+% \begin{macro}{\mpi@writebuf}
 % Write to the file:
 %    \begin{macrocode}
-\def\mpi@write#1{\ifmpi@write\immediate\write\mpi@out{#1}\fi}
+\def\mpi@writebuf{\ifmpi@write\immediate\write\mpi@out{\the\mpi@buf}\fi}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\mpi@writenow}
+% Write to the immediate buffer:
+%    \begin{macrocode}
+\def\mpi@writenow{\ifmpi@nowactive\mpi@addtoexp\mpi@nowbuf{\the\mpi@buf^^J}\fi}
 %    \end{macrocode}
 % \end{macro}
 
@@ -1836,8 +1966,10 @@ filename: \mpostgetname{sec8}
     \mpi@ifeq{#1}{\@gobble}{}{%
       \mpi@ifeq{#2}{eps}{\def\mpi@tmp{\def\mpi@stripped{#1}}}{}%
       \mpi@ifeq{#2}{mps}{\def\mpi@tmp{\def\mpi@stripped{#1}}}{}%
-      \expandafter\mpi@ifeq\expandafter{\mpi@extension}{#2}%
-        {\def\mpi@tmp{\def\mpi@stripped{#1}}}{}%
+      \ifx\mpi@extension\mpi@empty\else%
+        \expandafter\mpi@ifeq\expandafter{\mpi@extension}{#2}%
+          {\def\mpi@tmp{\def\mpi@stripped{#1}}}{}%
+      \fi%
     }%
   }{\def\mpi@tmp{\mpi@stripfor{#1.#2}#3.}}%
   \expandafter\endgroup\mpi@tmp%
@@ -1927,10 +2059,10 @@ filename: \mpostgetname{sec8}
 %    \begin{macrocode}
 \newcommand{\mpi@declaredoc}{%
   \ifmpi@latex%
-    \mpi@putlineno%
     \mpi@addbuf{verbatimtex}%
     \mpi@addbuf{\mpi@documentclass}%
     \mpi@addbuf{etex}%
+    \mpi@addbuf{}%
   \fi%
 }
 %    \end{macrocode}
@@ -1966,24 +2098,38 @@ filename: \mpostgetname{sec8}
 %    \end{macrocode}
 % \end{macro}
 
-% \begin{macro}{\mpi@writehead}
+% \begin{macro}{\mpi@declareformat}
+% Write \TeX{} format specifier to buffer:
+%    \begin{macrocode}
+\newcommand{\mpi@declareformat}{%
+  \let\mpi@tmp\mpi@texformat%
+  \ifx\mpi@tmp\@undefined\def\mpi@tmp{\ifmpi@latex latex\else tex\fi}\fi%
+  \ifx\mpi@tmp\mpi@empty\else%
+    \mpi@addbuf{verbatimtex}%
+    \mpi@addbuf{\@percentchar &\mpi@tmp}%
+    \mpi@addbuf{etex}%
+    \mpi@addbuf{}%
+  \fi%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\mpi@composehead}
 % Write file header to buffer;
 % declare font inclusion and draft mode,
 % write \TeX{} format specifier and \LaTeX{} header:
 %    \begin{macrocode}
-\newcommand{\mpi@writehead}{%
-  \ifmpi@fonts\mpi@addbuf{prologues:=3;}\else\mpi@addbuf{prologues:=2;}\fi%
+\newcommand{\mpi@composehead}{%
+  \mpi@putlineno%
+  \let\mpi@tmp\mpi@prologues%
+  \ifx\mpi@tmp\@undefined\def\mpi@tmp{\ifmpi@latex 3\else 2\fi}\fi%
+  \ifx\mpi@tmp\mpi@empty\else%
+    \mpi@addbuf{prologues:=\mpi@tmp;}%
+  \fi%
   \ifmpi@draft\mpi@addbuf{draft:=1;}\fi%
   \mpi@addbuf{}%
-  \mpi@putlineno%
-  \ifx\mpi@compiler\mpi@empty\else%
-    \mpi@addbuf{verbatimtex}%
-    \mpi@addbuf{\@percentchar &\mpi@texcompiler}%
-    \mpi@addbuf{etex}%
-    \mpi@addbuf{}%
-  \fi%
+  \mpi@declareformat%
   \mpi@declaredoc%
-  \mpi@addbuf{}%
 }
 %    \end{macrocode}
 % \end{macro}
@@ -1998,7 +2144,7 @@ filename: \mpostgetname{sec8}
   \fi%
   \mpi@addbuf{\@percentchar generated from file `\jobname' by mpostinl.sty}%
   \ifmpi@include\else%
-    \mpi@writehead%
+    \mpi@composehead%
     \mpi@addbufexp{\the\mpi@defbuf}%
   \fi%
 }
@@ -2036,7 +2182,7 @@ filename: \mpostgetname{sec8}
     \ifmpi@write\immediate\openout\mpi@out\mpostfilename.mp\fi%
     \mpi@clearbuf%
     \mpi@beginfile%
-    \mpi@write{\the\mpi@buf}%
+    \mpi@writebuf%
 %    \end{macrocode}
 % For include files, write |input| statement to definition buffer
 % so that the file will be included by all main files:
@@ -2050,10 +2196,8 @@ filename: \mpostgetname{sec8}
 % If immediate mode is available fill immediate buffer with header:
 %    \begin{macrocode}
     \else%
-      \ifmpi@nowactive%
-        \global\mpi@nowbuf={}%
-        \mpi@addtoexp\mpi@nowbuf{\the\mpi@buf^^J}%
-      \fi%
+      \global\mpi@nowbuf={}%
+      \mpi@writenow%
     \fi%
   \fi%
 }
@@ -2072,8 +2216,8 @@ filename: \mpostgetname{sec8}
     \global\mpi@inbodytrue%
     \mpi@clearbuf%
     \mpi@begindoc%
-    \mpi@write{\the\mpi@buf}%
-    \ifmpi@nowactive\mpi@addtoexp\mpi@nowbuf{\the\mpi@buf^^J}\fi%
+    \mpi@writebuf%
+    \mpi@writenow%
   \fi%
 }
 %    \end{macrocode}
@@ -2084,22 +2228,36 @@ filename: \mpostgetname{sec8}
 %    \begin{macrocode}
 \newcommand{\mpi@compile}[1]{%
   \ifmpi@write\ifmpi@compile%
+    \ifx\mpi@mpostcompiler\mpi@empty%
 %    \end{macrocode}
-% Pass on interactionmode setting to \MP{}:
+% Compose command line for |mpost|;
+% pass on interactionmode setting to \MP{},
+% specify mem filem, specify tex compiler:
 %    \begin{macrocode}
-    \def\mpi@imode{}%
-    \ifcase\the\interactionmode%
-      \def\mpi@imode{-interaction=batchmode}\or%
-      \def\mpi@imode{-interaction=nonstopmode}\or%
-      \def\mpi@imode{-interaction=scrollmode}\or%
-      \def\mpi@imode{-interaction=errorstopmode}\fi%
+      \def\mpi@imode{}%
+      \ifcase\the\interactionmode%
+        \def\mpi@imode{-interaction=batchmode}\or%
+        \def\mpi@imode{-interaction=nonstopmode}\or%
+        \def\mpi@imode{-interaction=scrollmode}\or%
+        \def\mpi@imode{-interaction=errorstopmode}\fi%
+      \let\mpi@texswitch\mpi@texcompiler%
+      \ifx\mpi@texswitch\@undefined%
+        \def\mpi@texswitch{\ifmpi@latex latex\else tex\fi}%
+      \fi%
+      \def\mpi@execute{mpost\space%
+        \mpi@imode\space%
+        \ifx\mpi@mpostmem\mpi@empty\else -mem=\mpi@mpostmem\space\fi%
+        \ifx\mpi@texswitch\mpi@empty\else -tex=\mpi@texswitch\space\fi%
+        #1}%
+    \else%
+%    \end{macrocode}
+% Compose custom command:
+%    \begin{macrocode}
+      \def\mpi@execute{\mpi@mpostcompiler\space#1}%
+    \fi%
 %    \end{macrocode}
 % Execute \MP{} by |\write18| command; do it again if needed:
 %    \begin{macrocode}
-    \def\mpi@execute{\mpi@mpostcompiler\space%
-      \mpi@imode\space%
-      \ifx\mpi@mpostmem\mpi@empty\else -mem=\mpi@mpostmem\space\fi%
-      -tex=\mpi@texcompiler\space#1}%
     \immediate\write18{\mpi@execute}%
     \ifmpi@twice%
       \immediate\write18{\mpi@execute}%
@@ -2126,7 +2284,7 @@ filename: \mpostgetname{sec8}
 % Write end of file and close:
 %    \begin{macrocode}
     \mpi@endfile%
-    \mpi@write{\the\mpi@buf}%
+    \mpi@writebuf%
     \ifmpi@write\immediate\closeout\mpi@out\fi%
 %    \end{macrocode}
 % Compile if file contains figures:
@@ -2249,16 +2407,12 @@ filename: \mpostgetname{sec8}
   \ifmpi@defglobal%
     \mpi@addtoexp\mpi@defbuf{\the\mpi@buf^^J}%
     \ifmpi@include\else\ifmpi@infile%
-      \mpi@write{\the\mpi@buf}%
-      \ifmpi@nowactive%
-        \mpi@addtoexp\mpi@nowbuf{\the\mpi@buf^^J}%
-      \fi%
+      \mpi@writebuf%
+      \mpi@writenow%
     \fi\fi%
   \else%
-    \mpi@write{\the\mpi@buf}%
-    \ifmpi@include\else\ifmpi@nowactive%
-      \mpi@addtoexp\mpi@nowbuf{\the\mpi@buf^^J}%
-    \fi\fi%
+    \mpi@writebuf%
+    \ifmpi@include\else\mpi@writenow\fi%
   \fi%
   \@esphack%
 }
@@ -2337,7 +2491,7 @@ filename: \mpostgetname{sec8}
 %    \begin{macrocode}
 {%
   \mpi@endfig%
-  \mpi@write{\the\mpi@buf}%
+  \mpi@writebuf%
   \ifmpi@now%
     \mpi@processnow%
   \fi%
