@@ -29,5 +29,5 @@ clean-all: clean
 clean-bak: clean-all
 	rm -f delimset.dtx.bak delimset.sty.bak delimset.ins.bak
 	rm -f delimset.dtx~ delimset.sty~ delimset.ins~
-	rm -f README.bak Makefile.bak
-	rm -f README~ Makefile~
+	rm -f README.txt.bak Makefile.bak
+	rm -f README.txt~ Makefile~

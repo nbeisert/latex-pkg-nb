@@ -1,6 +1,6 @@
 % \iffalse
 %
-% delimset.dtx Copyright (C) 2016 Niklas Beisert
+% delimset.dtx Copyright (C) 2016-2018 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -18,21 +18,35 @@
 % and the derived files delimset.sty and dlmssamp.tex
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{delimset}[2016/11/01 v1.0 convenient size control for delimiter sets]
-%<sample>\ProvidesFile{dlmssamp.tex}[2016/11/01 v1.0 sample for delimset]
+%<package>\ProvidesPackage{delimset}[2018/01/17 v1.01 convenient size control for delimiter sets]
+%<sample>\ProvidesFile{dlmssamp.tex}[2018/01/17 v1.01 sample for delimset]
 %<*driver>
-%\ProvidesFile{delimset.drv}[2016/11/01 v1.0 delimset Reference Manual file]
+%\ProvidesFile{delimset.drv}[2018/01/17 v1.01 delimset Reference Manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
 \usepackage[margin=35mm]{geometry}
 \usepackage{hyperref}
+\usepackage{hyperxmp}
 \usepackage[usenames]{color}
 \usepackage{amsmath,amsfonts}
 
 \hypersetup{colorlinks=true}
 \hypersetup{pdfstartview=FitH}
 \hypersetup{pdfpagemode=UseNone}
+\hypersetup{pdfsource={}}
+\hypersetup{pdflang={en-UK}}
+\hypersetup{pdfcopyright={Copyright 2016-2018 Niklas Beisert.
+  This work may be distributed and/or modified under the
+  conditions of the LaTeX Project Public License, either version 1.3
+  of this license or (at your option) any later version.}}
+\hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
+\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K, Wolfgang-Pauli-Strasse 27}}
+\hypersetup{pdfcontactpostcode={8093}}
+\hypersetup{pdfcontactcity={Zurich}}
+\hypersetup{pdfcontactcountry={Switzerland}}
+\hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
+\hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
 \begin{document}
 
@@ -46,11 +60,11 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package delimset}}
-\date{1 November 2016, \textsf{v1.0}}
+\date{17 January 2018, \textsf{v1.01}}
 \maketitle
 
 \begin{abstract}\noindent
-\textsf{delimset} is a \LaTeXe{} package to typeset and declare 
+\textsf{delimset} is a \LaTeXe{} package to typeset and declare
 sets of delimiters in math mode whose size can be adjusted conveniently.
 \end{abstract}
 
@@ -421,22 +435,6 @@ to typeset delimiters on the fly, e.g.:
 The mechanism to specify the size is leaner in the sense that it uses
 only a single character and a single command.
 
-The package relies on two other packages:
-\begin{itemize}
-\item
-This package relies on some functionality of the package \textsf{amsmath}
-by using and overwriting some native code.
-Compatibility with the \textsf{amsmath} package
-has been tested with v2.15d (2016/06/28).
-\item
-This package uses the package \textsf{keyval} from the \textsf{graphics} bundle
-to process optional arguments to the package options.
-Compatibility with the \textsf{keyval} package
-has been tested with v1.15 (2014/10/28).
-\end{itemize}
-%
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -737,59 +735,17 @@ If no value is given |true| is assumed; initially set to |true|.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Feature Suggestions}
-
-% specify width of null delimiter?
-% automatic nesting of bracket types?
-% make optional arguments work for DeclareMathDelimiterSet?
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Information}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\appendix
+\subsection{Copyright}
 
-\settowidth\MacroIndent{\rmfamily\scriptsize 000\ }
+\begingroup
 \parskip1ex
 \parindent0pt
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Files and Installation}
-
-The package consists of the files
-%
-\begin{center}
-\begin{tabular}{ll}
-    |README|       & readme file \\
-    |delimset.ins| & installation file \\
-    |delimset.dtx| & source file \\
-    |delimset.sty| & package file \\
-    |dlmssamp.tex| & sample file \\
-    |delimset.pdf| & manual
-\end{tabular}
-\end{center}
-%
-The distribution consists of the files
-|README|, |delimset.ins| and |delimset.dtx|.
-%
-\begin{itemize}
-\item
-Run (pdf)\LaTeX{} on |delimset.dtx|
-to compile the manual |delimset.pdf| (this file).
-\item
-Run \LaTeX{} on |delimset.ins| to create the package |delimset.sty|
-and the sample consisting of |dlmssamp.tex|.
-Copy the file |delimset.sty| to an appropriate directory of your \LaTeX{}
-distribution, e.g.\ \textit{texmf-root}|/tex/latex/delimset|.
-\end{itemize}
-
- \DocInput{delimset.dtx}
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Copyright}
-
-Copyright \copyright{} 2016 Niklas Beisert
+Copyright \copyright{} 2016--2018 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
@@ -803,8 +759,110 @@ This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainer of this work is Niklas Beisert.
 
-This work consists of the files |delimset.dtx| and |delimset.ins|
-and the derived files |delimset.sty| and |dlmssamp.tex|
+This work consists of the files |README.txt|, |delimset.ins| and |delimset.dtx|
+as well as the derived files |delimset.sty|, |dlmssamp.tex| and |delimset.pdf|.
+
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Files and Installation}
+
+The package consists of the files
+%
+\begin{center}
+\begin{tabular}{ll}
+    |README.txt|   & readme file \\
+    |delimset.ins| & installation file \\
+    |delimset.dtx| & source file \\
+    |delimset.sty| & package file \\
+    |dlmssamp.tex| & sample file \\
+    |delimset.pdf| & manual
+\end{tabular}
+\end{center}
+%
+The distribution consists of the files
+|README.txt|, |delimset.ins| and |delimset.dtx|.
+%
+\begin{itemize}
+\item
+Run (pdf)\LaTeX{} on |delimset.dtx|
+to compile the manual |delimset.pdf| (this file).
+\item
+Run \LaTeX{} on |delimset.ins| to create the package |delimset.sty|
+and the sample |dlmssamp.tex|.
+Copy the file |delimset.sty| to an appropriate directory of your \LaTeX{}
+distribution, e.g.\ \textit{texmf-root}|/tex/latex/delimset|.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Interaction with CTAN Packages}
+
+The package relies on other packages:
+\begin{itemize}
+\item
+This package relies on some functionality of the package \textsf{amsmath}
+by using and overwriting some native code.
+Compatibility with the \textsf{amsmath} package
+has been tested with v2.15d (2016/06/28).
+\item
+This package uses the package \textsf{keyval} from the \textsf{graphics} bundle
+to process optional arguments to the package options.
+Compatibility with the \textsf{keyval} package
+has been tested with v1.15 (2014/10/28).
+\end{itemize}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Feature Suggestions}
+
+% specify width of null delimiter?
+% automatic nesting of bracket types?
+% make optional arguments work for DeclareMathDelimiterSet?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.01:} 2018/01/17
+
+\begin{itemize}
+\item
+manual rearranged
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.0:} 2016/11/01
+
+\begin{itemize}
+\item
+extended standard definitions
+\item
+manual and installation package added
+\item
+first version published on CTAN
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v0.5--0.7:} 2016/05/08 -- 2016/09/04
+
+\begin{itemize}
+\item
+basic functionality
+\item
+standard definitions
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+
+\settowidth\MacroIndent{\rmfamily\scriptsize 000\ }
+\parskip1ex
+\parindent0pt
+
+ \DocInput{delimset.dtx}
 
 \end{document}
 %</driver>
@@ -1181,5 +1239,3 @@ alternative representation:
 %\fi
 %
 \endinput
-%
-%% \CheckSum{3381}

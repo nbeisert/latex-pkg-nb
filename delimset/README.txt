@@ -1,19 +1,20 @@
-delimset v1.0
-Copyright 2016 Niklas Beisert
+delimset v1.01
+Copyright 2016-2018 Niklas Beisert
 
 delimset is a LaTeX2e package to typeset and declare sets of delimiters
 in math mode whose size can be adjusted conveniently.
 
-The package consists of the files 
+The package consists of the files
 
-    README        readme file
+    README.txt    readme file
     delimset.ins  installation file
     delimset.dtx  source file
     delimset.sty  package file
     dlmssamp.tex  sample latex file
     delimset.pdf  manual
 
-The distribution consists of the files README, delimset.ins and delimset.dtx.
+The distribution consists of the files
+README.txt, delimset.ins and delimset.dtx.
 
 Run "(pdf)latex delimset.dtx" to compile the manual delimset.pdf.
 
