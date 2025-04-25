@@ -1,4 +1,4 @@
-exframe v3.31
+exframe v3.4
 Copyright 2011-2020 Niklas Beisert
 
 exframe is a LaTeX2e package which provides a general purpose

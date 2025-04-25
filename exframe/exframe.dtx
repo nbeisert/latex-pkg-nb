@@ -20,11 +20,11 @@
 % exfserpe.tex, exfserpf.tex, exfsermk.sh, exfsermk.mak.
 %
 %<package|samplesingle|samplemultimain>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{exframe}[2020/01/11 v3.31 Framework for Exercise Problems]
-%<samplesingle>\ProvidesFile{exfsamp.tex}[2020/01/11 v3.31 standalone sample for exframe]
-%<samplemultimain>\ProvidesFile{exfserm.tex}[2020/01/11 v3.31 multipart sample for exframe]
+%<package>\ProvidesPackage{exframe}[2020/02/24 v3.4 Framework for Exercise Problems]
+%<samplesingle>\ProvidesFile{exfsamp.tex}[2020/02/24 v3.4 standalone sample for exframe]
+%<samplemultimain>\ProvidesFile{exfserm.tex}[2020/02/24 v3.4 multipart sample for exframe]
 %<*driver>
-\def\thedate#1{2020/01/11}\def\theversion#1{v3.31}
+\def\thedate#1{2020/02/24}\def\theversion#1{v3.4}
 \ProvidesFile{exframe.dtx}[\thedate{} \theversion{} exframe reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -918,9 +918,9 @@ for other sheets and problems:
 %
 \begin{center}
 \begin{tabular}{l}
-|\getsheetpoints{|\textit{tag}|}|\\
-|\getproblempoints{|\textit{tag}|}|\\
-|\getsubproblempoints{}|\\
+|\getsheetpoints{|[\textit{tag}]|}|\\
+|\getproblempoints{|[\textit{tag}]|}|\\
+|\getsubproblempoints{|[\textit{tag}]|}|\\
 |\getsolutionpoints{}|
 \end{tabular}
 \end{center}
@@ -1025,8 +1025,10 @@ as the environment option:
 \DescribeMacro{tag}
 \DescribeMacro{\sheettag}
 \DescribeMacro{\problemtag}
+\DescribeMacro{\subproblemtag}
 The package provides an additional mechanism to tag sheets and problems.
-Each |sheet| and each |problem| can be assigned a unique tag \textit{tag} by
+Each |sheet|, |problem| and |subproblem|
+can be assigned a unique tag \textit{tag} by
 the environment option:
 %
 \begin{center}
@@ -1035,9 +1037,10 @@ the environment option:
 %
 This tag is used for reading point totals
 as described in \secref{sec:points}.
-Furthermore, the macro |\sheettag| or |\problemtag|
+Furthermore, the macro |\sheettag|, |\problemtag| or |\subproblemtag|
 is set to the tag \textit{tag} within the current environment.
-If no tag is specified it matches the number of the sheet or problem;
+If no tag is specified it defaults to the number
+of the current sheet or (sub)problem;
 note that this number can change by reordering sheets and problems
 and therefore it should not be used to identify the entity from
 other parts of the document.
@@ -1068,6 +1071,53 @@ for sheets (|sheet:|\textit{tag}) and problems (|prob:|\textit{tag}) by:
 \end{tabular}
 \end{center}
 %
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\getsheetlist}
+\DescribeMacro{\getproblemlist}
+\DescribeMacro{\getsubproblemlist}
+Tags can also be used to process a list of sheets, problems and subproblems:
+%
+\begin{center}
+\begin{tabular}{l}
+|\getsheetlist{}|\\
+|\getproblemlist{|[\textit{sheet-tag}]\textbar|*}|\\
+|\getsubproblemlist{|[\textit{problem-tag}]|}|\\
+\end{tabular}
+\end{center}
+%
+These commands return a list of sheets, problems and subproblems tags,
+where each item is encapsulated in braces.
+The commands |\get|[|sub|]|problemlist| return the (sub)problems
+within the specified sheet or problem. If no argument is given,
+the current sheet or problem is assumed.
+|\getproblemlist*| returns the list of all problems.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\exerciseloop}
+\DescribeMacro{\exerciseloopstr}
+\DescribeMacro{\exerciseloopret}
+\DescribeMacro{exerciseloop}
+The package defines two commands to walk through such a list:
+%
+\begin{center}
+\begin{tabular}{l}
+|\exerciseloop{|\textit{items}|}{|\textit{cmd}|}|\\
+|\exerciseloopstr[|\textit{ret}|]{|\textit{items}|}{|\textit{str}|}|
+\end{tabular}
+\end{center}
+%
+Here, \textit{items} is a list of items in braces,
+and |\exerciseloop| evaluates \textit{cmd}
+for each item of the list where `|#1|' is replaced by the item.
+The command |\exerciseloopstr| concatenates
+the evaluations of \textit{str}
+and returns the resulting string in the macro \textit{ret}
+(which defaults to |\exerciseloopret|).
+Both commands maintain a counter of items |exerciseloop|
+which can be accessed within \textit{cmd}/\textit{str} or
+after |\exerciseloop|[|str|] to obtain the total number of items
+in the list.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Layout}
@@ -1226,7 +1276,9 @@ They expand to the common \TeX{} constructs
 |\if&#1&#2\else#3\fi| and |\if&#1&\else#2\fi|
 which work assuming that \textit{expr} is not too exotic
 (e.g.\ it should not start with the character `|&|'
-and other special \TeX{} characters or macros are potentially dangerous).
+and other special \TeX{} characters or macros are potentially dangerous;
+also using this within tables can be troublesome;
+the character `|&|' can be reconfigured by the package option |emptytestchar|).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Exercise Styles}
@@ -1410,6 +1462,12 @@ define some more advanced metadata entries.
 (no value implies |true|, initially set to |false|) --
 define some more advanced styles.
 
+\item |metastr|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+load \textsf{metastr} package and use to handle PDF metadata
+and basic internationalisation,
+see \secref{sec:imp-metastr} for details.
+
 \item |problemenv=|\textit{name} --
 redefine environment name |problem|.
 This and the following alike options may be useful in
@@ -1506,6 +1564,12 @@ with |\exercisesetup{solutions=false}| when buffering if disabled.
 (no value implies |true|, initially set to |false|) --
 enable/disable buffering for |problem| environments
 in order to control their display.
+
+\item |emptytestchar=|\textit{char}
+(initially set to `|&|') --
+character to use for testing whether an argument |#1|
+is empty via |\if&#1&...\fi|;
+if `|&|' causes trouble within tables, could try `|@|' instead.
 
 \end{itemize}
 
@@ -1612,6 +1676,12 @@ provided by the package \textsf{currfile} (if available and loaded)
 to indicate the \LaTeX{} source file in the generated metapost file.
 Compatibility with the \textsf{currfile} package
 has been tested with v0.7c (2015/04/23).
+\item
+This package can use the package
+\href{http://ctan.org/pkg/metastr}{\textsf{metastr}}
+to write PDF metadata and to handle basic translations.
+Compatibility with the \textsf{metastr} package
+has been tested with v1.0 (2020/02/06).
 \end{itemize}
 
 There are several other \LaTeX{} packages
@@ -1690,8 +1760,8 @@ The package offers most of the functionality of the above packages,
 but (presently) misses out on some more advanced features,
 see \secref{sec:suggestions}.
 
-\iffalse
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\iffalse
 \subsection{Suggested Customisations}
 \label{sec:customisations}
 
@@ -1755,9 +1825,9 @@ Define structures for multiple-choice questions.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
 
-\iffalse
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v3.3+:} 2020/01/12
+\iffalse
+\paragraph{v3.4+:} 2020/02/25
 
 \begin{itemize}
 \item
@@ -1766,6 +1836,21 @@ section on extensions
 \ldots
 \end{itemize}
 \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v3.4:} 2020/02/24
+
+\begin{itemize}
+\item
+lists of sheets, problems and subproblems;
+list iterators
+\item
+tags for subproblems, tag customisation
+\item
+interaction with package \textsf{metastr}
+\item
+minor fixes
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v3.31:} 2020/01/11
@@ -1970,11 +2055,23 @@ dedicated layout and macros for author's exercise sheets
 \parskip0.5ex
 %    \end{macrocode}
 
-% Include \textsf{amsmath}, \textsf{hyperref}
-% and the \textsf{exframe} package:
+% Include \textsf{amsmath}, \textsf{hyperref} packages:
 %    \begin{macrocode}
 \usepackage{amsmath}
 \usepackage{hyperref}
+%    \end{macrocode}
+
+% May include \textsf{metastr} package;
+% below code adjusts to whether or not present:
+%    \begin{macrocode}
+\PassOptionsToPackage{loadlang=en|de}{metastr}
+\PassOptionsToPackage{course=true}{metastr}
+%%\usepackage{metastr}
+%%\metasetlang{de}
+%    \end{macrocode}
+
+% Include \textsf{exframe} package:
+%    \begin{macrocode}
 \usepackage[extstyle]{exframe}
 %    \end{macrocode}
 
@@ -1985,8 +2082,13 @@ dedicated layout and macros for author's exercise sheets
 % the display of solutions near the top
 % of the source file, potentially with the opposite setting commented out:
 %    \begin{macrocode}
-\exercisesetup{solutions=true}
-%%\exercisesetup{solutions=false}
+%%\exercisesetup{solutions=true}
+\exercisesetup{solutions=false}
+%    \end{macrocode}
+
+% Automatically put labels for (sub)problems:
+%    \begin{macrocode}
+\exercisesetup{autolabelproblem=true}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2026,8 +2128,15 @@ dedicated layout and macros for author's exercise sheets
 % Redefine the terms to be used for sheet(s);
 % here, a German version:
 %    \begin{macrocode}
+\ifdefined\metaset
+\metasetterm[en]{sheet}{Exercise Sheet}
+\metasetterm[en]{sheets}{Exercise Sheets}
+\metasetterm[de]{sheet}{\"Ubungsblatt}
+\metasetterm[de]{sheets}{\"Ubungsbl\"atter}
+\else
 \exerciseconfig{termsheet}{\"Ubungsblatt}
 \exerciseconfig{termsheets}{\"Ubungsbl\"atter}
+\fi
 %    \end{macrocode}
 
 % Display points for problems in the margin;
@@ -2037,7 +2146,7 @@ dedicated layout and macros for author's exercise sheets
 \exercisestyle{problempointsat=margin}
 \reversemarginpar
 \exerciseconfig{composepointsmargin}[1]{#1p.}
-\exerciseconfig{composepointspairmargin}[2]{
+\exerciseconfig{composepointspairmargin}[2]{%
   \ifdim#2pt=0pt#1p.%
   \else\ifdim#1pt=0pt+#2p.%
   \else#1+#2p.%
@@ -2068,19 +2177,35 @@ dedicated layout and macros for author's exercise sheets
 \exercisestyle{solutionsep}
 %    \end{macrocode}
 
-% Add course name to sheet title metadata:
-%    \begin{macrocode}
-\exerciseconfig{composemetasheet}[2]{\getexercisedata{course},
-  \exerciseifempty{#2}{\getexerciseconfig{termsheet} #1}{#2}}
-%    \end{macrocode}
-
-% Set title and author for pdf metadata:
+% Write metadata for sheet:
 %    \begin{macrocode}
 \exercisesetup{pdfdata=sheet}
+%    \end{macrocode}
+
+% Set title and author for pdf metadata;
+% |title| is |course| plus |material| or sheet title;
+% |author| is |instructor| or sheet author plus |institution|:
+%    \begin{macrocode}
+\ifdefined\metaset
+\metaset[sep]{subtitle}{, }
+\metaset{subtitle}{\ifsolutions\metatranslate[#1]{solutions} \fi%
+  \metaif[use]{sheettitle}
+   {\metapick[#1]{sheettitle}}
+   {\metapick[#1]{material}}}
+\metaset{author}{\exerciseifempty{\getsheetdata{author}}%
+  {\metapick[#1]{instructor}}{\metapick[#1]{sheetauthor}},
+  \metapick[#1]{institution}}
+\else
+\exerciseconfig{composemetasheet}[2]{\getexercisedata{course},
+  \ifsolutions\getexerciseconfig{termsolutions} \fi%
+  \exerciseifempty{#2}{\getexerciseconfig{termsheet} #1}{#2}}
 \exercisedata{title=%
-  {\getexercisedata{course}, \getexercisedata{material}}}
+  {\getexercisedata{course},
+  \ifsolutions\getexercisedata{solutions} \fi%
+  \getexercisedata{material}}}
 \exercisedata{author=%
   {\getexercisedata{instructor}, \getexercisedata{institution}}}
+\fi
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2088,11 +2213,21 @@ dedicated layout and macros for author's exercise sheets
 %
 % Set some data on the current series:
 %    \begin{macrocode}
+\ifdefined\metaset
+\metaset{institution}{Katharinen-Volksschule}
+\metaset[de]{course}{Mathematik}
+\metaset[en]{course}{Mathematics}
+\metaset{instructor}{J.\ G.\ B\"uttner}
+\metaset{period}{ca.\ 1786}
+\metaset[de]{material}{\"Ubungsaufgaben}
+\metaset[en]{material}{Exercise Problems}
+\else
 \exercisedata{institution={Katharinen-Volksschule}}
 \exercisedata{course={Mathematik}}
 \exercisedata{instructor={J.\ G.\ B\"uttner}}
 \exercisedata{period={ca.\ 1786}}
 \exercisedata{material={\"Ubungsaufgaben}}
+\fi
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2104,12 +2239,29 @@ dedicated layout and macros for author's exercise sheets
 
 % Start sheet number 5:
 %    \begin{macrocode}
-\begin{sheet}[number=5]
+\begin{sheet}[number=5,label={sheet5}]
 %    \end{macrocode}
 
 % Start a problem with a title:
 %    \begin{macrocode}
 \begin{problem}[title={Sums},points=99+4]
+%    \end{macrocode}
+
+% Summary of points:
+%    \begin{macrocode}
+\exerciseloopstr{\getsubproblemlist{}}{c}%
+\hfill\begin{tabular}{c|\exerciseloopret|c}
+\exerciseloop{\getsubproblemlist{}}
+ {&\ref{\getexerciseconfig{labelsubproblem}{#1}}}
+&\ref{prob:\problemtag}\\\hline
+\getexerciseconfig{termpoints}
+\exerciseloop{\getsubproblemlist{}}{&\extractpoints{\getsubproblempoints{#1}}}
+&\extractpoints{\getproblempoints{}}
+\\
+extra
+\exerciseloop{\getsubproblemlist{}}{&\extractpoints*{\getsubproblempoints{#1}}}
+&\extractpoints*{\getproblempoints{}}
+\end{tabular}
 %    \end{macrocode}
 
 % Some introduction to the problem:
@@ -2284,6 +2436,47 @@ This is beyond the scope of this example.
 \end{solution}
 %    \end{macrocode}
 
+% Summary of points per problem and per subproblem for grading:
+%    \begin{macrocode}
+\ifsolutions\else
+\textbf{Grading:}\par
+\exerciseloopstr{\getproblemlist{}}{|c}
+\begin{tabular}{|c|\exerciseloopret||c|}\hline
+\getexerciseconfig{termsheet} \ref{sheet5}
+\exerciseloop{\getproblemlist{*}}
+ {&\ref{\getexerciseconfig{labelproblem}{#1}}}
+&total
+\\\hline
+value
+\exerciseloop{\getproblemlist{*}}
+ {&\extractpoints{\getproblempoints{#1}}}%
+&\extractpoints{\getsheetpoints{}}
+\\\hline
+\exerciseloop{\getproblemlist{*}}{&}
+&\\\hline
+\end{tabular}\qquad
+\exerciseloop{\getproblemlist{*}}{
+ \exerciseloopstr{\getsubproblemlist{#1}}{|c}
+ \ifnum\value{exerciseloop}>0\relax
+  \begin{tabular}{|c|\exerciseloopret||c|}\hline
+  \getexerciseconfig{termproblem} \ref{\getexerciseconfig{labelproblem}{#1}}
+  \exerciseloop{\getsubproblemlist{#1}}
+   {&\ref{\getexerciseconfig{labelsubproblem}{##1}}}
+  &total
+  \\\hline
+  value
+  \exerciseloop{\getsubproblemlist{#1}}
+   {&\extractpoints{\getsubproblempoints{##1}}}%
+  &\extractpoints{\getproblempoints{#1}}
+  \\\hline
+  \exerciseloop{\getsubproblemlist{#1}}{&}
+  &\\\hline
+  \end{tabular}\quad
+ \fi
+}
+\fi
+%    \end{macrocode}
+
 % End sheet:
 %    \begin{macrocode}
 \end{sheet}
@@ -2342,12 +2535,13 @@ This is beyond the scope of this example.
 % the document is to be compiled;
 % concretely this affects the compilations of metapost figures, see below:
 %    \begin{macrocode}
-\providecommand{\draftver}{y}
 \ifchilddoc
 \providecommand{\printsol}{y}
 \else
 \providecommand{\printsol}{n}
 \fi
+\providecommand{\draftver}{y}
+\newif\ifdraft\if\draftver y\drafttrue\else\draftfalse\fi
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2373,10 +2567,22 @@ This is beyond the scope of this example.
 \PassOptionsToPackage{bookmarksopen=true}{hyperref}
 \RequirePackage{hyperref}
 %    \end{macrocode}
-% Use the \textsf{hyperxmp} package for inclusion of
-% copyright metadata in the compiled pdf files:
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{metastr Package.}
+%
+% Use the \textsf{metastr} package to handle
+% metadata and copyright information;
+% disable usage of \textsf{hyperxmp} package if not installed;
+% write auxiliary PDF metadata and rights information:
 %    \begin{macrocode}
-\IfFileExists{hyperxmp.sty}{\RequirePackage{hyperxmp}}{}
+\ifdraft
+\PassOptionsToPackage{draft}{metastr}
+\fi
+\IfFileExists{hyperxmp.sty}{}{\PassOptionsToPackage{hyperxmp=false}{metastr}}
+\RequirePackage[course]{metastr}
+\metaset[aux]{writepdf}{}
+\metaset[rights]{writepdf}{}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2388,7 +2594,9 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 
 % Set solutions switch and declare two-sided layout only
-% if no solutions are printed:
+% if no solutions are printed;
+% do not use solution buffer in draft mode
+% for easier identification of potential compile errors:
 %    \begin{macrocode}
 \if\printsol n
 \exercisesetup{solutions=false}
@@ -2396,6 +2604,9 @@ This is beyond the scope of this example.
 \else
 \exercisesetup{solutions=true}
 \exercisesetup{twoside=false}
+\ifdraft
+\exercisesetup{solutionbuf=false}
+\fi
 \fi
 %    \end{macrocode}
 
@@ -2410,7 +2621,7 @@ This is beyond the scope of this example.
 % Count problems, equations and pages by sheet
 % (unless compiling single problem).
 % Collect solutions below each problem.
-% Write pdf metadata for sheet when compiling single sheet.
+% Write pdf metadata for sheet when compiling single sheet:
 %    \begin{macrocode}
 \exercisesetup{autolabelproblem}
 \exercisestyle{contents,solutionsep}
@@ -2419,6 +2630,19 @@ This is beyond the scope of this example.
 \fi
 \exercisestyle{solutionbelow={problem}}
 \ifchilddoc\ifchilddocmanual\else\exercisesetup{pdfdata=sheet}\fi\fi
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Language.}
+%
+% Redefine some terms:
+%    \begin{macrocode}
+\metasetlang{en-GB}
+
+\metasetterm[en]{sheet}{sheet}
+\metasetterm[en]{sheets}{sample sheets}
+\metasetterm[en]{solution}{Solution}
+\metasetterm[en]{solutions}{solutions}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2489,16 +2713,13 @@ This is beyond the scope of this example.
 % Setup \textsf{mpostinl}.
 % Use checksums to invoke metapost only when figures change.
 % Process all figures individually and immediately when in
-% draft mode (avoids a second compilation pass).
+% draft mode for child documents (avoids a second compilation pass).
 % Number figures within sheet to provide a stable numbering
-% upon insertion/deletion of new figures or partial compilation.
-% Do not warn about unused figures when preparing without solutions
-% (figures for solutions should be declared outside |solution| environments):
+% upon insertion/deletion of new figures or partial compilation:
 %    \begin{macrocode}
 \mpostsetup{checksum}
-\if\draftver y\mpostsetup{now,nowall}\fi
+\ifchilddoc\ifdraft\mpostsetup{now,nowall}\fi\fi
 \ifchilddocmanual\else\mpostsetup{numberwithin={sheet}}\fi
-\ifsolutions\else\mpostsetup{warnunused=false}\fi
 %    \end{macrocode}
 
 % Global metapost definitions.
@@ -2508,7 +2729,9 @@ This is beyond the scope of this example.
 % |paths| is an array of path variables,
 % |xu| serves as a length unit to
 % scale individual figures
-% (use |interim xu:=...;| to set scale for local figure only):
+% (use |interim xu:=...;| to set scale for local figure only),
+% |pensize| changes the size of the pen,
+% |fillshape| fills and outlines a shape:
 %    \begin{macrocode}
 \mpostsetup{globaldef=true}
 \begin{mposttex}
@@ -2518,6 +2741,11 @@ This is beyond the scope of this example.
 path paths[];
 newinternal numeric xu;
 xu:=1cm;
+def pensize(expr s)=withpen pencircle scaled s enddef;
+def fillshape(expr p,c)=
+  fill p withcolor c;
+  draw p
+enddef;
 \end{mpostdef}
 \mpostsetup{globaldef=false}
 %    \end{macrocode}
@@ -2532,97 +2760,62 @@ xu:=1cm;
 %
 % Set document data for series of problem sheets:
 %    \begin{macrocode}
-\exercisedata{course={exframe package samples}}
-\exercisedata{instructor={N.\ Beisert}}
-\exercisedata{institution={exframe academy}}
-\exercisedata{period={spring 2019}}
-\exercisedata{date={2019}}
+\metaset{course}{exframe package samples}
+\metaset{instructor}{N.\ Beisert}
+\metaset{author}{Niklas Beisert, \metapick[#1]{institution}}
+\metaset{institution}{exframe academy}
+\metaset{period}{spring 2019}
+\metaset{copyrightdate}{2019--2020}
 %    \end{macrocode}
 
 % Assemble some entries from given data:
 %    \begin{macrocode}
-\exercisedata{material={\ifsolutions\getexerciseconfig{termsolutions}%
-  \else\getexerciseconfig{termsheets}\fi}}
+\metaset{material}{\metatranslate[#1]{sheets}}
 \exerciseconfig{composetitlesheet}[2]{\exerciseifempty{#2}%
-  {\ifsolutions\getexerciseconfig{termsolutions}\else%
-   \getexerciseconfig{termsheet}\fi\ #1}%
-  {\ifsolutions\getexerciseconfig{termsolutions}\fi\ #2}}
-\exerciseconfig{composemetasheet}[2]{\if\draftver yDRAFT: \fi%
-  \getexercisedata{course},
-  \getexerciseconfig{composetitlesheet}{#1}{#2}}
+  {\ifsolutions\metaterm{solutions}\else%
+   \metaterm{sheet}\fi\ #1}%
+  {\ifsolutions\metaterm{solutions} \fi #2}}
+%    \end{macrocode}
+
+% For child documents declare part of:
+%    \begin{macrocode}
+\ifchilddoc
+\metaset{partof}{\metatranslate[#1]{sheets} \metapick[#1]{course}}
+\fi
 %    \end{macrocode}
 
 % Set general purpose metadata:
 %    \begin{macrocode}
-\exercisedata{title={\if\draftver yDRAFT: \fi%
-  \getexercisedata{course}, \getexercisedata{material}}}
-\exercisedata{author={Niklas Beisert, \getexercisedata{institution}}}
-\exercisedata{subject={lecture series at \getexercisedata{institution},
-  \getexercisedata{period}}}
-%    \end{macrocode}
-
-% Redefine some terms:
-%    \begin{macrocode}
-\exerciseconfig{termsheet}{sheet}
-\exerciseconfig{termsheets}{sample sheets}
-\exerciseconfig{termsolution}{Solution}
-\exerciseconfig{termsolutions}{solutions}
+\metaset[sep]{draft}{ -- }
+\metaset[sep]{subtitle}{, }
+\metaset{subtitle}{\ifsolutions\metatranslate[#1]{solutions} \fi%
+  \metaif[use]{sheettitle}{\metapick[#1]{sheettitle}}{\metapick[#1]{material}}}
+\metaset{subject}{Lecture Series,
+  \metapick[#1]{institution}, \metapick[#1]{period}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{License.}
 %
-% It is always useful to specify a copyright line
-% and a license for the document.
-% Define some restrictive default text.
+% It is good practice to specify a copyright line
+% and a license for the document:
 %    \begin{macrocode}
-\def\copyrightmessage
-  {This document as well as its parts is protected by copyright.}
-\def\licensemessage
-  {Reproduction of any part of this work in any form
-  without prior written consent of \getexercisedata{institution}
-  is not permissible.}
+\metaset{copyrightowner}{\metapick[#1]{author}}
+\ifchilddoc
+\metacopyright{doc}
+\else
+\metacopyright{doc-parts}
+\fi
+\metaset{licenseprovider}{of \metapick[#1]{institution}}
+\metalicense{consent}
 %    \end{macrocode}
 
 % Apply Creative Commons BY-SA license
 % under certain conditions (no solutions, final version):
 %    \begin{macrocode}
-\ifsolutions\else\if\draftver y\else
-\def\licensecctype{by-sa}
-\def\licenseccname{Attribution-ShareAlike \licenseccver{} International}
+\ifsolutions\else\ifdraft\else
+\metalicensecc{by-sa}
 \fi\fi
-%    \end{macrocode}
-
-% Write applicable Creative Commons license information.
-% Use Creative Commons logos included in package \textsf{doclicense}:
-%    \begin{macrocode}
-\ifdefined\licensecctype
-\ifdefined\licenseccver\else\def\licenseccver{4.0}\fi
-\def\licenseurl
-  {https://creativecommons.org/licenses/\licensecctype/\licenseccver}
-\def\licensemessage{\texorpdfstring
-  {This work is licensed under the Creative Commons ``\licenseccname'' License
-  (CC \MakeUppercase{\licensecctype} \licenseccver).\par
-  \IfFileExists{doclicense.sty}{
-   \begin{center}\includegraphics{doclicense-CC-\licensecctype}\end{center}}{}
-  To view a copy of this license, visit: \url{\licenseurl}}
-  {This work is licensed under the Creative Commons \licenseccname{} License.}}
-\fi
-%    \end{macrocode}
-
-% Write copyright and license as pdf metadata
-% (using package \textsf{hyperxmp} if available):
-%    \begin{macrocode}
-\ifdefined\xmptilde
-\hypersetup{pdfcopyright={Copyright \getexercisedata{date}
-  \getexercisedata{author}. \copyrightmessage{} \licensemessage}}
-\ifdefined\sourceurl\hypersetup{pdflicenseurl={\sourceurl}}\else
-\ifdefined\licenseurl\hypersetup{pdflicenseurl={\licenseurl}}\fi\fi
-\hypersetup{keeppdfinfo=true}
-\hypersetup{pdfsource={}}
-\XMPLangAlt{en}{pdfcopyright={Copyright \getexercisedata{date}
-  \getexercisedata{author}. \copyrightmessage{} \licensemessage}}
-\fi
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2660,18 +2853,11 @@ xu:=1cm;
 
 % Prepare a title page to display some relevant data:
 %    \begin{macrocode}
-\pdfbookmark[1]{Title Page}{title}
+\pdfbookmark[1]{\metaterm{title}}{title}
 \thispagestyle{empty}
 \vspace*{\fill}
 \begin{center}
-\begingroup\bfseries\LARGE\getexercisedata{course}\par\endgroup
-\vspace{0.5cm}
-\begingroup\large\getexercisedata{material}\par\endgroup
-\vspace{0.5cm}
-\begingroup\large\getexercisedata{institution},
-  \getexercisedata{period}\par\endgroup
-\vspace{2cm}
-\begingroup\scshape\Large\getexercisedata{instructor}\par\endgroup
+\metapick[course]{titletext}
 \end{center}
 \vspace*{\fill}\vspace*{\fill}
 \newpage
@@ -2679,17 +2865,11 @@ xu:=1cm;
 
 % Prepare a copyright and license page using data specified above:
 %    \begin{macrocode}
-\phantomsection\pdfbookmark[1]{Copyright}{copyright}
+\phantomsection\pdfbookmark[1]{\metaterm{copyright}}{copyright}
 \thispagestyle{empty}
 \vspace*{\fill}\vspace*{\fill}
-\begin{center}
-\begin{minipage}{11cm}\raggedright
-{\copyright} \getexercisedata{date} \getexercisedata{author}
-\par\medskip
-\copyrightmessage{}
-\licensemessage
-\ifdefined\sourcemessage\par\medskip\sourcemessage\fi
-\ifdefined\attributionmessage\par\medskip\attributionmessage\fi
+\begin{center}\begin{minipage}{11cm}\raggedright
+\metapick[print]{rightstext}
 \end{minipage}\end{center}
 \vspace*{\fill}\vspace*{\fill}\vspace*{\fill}
 \newpage
@@ -2699,7 +2879,7 @@ xu:=1cm;
 %    \begin{macrocode}
 \makeatletter\renewcommand\@pnumwidth{2.4em}\makeatother
 \setcounter{tocdepth}{2}
-\phantomsection\pdfbookmark[1]{Contents}{contents}
+\phantomsection\pdfbookmark[1]{\metaterm{contents}}{contents}
 {\parskip0pt\tableofcontents}
 \exercisecleardoublepage\setcounter{page}{1}
 %    \end{macrocode}
@@ -2810,16 +2990,26 @@ xu:=1cm;
 % where \textit{tag} is the tag of the problem
 % (in order to avoid potential conflicts with other problems;
 % \textit{tag} is assigned automatically or by specifying
-% the option |tag| for the |problem| environment):
+% the option |tag| for the |problem| environment).
+% Also declare a figure \textit{tag}|-solfig| for use within the solution:
 %    \begin{macrocode}
 \ifdefined\mpostuse
 \begin{mpostfig}[label={\problemtag-fig}]
 interim xu:=1.5cm;
 paths[1]:=fullcircle scaled 1xu;
-fill paths[1] withgreyscale 0.7;
-draw paths[1] withpen pencircle scaled 1pt;
+fillshape(paths[1], 0.7white) pensize(1pt);
 label(btex \figure etex, center(paths[1]));
 \end{mpostfig}
+\begin{onlysolutions}
+\begin{mpostfig}[label={\problemtag-solfig}]
+interim xu:=1.5cm;
+paths[1]:=fullcircle scaled 1xu;
+paths[2]:=((subpath (-2,2) of paths[1])--cycle) shifted (+0.5xu,0);
+paths[3]:=((subpath (2,6) of paths[1])--cycle) shifted (-0.5xu,0);
+fillshape(paths[2], 0.7white) pensize(1pt);
+fillshape(paths[3], 0.7white) pensize(1pt);
+\end{mpostfig}
+\end{onlysolutions}
 \fi
 %    \end{macrocode}
 
@@ -2836,6 +3026,10 @@ label(btex \figure etex, center(paths[1]));
 \end{subproblem}
 
 \begin{solution}
+\lorem
+\begin{center}
+\ifdefined\mpostuse\mpostuse{\problemtag-solfig}\else figure\fi
+\end{center}
 \lorem
 \end{solution}
 
@@ -3096,7 +3290,7 @@ function docompile
     fwd="\\childdocforward[$srcmain]{$srcsec$num}"
   fi
   body="\\def\\jobname{$job}$optdef\\input{childdoc.def}$fwd"
-  for pass in first main
+  for pass in first main extra
   do
     par="";
     if [[ "$pass" == "first" ]]; then par="-draftmode"; fi
@@ -3105,7 +3299,8 @@ function docompile
     pdflatex -shell-escape -interaction=batchmode $par \
       -jobname "$trg" "$body" | grep -vE "$drop"
     if [[ "$pass" != "main" ]]; then continue; fi
-    if ! (grep -E -q "may have changed|rerunfilecheck Warning" "$trg.log"); then break; fi
+    if ! (grep -E -q "may have changed|rerunfilecheck Warning" "$trg.log")
+      then break; fi
   done
   grep -E "^! |Warning|Error|Undefined|Overfull|Underfull" "$trg.log"
 }
@@ -3185,7 +3380,8 @@ SRCSECFILES = $(SECNUM:%=$(SRCSEC)%.tex)
 TRGMAINFILES = $(foreach trg,$(TRGLIST),$(trg).pdf)
 TRGSECFILES = $(foreach trg,$(TRGLIST),$(trg).pdf $(SECNUM:%=$(trg)%.pdf))
 GENFILES = $(foreach trg,$(TRGLIST),$(trg).tex $(SECNUM:%=$(trg)%.tex))
-BAKFILES = $(PREREQS) $(SRCSECFILES) $(GENFILES) $(MAKEFILE) $(SCRIPT) $(SRCPRB)*
+BAKFILES = $(PREREQS) $(SRCSECFILES) $(GENFILES)\
+           $(MAKEFILE) $(SCRIPT) $(SRCPRB)*
 %    \end{macrocode}
 %\iffalse$\fi
 
@@ -3228,12 +3424,12 @@ clean:
 	rm -f $(foreach ext,.aux .log,$(SECNUM:%=$(SRCSEC)%$(ext)))
 	rm -f $(foreach trg,$(TRGLIST),$(SECNUM:%=$(trg)%.log) $(trg).log)
 	rm -f $(foreach ext,.aux .log .out .toc,$(SRCMAIN)$(ext))
-	rm -f $(foreach ext,.mp .mpx -*.mps -tmp.log -tmp.mp -tmp.mpx,$(SRCMAIN)$(ext))
+	rm -f $(foreach ext,.mp .mpx -*.mps,$(SRCMAIN)$(ext))
+	rm -f $(foreach ext,-tmp.log -tmp.mp -tmp.mpx,$(SRCMAIN)$(ext))
 	rm -f mpxerr.tex mpxerr.log mpxerr.dvi texput.log
 	rm -f $(patsubst %,$(SRCPRB)*%,.aux .log .mp .mpx -*.mps)
 	rm -f $(patsubst %,$(SRCPRB)*%,-tmp.log -tmp.mp -tmp.mpx)
 %    \end{macrocode}
-%\iffalse$\fi
 % Define |clean-bak| target to remove all backup files
 % ending in `|~|' or `|.bak|':
 %    \begin{macrocode}
@@ -3317,6 +3513,11 @@ clean-all:  clean
 \def\exf@csdo#1#2{\expandafter#1\csname#2\endcsname}
 \def\exf@csdotwo#1#2#3{\exf@exptwo#1#2\csname#3\endcsname}
 %    \end{macrocode}
+% \macro{\exf@csor}
+% A macro to return |\csname| or default if not exists:
+%    \begin{macrocode}
+\def\exf@csor#1#2{\ifcsname#1\endcsname\csname#1\endcsname\else#2\fi}
+%    \end{macrocode}
 
 % \macro{\exf@append@def}
 % \macro{\exf@prepend@def}
@@ -3370,6 +3571,26 @@ clean-all:  clean
   \ifx#1\exf@empty\else\addcontentsline{toc}{#1}{#2}\fi}
 %    \end{macrocode}
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Auxiliary File Data Storage.}
+%
+% \macro{\exf@notedata}
+% Process stored data by handler:
+%    \begin{macrocode}
+\newcommand{\exf@notedata}[3]{\csname exf@notedata@#1\endcsname{#2}{#3}}
+%    \end{macrocode}
+% Make sure the macros in code written to the |.aux| file exist:
+%    \begin{macrocode}
+\AtBeginDocument{\immediate\write\@auxout{%
+  \string\providecommand{\string\exf@notedata}[3]{}}}
+%    \end{macrocode}
+% \macro{\exf@writedata}
+% Write data to the |.aux| file:
+%    \begin{macrocode}
+\newcommand{\exf@writedata}[3]%
+  {\immediate\write\@auxout{\string\exf@notedata{#1}{#2}{#3}}}
+%    \end{macrocode}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Package Setup}
 % \label{sec:imp-setup}
@@ -3405,6 +3626,12 @@ clean-all:  clean
 %    \begin{macrocode}
 \define@boolkey{exframe.sty}[exf@]{extdata}[true]{}
 \define@boolkey{exframe.sty}[exf@]{extstyle}[true]{}
+%    \end{macrocode}
+
+% Whether to load package \textsf{metastr}
+% (available while loading only):
+%    \begin{macrocode}
+\define@boolkey{exframe.sty}[exf@]{metastr}[true]{}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3455,6 +3682,12 @@ clean-all:  clean
 %    \begin{macrocode}
 \define@boolkey{exf@setup}[exf@]{problembuf}[true]{}
 %    \end{macrocode}
+% \macro{\exf@emptytestchar}
+% Redefine character for testing emptyness:
+%    \begin{macrocode}
+\def\exf@emptytestchar{&}
+\define@key{exf@setup}{emptytestchar}{\def\exf@emptytestchar{#1}}
+%    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Processing.}
@@ -3468,6 +3701,17 @@ clean-all:  clean
 % Configure package when package is already loaded:
 %    \begin{macrocode}
 \newcommand{\exercisesetup}[1]{\exf@expsetkeys{exf@setup}{#1}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Additional Packages.}
+%
+% Load \textsf{metastr} package if desired:
+%    \begin{macrocode}
+\ifexf@metastr
+\PassOptionsToPackage{course=true}{metastr}
+\RequirePackage{metastr}
+\fi
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3534,8 +3778,10 @@ clean-all:  clean
 % Code to test whether |#1| (expanded) is empty;
 % execute |#2| if empty, otherwise execute |#3|:
 %    \begin{macrocode}
-\long\def\exerciseifempty#1#2#3{\if&#1&#2\else#3\fi}
-\long\def\exerciseifnotempty#1#2{\if&#1&\else#2\fi}
+\long\def\exerciseifempty#1#2#3{%
+  \if\exf@emptytestchar#1\exf@emptytestchar#2\else#3\fi}
+\long\def\exerciseifnotempty#1#2{%
+  \if\exf@emptytestchar#1\exf@emptytestchar\else#2\fi}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4041,12 +4287,24 @@ clean-all:  clean
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Further Definitions.}
 %
+% \macro{tagsheet}
+% \macro{tagproblem}
+% \macro{tagsubproblem}
+% Templates for automatic generation of tags:
+%    \begin{macrocode}
+\exerciseconfig{tagsheet}{\arabic{\exf@sheetcounter}}
+\exerciseconfig{tagproblem}{\csname the\exf@problemcounter\endcsname}
+\exerciseconfig{tagsubproblem}{\problemtag-\arabic{\exf@subproblemcounter}}
+%    \end{macrocode}
+
 % \macro{labelsheet}
 % \macro{labelproblem}
+% \macro{labelsubproblem}
 % Templates for automatic generation of labels from tags:
 %    \begin{macrocode}
 \exerciseconfig{labelsheet}[1]{sheet:#1}
 \exerciseconfig{labelproblem}[1]{prob:#1}
+\exerciseconfig{labelsubproblem}[1]{\getexerciseconfig{labelproblem}{#1}}
 %    \end{macrocode}
 
 % \macro{toclevel...}
@@ -4576,23 +4834,20 @@ clean-all:  clean
     \hypersetup{pdfsubject={\exf@data@subject}}\fi%
    \ifx\exf@data@keyword\exf@empty\else%
     \hypersetup{pdfkeywords={\exf@data@keyword}}\fi%
-  \fi%
-%    \end{macrocode}
-% Do not write again:
-%    \begin{macrocode}
-  \gdef\exf@metadata{off}}
+  \fi}
 %    \end{macrocode}
 
 % Automatic writing at |\begin{document}|:
 %    \begin{macrocode}
-\AtBeginDocument{\exf@ifis\exf@metadata{auto}{\exf@writemetadata}}
+\AtBeginDocument{\exf@ifis\exf@metadata{auto}%
+  {\exf@writemetadata\gdef\exf@metadata{off}}}
 %    \end{macrocode}
 
 % \macro{\writeexercisedata}
 % Write metadata manually:
 %    \begin{macrocode}
-\newcommand{\writeexercisedata}{%
-  \exf@ifis\exf@metadata{manual}{\exf@writemetadata}}
+\newcommand{\writeexercisedata}{\exf@ifis\exf@metadata{manual}%
+  {\exf@writemetadata\gdef\exf@metadata{off}}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4636,7 +4891,15 @@ clean-all:  clean
 \newcommand{\exf@numberproblemwithin}[1]{%
   \@addtoreset{\exf@problemcounter}{#1}%
   \exf@csdo\def{the\exf@problemcounter}%
-   {\csname the#1\endcsname.\exf@config@counterproblem}}
+   {\csname the#1\endcsname.\exf@config@counterproblem}%
+  \edef\exf@tmp{#1}%
+  \ifx\exf@tmp\exf@sheetcounter%
+   \exerciseconfig{tagproblem}{\ifdefined\sheettag\sheettag-\fi%
+    \arabic{\exf@problemcounter}}%
+  \else%
+   \exerciseconfig{tagproblem}{\csname the#1\endcsname-%
+    \arabic{\exf@problemcounter}}%
+  \fi}
 %    \end{macrocode}
 
 % \macro{\exf@numberequationwithin}
@@ -4917,13 +5180,13 @@ clean-all:  clean
 %    \end{macrocode}
 
 % \macro{\exf@scanpoints}
-% Call as |\exf@scanpoints#1|[\textit{regular}][|+|\textit{bonus}]|++&| to
+% Call as |\exf@scanpoints#1|[\textit{regular}][|+|\textit{bonus}]|++@| to
 % write |{|\textit{regular}|}{|\textit{bonus}|}| into |#1|;
 % fill with 0 if empty:
 %    \begin{macrocode}
-\def\exf@scanpoints#1#2+#3+#4&{%
-  \edef#1{\if&#2&0\else#2\fi}%
-  \edef#1{{#1}{\if&#3&0\else#3\fi}}}
+\def\exf@scanpoints#1#2+#3+#4@{%
+  \edef#1{\if @#2@0\else#2\fi}%
+  \edef#1{{#1}{\if @#3@0\else#3\fi}}}
 %    \end{macrocode}
 % \macro{\exf@formatpoints}
 % Format as [|#1|][|+#2|]; remove 0 components:
@@ -4938,7 +5201,7 @@ clean-all:  clean
 \newcommand{\extractpoints}{\@ifstar{\exf@extractpoints\@secondoftwo}%
   {\exf@extractpoints\@firstoftwo}}
 \newcommand{\exf@extractpoints}[2]{\edef\exf@tmp{#2}%
-  \exf@exptwo\exf@scanpoints\exf@tmp\exf@tmp++&%
+  \exf@exptwo\exf@scanpoints\exf@tmp\exf@tmp++@%
   \expandafter#1\exf@tmp}
 %    \end{macrocode}
 
@@ -4947,7 +5210,7 @@ clean-all:  clean
 % and execute one of three:
 %    \begin{macrocode}
 \newcommand{\switchpoints}[5]{\edef\exf@tmp{#5}%
-  \exf@exptwo\exf@scanpoints\exf@tmp\exf@tmp++&%
+  \exf@exptwo\exf@scanpoints\exf@tmp\exf@tmp++@%
   \expandafter\exf@switchpoints\exf@tmp{#1}{#2}{#3}{#4}}
 \newcommand{\exf@switchpoints}[6]{%
   \ifdim#2pt=0pt\ifdim#1pt=0pt\def\exf@tmp##1##2{#6}%
@@ -5016,8 +5279,8 @@ clean-all:  clean
   \edef\exf@tmp{#1}%
   \expandafter\exf@splitsign\exf@tmp--&%
   \expandafter\exf@splitdecimal\exf@splitnum..&%
-  \if&\exf@splitint&\def\exf@splitint{0}\fi%
-  \if&\exf@splitdec&\def\exf@splitdec{0}\fi%
+  \if @\exf@splitint @\def\exf@splitint{0}\fi%
+  \if @\exf@splitdec @\def\exf@splitdec{0}\fi%
   \def\exf@tmp{\exf@splitint.\exf@splitdec}%
   \ifnum\exf@splitdec=0\def\exf@tmp{\exf@splitint}\fi%
   \ifnum\exf@splitdec=5\def\exf@tmp{\exf@config@frac{\exf@splitint}{1}{2}}\fi%
@@ -5036,8 +5299,8 @@ clean-all:  clean
 % such as 12$^3\mskip-4mu/\mskip-2mu_4$:
 %    \begin{macrocode}
 \newcommand{\exf@config@frac}[3]{%
-  \ifnum#1=0\else#1\fi%
-  \ifnum#2=0\else$%
+  \ifnum#1=0\relax\else#1\fi%
+  \ifnum#2=0\relax\else$%
    ^{\exf@text{#2}}%
    \mskip-4mu/\mskip-2mu%
    _{\exf@text{#3}}$\fi}
@@ -5046,71 +5309,49 @@ clean-all:  clean
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Sheet Points Code.}
 %
-% \macro{\exf@notesheetpoints}
+% \macro{\exf@notedata@sheetpoints}
 % Store a sheet point number in a macro:
 %    \begin{macrocode}
-\newcommand{\exf@notesheetpoints}[2]{%
+\newcommand{\exf@notedata@sheetpoints}[2]{%
   \exf@csdo\gdef{exf@sheetpoints@#1}{#2}}
-%    \end{macrocode}
-% Make sure the macros in code written to the |.aux| file exist:
-%    \begin{macrocode}
-\AtBeginDocument{\immediate\write\@auxout{%
-  \string\providecommand{\string\exf@notesheetpoints}[2]{}}}
 %    \end{macrocode}
 % \macro{\exf@writesheetpoints}
 % Write sheet points to the |.aux| file:
 %    \begin{macrocode}
 \newcommand{\exf@writesheetpoints}[2]%
-  {\immediate\write\@auxout{\string\exf@notesheetpoints{\sheettag}%
-   {\exf@formatpoints{#1}{#2}}}}
+  {\exf@writedata{sheetpoints}{\sheettag}{\exf@formatpoints{#1}{#2}}}
 %    \end{macrocode}
 % \macro{\getsheetpoints}
 % Read points for current sheet or from |.aux| file:
 %    \begin{macrocode}
-\newcommand{\getsheetpoints}[1]{\if&#1&%
+\newcommand{\getsheetpoints}[1]{\if @#1@%
    \ifdefined\exf@sheet@points%
     \expandafter\exf@formatpoints\exf@sheet@points\else 0\fi%
-  \else\ifcsname exf@sheetpoints@#1\endcsname%
-   \csname exf@sheetpoints@#1\endcsname\else 0\fi\fi}
+  \else\exf@csor{exf@sheetpoints@#1}{0}\fi}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Problem Points Code.}
 %
-% \macro{\exf@noteproblempoints}
+% \macro{\exf@notedata@problempoints}
 % Store a problem point number in a macro:
 %    \begin{macrocode}
-\newcommand{\exf@noteproblempoints}[2]{%
+\newcommand{\exf@notedata@problempoints}[2]{%
   \exf@csdo\gdef{exf@problempoints@#1}{#2}}
-%    \end{macrocode}
-% Make sure the macros written to the |.aux| file exist:
-%    \begin{macrocode}
-\AtBeginDocument{\immediate\write\@auxout{%
-  \string\providecommand{\string\exf@noteproblempoints}[2]{}}}
 %    \end{macrocode}
 % \macro{\exf@writeproblempoints}
 % Write problem points to the |.aux| file:
 %    \begin{macrocode}
 \newcommand{\exf@writeproblempoints}[2]%
-  {\immediate\write\@auxout{\string\exf@noteproblempoints{\problemtag}%
-   {\exf@formatpoints{#1}{#2}}}}
+  {\exf@writedata{problempoints}{\problemtag}{\exf@formatpoints{#1}{#2}}}
 %    \end{macrocode}
 % \macro{\getproblempoints}
 % Read points for current problem or from |.aux| file:
 %    \begin{macrocode}
-\newcommand{\getproblempoints}[1]{\if&#1&%
+\newcommand{\getproblempoints}[1]{\if @#1@%
    \ifdefined\exf@problem@points%
     \expandafter\exf@formatpoints\exf@problem@points\else 0\fi%
-  \else\ifcsname exf@problempoints@#1\endcsname%
-   \csname exf@problempoints@#1\endcsname\else 0\fi\fi}
-%    \end{macrocode}
-% \macro{\getsubproblempoints}
-% Read points for current subproblem:
-%    \begin{macrocode}
-\newcommand{\getsubproblempoints}[1]{\if&#1&%
-   \ifdefined\exf@subproblem@points%
-    \expandafter\exf@formatpoints\exf@subproblem@points\else 0\fi%
-  \else 0\fi}
+  \else\exf@csor{exf@problempoints@#1}{0}\fi}
 %    \end{macrocode}
 
 % \macro{\showpoints}
@@ -5127,13 +5368,38 @@ clean-all:  clean
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Subproblem Points Code.}
+%
+% \macro{\exf@notedata@subproblempoints}
+% Store a subproblem point number in a macro:
+%    \begin{macrocode}
+\newcommand{\exf@notedata@subproblempoints}[2]{%
+  \exf@csdo\gdef{exf@subproblempoints@#1}{#2}}
+%    \end{macrocode}
+% \macro{\exf@writesubproblempoints}
+% Write subproblem points to the |.aux| file:
+%    \begin{macrocode}
+\newcommand{\exf@writesubproblempoints}[2]%
+  {\exf@writedata{subproblempoints}%
+   {\subproblemtag}{\exf@formatpoints{#1}{#2}}}
+%    \end{macrocode}
+% \macro{\getsubproblempoints}
+% Read points for current subproblem:
+%    \begin{macrocode}
+\newcommand{\getsubproblempoints}[1]{\if @#1@%
+   \ifdefined\exf@subproblem@points%
+    \expandafter\exf@formatpoints\exf@subproblem@points\else 0\fi%
+  \else\exf@csor{exf@subproblempoints@#1}{0}\fi}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Solution Points Code.}
 %
 % \macro{\exf@awardpointsalt}
 % Award points for alternative or optional solution;
 % does not count towards solution total:
 %    \begin{macrocode}
-\newcommand{\exf@awardpointsalt}[2][]{\exf@scanpoints\exf@tmp#2++&%
+\newcommand{\exf@awardpointsalt}[2][]{\exf@scanpoints\exf@tmp#2++@%
   \exf@exptwo\exf@ensuretext{%
    \expandafter\exf@config@composepointspairawardalt\exf@tmp{#1}}}
 %    \end{macrocode}
@@ -5141,9 +5407,9 @@ clean-all:  clean
 % Award points for regular solution;
 % counts towards solution total:
 %    \begin{macrocode}
-\newcommand{\exf@awardpointsreg}[2][]{\exf@scanpoints\exf@tmp#2++&%
+\newcommand{\exf@awardpointsreg}[2][]{\exf@scanpoints\exf@tmp#2++@%
   \exf@exptwo\exf@addtopoints\exf@solution@points@total\exf@tmp%
-  \exf@scanpoints\exf@tmp#2++&%
+  \exf@scanpoints\exf@tmp#2++@%
   \exf@exptwo\exf@ensuretext{%
    \expandafter\exf@config@composepointspairaward\exf@tmp{#1}}}
 %    \end{macrocode}
@@ -5156,11 +5422,112 @@ clean-all:  clean
 % \macro{\getsolutionpoints}
 % Read points for current solution:
 %    \begin{macrocode}
-\newcommand{\getsolutionpoints}[1]{\if&#1&%
+\newcommand{\getsolutionpoints}[1]{\if @#1@%
    \ifdefined\exf@solution@points%
     \expandafter\exf@formatpoints\exf@solution@points\else 0\fi%
   \else 0\fi}
 %    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Tag Lists}
+% \label{sec:imp-taglist}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Loop Lists.}
+%
+% \macro{exerciseloop}
+% \macro{exf@loopdepth}
+% Counters for item number within list and depth of loop nesting:
+%    \begin{macrocode}
+\newcounter{exerciseloop}
+\newcounter{exf@loopdepth}
+%    \end{macrocode}
+
+% \macro{exf@listwalk}
+% Step through a list;
+% call the callback function |#1| with current item |#2|:
+%    \begin{macrocode}
+\def\exf@listwalk#1#2{\if @#2@\def\exf@tmp{}\else%
+  \def\exf@tmp{#1{#2}\exf@listwalk#1}\fi\exf@tmp}
+%    \end{macrocode}
+
+% \macro{\exerciseloop}
+% Loop through a list of items in braces |#1|
+% which is expanded first;
+% store code |#2| to be executed in a callback function
+% (need to use different callback function for each loop depth,
+% callback function must be global to work within table cells);
+% initialise item counter:
+%    \begin{macrocode}
+\newcommand{\exerciseloop}[2]{\addtocounter{exf@loopdepth}{1}%
+  \setcounter{exerciseloop}{0}%
+  \exf@csdo\gdef{exf@listcallback@\roman{exf@loopdepth}}##1%
+   {\stepcounter{exerciseloop}#2}%
+  \edef\exf@tmp{#1}%
+  \exf@csdotwo\exf@exptwo\exf@listwalk%
+   {exf@listcallback@\roman{exf@loopdepth}}\exf@tmp{}%
+  \addtocounter{exf@loopdepth}{-1}}
+%    \end{macrocode}
+% \macro{\exerciseloopstr}
+% Loop through list and save result to |\exerciseloopret|
+% (or optional argument |#1|):
+%    \begin{macrocode}
+\newcommand{\exerciseloopstr}[3][\exerciseloopret]{%
+  \def#1{}\exerciseloop{#2}{\protected@edef#1{#1#3}}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Lists Management.}
+%
+% \macro{\exf@notedata@sheet}
+% Store a sheet tag:
+%    \begin{macrocode}
+\def\exf@sheetlist{}
+\newcommand{\exf@notedata@sheet}[2]{%
+  \xdef\exf@sheetlist{\exf@sheetlist{#1}}}
+%    \end{macrocode}
+% \macro{\exf@notedata@problem}
+% Store a problem tag:
+%    \begin{macrocode}
+\def\exf@problemlist{}
+\newcommand{\exf@notedata@problem}[2]{%
+  \xdef\exf@problemlist{\exf@problemlist{#1}}%
+  \if @#2@\else%
+   \ifcsname exf@problemlist@#2\endcsname\else%
+    \exf@csdo\gdef{exf@problemlist@#2}{}\fi%
+   \exf@csdo\xdef{exf@problemlist@#2}%
+    {\csname exf@problemlist@#2\endcsname{#1}}%
+  \fi}
+%    \end{macrocode}
+% \macro{\exf@notedata@subproblem}
+% Store a subproblem tag:
+%    \begin{macrocode}
+\newcommand{\exf@notedata@subproblem}[2]{%
+  \ifcsname exf@subproblemlist@#2\endcsname\else%
+   \exf@csdo\gdef{exf@subproblemlist@#2}{}\fi%
+  \exf@csdo\xdef{exf@subproblemlist@#2}%
+   {\csname exf@subproblemlist@#2\endcsname{#1}}}
+%    \end{macrocode}
+
+% \macro{\getsheetlist}
+% \macro{\getproblemlist}
+% \macro{\getsubproblemlist}
+% Get list of sheet tags,
+% problem tags (all, within current or particular sheet),
+% subproblem tags (within current or particular problem):
+%    \begin{macrocode}
+\newcommand{\getsheetlist}[1]{\exf@sheetlist}
+\newcommand{\getproblemlist}[1]{\if @#1@%
+  \ifdefined\sheettag\exf@csor{exf@problemlist@\sheettag}{}%
+  \else\exf@problemlist\fi%
+ \else%
+  \if *#1\exf@problemlist\else\exf@csor{exf@problemlist@#1}{}\fi%
+ \fi}
+\newcommand{\getsubproblemlist}[1]{\if @#1@%
+  \exf@csor{exf@subproblemlist@\problemtag}{}\else%
+  \exf@csor{exf@subproblemlist@#1}{}\fi}
+%    \end{macrocode}
+
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Sheet Environment}
@@ -5169,8 +5536,9 @@ clean-all:  clean
 % \macro{exf@sheet}
 % Define options for |sheet| environment:
 %    \begin{macrocode}
-\define@key{exf@sheet}{points}{\exf@scanpoints\exf@sheet@points#1++&}
-\define@key{exf@sheet}{number}{\setcounter{\exf@sheetcounter}{#1}}
+\define@key{exf@sheet}{points}{\exf@scanpoints\exf@sheet@points#1++@}
+\define@key{exf@sheet}{number}{\setcounter{\exf@sheetcounter}{#1}%
+  \addtocounter{\exf@sheetcounter}{-1}\refstepcounter{\exf@sheetcounter}}
 \define@key{exf@sheet}{label}{\def\exf@label{#1}}
 \define@key{exf@sheet}{tag}{\def\sheettag{#1}}
 %    \end{macrocode}
@@ -5197,7 +5565,7 @@ clean-all:  clean
 % Reset optional arguments, process arguments:
 %    \begin{macrocode}
   \let\exf@sheet@points\@undefined%
-  \def\sheettag{\csname the\exf@sheetcounter\endcsname}%
+  \def\sheettag{\getexerciseconfig{tagsheet}}%
   \let\exf@sheet@points@total\@undefined%
   \let\exf@label\@undefined%
   \setkeys{exf@sheet}{#1}%
@@ -5206,6 +5574,7 @@ clean-all:  clean
 %    \begin{macrocode}
   \ifexf@autolabelsheet\label{\exf@config@labelsheet{\sheettag}}\fi%
   \ifdefined\exf@label\label{\exf@label}\fi%
+  \exf@writedata{sheet}{\sheettag}{}%
 %    \end{macrocode}
 % Set points from explicit input or from |.aux| storage:
 %    \begin{macrocode}
@@ -5215,7 +5584,7 @@ clean-all:  clean
    \let\exf@sheet@points@given\@undefined%
    \ifcsname exf@sheetpoints@\sheettag\endcsname%
     \exf@csdotwo\let\exf@tmp{exf@sheetpoints@\sheettag}%
-    \exf@exptwo\exf@scanpoints\exf@sheet@points\exf@tmp++&%
+    \exf@exptwo\exf@scanpoints\exf@sheet@points\exf@tmp++@%
   \fi\fi%
 %    \end{macrocode}
 % Process metadata:
@@ -5225,7 +5594,7 @@ clean-all:  clean
     \let\exf@data@author\exf@data@sheet@author\fi%
    \def\exf@data@title{\exf@config@composemetasheet%
     {\csname the\exf@sheetcounter\endcsname}{\exf@data@sheet@rawtitle}}%
-   \exf@writemetadata}}%
+   \exf@writemetadata}\gdef\exf@metadata{off}}%
 %    \end{macrocode}
 % Insert hook code:
 %    \begin{macrocode}
@@ -5306,7 +5675,7 @@ clean-all:  clean
 % \macro{exf@problem}
 % Define options for |problem| environment:
 %    \begin{macrocode}
-\define@key{exf@problem}{points}{\exf@scanpoints\exf@problem@points#1++&}
+\define@key{exf@problem}{points}{\exf@scanpoints\exf@problem@points#1++@}
 \define@key{exf@problem}{label}{\def\exf@label{#1}}
 \define@key{exf@problem}{tag}{\def\problemtag{#1}}
 \define@key{exf@problem}{sollabel}{\xdef\exf@sollabel{#1}}
@@ -5346,7 +5715,7 @@ clean-all:  clean
 % Initialise variables, process arguments:
 %    \begin{macrocode}
   \exf@init@block{\exf@config@skipprobleminfo}%
-  \def\problemtag{\csname the\exf@problemcounter\endcsname}%
+  \def\problemtag{\getexerciseconfig{tagproblem}}%
   \let\exf@problem@points\@undefined%
   \let\exf@label\@undefined%
   \global\let\exf@sollabel\@undefined%
@@ -5357,6 +5726,7 @@ clean-all:  clean
 %    \begin{macrocode}
   \ifexf@autolabelproblem\label{\exf@config@labelproblem{\problemtag}}\fi%
   \ifdefined\exf@label\label{\exf@label}\fi%
+  \exf@writedata{problem}{\problemtag}{\ifdefined\sheettag\sheettag\fi}%
 %    \end{macrocode}
 % Mark for new solution section; remember problem counter, title:
 %    \begin{macrocode}
@@ -5382,7 +5752,7 @@ clean-all:  clean
    \let\exf@problem@points@given\@undefined%
    \ifcsname exf@problempoints@\problemtag\endcsname%
     \exf@csdotwo\let\exf@tmp{exf@problempoints@\problemtag}%
-    \exf@exptwo\exf@scanpoints\exf@problem@points\exf@tmp++&%
+    \exf@exptwo\exf@scanpoints\exf@problem@points\exf@tmp++@%
   \fi\fi%
   \global\let\exf@prevpoints\exf@problem@points%
   \let\exf@problem@points@show\@undefined%
@@ -5490,8 +5860,10 @@ clean-all:  clean
   \ifdefined\exf@problem@points%
    \expandafter\exf@writeproblempoints\exf@problem@points%
    \exf@exptwo\exf@addtopoints\exf@sheet@points@total\exf@problem@points%
-  \fi%
-  \ifdefined\exf@problem@points\else\ifdefined\exf@sheet@points@total%
+%    \end{macrocode}
+% Warn if no points given for present problem but previously:
+%    \begin{macrocode}
+  \else\ifdefined\exf@sheet@points@total%
    \PackageWarning{exframe}{no points defined for \exf@problemname}%
   \fi\fi%
 %    \end{macrocode}
@@ -5743,8 +6115,9 @@ clean-all:  clean
 % \macro{exf@subproblem}
 % Define options for |subproblem| environment:
 %    \begin{macrocode}
-\define@key{exf@subproblem}{points}{\exf@scanpoints\exf@subproblem@points#1++&}
+\define@key{exf@subproblem}{points}{\exf@scanpoints\exf@subproblem@points#1++@}
 \define@key{exf@subproblem}{label}{\def\exf@label{#1}}
+\define@key{exf@subproblem}{tag}{\def\subproblemtag{#1}}
 %    \end{macrocode}
 
 % \macro{subproblem}
@@ -5769,13 +6142,17 @@ clean-all:  clean
 % Initialise variables, process arguments:
 %    \begin{macrocode}
   \exf@init@block{\exf@config@skipsubprobleminfo}%
+  \def\subproblemtag{\getexerciseconfig{tagsubproblem}}%
   \let\exf@subproblem@points\@undefined%
   \let\exf@label\@undefined%
   \setkeys{exf@subproblem,exf@probleminfo}{#1}%
 %    \end{macrocode}
-% Process manual label:
+% Process automatic and manual labels:
 %    \begin{macrocode}
+  \ifexf@autolabelproblem\label{\exf@config@labelsubproblem%
+   {\subproblemtag}}\fi%
   \ifdefined\exf@label\label{\exf@label}\fi%
+  \exf@writedata{subproblem}{\subproblemtag}{\problemtag}%
 %    \end{macrocode}
 % Remember subproblem counter for solution:
 %    \begin{macrocode}
@@ -5785,7 +6162,7 @@ clean-all:  clean
     \csname theH\exf@subproblemcounter\endcsname}%
   \fi%
 %    \end{macrocode}
-% Remeber points for display;
+% Remember points for display;
 % disable points display if desired:
 %    \begin{macrocode}
   \let\exf@subproblem@points@show\@undefined%
@@ -5793,19 +6170,18 @@ clean-all:  clean
    \let\exf@subproblem@points@show\exf@subproblem@points\fi%
   \exf@ifis\exf@subpointsat{off}{\let\exf@subproblem@points@show\@undefined}%
 %    \end{macrocode}
-% Add given points to problem total:
+% Write points to |.aux| file; add to problem total:
 %    \begin{macrocode}
   \ifdefined\exf@subproblem@points%
    \global\let\exf@prevpoints\exf@subproblem@points%
+   \expandafter\exf@writesubproblempoints\exf@subproblem@points%
    \exf@exptwo\exf@addtopoints\exf@problem@points@total\exf@subproblem@points%
 %    \end{macrocode}
 % Warn if no points given for present subproblem but previously:
 %    \begin{macrocode}
-  \else%
-   \ifdefined\exf@problem@points@total%
-    \PackageWarning{exframe}{no points defined for \exf@subproblemname}%
-   \fi%
-  \fi%
+  \else\ifdefined\exf@problem@points@total%
+   \PackageWarning{exframe}{no points defined for \exf@subproblemname}%
+  \fi\fi%
 %    \end{macrocode}
 % Display points in opening line if desired;
 % expand points into argument and remove points:
@@ -5912,7 +6288,7 @@ clean-all:  clean
 \define@key{exf@solution}{sheettag}{\def\sheettag{#1}}
 \define@key{exf@solution}{href}{\def\exf@solhref{#1}}
 \define@key{exf@solution}{label}{\def\exf@label{#1}}
-\define@key{exf@solution}{points}{\exf@scanpoints\exf@solution@points#1++&}
+\define@key{exf@solution}{points}{\exf@scanpoints\exf@solution@points#1++@}
 \define@key{exf@solution}{probtitle}{\def\exf@solprobtitle{#1}}
 %    \end{macrocode}
 
@@ -5963,7 +6339,7 @@ clean-all:  clean
 %    \begin{macrocode}
   \ifdefined\exf@label\label{\exf@label}\fi%
 %    \end{macrocode}
-% Remeber points for display;
+% Remember points for display;
 % disable points display if desired:
 %    \begin{macrocode}
   \let\exf@solution@points@show\@undefined%
@@ -6399,6 +6775,184 @@ clean-all:  clean
   {\exf@config@composetitlesolutionmulti}{\exf@solutionstitle}}
 %    \end{macrocode}
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Interaction with metastr}
+% \label{sec:imp-metastr}
+%
+% This package transfers some functionality
+% to the package \textsf{metastr} when loaded
+% previously (preferably with package option |course|)
+% by the package option |metastr|.
+% The following changes apply:
+% \begin{itemize}
+% \item
+% The terms specified by the configuration options |term...|,
+% see \secref{sec:imp-config},
+% are transferred to the corresponding term registers
+% |\metaterm{...}| in \textsf{metastr}.
+% This can facilitate internationalisation,
+% and suitable words for English, German, French and Spanish are provided.
+% \item
+% Metadata as described in \secref{sec:metadata}
+% should be filled via |\metaset| rather than |\exercisedata|.
+% The present package will read it from the \textsf{metastr} registers.
+% \item
+% Basic PDF metadata is written automatically or manually
+% as described in \secref{sec:metadata}.
+% This is done via |\metawritepdfinfo|,
+% consequently, automatic writing of these basic metadata
+% is disabled in \textsf{metastr}.
+% \item
+% Sheet-specific metadata (package option |pdfdata=sheet|)
+% is handled via the \textsf{metastr} registers |sheettitle| and |sheetdata|
+% rather than |composemetasheet|.
+% \end{itemize}
+%
+% Apply modifications only when package \textsf{metastr} is loaded:
+%    \begin{macrocode}
+\ifdefined\metaset
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Transfer Metadata.}
+%
+% Import basic data from \textsf{metastr}:
+%    \begin{macrocode}
+\exercisedata{author={\metapick[]{author}}}
+\exercisedata{title={\metapick[]{title}}}
+\exercisedata{subject={\metapick[]{subject}}}
+\exercisedata{keyword={\metapick[]{keyword}}}
+\exercisedata{date={\metapick[]{date}}}
+%    \end{macrocode}
+% Import course data from \textsf{metastr}:
+%    \begin{macrocode}
+\ifdefined\mstr@def@course
+\exercisedata{course={\metapick[]{course}}}
+\exercisedata{instructor={\metapick[]{instructor}}}
+\exercisedata{institution={\metapick[]{institution}}}
+\exercisedata{period={\metapick[]{period}}}
+\exercisedata{material={\metapick[]{material}}}
+\fi
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Sheet Data.}
+%
+% \macro{sheettitle}
+% \macro{sheetauthor}
+% Registers for sheet title and author:
+%    \begin{macrocode}
+\metadef{sheettitle}
+\metadef{sheetauthor}
+%    \end{macrocode}
+
+% \macro{\exf@writemetadata}
+% Write PDF metadata via \textsf{metastr} package,
+% let \textsf{exframe} initiate process (especially for sheet):
+%    \begin{macrocode}
+\metaunset[info]{writepdf}
+\def\exf@writemetadata{%
+  \exf@ifis\exf@metadata{sheet}{\metaset[use]{sheettitle}{}}%
+  \metawritepdfinfo%
+  \exf@ifis\exf@metadata{sheet}{\metaunset[use]{sheettitle}}}
+%    \end{macrocode}
+
+% Fill registers:
+%    \begin{macrocode}
+\metaset{sheetauthor}{\exerciseifempty{\getsheetdata{author}}%
+  {\metapick[#1]{instructor}}{\getsheetdata{author}}}
+\metaset{sheettitle}{\exerciseifempty{\getsheetdata{rawtitle}}%
+  {\metatranslate[#1]{sheet} \thesheet}%
+  {\getsheetdata{rawtitle}}}
+\metaset{author}{\exerciseifempty{\getsheetdata{author}}%
+  {\metapick[#1]{instructor}}{\metapick[#1]{sheetauthor}}}
+\metaset{subtitle}{%
+  \metaif[use]{sheettitle}
+   {\metapick[#1]{sheettitle}}
+   {\metapick[#1]{material}}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Terms.}
+%
+% \macro{term...}
+% Transfer term definitions to \textsf{metastr}:
+%    \begin{macrocode}
+\exerciseconfig{termsheet}{\metaterm{sheet}}
+\exerciseconfig{termsheets}{\metaterm{sheets}}
+\exerciseconfig{termproblem}{\metaterm{problem}}
+\exerciseconfig{termproblems}{\metaterm{problems}}
+\exerciseconfig{termsolution}{\metaterm{solution}}
+\exerciseconfig{termsolutions}{\metaterm{solutions}}
+\exerciseconfig{termpoint}{\metaterm{point}}
+\exerciseconfig{termpoints}{\metaterm{points}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Translations.}
+%
+% English:
+%    \begin{macrocode}
+\ifdefined\mstr@lang@en
+\metasetterm[en]{sheet}{Sheet}
+\metasetterm[en]{sheets}{Sheets}
+\metasetterm[en]{problem}{Problem}
+\metasetterm[en]{problems}{Problems}
+\metasetterm[en]{solution}{Solution}
+\metasetterm[en]{solutions}{Solutions}
+\metasetterm[en]{point}{point}
+\metasetterm[en]{points}{points}
+\fi
+%    \end{macrocode}
+
+% German:
+%    \begin{macrocode}
+\ifdefined\mstr@lang@de
+\metasetterm[de]{sheet}{Blatt}
+\metasetterm[de]{sheets}{Blätter}
+\metasetterm[de]{problem}{Aufgabe}
+\metasetterm[de]{problems}{Aufgaben}
+\metasetterm[de]{solution}{L\"osung}
+\metasetterm[de]{solutions}{L\"osungen}
+\metasetterm[de]{point}{Punkt}
+\metasetterm[de]{points}{Punkte}
+\fi
+%    \end{macrocode}
+
+% French:
+%    \begin{macrocode}
+\ifdefined\mstr@lang@fr
+\metasetterm[fr]{sheet}{Feuille}
+\metasetterm[fr]{sheets}{Feuilles}
+\metasetterm[fr]{problem}{Probl\`eme}
+\metasetterm[fr]{problems}{Probl\`emes}
+\metasetterm[fr]{solution}{Solution}
+\metasetterm[fr]{solutions}{Solutions}
+\metasetterm[fr]{point}{point}
+\metasetterm[fr]{points}{points}
+\fi
+%    \end{macrocode}
+
+% Spanish:
+%    \begin{macrocode}
+\ifdefined\mstr@lang@es
+\metasetterm[es]{sheet}{Hoja}
+\metasetterm[es]{sheets}{Hojas}
+\metasetterm[es]{problem}{Problema}
+\metasetterm[es]{problems}{Problemas}
+\metasetterm[es]{solution}{Solucion}
+\metasetterm[es]{solutions}{Soluciones}
+\metasetterm[es]{point}{punto}
+\metasetterm[es]{points}{puntos}
+\fi
+%    \end{macrocode}
+
+% Close \textsf{metastr} conditional:
+%    \begin{macrocode}
+\fi
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\iffalse
 %</package>
 %\fi
