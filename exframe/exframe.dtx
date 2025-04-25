@@ -1,14 +1,14 @@
 % \iffalse
 %
-% exframe.dtx Copyright (C) 2011-2020 Niklas Beisert
+% exframe.dtx Copyright (C) 2011-2024 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
 % of this license or (at your option) any later version.
 % The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
-% and version 1.3 or later is part of all distributions of LaTeX
-% version 2005/12/01 or later.
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008 or later.
 %
 % This work has the LPPL maintenance status `maintained'.
 %
@@ -20,11 +20,11 @@
 % exfserpe.tex, exfserpf.tex, exfsermk.sh, exfsermk.mak.
 %
 %<package|samplesingle|samplemultimain>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{exframe}[2020/02/24 v3.4 Framework for Exercise Problems]
-%<samplesingle>\ProvidesFile{exfsamp.tex}[2020/02/24 v3.4 standalone sample for exframe]
-%<samplemultimain>\ProvidesFile{exfserm.tex}[2020/02/24 v3.4 multipart sample for exframe]
+%<package>\ProvidesPackage{exframe}[2024/10/18 v3.5 Framework for Exercise Problems]
+%<samplesingle>\ProvidesFile{exfsamp.tex}[2024/10/18 v3.5 standalone sample for exframe]
+%<samplemultimain>\ProvidesFile{exfserm.tex}[2024/10/18 v3.5 multipart sample for exframe]
 %<*driver>
-\def\thedate#1{2020/02/24}\def\theversion#1{v3.4}
+\def\thedate#1{2024/10/18}\def\theversion#1{v3.5}
 \ProvidesFile{exframe.dtx}[\thedate{} \theversion{} exframe reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -40,20 +40,22 @@
 \hypersetup{keeppdfinfo=true}
 \hypersetup{pdfsource={}}
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfcopyright={Copyright 2010-2020 Niklas Beisert.
+\hypersetup{pdfcopyright={Copyright 2010-2024 Niklas Beisert.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
-\hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
+\hypersetup{pdflicenseurl={https://www.latex-project.org/lppl.txt}}
 \hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K,
   Wolfgang-Pauli-Strasse 27}}
 \hypersetup{pdfcontactpostcode={8093}}
 \hypersetup{pdfcontactcity={Zurich}}
 \hypersetup{pdfcontactcountry={Switzerland}}
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
-\hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
+\hypersetup{pdfcontacturl={https://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
 \newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
+\newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
+\newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\textsf{#1}}}
 
 \parskip1ex
 \parindent0pt
@@ -139,8 +141,8 @@ The package can handle exercise sheets which combine several exercise problems:
 A \LaTeX{} document can consist of an individual sheet
 or of a collection of sheets (e.g.\ spanning a lecture course).
 In the latter case, the document files can be set up
-such that single sheets as well as a collection of all sheets
-can be compiled; the package \textsf{childdoc} may be of assistance.
+such that single sheets as well as a collection of all sheets can be compiled;
+the package \ctanpkg{childdoc} may be of assistance.
 
 \item
 The package can handle points to be credited:
@@ -235,7 +237,10 @@ the solution to a problem or a subproblem:
 A |solution| environment should be
 at the end of a |subproblem| or |problem| environment
 (it is not mandatory to provide a |solution|).
-It can be contained within the corresponding environment or it can follow it.
+It can be contained within the corresponding environment or it can follow it
+(where needed, the option |forproblem| associates a |solution|
+following a |subproblem| to the encompassing |problem|
+rather than the preceding |subproblem|).
 Depending on the choice of solution display, see \secref{sec:solutions},
 the output may have a slightly different layout.
 In terms of logic, it is preferred
@@ -401,24 +406,27 @@ and reads the file via |\input{|\textit{filename}|.sol}|.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DescribeMacro{solutionbuf}
 \DescribeMacro{problembuf}
+\DescribeMacro{subproblembuf}
 The package offers similar functionality to control the display of problems.
-In order to have any control over the content of |problem| environments,
-the latter needs to be read into an internal buffer.
+In order to have any control over the content of |problem| and |subproblem|
+environments, the latter need to be read into an internal buffer.
 Reading of solutions and problems to internal buffers is activated
 or deactivated by:
 %
 \begin{center}
 \begin{tabular}{l}
 |\exercisesetup{solutionbuf|[|=true|\textbar|false|]|}|\\
-|\exercisesetup{problembuf|[|=true|\textbar|false|]|}|
+|\exercisesetup{problembuf|[|=true|\textbar|false|]|}|\\
+|\exercisesetup{subproblembuf|[|=true|\textbar|false|]|}|
 \end{tabular}
 \end{center}
 %
 By default, |solution| environments are read to an internal buffer,
-while the content of |problem| environments is processed directly
+while the content of [|sub|]|problem| environments is processed directly
 by the \TeX\ engine.
-Therefore, the following options to control the display
-of |problem| environments require the statement |\exercisesetup{problembuf}|.
+Therefore, the below options to control the display
+of [|sub|]|problem| environments
+require the statement |\exercisesetup{|[|sub|]|problembuf}|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DescribeMacro{problemmanual}
@@ -462,25 +470,26 @@ the extension |.prb| can be customised by the configuration |extproblems|.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DescribeMacro{disable}
 \DescribeMacro{insertproblemselect}
-The display of a particular |problem|
+\DescribeMacro{insertsubproblemselect}
+The display of a particular [|sub|]|problem|
 can be suppressed altogether by an optional argument:
 %
 \begin{center}
-|\begin{problem}[disable]|
+|\begin{|[|sub|]|problem}[disable]|
 \end{center}
 %
 
 This option can be exploited to automatically
 suppress certain classes of problems as follows:
-A hook function |insertproblemselect| declared by:
+A hook function |insert|[|sub|]|problemselect| declared by:
 %
 \begin{center}
-|\exerciseconfig{insertproblemselect}[1]{|\textit{code}|}|
+|\exerciseconfig{insert|[|sub|]|problemselect}[1]{|\textit{code}|}|
 \end{center}
 %
 can call
-|\setproblemdata{disable}| whenever a problem is to be suppressed.
-In order to decide, the optional argument of the |problem| environment
+|\set|[|sub|]|problemdata{disable}| whenever a problem is to be suppressed.
+In order to decide, the optional argument of the [|sub|]|problem| environment
 is passed on to the hook function as the single argument.
 Note that the argument needs to be processed manually.
 
@@ -669,7 +678,7 @@ The following directives are analogous to |\defexercisedata|,
 \DescribeMacro{\writeexercisedata}
 The most relevant metadata can be written to
 the metadata section of pdf files
-(using pdf\LaTeX{} and the package \textsf{hyperref}
+(using pdf\LaTeX{} and the package \ctanpkg{hyperref}
 whenever loaded).
 This feature is configured by:
 %
@@ -1181,12 +1190,14 @@ Otherwise the \textit{filled code} is executed.
 The package defines numerous layout configuration options.
 They are listed along with their original definition
 and a brief description in \secref{sec:imp-config}.
-They include options to:
+Some particular aspects are described in more detail
+in \secref{sec:guides}.
+The configuration includes options to:
 %
 \begin{itemize}
 \item
 adjust the language for the principal entities of this package
-like `sheet(s)', `problem(s)', `solution(s)', `points(s)';
+like ``sheet(s)'', ``problem(s)'', ``solution(s)'', ``points(s)'';
 \item
 adjust the fonts styles of various parts of the text;
 \item
@@ -1201,84 +1212,7 @@ adjust the appearance of counters;
 adjust some other behaviour of the package.
 \end{itemize}
 %
-The following will highlight only few examples.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\DescribeMacro{insertsheettitle}
-An important setting is:
-%
-\begin{center}
-|\exerciseconfig{insertsheettitle}{|\textit{code}|}|
-\end{center}
-%
-The code \textit{code} is meant to print the title
-or header of an exercise sheet.
-The minimalistic default code |\centerline{\getsheetdata{title}}|
-merely prints the sheet title ``Sheet \#'' at the centre of a line.
-Commonly, one would replace this by a more elaborate header
-(potentially with some more information,
-appealing layout, logos, \ldots).
-In order to design a header template,
-it makes sense to retrieve data
-via |\getexercisedata| and |\getsheetdata|
-described in \secref{sec:metadata}.
-Likewise |\exercisedataempty| and |\sheetdataempty|
-can be used to display default values or alternative data
-if some particular data is not provided.
-An example is given by the |plainheader| extended style option
-defined in \secref{sec:imp-styles}.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\DescribeMacro{composetitleproblem}
-Another noteworthy example is |composetitleproblem|
-to compose the title for a problem. It takes two parameters,
-the number and the title.
-The (somewhat simplified) default declaration is:
-%
-\begin{center}
-\begin{tabular}{l}
-|\exerciseconfig{composetitleproblem}[2]{\exerciseifempty{#2}|\\
-|  {\getexerciseconfig{termproblem}|\\
-|   \getexerciseconfig{composeitemproblem}{#1}}|\\
-|  {\getexerciseconfig{composeitemproblem}{#1} #2}}|
-\end{tabular}
-\end{center}
-%
-This checks whether the title is empty.
-If no title is given use ``Problem \#.'',
-otherwise use ``\#. \textit{title}''.
-Here the term ``Problem'' is made abstract
-by the configuration |termproblem|
-(e.g.\ to support internationalisation)
-and the problem number is further composed obtained by
-the configuration |composeitemproblem|
-which takes the bare number as argument
-and returns it followed by a dot.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\DescribeMacro{\exerciseifempty}
-\DescribeMacro{\exerciseifnotempty}
-Handy conditionals command to check
-whether an expression \textit{expr} is empty are:
-%
-\begin{center}
-\begin{tabular}{l}
-|\exerciseifempty{|\textit{expr}|}|%
-  |{|\textit{empty code}|}{|\textit{filled code}|}|\\
-|\exerciseifnotempty{|\textit{expr}|}|%
-  |{|\textit{filled code}|}|
-\end{tabular}
-\end{center}
-%
-Their main purpose is to test
-whether some provided expression \textit{expt} is empty.
-They expand to the common \TeX{} constructs
-|\if&#1&#2\else#3\fi| and |\if&#1&\else#2\fi|
-which work assuming that \textit{expr} is not too exotic
-(e.g.\ it should not start with the character `|&|'
-and other special \TeX{} characters or macros are potentially dangerous;
-also using this within tables can be troublesome;
-the character `|&|' can be reconfigured by the package option |emptytestchar|).
+We will highlight a few examples in \secref{sec:examples}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Exercise Styles}
@@ -1373,6 +1307,13 @@ in two-sided layout, sheets will start on odd pages
 and empty pages are added at the end of sheets
 to produce an even number of pages.
 
+\item |subproblemdelimitem| --
+shift subproblem number delimiter `)' from subproblem label
+to subproblem item composition;
+needed if |\ref| to a subproblem |\label| should produce a bare identifier
+without a trailing `)';
+assumes (and restores) numbering |\alph| and delimiter `)'.
+
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1464,7 +1405,7 @@ define some more advanced styles.
 
 \item |metastr|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
-load \textsf{metastr} package and use to handle PDF metadata
+load \ctanpkg{metastr} package and use to handle pdf metadata
 and basic internationalisation,
 see \secref{sec:imp-metastr} for details.
 
@@ -1514,7 +1455,7 @@ Sets the conditional |\ifsolutions| accordingly.
 \item |pdfdata|[|=auto|\textbar|manual|\textbar|sheet|\textbar|off|]
 (no value implies |auto|, initially set to |auto|) --
 control writing most relevant metadata to pdf files;
-has no effect without package \textsf{hyperref}.
+has no effect without package \ctanpkg{hyperref}.
 
 \item |lineno|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
@@ -1530,7 +1471,7 @@ see \secref{sec:styles} for details.
 (no value implies |true|, initially set to |false|) --
 enable/disable use of hyper-references from solutions
 to the corresponding problems;
-has no effect without package \textsf{hyperref}.
+has no effect without package \ctanpkg{hyperref}.
 
 \item |warntext|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
@@ -1565,6 +1506,11 @@ with |\exercisesetup{solutions=false}| when buffering if disabled.
 enable/disable buffering for |problem| environments
 in order to control their display.
 
+\item |subproblembuf|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+enable/disable buffering for |subproblem| environments
+in order to control their display.
+
 \item |emptytestchar=|\textit{char}
 (initially set to `|&|') --
 character to use for testing whether an argument |#1|
@@ -1575,29 +1521,443 @@ if `|&|' causes trouble within tables, could try `|@|' instead.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Customisations}
+\label{sec:customisation}
+
+This section attempts to shed some light on the rich array of options
+for layout customisations.
+It is not at all complete, but it provides an overview and
+illustrates selected aspects by means of guidance and examples.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Guidance}
+\label{sec:guides}
+
+The following provides some guidance on customisation options
+which might otherwise be hard to follow.
+Suggestions for topics to be expanded are welcome.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Package Philosophy.}
+
+The philosophy of the present package is to
+define a low-level framework to describe exercises with solutions
+to be used in various situations.
+The aim is to provide the means to describe the content
+(problems, solutions, sheets) in a simple fashion
+and separate it from the various layout definitions and choices
+which will define the appearance of the content.
+The package itself provides a functional basic layout
+rather than an elaborate or particularly appealing one.
+However, it provides means to adjust the basic layout in many ways and
+to predefine custom layout schemes.
+The package is meant to collaborate with other packages
+which provide solutions for particular applications
+in order to produce an appealing layout for the given content.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Framework for Layout Customisation.}
+
+The framework for defining the layout
+consists of an internal and a public component
+which allow for minor adjustments and major changes
+both with reasonable efforts.
+
+The internal component implements some very coarse
+choices for the presentation of the content.
+It is hard-coded in the package
+(using internal macros starting with |exf@|)
+and its operation can be adjusted mainly through the available package options,
+see \secref{sec:options}, and through configuration switches
+for individual blocks.
+
+The public framework uses a hierarchy of configuration macros
+defined by |\exerciseconfig|, see \secref{sec:layout}.
+The internal component interfaces with the public framework
+through a set of higher-level interface macros.
+These include macros which produce the desired text in a
+well-prescribed situation
+as well as macros which perform some \LaTeX\ operations
+such as adjusting presentation styles or modifying some variables.
+In many cases the structural higher-level macros have been set up to
+branch out to further lower-level macros prescribing presentation details.
+
+The hierarchy has the following structure:
+High-level macros compose certain abstract elements
+into readable text, e.g.\ an intro/outro for some block of text
+made from space, decorations and abstract text elements.
+Medium-level macros compose elementary objects into abstract text elements,
+e.g.\ a header for some block of text
+composed from a label and a title with some space and delimiters in between.
+Low-level macros define elementary objects,
+such as delimiter characters, spaces, widths and words (translations).
+
+The public framework has been set up such that
+elements at high, medium and low levels can be adjusted independently
+to arrive at a specific effect.
+For example, the composition of problem titles can be adjusted abstractly,
+but also the representation of a specific delimiter
+can be tweaked from `.' to `:';
+either change can be obtained by adjusting a single definition.
+This flexibility comes along with an unfortunate complexity
+to allow for adjustments to be implemented individually but also universally.
+Nevertheless, the implementation of the public configuration macros
+for a particular setup can be rather simple because the particular setup
+will neither use all of the available coarse layout choices
+nor all of the customisation options.
+For example, a higher-level macro for a problem title
+may directly produce the desired text without branching into
+further lower-level definitions.
+Also, only those higher-level macros which actually come to use
+in a particular setup will need to be implemented.
+
+The following paragraphs provide guidance on aspects of the
+public framework. There is no complete manual for the framework,
+but a skilled \LaTeX\ tinkerer can find further information
+and pieces of code ready for tweaking in the implementation notes
+in \secref{sec:imp-config} and \secref{sec:imp-styles}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Labels for Problems and Sheets.}
+
+The package provides many methods with various names
+to customise labels for problem and solution blocks.
+These names follow certain patterns
+(but are sometimes stuck with odd assignments due to backward compatibility).
+The following guide describes which methods come to use
+in which situations.
+
+The labels can be grouped into two categories,
+items and titles, and the corresponding methods are
+typically called |...item...| and |...title...|.
+Items are enumerative identifiers for the [sub]problems
+such as `1.', `b)' or `3iv)'.
+Titles serve as headers for [sub]problem or solution blocks
+which usually take the form ``Problem 1'', ``2.\ Fermat's Last''
+or simply ``c)'' for a subproblem.
+Titles may use the corresponding item, and display it together with
+the type, name or using a different punctuation
+depending on the situation.
+
+\DescribeMacro{composetitleproblem}
+\DescribeMacro{composenamedproblem}
+\DescribeMacro{composebareproblem}
+The composition of problem titles through |composetitleproblem|
+depends mainly on whether an individual name is provided
+(|title| option to |problem| environment).
+The method passes on to |composenamedproblem| if a name is provided
+(second argument non-empty), otherwise to |composebareproblem|.
+It might also produce a plain name if no item is provided
+(first argument empty).
+
+\DescribeMacro{composenamedproblemdelim}
+\DescribeMacro{composenamedproblemsep}
+\DescribeMacro{composebareproblemdelim}
+\DescribeMacro{composebareproblemsep}
+\DescribeMacro{composeitemproblemdelim}
+\DescribeMacro{composeitemproblemsep}
+Titles and items are separated by some space (|...sep|)
+and/or delimiting characters (|...delim|).
+The item within a named title is separated from the following name by
+|composenamedproblemdelim| and |composenamedproblemsep|.
+In an unnamed title, the type is separated from the following item by
+|composebareproblemsep|, and the item is followed by |composebareproblemdelim|.
+A plain item not used within a title is delimited by |composeitemproblemdelim|.
+The presentation of all titles and items
+is followed by |composeitemproblemsep|.
+
+\DescribeMacro{composetocproblem}
+Problem titles can also be made to appear in the table of contents,
+their display is governed by |composetocproblem|
+which distinguishes between named and unnamed problems.
+The method uses the above delimiter |composenamedproblemdelim|
+but no other customisations because detailed layout
+will be less welcome in the table of contents.
+
+\DescribeMacro{composetitlesheet}
+\DescribeMacro{composetocsheet}
+\DescribeMacro{composemetasheet}
+Sheet titles generated by |composetitlesheet| are similar
+to problem titles but simpler.
+They may or may not have a name, but there are no pre-defined delimiters.
+The two similar methods |composetocsheet| and |composemetasheet|
+govern the display of sheet titles in the table of contents
+and in pdf metadata, respectively.
+
+\DescribeMacro{composeitemsubproblem}
+\DescribeMacro{composetitlesubproblem}
+\DescribeMacro{composeitemsubproblemdelim}
+\DescribeMacro{composeitemsubproblemsep}
+\DescribeMacro{countersubproblem}
+\DescribeMacro{subproblemdelimitem}
+Subproblem items and titles are simple as well because
+subproblems have no names.
+They are generated by |composeitemsubproblem| and |composetitlesubproblem|,
+respectively. The subproblem delimiter and separator
+are determined by |composeitemsubproblemdelim|
+and |composeitemsubproblemsep|, respectively.
+Note that the delimiter `)' within `b)' may be declared as either
+|composeitemsubproblemdelim| or as part of the subproblem counter
+defined in |countersubproblem|.
+This behaviour is governed by the style |subproblemdelimitem|.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Labels for Solutions.}
+
+The display of appropriate solution items and titles is very complex
+as it depends on four factors:
+(i) The first factor is whether solutions are displayed as an itemised list
+or as a plain list.
+(ii) The second factor is whether solutions are
+displayed individually, grouped by problem
+or assembled as a list for multiple problems.
+(iii) The third factor is whether the solution corresponds
+to a problem or subproblem.
+(iv) A fourth factor is whether a solution is the first one within a problem.
+In addition, the list of solutions may have a title (v) and sections (vi).
+Let us discuss the relevant combinations.
+
+\DescribeMacro{composetitlesolutions}
+\DescribeMacro{...solutionsproblemsingle}
+\DescribeMacro{...solutionsproblemmulti}
+The solution list title (``Solutions'') (v)
+generated by |composetitlesolutions| only applies to
+lists of (potentially) multiple problems (ii).
+The solution section title (vi) generated by |composetitlesolutionsproblem...|
+indicates the corresponding problem.
+It comes in two variants |...single| and |...multi|
+which distinguish a single problem (``Solution'')
+from a list of (potentially) multiple problems (``Problem 2'') (ii).
+
+\DescribeMacro{skipsolutionitem}
+\DescribeMacro{skipsolutionitemsub}
+\DescribeMacro{composeitemsolution}
+\DescribeMacro{composeitemsolutionsub}
+\DescribeMacro{composeitemsolutionfirst}
+\DescribeMacro{...itemsolutionfirstsub}
+An itemised list of solutions (i) is invoked by a non-zero
+width |skipsolutionitem|[|sub|] (iii) for horizontal alignment
+of the solution text. In this case, solution items are displayed
+to the left of the line of horizontal alignment.
+These are generated by the configuration |composeitemsolution|[|sub|] (iii)
+irrespectively of the display mode (ii).
+By default, the current problem item is displayed as a section title (vi),
+therefore the solution items will only display
+the corresponding subproblem item
+leaving blank the solution items for problems.
+However, in an adjusted scheme without section titles (vi),
+the very first solution within a problem (iv)
+might additionally indicate the corresponding problem item
+|composeitemsolutionfirst|[|sub|] (iii).
+
+\DescribeMacro{composetitlesolutionsingle}
+\DescribeMacro{composeitemsolutiondelim}
+An individual solution (ii) formally part of a plain list (i)
+starts with the title ``Solution:''
+which is generated by the method |composetitlesolutionsingle|.
+The delimiter `:' is defined by |composeitemsolutiondelim|.
+
+\DescribeMacro{composetitlesolutionmulti}
+\DescribeMacro{...titlesolutionproblem}
+\DescribeMacro{...titlesolutionsubproblem}
+The title for a grouped solution (ii) within a plain list (i)
+is generated by the method |composetitlesolutionmulti|
+which forwards to |composetitlesolution|[|sub|]|problem| (iii).
+Again, by default, these methods only display the subproblem item
+because the problem item is provided as a section title (vi) instead.
+
+\DescribeMacro{composetocsolution}
+\DescribeMacro{composetocsolutions}
+Items for the table of contents corresponding to
+solution lists and problem solutions
+are generated by |composetocsolution|[|s|].
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Examples}
+\label{sec:examples}
+
+This section contains some sample customisations of the default (plain) layout
+which can be realised with moderate effort
+using the various tools provided by the package.
+Additional applications are shown in the sample files
+|exfsamp.tex| and |exfserm.tex|.
+Suggestions for further applications are welcome.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Sheet Title.}
+
+\DescribeMacro{insertsheettitle}
+An important setting is:
+%
+\begin{center}
+|\exerciseconfig{insertsheettitle}{|\textit{code}|}|
+\end{center}
+%
+The code \textit{code} is meant to print the title
+or header of an exercise sheet.
+The minimalistic default code |\centerline{\getsheetdata{title}}|
+merely prints the sheet title ``Sheet \#'' at the centre of a line.
+Commonly, one would replace this by a more elaborate header
+(potentially with some more information,
+appealing layout, logos, \ldots).
+In order to design a header template,
+it makes sense to retrieve data
+via |\getexercisedata| and |\getsheetdata|
+described in \secref{sec:metadata}.
+Likewise |\exercisedataempty| and |\sheetdataempty|
+can be used to display default values or alternative data
+if some particular data is not provided.
+An example is given by the |plainheader| extended style option
+defined in \secref{sec:imp-styles}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Problem Title.}
+
+\DescribeMacro{composetitleproblem}
+\DescribeMacro{composenamedproblem}
+\DescribeMacro{composebareproblem}
+Another noteworthy example is |composetitleproblem|
+to compose the title for a problem. It takes two parameters,
+the number and the title.
+The (somewhat simplified) default declarations are:
+%
+\begin{center}
+\begin{tabular}{l}
+|\exerciseconfig{composetitleproblem}[2]{\exerciseifempty{#2}|\\
+|  {\getexerciseconfig{composebareproblem}{#1}}|\\
+|  {\getexerciseconfig{composenamedproblem}{#1}{#2}}}|\\
+|\exerciseconfig{composebareproblem}[1]{\getexerciseconfig{termproblem}|\\
+|  #1\getexerciseconfig{composebareproblemdelim}}|\\
+|\exerciseconfig{composenamedproblem}[2]|\\
+|  {#1\getexerciseconfig{composenamedproblemdelim} #2}|
+\end{tabular}
+\end{center}
+%
+This checks whether the title is empty.
+If no title is given use the configuration |composebareproblem|
+to compose ``Problem \#'',
+where the term ``Problem'' is made abstract
+by the configuration |termproblem|
+(e.g.\ to support internationalisation).
+If a title is given use the configuration |composenamedproblem|
+to compose ``\#. \textit{title}''.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Conditionals.}
+
+\DescribeMacro{\exerciseifempty}
+\DescribeMacro{\exerciseifnotempty}
+Handy conditional commands to check
+whether an expression \textit{expr} is empty are:
+%
+\begin{center}
+\begin{tabular}{l}
+|\exerciseifempty{|\textit{expr}|}|%
+  |{|\textit{empty code}|}{|\textit{filled code}|}|\\
+|\exerciseifnotempty{|\textit{expr}|}|%
+  |{|\textit{filled code}|}|
+\end{tabular}
+\end{center}
+%
+Their main purpose is to test
+whether some provided expression \textit{expt} is empty.
+They expand to the common \TeX{} constructs
+|\if&#1&#2\else#3\fi| and |\if&#1&\else#2\fi|
+which work assuming that \textit{expr} is not too exotic
+(e.g.\ it should not start with the character `|&|'
+and other special \TeX{} characters or macros are potentially dangerous;
+also using this within tables can be troublesome;
+the character `|&|' can be reconfigured by the package option |emptytestchar|).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Decorate Solutions with Boxes.}
+
+\DescribeMacro{insertsolutionsbefore}
+\DescribeMacro{insertsolutionsafter}
+\DescribeMacro{composetitlesolution...}
+The following adjustment changes the
+presentation of solutions to be surrounded by boxes with background colour
+(thanks to Till Bargheer for the example).
+This yields an alternative presentation
+that visually distinguishes problem from solution content.
+
+The adjustment uses the package \ctanpkg{tcolorbox}
+to supply such boxes. The coloured box environment |tcolorbox| is invoked
+by the customisations |insertsolutionsbefore| and |...after|
+which are called just before and after a block of solutions is:
+%
+\begin{center}
+\begin{tabular}{l}
+|\RequirePackage{tcolorbox}|\\
+|\tcbuselibrary{breakable}|\\
+|\exerciseconfig{insertsolutionsbefore}{%|\\
+|  \begin{tcolorbox}[breakable,boxrule=0.25pt]}|\\
+|\exerciseconfig{insertsolutionsafter}{\end{tcolorbox}}|\\
+|\exerciseconfig{composetitlesolutionsingle}[2]{}|
+\end{tabular}
+\end{center}
+%
+With the highlighting of solutions by boxes,
+the default introductory statement ``Solution:''
+(when |solutionbelow| is |here| or |subproblem|)
+of a solution block becomes obsolete.
+This is achieved by removing the content of |composetitlesolutionsingle|
+(or similar composition definitions if |solutionbelow| is set otherwise).
+
+\DescribeMacro{solutionpointsat}
+\DescribeMacro{insertpointsmargin}
+Note that displaying points in the margin would have to be adjusted
+because the plain \LaTeX\ command |\marginpar| does not work
+inside a |tcolorbox| (due to nested floats).
+If this combination is desired,
+one should adjust the placement of margin paragraphs
+to the package \ctanpkg{marginnote}:
+%
+\begin{center}
+\begin{tabular}{l}
+|\exercisestyle{solutionpointsat=margin}|\\
+|\RequirePackage{marginnote}|\\
+|\exerciseconfig{insertpointsmargin}[1]{\marginnote{\footnotesize#1}}|
+\end{tabular}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\iffalse
+\paragraph{Further Ideas.}
+
+\begin{itemize}
+\item Optional Starred
+\item Collections
+\item Keep list of tags per sheet. Code to loop through list. Manuel Benz
+\end{itemize}
+
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Information}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-Copyright \copyright{} 2011--2020 Niklas Beisert
+Copyright \copyright{} 2011--2024 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
 of this license or (at your option) any later version.
 The latest version of this license is in
-  \url{http://www.latex-project.org/lppl.txt}
-and version 1.3 or later is part of all distributions of \LaTeX{}
-version 2005/12/01 or later.
+  \url{https://www.latex-project.org/lppl.txt}
+and version 1.3c or later is part of all distributions of \LaTeX{}
+version 2008 or later.
 
 This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainer of this work is Niklas Beisert.
 
 This work consists of the files |README.txt|, |exframe.ins| and |exframe.dtx|
-as well as the derived files |exframe.sty|, |exfsamp.tex|, |exfserm.tex|,
-|exfser|\textit{nn}|.tex| (\textit{nn}=|01|, |02|, |03|, |aa|),
-|exfserpe.tex|, |exfserpf.tex|, |exfsermk.sh|, |exfsermk.mak|
+as well as the derived files |exframe.sty|, |exfsamp.tex|,
+|exfser|\textit{x}|.tex| (\textit{x}=|m|, |e|, |f|, |01|, |02|, |03|, |aa|),
+|exfsermk.sh|, |exfsermk.mak|
 and |exframe.pdf|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1613,12 +1973,10 @@ The package consists of the files:
     |exframe.sty|  & package file \\
     |exfsamp.tex|  & sample file \\
     |exfserm.tex|  & multipart sample main file \\
-    |exfser01.tex| & multipart sample sheet 1 \\
-    |exfser02.tex| & multipart sample sheet 2 \\
-    |exfser03.tex| & multipart sample sheet 3 \\
+    |exfser0|\textit{n}|.tex| & multipart sample sheet
+                                \textit{n}=|1|, |2|, |3| \\
     |exfseraa.tex| & multipart sample unused problems \\
-    |exfserpe.tex| & multipart sample problem E \\
-    |exfserpf.tex| & multipart sample problem F \\
+    |exfserp|\textit{x}|.tex| & multipart sample problem \textit{x}=|e|, |f| \\
     |exfsermk.sh|  & multipart sample compile script \\
     |exfsermk.mak| & multipart sample makefile \\
     |exframe.pdf|  & manual
@@ -1634,9 +1992,9 @@ Run (pdf)\LaTeX{} on |exframe.dtx|
 to compile the manual |exframe.pdf| (this file).
 \item
 Run \LaTeX{} on |exframe.ins| to create the package |exframe.sty|
-and the samples consisting of |exfsamp.tex|, |exfserm.tex|,
-|exfser01.tex|, |exfser02.tex|, |exfser03.tex|, |exfseraa.tex|,
-|exfserpe.tex|, |exfserpf.tex|, |exfsermk.sh|, |exfsermk.mak|.
+and the samples consisting of |exfsamp.tex|,
+|exfser|\textit{x}|.tex| (\textit{x}=|m|, |e|, |f|, |01|, |02|, |03|, |aa|),
+|exfsermk.sh|, |exfsermk.mak|.
 Copy the file |exframe.sty| to an appropriate directory of your \LaTeX{}
 distribution, e.g.\ \textit{texmf-root}|/tex/latex/exframe|.
 \end{itemize}
@@ -1647,40 +2005,36 @@ distribution, e.g.\ \textit{texmf-root}|/tex/latex/exframe|.
 The package makes use of other packages available at CTAN:
 \begin{itemize}
 \item
-This package relies on some functionality of the package \textsf{verbatim}
+This package relies on some functionality of the package \ctanpkg{verbatim}
 to read verbatim code from the \LaTeX{} source without expansion of macros.
-Compatibility with the \textsf{verbatim} package
+Compatibility with the \ctanpkg{verbatim} package
 has been tested with v1.5q (2014/10/28).
 \item
-This package uses the package
-\href{http://ctan.org/pkg/xkeyval}{\textsf{xkeyval}}
+This package uses the package \ctanpkg{xkeyval}
 to process the options for the package, environments and macros.
-Compatibility with the \textsf{xkeyval} package
+Compatibility with the \ctanpkg{xkeyval} package
 has been tested with v2.7a (2014/12/03).
 \item
-This package can use the package
-\href{http://ctan.org/pkg/hyperref}{\textsf{hyperref}}
+This package can use the package \ctanpkg{hyperref}
 to include hyperlinks between problems and solutions.
-Compatibility with the \textsf{hyperref} package
+Compatibility with the \ctanpkg{hyperref} package
 has been tested with v6.88e (2018/11/30).
 \item
-This package can use the package
-\href{http://ctan.org/pkg/amstext}{\textsf{amstext}}
-(which is automatically loaded by \textsf{amsmath})
+This package can use the package \ctanpkg{amstext}
+(which is automatically loaded by \ctanpkg{amsmath})
 to display text within equations.
-Compatibility with the \textsf{amstext} package
+Compatibility with the \ctanpkg{amstext} package
 has been tested with v2.01 (2000/06/29).
 \item
 This package uses the command |\currfilename|
-provided by the package \textsf{currfile} (if available and loaded)
+provided by the package \ctanpkg{currfile} (if available and loaded)
 to indicate the \LaTeX{} source file in the generated metapost file.
-Compatibility with the \textsf{currfile} package
+Compatibility with the \ctanpkg{currfile} package
 has been tested with v0.7c (2015/04/23).
 \item
-This package can use the package
-\href{http://ctan.org/pkg/metastr}{\textsf{metastr}}
-to write PDF metadata and to handle basic translations.
-Compatibility with the \textsf{metastr} package
+This package can use the package \ctanpkg{metastr}
+to write pdf metadata and to handle basic translations.
+Compatibility with the \ctanpkg{metastr} package
 has been tested with v1.0 (2020/02/06).
 \end{itemize}
 
@@ -1690,8 +2044,8 @@ varying largely in scope and sophistication:
 %
 \begin{itemize}
 \item
-The package \href{http://ctan.org/pkg/exsheets}{\textsf{exsheets}}
-and its successor \href{http://ctan.org/pkg/xsim}{\textsf{xsim}}
+The package \ctanpkg{exsheets}
+and its successor \ctanpkg{xsim}
 provide a \LaTeX{} 3 style for typesetting exercises with solutions.
 They offer options to
 hide or delay solutions,
@@ -1702,7 +2056,7 @@ handle exercise collections,
 as well as some more specific options.
 They allow to adjust the layout and choose among predefined ones.
 \item
-The package \href{http://ctan.org/pkg/exercise}{\textsf{exercise}}
+The package \ctanpkg{exercise}
 provides a style for typesetting exercises with solutions.
 It offers many options to
 hide or delay solutions,
@@ -1711,18 +2065,18 @@ specify some metadata
 as well as some more specific options.
 It allows to customise the layout.
 \item
-The package \href{http://ctan.org/pkg/exercises}{\textsf{exercises}}
+The package \ctanpkg{exercises}
 provides a style for typesetting exercises with solutions.
 It offers options to hide solutions and deal with points.
 It allows basic customisation of the layout.
 \item
-The package \href{http://ctan.org/pkg/exam}{\textsf{exam}}
+The package \ctanpkg{exam}
 provides a document class for typesetting exams conveniently.
 It offers many options to hide solutions, deal with points
 and deal with other exam-specific tasks.
 It allows to adjust the layout and choose among predefined ones.
 \item
-The package \href{http://ctan.org/pkg/probsoln}{\textsf{probsoln}}
+The package \ctanpkg{probsoln}
 provides a style for typesetting exercises with solutions
 which are stored in a collection.
 It offers options to
@@ -1730,18 +2084,17 @@ hide solutions
 and to assemble problems from an external collection.
 \item
 The packages
-\href{http://ctan.org/pkg/uebungsblatt}{\textsf{uebungsblatt}},
-\href{http://ctan.org/pkg/uassign}{\textsf{uassign}},
-\href{http://ctan.org/pkg/mathexam}{\textsf{mathexam}},
-\href{http://ctan.org/pkg/exsol}{\textsf{exsol}},
+\ctanpkg{uebungsblatt},
+\ctanpkg{uassign},
+\ctanpkg{mathexam},
+\ctanpkg{exsol},
 \href{https://github.com/mbauman/homework}{\textsf{homework}},
 \href{https://gist.github.com/jhwilson/1278588}{\textsf{jhwhw}}
 provide basic functionality for somewhat more particular situations.
 \end{itemize}
 %
-See CTAN categories
-\href{http://ctan.org/topic/exercise}{\textsf{exercise}}
-and \href{http://ctan.org/topic/exam}{\textsf{exam}}
+See CTAN categories \ctanref{topic/exercise}{exercise}
+and \ctanref{topic/exam}{exam}
 for further up-to-date packages.
 
 The philosophy of the present package is to
@@ -1753,51 +2106,14 @@ and separate it from the various layout definitions and choices
 which will define the appearance of the content.
 The interface was designed to reduce potential conflict
 with other packages and definitions.
-The package itself does not define an elaborate layout,
-but it provides means to adjust it in many ways and
+The package itself provides a functional basic layout
+rather than an elaborate or particularly appealing one.
+However, it provides means to adjust the basic layout in many ways and
 to predefine custom layout schemes.
 The package offers most of the functionality of the above packages,
-but (presently) misses out on some more advanced features,
-see \secref{sec:suggestions}.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\iffalse
-\subsection{Suggested Customisations}
-\label{sec:customisations}
-
-\textbf{philosophy:}
-this is fundamental, relies on few other basic packages.
-can improve by combining with other packages which provide solutions
-for particular applications. some suggestions:
-
-\textbf{Optional Starred}
-
-\textbf{Till's Boxen}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Realize background color for solutions with tcolorbox:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\RequirePackage{tcolorbox}
-%\tcbuselibrary{breakable}
-%\exercisestyle{solutionsep}
-%\exerciseconfig{insertsolutionsbefore}{%
-%  \begin{tcolorbox}[breakable,boxrule=0.2pt,sharp corners=all]}
-%\exerciseconfig{insertsolutionsafter}{%
-%  \end{tcolorbox}}
-%% cannot use marginpar inside tcolorbox (nested floats), use marginnote instead:
-%\exercisestyle{solutionpointsat=margin}
-%\RequirePackage{marginnote}
-%\exerciseconfig{insertpointsmargin}[1]{\marginnote{\footnotesize #1}}
-%% Don't indent solutions:
-%\exerciseconfig{skipsolutionitemsub}{0ex}
-%% remove initial "Solution:" because the colorbox is highlight enough:
-%\exerciseconfig{composetitlesolutionsingle}[2]{}
-
-\textbf{Collections}
-
-\textbf{keep list of tags per sheet. code to loop through list. Manuel Benz}
-
-\fi
+but (presently) misses out on some more advanced features.
+See \secref{sec:customisation} on customisation assistance and examples
+and \secref{sec:suggestions} for feature suggestions.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Feature Suggestions}
@@ -1808,8 +2124,13 @@ versions of this package:
 %
 \begin{itemize}
 \item
-Add a section on useful combinations of customisation settings
-to achieve specific goals. Please send suggestions.
+Define structures for multiple-choice questions.
+\item
+Add more guidance to \secref{sec:guides} on customisation settings.
+\item
+Add more examples of customisation settings to achieve specific goals
+to \secref{sec:examples}.
+Please send suggestions.
 \item
 Option to hide problem text while maintaining access to embedded solutions
 (for a version containing only solutions):
@@ -1818,24 +2139,43 @@ cannot simply be discarded, but would have to be scanned very carefully
 for the embedded solution;
 instead process problems to some document and save solutions to file,
 then read solutions from different document.
-\item
-Define structures for multiple-choice questions.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\iffalse
-\paragraph{v3.4+:} 2020/02/25
+\paragraph{v3.5:} 2024/10/18
 
 \begin{itemize}
 \item
-section on extensions
+more convenient delimiter configuration |compose...delim| for various items
 \item
-\ldots
+composition of problem titles in |composetitleproblem|
+split up further into the configurations |composebareproblem|
+and |composenamedproblem|;
+to enable delimiter `.' for problems without a name, use
+%
+\begin{center}
+|\exerciseconfig{composebareproblemdelim}{.}|
+\end{center}
+%
+\item
+style |subproblemdelimitem| added
+to shift delimiter `)' from subproblem reference labels
+to subproblem item composition.
+\item
+|composetitlesolutionsproblemmulti| improved
+(thanks to Daniel Wegmann for pointing out insufficient behaviour)
+\item
+option |forproblem| for |solution|
+to release association to previous subproblem
+\item
+option to |disable| particular subproblems and solutions
+including following |solution| block
+\item
+handling of first solutions within a problem block
 \end{itemize}
-\fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v3.4:} 2020/02/24
@@ -1847,7 +2187,7 @@ list iterators
 \item
 tags for subproblems, tag customisation
 \item
-interaction with package \textsf{metastr}
+interaction with package \ctanpkg{metastr}
 \item
 minor fixes
 \end{itemize}
@@ -1913,7 +2253,7 @@ multipart sample added
 \begin{itemize}
 \item
 fix interaction with
-package \href{http://ctan.org/pkg/calc}{\textsf{calc}}
+package \ctanpkg{calc}
 (thanks to Johannes Hahn for bug report)
 \item
 fix style |fracpoints| in combination
@@ -1957,7 +2297,7 @@ generalised sectioning layout
 \item
 changed layout specification model
 \item
-insert hyperlinks using \textsf{hyperref}
+insert hyperlinks using \ctanpkg{hyperref}
 \item
 manual, example and installation package added
 \end{itemize}
@@ -2044,7 +2384,7 @@ dedicated layout and macros for author's exercise sheets
 \documentclass[12pt]{article}
 %    \end{macrocode}
 
-% Use package \textsf{geometry} to set the page layout;
+% Use package \ctanpkg{geometry} to set the page layout;
 % adjust the paragraph shape:
 %    \begin{macrocode}
 \usepackage{geometry}
@@ -2055,13 +2395,13 @@ dedicated layout and macros for author's exercise sheets
 \parskip0.5ex
 %    \end{macrocode}
 
-% Include \textsf{amsmath}, \textsf{hyperref} packages:
+% Include \ctanpkg{amsmath}, \ctanpkg{hyperref} packages:
 %    \begin{macrocode}
 \usepackage{amsmath}
 \usepackage{hyperref}
 %    \end{macrocode}
 
-% May include \textsf{metastr} package;
+% May include \ctanpkg{metastr} package;
 % below code adjusts to whether or not present:
 %    \begin{macrocode}
 \PassOptionsToPackage{loadlang=en|de}{metastr}
@@ -2082,8 +2422,8 @@ dedicated layout and macros for author's exercise sheets
 % the display of solutions near the top
 % of the source file, potentially with the opposite setting commented out:
 %    \begin{macrocode}
-%%\exercisesetup{solutions=true}
 \exercisesetup{solutions=false}
+%%\exercisesetup{solutions=true}
 %    \end{macrocode}
 
 % Automatically put labels for (sub)problems:
@@ -2105,14 +2445,20 @@ dedicated layout and macros for author's exercise sheets
 \exerciseconfig{composeheaderbelowright}{\getsheetdata{points}}%
 %    \end{macrocode}
 
+% Make the delimiter `)' part of the subproblem item
+% rather than the subproblem label:
+%    \begin{macrocode}
+\exercisestyle{subproblemdelimitem}
+%    \end{macrocode}
+
 % Redefine the appearance of some counters;
 % sheets should be labelled by capital roman numerals,
 % subproblems by lowercase roman numerals;
 % declare the widest subproblem item to be expected:
 %    \begin{macrocode}
 \exerciseconfig{countersheet}{\Roman{sheet}}
-\exerciseconfig{countersubproblem}{\roman{subproblem})}
-\exerciseconfig{countersubproblemmax}{vii)}
+\exerciseconfig{countersubproblem}{\roman{subproblem}}
+\exerciseconfig{countersubproblemmax}{vii}
 %    \end{macrocode}
 
 % Automatically display an asterisk for all
@@ -2171,6 +2517,10 @@ dedicated layout and macros for author's exercise sheets
 % (may try alternatives |subproblem| or |sheet|):
 %    \begin{macrocode}
 \exercisestyle{solutionbelow=problem}
+%    \end{macrocode}
+% Indent solutions for subproblems:
+%    \begin{macrocode}
+\exerciseconfig{skipsolutionitemsub}{-1pt}
 %    \end{macrocode}
 % Separate solutions by horizontal lines (extended style):
 %    \begin{macrocode}
@@ -2311,7 +2661,7 @@ Keep calm and calculate!
 % declare author:
 %    \begin{macrocode}
 \begin{solution}[author={C.\ F.\ Gau\ss}]
-We use the result $1+2+3=6$ from part \ref{\problemtag-simplesum}
+We use the result $1+2+3=6$ from part \ref{\problemtag-simplesum})
 to jumpstart the calculation. The remaining sums yield
 \awardpoints*[1 for each remaining sum]{97}
 \begin{equation}
@@ -2516,13 +2866,12 @@ value
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{childdoc Mechanism.}
 %
-% The setup uses the package \textsf{childdoc} to allow compilation
+% The setup uses the package \ctanpkg{childdoc} to allow compilation
 % of the series as a whole or in parts and with various sets of options:
 %    \begin{macrocode}
 \input{childdoc.def}
-\childdocmain{exfserm}
+\childdocmain{}
 %    \end{macrocode}
-% The parameter of |\childdocmain| must match the main file name |exfserm|.
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Compilation Switches.}
@@ -2553,14 +2902,14 @@ value
 %    \end{macrocode}
 
 %    \begin{macrocode}
-% \textsf{graphicx} package to display license logo:
+% \ctanpkg{graphicx} package to display license logo:
 \RequirePackage{graphicx}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{hyperref Package.}
 %
-% Use the \textsf{hyperref} package.
+% Use the \ctanpkg{hyperref} package.
 % Declare some options, e.g.\ use bookmarks only for complete document:
 %    \begin{macrocode}
 \PassOptionsToPackage{bookmarks=\ifchilddoc false\else true\fi}{hyperref}
@@ -2571,10 +2920,10 @@ value
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{metastr Package.}
 %
-% Use the \textsf{metastr} package to handle
+% Use the \ctanpkg{metastr} package to handle
 % metadata and copyright information;
-% disable usage of \textsf{hyperxmp} package if not installed;
-% write auxiliary PDF metadata and rights information:
+% disable usage of \ctanpkg{hyperxmp} package if not installed;
+% write auxiliary pdf metadata and rights information:
 %    \begin{macrocode}
 \ifdraft
 \PassOptionsToPackage{draft}{metastr}
@@ -2703,14 +3052,14 @@ value
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{metapost Setup.}
 %
-% Use package \textsf{mpostinl} (if available)
+% Use package \ctanpkg{mpostinl} (if available)
 % to include some metapost figures within the source of the problems:
 %    \begin{macrocode}
 \IfFileExists{mpostinl.sty}{\RequirePackage{mpostinl}}{}
 \ifdefined\mpostsetup
 %    \end{macrocode}
 
-% Setup \textsf{mpostinl}.
+% Setup \ctanpkg{mpostinl}.
 % Use checksums to invoke metapost only when figures change.
 % Process all figures individually and immediately when in
 % draft mode for child documents (avoids a second compilation pass).
@@ -2750,7 +3099,7 @@ enddef;
 \mpostsetup{globaldef=false}
 %    \end{macrocode}
 
-% Close optional \textsf{mpostinl} processing:
+% Close optional \ctanpkg{mpostinl} processing:
 %    \begin{macrocode}
 \fi
 %    \end{macrocode}
@@ -2765,16 +3114,7 @@ enddef;
 \metaset{author}{Niklas Beisert, \metapick[#1]{institution}}
 \metaset{institution}{exframe academy}
 \metaset{period}{spring 2019}
-\metaset{copyrightdate}{2019--2020}
-%    \end{macrocode}
-
-% Assemble some entries from given data:
-%    \begin{macrocode}
-\metaset{material}{\metatranslate[#1]{sheets}}
-\exerciseconfig{composetitlesheet}[2]{\exerciseifempty{#2}%
-  {\ifsolutions\metaterm{solutions}\else%
-   \metaterm{sheet}\fi\ #1}%
-  {\ifsolutions\metaterm{solutions} \fi #2}}
+\metaset{copyrightdate}{2019--2024}
 %    \end{macrocode}
 
 % For child documents declare part of:
@@ -2784,12 +3124,19 @@ enddef;
 \fi
 %    \end{macrocode}
 
-% Set general purpose metadata:
+% Assemble some entries from given data:
 %    \begin{macrocode}
 \metaset[sep]{draft}{ -- }
 \metaset[sep]{subtitle}{, }
-\metaset{subtitle}{\ifsolutions\metatranslate[#1]{solutions} \fi%
-  \metaif[use]{sheettitle}{\metapick[#1]{sheettitle}}{\metapick[#1]{material}}}
+\metaset{material}{\ifsolutions\metatranslate[#1]{solutions} \fi%
+  \metatranslate[#1]{sheets}}
+\exerciseconfig{composetitlesheet}[2]{\exerciseifempty{#2}%
+  {\ifsolutions\metaterm{solutions}\else\metaterm{sheet}\fi\ #1}%
+  {\ifsolutions\metaterm{solutions} \fi #2}}
+\metaset{sheettitle}{\ifsolutions\metatranslate[#1]{solutions} \fi%
+  \exerciseifempty{\getsheetdata{rawtitle}}%
+   {\metatranslate[#1]{sheet} \thesheet}%
+   {\getsheetdata{rawtitle}}}
 \metaset{subject}{Lecture Series,
   \metapick[#1]{institution}, \metapick[#1]{period}}
 %    \end{macrocode}
@@ -2933,7 +3280,7 @@ enddef;
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{childdoc Mechanism.}
 %
-% Instruct the package \textsf{childdoc} to compile
+% Instruct the package \ctanpkg{childdoc} to compile
 % only the present sheet if source is compiled by latex:
 %    \begin{macrocode}
 %%\providecommand{\printsol}{n}
@@ -2963,7 +3310,7 @@ enddef;
 %\iffalse
 %</samplemultisheet1>
 %<samplemultisheet2>\begin{sheet}[due={2019-05-06}]
-%<samplemultisheet3>\begin{sheet}[due={2019-05-13}]
+%<samplemultisheet3>\begin{sheet}[due={2019-05-13}, title={last sheet}]
 %<samplemultisheeta>\begin{sheet}[title={unused problems}]
 %<*samplemultisheet1>
 %\fi
@@ -2985,7 +3332,7 @@ enddef;
 %<*samplemultisheet1|samplemultisheet2|samplemultisheeta|samplemultiprobleme>
 %\fi
 
-% Let us declare a figure using \textsf{mpostinl} (if available).
+% Let us declare a figure using \ctanpkg{mpostinl} (if available).
 % Denote it by the label \textit{tag}|-fig|,
 % where \textit{tag} is the tag of the problem
 % (in order to avoid potential conflicts with other problems;
@@ -3072,7 +3419,7 @@ fillshape(paths[3], 0.7white) pensize(1pt);
 %\fi
 % Write a second problem to accompany the first one:
 %    \begin{macrocode}
-\begin{problem}[title={Sample B}]
+\begin{problem}
 %    \end{macrocode}
 %
 %\iffalse
@@ -3136,7 +3483,7 @@ fillshape(paths[3], 0.7white) pensize(1pt);
 % It may be more convenient to define each problem in an individual file,
 % so that a sheet can be composed by including the appropriate
 % problem files.
-% In such a setup, the \textsf{childdoc} mechanism
+% In such a setup, the \ctanpkg{childdoc} mechanism
 % allows to compile each problem individually.
 %
 % To that end, prepare a file |exfserp|\textit{nn}|.tex|
@@ -3274,7 +3621,7 @@ if [[ "$make" == ".pdf" ]]; then nl=""; fi
 %\iffalse$\fi
 
 % Function to compile a component.
-% Set up \textsf{childdoc} mechanism according to desired component.
+% Set up \ctanpkg{childdoc} mechanism according to desired component.
 % Compile two passes, first in |-draftmode|.
 % Suppress messages by |mpost|.
 % Display warning messages in log file:
@@ -3307,7 +3654,7 @@ function docompile
 %    \end{macrocode}
 %\iffalse$\fi
 
-% Function to generate a \textsf{childdoc} compile file with specific options:
+% Function to generate a \ctanpkg{childdoc} compile file with specific options:
 %    \begin{macrocode}
 function writesource
 {
@@ -3469,10 +3816,10 @@ clean-all:  clean
 % \paragraph{Required Packages.}
 %
 % The package loads the package
-% \textsf{verbatim} and \textsf{xkeyval}
+% \ctanpkg{verbatim} and \ctanpkg{xkeyval}
 % if not yet present.
-% \textsf{verbatim} is used for solution environment reading
-% and \textsf{xkeyval} is used for extended options processing:
+% \ctanpkg{verbatim} is used for solution environment reading
+% and \ctanpkg{xkeyval} is used for extended options processing:
 %    \begin{macrocode}
 \RequirePackage{verbatim}
 \RequirePackage{xkeyval}
@@ -3529,7 +3876,7 @@ clean-all:  clean
 %    \end{macrocode}
 
 % \macro{\exf@expsetkeys}
-% A version of |\setkeys| from \textsf{xkeyval} which expands first:
+% A version of |\setkeys| from \ctanpkg{xkeyval} which expands first:
 %    \begin{macrocode}
 \newcommand{\exf@expsetkeys}[2]{\edef\exf@tmp{#2}%
   \exf@exparg{\setkeys{#1}}{\exf@tmp}}
@@ -3544,7 +3891,7 @@ clean-all:  clean
 
 % \macro{\exf@href}
 % Display text with hyperreference passed by macro |#1|
-% (in case \textsf{hyperref} is loaded
+% (in case \ctanpkg{hyperref} is loaded
 % and the reference is defined and not empty):
 %    \begin{macrocode}
 \newcommand{\exf@href}[2]{%
@@ -3555,7 +3902,7 @@ clean-all:  clean
 % \macro{\exf@text}
 % \macro{\exf@ensuretext}
 % Two macros to display text in math mode.
-% |exf@text| is a wrapper for |\text| of \textsf{amstext}
+% |exf@text| is a wrapper for |\text| of \ctanpkg{amstext}
 % in case the latter package is loaded.
 % |exf@ensuretext| makes sure the text is set in text mode
 % or within an |\mbox| in math math:
@@ -3620,15 +3967,13 @@ clean-all:  clean
 \define@key{exframe.sty}{solutioncounter}{\def\exf@solutioncounter{#1}}
 \define@key{exframe.sty}{sheetcounter}{\def\exf@sheetcounter{#1}}
 %    \end{macrocode}
-
 % Whether to provide some extended configuration options
 % (available while loading only):
 %    \begin{macrocode}
 \define@boolkey{exframe.sty}[exf@]{extdata}[true]{}
 \define@boolkey{exframe.sty}[exf@]{extstyle}[true]{}
 %    \end{macrocode}
-
-% Whether to load package \textsf{metastr}
+% Whether to load package \ctanpkg{metastr}
 % (available while loading only):
 %    \begin{macrocode}
 \define@boolkey{exframe.sty}[exf@]{metastr}[true]{}
@@ -3682,6 +4027,10 @@ clean-all:  clean
 %    \begin{macrocode}
 \define@boolkey{exf@setup}[exf@]{problembuf}[true]{}
 %    \end{macrocode}
+% Activate buffering of subproblems:
+%    \begin{macrocode}
+\define@boolkey{exf@setup}[exf@]{subproblembuf}[true]{}
+%    \end{macrocode}
 % \macro{\exf@emptytestchar}
 % Redefine character for testing emptyness:
 %    \begin{macrocode}
@@ -3706,7 +4055,7 @@ clean-all:  clean
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Additional Packages.}
 %
-% Load \textsf{metastr} package if desired:
+% Load \ctanpkg{metastr} package if desired:
 %    \begin{macrocode}
 \ifexf@metastr
 \PassOptionsToPackage{course=true}{metastr}
@@ -4014,6 +4363,7 @@ clean-all:  clean
 \exerciseconfig{insertsubproblemafter}{}
 \exerciseconfig{insertsubprobleminfo}{}
 \exerciseconfig{insertsubproblemsolution}{}
+\exerciseconfig{insertsubproblemselect}[1]{}
 %    \end{macrocode}
 % Analogous definitions for solutions:
 %    \begin{macrocode}
@@ -4052,68 +4402,116 @@ clean-all:  clean
 % arguments are sheet number and raw title:
 %    \begin{macrocode}
 \exerciseconfig{composetocsheet}[2]%
-  {\exerciseifempty{#2}{\getexerciseconfig{termsheet} #1}{#1. #2}}
+  {\exerciseifempty{#2}{\getexerciseconfig{termsheet} #1}{#2}}
+%    \end{macrocode}
+% Problem item separator, delimiter:
+%    \begin{macrocode}
+\exerciseconfig{composeitemproblemsep}{\getexerciseconfig{composeitemsep}}
+\exerciseconfig{composeitemproblemdelim}{.}
 %    \end{macrocode}
 % Compose problem item; argument is problem number:
 %    \begin{macrocode}
-\exerciseconfig{composeitemproblem}[1]{#1.}
+\exerciseconfig{composeitemproblem}[1]%
+  {#1\getexerciseconfig{composeitemproblemdelim}}
 %    \end{macrocode}
-% Problem item separator:
+% Unnamed problem separator, delimiter:
 %    \begin{macrocode}
-\exerciseconfig{composeitemproblemsep}%
-  {\getexerciseconfig{composeitemsep}}
+\exerciseconfig{composebareproblemsep}{ }
+\exerciseconfig{composebareproblemdelim}{}
+%    \end{macrocode}
+% Compose unnamed problem title; arguments are problem number and name;
+% includes exception for legacy behaviour:
+%    \begin{macrocode}
+\exerciseconfig{composebareproblem}[1]%
+  {\getexerciseconfig{termproblem}\getexerciseconfig{composebareproblemsep}%
+   \ifx\exf@config@composebareproblemdelim\exf@config@composeitemproblemdelim%
+    \getexerciseconfig{composeitemproblem}{#1}\else%
+    #1\getexerciseconfig{composebareproblemdelim}\fi}
+%    \end{macrocode}
+% Named problem separator, delimiter:
+%    \begin{macrocode}
+\exerciseconfig{composenamedproblemsep}{ }
+\exerciseconfig{composenamedproblemdelim}{.}
+%    \end{macrocode}
+% Compose named problem title; arguments are problem number and name;
+% includes exception for legacy behaviour:
+%    \begin{macrocode}
+\exerciseconfig{composenamedproblem}[2]%
+  {\ifx\exf@config@composenamedproblemdelim\exf@config@composeitemproblemdelim%
+    \getexerciseconfig{composeitemproblem}{#1}\else%
+    #1\getexerciseconfig{composenamedproblemdelim}\fi%
+   \getexerciseconfig{composenamedproblemsep}#2}
 %    \end{macrocode}
 % Compose problem title;
 % arguments are problem number (empty if item is split off)
 % and raw title (empty if not specified);
-% default is ``Problem |#1|.'' or ``|#1|. |#2|'':
+% default is ``Problem |#1|'' or ``|#1|. |#2|'':
 %    \begin{macrocode}
 \exerciseconfig{composetitleproblem}[2]{\exerciseifempty{#1}%
    {\exerciseifempty{#2}{}{#2}}%
-   {\exerciseifempty{#2}{\getexerciseconfig{termproblem}\ %
-     \getexerciseconfig{composeitemproblem}{#1}}%
-    {\getexerciseconfig{composeitemproblem}{#1} #2}}}
+   {\exerciseifempty{#2}{\getexerciseconfig{composebareproblem}{#1}}%
+    {\getexerciseconfig{composenamedproblem}{#1}{#2}}}}
 %    \end{macrocode}
 % Compose problem title for table of contents;
 % arguments are problem number and raw title:
 %    \begin{macrocode}
 \exerciseconfig{composetocproblem}[2]%
-  {\exerciseifempty{#2}{\getexerciseconfig{termproblem} #1}{#1. #2}}
+  {\exerciseifempty{#2}{\getexerciseconfig{termproblem} #1}%
+   {#1\getexerciseconfig{composenamedproblemdelim} #2}}
+%    \end{macrocode}
+% Subproblem item separator, delimiter:
+%    \begin{macrocode}
+\exerciseconfig{composeitemsubproblemsep}{\getexerciseconfig{composeitemsep}}
+\exerciseconfig{composeitemsubproblemdelim}{}
 %    \end{macrocode}
 % Compose subproblem item; argument is subproblem number:
 %    \begin{macrocode}
-\exerciseconfig{composeitemsubproblem}[1]{#1}
-%    \end{macrocode}
-% Subproblem item separator:
-%    \begin{macrocode}
-\exerciseconfig{composeitemsubproblemsep}%
-  {\getexerciseconfig{composeitemsep}}
+\exerciseconfig{composeitemsubproblem}[1]%
+  {#1\getexerciseconfig{composeitemsubproblemdelim}}
 %    \end{macrocode}
 % Compose subproblem title;
 % argument is subproblem number:
 %    \begin{macrocode}
-\exerciseconfig{composetitlesubproblem}[1]{#1}
+\exerciseconfig{composetitlesubproblem}[1]%
+  {\getexerciseconfig{composeitemsubproblem}{#1}}
+%    \end{macrocode}
+% Solution item separator, delimiter:
+%    \begin{macrocode}
+\exerciseconfig{composeitemsolutionsep}{\getexerciseconfig{composeitemsep}}
+\exerciseconfig{composeitemsolutiondelim}{:}
 %    \end{macrocode}
 % Compose solution item; arguments are problem and subproblem number:
 %    \begin{macrocode}
-\exerciseconfig{composeitemsolution}[2]{#1.}
-\exerciseconfig{composeitemsolutionsub}[2]{#2}
+\exerciseconfig{composeitemsolution}[2]{}
+\exerciseconfig{composeitemsolutionsub}[2]%
+  {\getexerciseconfig{composeitemsubproblem}{#2}}
 %    \end{macrocode}
-% Solution item separator:
+% Compose solution item for first solution in a problem section;
+% arguments are problem and subproblem number:
 %    \begin{macrocode}
-\exerciseconfig{composeitemsolutionsep}%
-  {\getexerciseconfig{composeitemsep}}
+\exerciseconfig{composeitemsolutionfirst}[2]%
+  {\getexerciseconfig{composeitemsolution}{#1}{#2}}
+\exerciseconfig{composeitemsolutionfirstsub}[2]%
+  {\getexerciseconfig{composeitemsolutionsub}{#1}{#2}}
 %    \end{macrocode}
-% Compose title for single solution;
+% Compose title for single solution
+% (solution intro if |solutionbelow| is |here| or |subproblem|);
 % arguments are corresponding problem and subproblem number:
 %    \begin{macrocode}
 \exerciseconfig{composetitlesolutionsingle}[2]%
-  {\getexerciseconfig{termsolution}:}
+  {\getexerciseconfig{termsolution}%
+   \getexerciseconfig{composeitemsolutiondelim}}
 %    \end{macrocode}
-% Compose title for one out of several solutions;
+% Compose title for one out of several solutions
+% (solution intro if |solutionbelow| is |problem|, |sheet| or |manual|);
 % arguments are corresponding problem and subproblem number:
 %    \begin{macrocode}
-\exerciseconfig{composetitlesolutionmulti}[2]{#2}
+\exerciseconfig{composetitlesolutionproblem}[1]{}
+\exerciseconfig{composetitlesolutionsubproblem}[2]%
+  {\getexerciseconfig{composeitemsubproblem}{#2}}
+\exerciseconfig{composetitlesolutionmulti}[2]{\exerciseifempty{#2}%
+  {\getexerciseconfig{composetitlesolutionproblem}{#1}}%
+  {\getexerciseconfig{composetitlesolutionsubproblem}{#1}{#2}}}
 %    \end{macrocode}
 % Compose table of contents line for solution;
 % arguments are problem number and raw title:
@@ -4141,17 +4539,20 @@ clean-all:  clean
 \exerciseconfig{composetocproblems}%
   {\getexerciseconfig{composetitleproblems}}
 %    \end{macrocode}
-% Compose sectional title for solution following a single problem;
+% Compose sectional title for solution following a single problem
+% (problem section intro if |solutionbelow| is |problem|);
 % arguments are problem number and raw title:
 %    \begin{macrocode}
 \exerciseconfig{composetitlesolutionsproblemsingle}[2]%
   {\getexerciseconfig{termsolution}}
 %    \end{macrocode}
-% Compose sectional title for solution of one problem within a solution block;
+% Compose sectional title for solution of one problem within a solution block
+% (problem section intro if |solutionbelow| is |sheet| or |manual|);
 % arguments are problem number and raw title:
 %    \begin{macrocode}
 \exerciseconfig{composetitlesolutionsproblemmulti}[2]%
-  {\exerciseifempty{#2}{\getexerciseconfig{termproblem} #1}{#1. #2}}
+  {\exerciseifempty{#2}{\getexerciseconfig{composebareproblem}{#1}}%
+   {\getexerciseconfig{composenamedproblem}{#1}{#2}}}
 %    \end{macrocode}
 % Compose label:
 %    \begin{macrocode}
@@ -4260,12 +4661,12 @@ clean-all:  clean
 
 % Display warning about points mismatch:
 %    \begin{macrocode}
-\exerciseconfig{insertwarnpoints}[3]
+\exerciseconfig{insertwarnpoints}[3]%
   {\textbf{points mismatch for #1 (#2 determined vs.\ #3 given)}}
 %    \end{macrocode}
 % Display warning about points changed:
 %    \begin{macrocode}
-\exerciseconfig{insertwarnpointsrerun}[1]
+\exerciseconfig{insertwarnpointsrerun}[1]%
   {\textbf{points changed for #1 (please recompile)}}
 %    \end{macrocode}
 
@@ -4451,6 +4852,16 @@ clean-all:  clean
 % Use two-sided layout for sheets:
 %    \begin{macrocode}
 \defexercisestylearg[true]{twoside}{\exercisesetup{twoside={#1}}}
+%    \end{macrocode}
+%
+% \macro{subproblemdelimitem}
+% to append delimiter `)' to subproblem reference labels
+% Use two-sided layout for sheets:
+%    \begin{macrocode}
+\defexercisestyle{subproblemdelimitem}%
+  {\exerciseconfig{composeitemsubproblemdelim}{)}%
+   \exerciseconfig{countersubproblem}{\alph{\exf@subproblemcounter}}%
+   \exerciseconfig{countersubproblemmax}{m}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4669,6 +5080,12 @@ clean-all:  clean
 %    \begin{macrocode}
 \newcommand{\setproblemdata}[1]{\setkeys{exf@problem,exf@scanproblem}{#1}}
 %    \end{macrocode}
+% \macro{\setsubproblemdata}
+% Set subproblem metadata:
+%    \begin{macrocode}
+\newcommand{\setsubproblemdata}[1]{%
+  \setkeys{exf@subproblem,exf@scansubproblem}{#1}}
+%    \end{macrocode}
 % \macro{\getproblemdata}
 % Read problem metadata:
 %    \begin{macrocode}
@@ -4819,7 +5236,7 @@ clean-all:  clean
 % \paragraph{Write Metadata to PDF Files.}
 %
 % \macro{\exf@writemetadata}
-% Write Metadata to PDF Files in case \textsf{hyperref} is available:
+% Write Metadata to PDF Files in case \ctanpkg{hyperref} is available:
 %    \begin{macrocode}
 \newcommand{\exf@writemetadata}{%
   \ifdefined\hypersetup%
@@ -4872,7 +5289,7 @@ clean-all:  clean
 %    \end{macrocode}
 
 % Implement counter display;
-% take care of corresponding \textsf{hyperref} labels:
+% take care of corresponding \ctanpkg{hyperref} labels:
 %    \begin{macrocode}
 \exf@csdo\def{the\exf@sheetcounter}{\exf@config@countersheet}
 \exf@csdo\def{the\exf@problemcounter}{\exf@config@counterproblem}
@@ -4904,7 +5321,7 @@ clean-all:  clean
 
 % \macro{\exf@numberequationwithin}
 % Declare various new equation counters as subcounter of |#1|;
-% take care of corresponding \textsf{hyperref} labels:
+% take care of corresponding \ctanpkg{hyperref} labels:
 %    \begin{macrocode}
 \newcommand{\exf@numberequationwithin}[1]{%
   \@addtoreset{exf@sheetequation}{#1}%
@@ -4959,7 +5376,7 @@ clean-all:  clean
 % \macro{\exf@lineno}
 % Return current position in source file;
 % display line number and source file name
-% (if available via package \textsf{currfile}):
+% (if available via package \ctanpkg{currfile}):
 %    \begin{macrocode}
 \newcommand{\exf@lineno}{\@percentchar%
   \ifdefined\currfilename\currfilename\space\fi%
@@ -5037,6 +5454,7 @@ clean-all:  clean
 %
 % \macro{\exf@solbuf}
 % \macro{\exf@probbuf}
+% \macro{\exf@subprobbuf}
 % \macro{\ifexf@solbuf@clean}
 % \macro{\ifexf@probbuf@clean}
 % Declare token buffers for storing problems and solutions
@@ -5044,15 +5462,18 @@ clean-all:  clean
 %    \begin{macrocode}
 \newtoks\exf@solbuf
 \newtoks\exf@probbuf
+\newtoks\exf@subprobbuf
 \newif\ifexf@solbuf@clean\exf@solbuf@cleantrue
 \newif\ifexf@probbuf@clean\exf@probbuf@cleantrue
 %    \end{macrocode}
 % \macro{\exf@clear@solbuf}
 % \macro{\exf@clear@probbuf}
+% \macro{\exf@clear@subprobbuf}
 % Clear a buffer and mark clean:
 %    \begin{macrocode}
 \def\exf@clear@solbuf{\global\exf@solbuf@cleantrue\global\exf@solbuf={}}
 \def\exf@clear@probbuf{\global\exf@probbuf@cleantrue\global\exf@probbuf={}}
+\def\exf@clear@subprobbuf{\global\exf@subprobbuf={}}
 %    \end{macrocode}
 
 % \macro{\exf@append@buf}
@@ -5290,8 +5711,7 @@ clean-all:  clean
   \ifnum\exf@splitdec=375\def\exf@tmp{\exf@config@frac{\exf@splitint}{3}{8}}\fi%
   \ifnum\exf@splitdec=625\def\exf@tmp{\exf@config@frac{\exf@splitint}{5}{8}}\fi%
   \ifnum\exf@splitdec=875\def\exf@tmp{\exf@config@frac{\exf@splitint}{7}{8}}\fi%
-  \ifx\exf@splitminus\exf@empty\else$\exf@splitminus$\fi\exf@tmp%
-}
+  \ifx\exf@splitminus\exf@empty\else$\exf@splitminus$\fi\exf@tmp}
 %    \end{macrocode}
 
 % \macro{\exf@config@frac}
@@ -5730,7 +6150,7 @@ clean-all:  clean
 %    \end{macrocode}
 % Mark for new solution section; remember problem counter, title:
 %    \begin{macrocode}
-  \gdef\exf@problem@solnewsec{}%
+  \global\let\exf@problem@solfirst\exf@empty%
   \xdef\exf@prevprob{\csname the\exf@problemcounter\endcsname}%
   \ifcsname theH\exf@problemcounter\endcsname%
    \xdef\exf@prevprobhref{\exf@problemcounter.%
@@ -5741,8 +6161,7 @@ clean-all:  clean
   \else%
    \protected@xdef\exf@prevprobtitle{\exf@data@problem@rawtitle}%
   \fi%
-  \global\let\exf@prevsubprob\@undefined%
-  \global\let\exf@prevsubprobhref\@undefined%
+  \exf@clear@prevsubprob%
 %    \end{macrocode}
 % Set points from explicit input or from |.aux| storage:
 %    \begin{macrocode}
@@ -5869,8 +6288,7 @@ clean-all:  clean
 %    \end{macrocode}
 % Solutions to subproblems must be declared within problem environment:
 %    \begin{macrocode}
-  \global\let\exf@prevsubprob\@undefined%
-  \global\let\exf@prevsubprobhref\@undefined%
+  \exf@clear@prevsubprob%
 %    \end{macrocode}
 % End paragraph and environment:
 %    \begin{macrocode}
@@ -5912,7 +6330,7 @@ clean-all:  clean
 % \paragraph{Read Problem Environment.}
 %
 % \macro{exf@scanproblem}
-% Define options for |problem| environment:
+% Define options for scanning |problem| environment:
 %    \begin{macrocode}
 \define@boolkey{exf@scanproblem}[exf@scanproblem@]{disable}[true]{}
 %    \end{macrocode}
@@ -5937,24 +6355,28 @@ clean-all:  clean
 %    \end{macrocode}
 % Determine problem display:
 %    \begin{macrocode}
-  \exf@scanproblem@disablefalse%
+  \global\exf@scanproblem@disablefalse%
   \setkeys*{exf@scanproblem}{#1}%
   \exf@config@insertproblemselect{#1}%
+  \ifexf@scanproblem@disable\global\exf@scanproblem@disabletrue\fi%
 %    \end{macrocode}
-% Write separator and |printproblem| environment to buffer:
+% Circumvent problem display:
 %    \begin{macrocode}
   \ifexf@scanproblem@disable%
    \def\exf@verbatim@process{\@gobble}%
   \else%
+%    \end{macrocode}
+% Write separator and |printproblem| environment to buffer:
+%    \begin{macrocode}
    \ifexf@lineno\exf@addline\exf@probbuf{\exf@linesep}%
     \exf@addline\exf@probbuf{\exf@lineno}\fi%
    \exf@addline\exf@probbuf%
     {\@backslashchar begin{printproblem}{#1}}%
-   \def\exf@verbatim@process{\exf@append@buf\exf@probbuf}%
-  \fi%
 %    \end{macrocode}
 % Start verbatim processing:
 %    \begin{macrocode}
+   \def\exf@verbatim@process{\exf@append@buf\exf@probbuf}%
+  \fi%
   \exf@verbatim#2}%
 %    \end{macrocode}
 % End verbatim processing; close |printproblem| environment:
@@ -5985,8 +6407,7 @@ clean-all:  clean
 %    \end{macrocode}
 
 % \macro{problem}
-% Define |problem| environment
-% (potentially using custom name)
+% Define |problem| environment (potentially using custom name)
 % to choose between direct and buffered version:
 %    \begin{macrocode}
 \newenvironment{\exf@problemname}%
@@ -6112,6 +6533,9 @@ clean-all:  clean
 % \subsection{Subproblem Environment}
 % \label{sec:imp-subproblem}
 %
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Print Subproblems.}
+%
 % \macro{exf@subproblem}
 % Define options for |subproblem| environment:
 %    \begin{macrocode}
@@ -6120,10 +6544,10 @@ clean-all:  clean
 \define@key{exf@subproblem}{tag}{\def\subproblemtag{#1}}
 %    \end{macrocode}
 
-% \macro{subproblem}
-% Define |subproblem| environment (potentially using custom name):
+% \macro{printsubproblem}
+% Define |printsubproblem| environment:
 %    \begin{macrocode}
-\newenvironment{\exf@subproblemname}[1][]{%
+\newenvironment{printsubproblem}[1]{%
 %    \end{macrocode}
 % Start with new paragraph, set text style, add vspace and step counter:
 %    \begin{macrocode}
@@ -6145,7 +6569,7 @@ clean-all:  clean
   \def\subproblemtag{\getexerciseconfig{tagsubproblem}}%
   \let\exf@subproblem@points\@undefined%
   \let\exf@label\@undefined%
-  \setkeys{exf@subproblem,exf@probleminfo}{#1}%
+  \setkeys{exf@subproblem,exf@probleminfo,exf@scansubproblem}{#1}%
 %    \end{macrocode}
 % Process automatic and manual labels:
 %    \begin{macrocode}
@@ -6272,6 +6696,88 @@ clean-all:  clean
   \ignorespacesafterend}
 %    \end{macrocode}
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Read Subproblem Environment.}
+%
+% \macro{exf@scansubproblem}
+% Define options for scanning |subproblem| environment:
+%    \begin{macrocode}
+\define@boolkey{exf@scansubproblem}[exf@scansubproblem@]{disable}[true]{}
+%    \end{macrocode}
+
+% \macro{exf@subproblem@direct}
+% Define direct output version of |subproblem| environment;
+% pass on to |printsubproblem| environment:
+%    \begin{macrocode}
+\newenvironment{exf@subproblem@direct}[1][]%
+ {\printsubproblem{#1}}{\endprintsubproblem\ignorespacesafterend}
+%    \end{macrocode}
+
+% \macro{exf@subproblem@scan}
+% \macro{exf@scansubproblem}
+% Define scan version of |subproblem| environment;
+% use |\exf@scanblock| to properly parse optional argument
+% and pass on to |exf@scansubproblem|:
+%    \begin{macrocode}
+\newenvironment{exf@subproblem@scan}%
+ {\exf@scanblock{\exf@scansubproblem}}{\endexf@scansubproblem}%
+\newenvironment{exf@scansubproblem}[2]{%
+%    \end{macrocode}
+% Determine subproblem display:
+%    \begin{macrocode}
+  \global\exf@scansubproblem@disablefalse%
+  \setkeys*{exf@scansubproblem}{#1}%
+  \exf@config@insertsubproblemselect{#1}%
+  \ifexf@scansubproblem@disable\global\exf@scansubproblem@disabletrue\fi%
+%    \end{macrocode}
+% Circumvent subproblem display:
+%    \begin{macrocode}
+  \exf@clear@subprobbuf%
+  \ifexf@scansubproblem@disable%
+   \global\let\exf@prevsubprob\exf@empty%
+   \def\exf@verbatim@process{\@gobble}%
+  \else%
+%    \end{macrocode}
+% Write |printsubproblem| environment to buffer:
+%    \begin{macrocode}
+   \exf@addline\exf@subprobbuf%
+    {\@backslashchar begin{printsubproblem}{#1}}%
+%    \end{macrocode}
+% Start verbatim processing:
+%    \begin{macrocode}
+   \def\exf@verbatim@process{\exf@append@buf\exf@subprobbuf}%
+  \fi%
+  \exf@verbatim#2}%
+%    \end{macrocode}
+% End verbatim processing; close |printsubproblem| environment:
+%    \begin{macrocode}
+ {\exf@endverbatim%
+  \ifexf@scansubproblem@disable\else%
+   \exf@addline\exf@subprobbuf{\@backslashchar end{printsubproblem}}%
+  \fi%
+%    \end{macrocode}
+% Output buffer immediately:
+%    \begin{macrocode}
+  \exf@source@buf\exf@subprobbuf%
+%    \end{macrocode}
+% Done:
+%    \begin{macrocode}
+  \ignorespacesafterend}
+%    \end{macrocode}
+
+% \macro{subproblem}
+% Define |subproblem| environment (potentially using custom name)
+% to choose between direct and buffered version:
+%    \begin{macrocode}
+\newenvironment{\exf@subproblemname}%
+ {\ifexf@subproblembuf\let\exf@tmp\exf@subproblem@scan%
+  \else\let\exf@tmp\exf@subproblem@direct\fi%
+  \exf@tmp}%
+ {\ifexf@subproblembuf\let\exf@tmp\endexf@subproblem@scan%
+  \else\let\exf@tmp\endexf@subproblem@direct\fi%
+  \exf@tmp}
+%    \end{macrocode}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Solution Environment}
 % \label{sec:imp-solution}
@@ -6290,6 +6796,7 @@ clean-all:  clean
 \define@key{exf@solution}{label}{\def\exf@label{#1}}
 \define@key{exf@solution}{points}{\exf@scanpoints\exf@solution@points#1++@}
 \define@key{exf@solution}{probtitle}{\def\exf@solprobtitle{#1}}
+\define@key{exf@solution}{firstsol}[]{\let\exf@solfirst\exf@empty}
 %    \end{macrocode}
 
 % \macro{printsolution}
@@ -6322,12 +6829,13 @@ clean-all:  clean
   \def\exf@in@solution{}%
   \def\exf@solprob{}%
   \def\exf@solsubprob{}%
+  \let\exf@solfirst\@undefined%
   \let\exf@label\@undefined%
   \let\exf@solution@points\@undefined%
   \let\exf@solution@points@total\@undefined%
   \def\exf@solhref{}%
   \exf@init@block{\exf@config@skipsolutioninfo}%
-  \setkeys{exf@solution,exf@probleminfo}{#1}%
+  \setkeys{exf@solution,exf@probleminfo,exf@scansolution}{#1}%
 %    \end{macrocode}
 % Set solution counter to reflect associated problem:
 %    \begin{macrocode}
@@ -6373,6 +6881,8 @@ clean-all:  clean
   \ifdim\exf@tmp=0pt%
    \protected@edef\exf@solution@title{%
     \exf@composetitle{\exf@solprob}{\exf@solsubprob}}%
+   \ifx\exf@solsubprob\exf@empty\ifdefined\exf@solfirst\else%
+    \let\exf@solution@title\exf@empty\fi\fi%
    \ifx\exf@solution@title\exf@empty\else%
     \exf@prepend@intro{{%
      \exf@config@styletitle\exf@config@styletitlesolution%
@@ -6389,31 +6899,31 @@ clean-all:  clean
     \settowidth\exf@addmargin{%
      \exf@config@styletitle\exf@config@styletitlesolution%
      \ifx\exf@solsubprob\exf@empty%
-      \exf@config@composeitemsolution{\exf@config@counterproblemmax}%
-       {\exf@config@countersubproblemmax}%
-     \else%
-      \exf@config@composeitemsolutionsub{\exf@config@counterproblemmax}%
-       {\exf@config@countersubproblemmax}%
-     \fi\exf@config@composeitemsolutionsep}%
+      \let\exf@tmp\exf@config@composeitemsolutionfirst\else%
+      \let\exf@tmp\exf@config@composeitemsolutionfirstsub\fi%
+     \protected@edef\exf@solution@item{\exf@tmp%
+      {\exf@config@counterproblemmax}{\exf@config@countersubproblemmax}}%
+     \ifx\exf@solution@item\exf@empty\else%
+      \exf@solution@item\exf@config@composeitemsolutionsep\fi}%
    \fi%
 %    \end{macrocode}
 % Set item label depending on problem or subproblem:
 %    \begin{macrocode}
-   \ifx\exf@solsubprob\exf@empty%
-    \protected@edef\exf@solution@item%
-     {\exf@config@composeitemsolution{\exf@solprob}{\exf@empty}}%
-   \else%
-    \protected@edef\exf@solution@item%
-     {\exf@config@composeitemsolutionsub{\exf@solprob}{\exf@solsubprob}}%
-   \fi%
+   \ifx\exf@solsubprob\exf@empty\ifdefined\exf@solfirst%
+     \let\exf@tmp\exf@config@composeitemsolutionfirst\else%
+     \let\exf@tmp\exf@config@composeitemsolution\fi%
+   \else\ifdefined\exf@solfirst%
+     \let\exf@tmp\exf@config@composeitemsolutionfirstsub\else%
+     \let\exf@tmp\exf@config@composeitemsolutionsub\fi\fi%
+   \protected@edef\exf@solution@item{\exf@tmp{\exf@solprob}{\exf@solsubprob}}%
 %    \end{macrocode}
 % Define item label:
 %    \begin{macrocode}
-   \def\exf@introitem{\makebox[0cm][r]{%
+   \def\exf@introitem{\ifx\exf@solution@item\exf@empty\else\makebox[0cm][r]{%
     \exf@config@styletitle\exf@config@styletitlesubproblem%
     \ifexf@solutionhref\exf@href{\exf@solhref}{\exf@solution@item}%
     \else\exf@solution@item\fi%
-    \exf@config@composeitemproblemsep}}%
+    \exf@config@composeitemproblemsep}\fi}%
   \fi%
 %    \end{macrocode}
 % Write points into margin if desired;
@@ -6474,15 +6984,15 @@ clean-all:  clean
   \def\exf@solprobtitle{}%
   \let\exf@label\@undefined%
   \let\exf@solhref\@undefined%
-  \setkeys{exf@solution}{#1}%
+  \setkeys{exf@solution,exf@scansolution}{#1}%
 %    \end{macrocode}
 % Select title (and table of contents entry)
 % corresponding to multiple problems vs.\ single problem:
 %    \begin{macrocode}
-  \let\exf@composetitle\exf@config@composetitlesolutionsproblemmulti%
-  \exf@ifis\exf@solutionbelow{problem}{\let\exf@composetitle%
+  \let\exf@composesectitle\exf@config@composetitlesolutionsproblemmulti%
+  \exf@ifis\exf@solutionbelow{problem}{\let\exf@composesectitle%
     \exf@config@composetitlesolutionsproblemsingle}%
-  \exf@ifis\exf@solutionbelow{problem*}{\let\exf@composetitle%
+  \exf@ifis\exf@solutionbelow{problem*}{\let\exf@composesectitle%
     \exf@config@composetitlesolutionsproblemsingle}%
   \def\exf@solutionstoc{\exf@addcontentsline{\exf@config@toclevelsolution}%
     {\exf@config@composetocsolution{\exf@solprob}{\exf@solprobtitle}}}%
@@ -6491,7 +7001,7 @@ clean-all:  clean
 %    \begin{macrocode}
   \addvspace{\exf@config@skipsolutionsproblemabove}%
   \exf@solutionssection{\exf@config@styletitlesolutionsproblem}%
-   {\exf@composetitle{\exf@solprob}{\exf@solprobtitle}}%
+   {\exf@composesectitle{\exf@solprob}{\exf@solprobtitle}}%
    {\exf@config@skipsolutionsproblemtitle}%
    {\exf@solutionstoc}{\exf@label}{\exf@solhref}%
   \endgroup}
@@ -6500,35 +7010,50 @@ clean-all:  clean
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Read Solution Environment.}
 %
-% \macro{\exf@process@solnewsec}
-% If this is the first solution within a new section,
-% write section heading to buffer:
+% \macro{exf@scansolution}
+% Define options for scanning |solution| environment:
 %    \begin{macrocode}
-\newcommand{\exf@process@solnewsec}{%
-  \ifdefined\exf@problem@solnewsec%
-   \def\exf@probarg{\ifdefined\exf@prevprob prob={\exf@prevprob}\fi%
-    \ifdefined\exf@prevprobtitle,probtitle={\exf@prevprobtitle}\fi%
-    \ifdefined\exf@prevprobhref,href={\exf@prevprobhref}\fi%
-    \ifdefined\exf@sollabel,label={\exf@sollabel}\fi}%
-   \exf@ifis\exf@solutionbelow{here}{\let\exf@probarg\@undefined}%
-   \exf@ifis\exf@solutionbelow{subproblem}{\let\exf@probarg\@undefined}%
-   \exf@ifis\exf@solutionbelow{subproblem*}{\let\exf@probarg\@undefined}%
-   \ifdefined\exf@probarg%
-    \ifexf@lineno\exf@addline\exf@solbuf{\exf@linesep}%
-     \exf@addline\exf@solbuf{\exf@lineno}\fi%
-    \exf@addline\exf@solbuf{\@backslashchar solutionssection{\exf@probarg}}%
-    \exf@addline\exf@solbuf{}%
-   \fi%
-   \global\let\exf@problem@solnewsec\@undefined%
-  \fi}%
+\define@key{exf@scansolution}{forproblem}[]{\exf@clear@prevsubprob}
+\define@boolkey{exf@scansolution}[exf@scansolution@]{disable}[true]{}
 %    \end{macrocode}
 
-% \macro{\exf@process@solnewsec}
+% \macro{\exf@clear@prevsubprob}
+% Clear previous subproblem register:
+%    \begin{macrocode}
+\newcommand{\exf@clear@prevsubprob}{%
+  \global\let\exf@prevsubprob\@undefined%
+  \global\let\exf@prevsubprobhref\@undefined%
+  \global\let\exf@prevpoints\@undefined%
+  \global\exf@scansubproblem@disablefalse}
+%    \end{macrocode}
+
+% \macro{\exf@process@solsec}
+% If this is the first solution within a problem section,
+% write section heading to buffer:
+%    \begin{macrocode}
+\newcommand{\exf@process@solsec}{%
+  \def\exf@probarg{\ifdefined\exf@prevprob prob={\exf@prevprob}\fi%
+   \ifdefined\exf@prevprobtitle,probtitle={\exf@prevprobtitle}\fi%
+   \ifdefined\exf@prevprobhref,href={\exf@prevprobhref}\fi%
+   \ifdefined\exf@sollabel,label={\exf@sollabel}\fi}%
+  \exf@ifis\exf@solutionbelow{here}{\let\exf@probarg\@undefined}%
+  \exf@ifis\exf@solutionbelow{subproblem}{\let\exf@probarg\@undefined}%
+  \exf@ifis\exf@solutionbelow{subproblem*}{\let\exf@probarg\@undefined}%
+  \ifdefined\exf@probarg%
+   \ifexf@lineno\exf@addline\exf@solbuf{\exf@linesep}%
+    \exf@addline\exf@solbuf{\exf@lineno}\fi%
+   \exf@addline\exf@solbuf{\@backslashchar solutionssection{\exf@probarg}}%
+   \exf@addline\exf@solbuf{}%
+  \fi}
+%    \end{macrocode}
+
+% \macro{\exf@generate@solprobarg}
 % Declare additional arguments to |printsolution|
 % to describe corresponding problem and tags:
 %    \begin{macrocode}
 \newcommand{\exf@generate@solprobarg}{%
   \edef\exf@solprobarg{%
+    \ifdefined\exf@problem@solfirst firstsol,\fi%
     \ifdefined\exf@prevprob prob={\exf@prevprob},\fi%
     \ifdefined\exf@prevsubprob subprob={\exf@prevsubprob},%
      \ifdefined\exf@prevsubprobhref href={\exf@prevsubprobhref},\fi%
@@ -6538,13 +7063,7 @@ clean-all:  clean
     \ifdefined\exf@prevpoints points=%
      {\expandafter\exf@formatpoints\exf@prevpoints},\fi%
     \ifdefined\sheettag sheettag={\sheettag},\fi%
-    \ifdefined\problemtag problemtag={\problemtag},\fi}%
-%    \end{macrocode}
-% Clean up:
-%    \begin{macrocode}
-  \global\let\exf@prevsubprob\@undefined%
-  \global\let\exf@prevsubprobhref\@undefined%
-  \global\let\exf@prevpoints\@undefined}%
+    \ifdefined\problemtag problemtag={\problemtag},\fi}}
 %    \end{macrocode}
 
 % \macro{exf@solution@direct}
@@ -6553,14 +7072,15 @@ clean-all:  clean
 %    \begin{macrocode}
 \newenvironment{exf@solution@direct}[1][]%
  {\showpoints%
-  \global\let\exf@problem@solnewsec\@undefined%
   \exf@generate@solprobarg%
+  \global\let\exf@problem@solfirst\@undefined%
+  \exf@clear@prevsubprob%
   \exf@showsolutionsin%
   \let\exf@composetitle\exf@config@composetitlesolutionsingle%
   \exf@exptwo\printsolution{\exf@solprobarg#1}}%
  {\endprintsolution%
   \exf@showsolutionsout%
-  \ignorespacesafterend}%
+  \ignorespacesafterend}
 %    \end{macrocode}
 
 % \macro{exf@solution@scan}
@@ -6573,32 +7093,54 @@ clean-all:  clean
  {\exf@scanblock{\exf@scansolution}}{\endexf@scansolution}%
 \newenvironment{exf@scansolution}[2]{%
 %    \end{macrocode}
+% Determine solution association and display:
+%    \begin{macrocode}
+  \exf@scansolution@disablefalse%
+  \setkeys*{exf@scansolution}{#1}%
+  \ifdefined\exf@prevsubprob%
+   \ifexf@scansubproblem@disable\exf@scansolution@disabletrue\fi%
+  \else%
+   \ifexf@scanproblem@disable\exf@scansolution@disabletrue\fi%
+  \fi%
+%    \end{macrocode}
+% Circumvent solution display:
+%    \begin{macrocode}
+  \ifexf@scansolution@disable%
+   \exf@clear@prevsubprob%
+   \def\exf@verbatim@process{\@gobble}%
+  \else%
+%    \end{macrocode}
 % If solution is to be displayed immediately,
 % make sure to display points first;
 % insert solution section heading in buffer;
 % compose additional arguments to |printsolution|:
 %    \begin{macrocode}
-  \exf@ifis\exf@solutionbelow{here}{\showpoints}%
-  \exf@process@solnewsec%
-  \exf@generate@solprobarg%
+   \exf@ifis\exf@solutionbelow{here}{\showpoints}%
+   \exf@generate@solprobarg%
+   \ifdefined\exf@problem@solfirst\exf@process@solsec\fi%
+   \global\let\exf@problem@solfirst\@undefined%
+   \exf@clear@prevsubprob%
 %    \end{macrocode}
 % Write separator and |printsolution| environment to buffer:
 %    \begin{macrocode}
-  \ifexf@lineno\exf@addline\exf@solbuf{\exf@linesep}%
-   \exf@addline\exf@solbuf{\exf@lineno}\fi%
-  \exf@addline\exf@solbuf%
-   {\@backslashchar begin{printsolution}{\exf@solprobarg#1}}%
+   \ifexf@lineno\exf@addline\exf@solbuf{\exf@linesep}%
+    \exf@addline\exf@solbuf{\exf@lineno}\fi%
+   \exf@addline\exf@solbuf%
+    {\@backslashchar begin{printsolution}{\exf@solprobarg#1}}%
 %    \end{macrocode}
 % Start verbatim processing:
 %    \begin{macrocode}
-  \def\exf@verbatim@process{\exf@append@buf\exf@solbuf}%
+   \def\exf@verbatim@process{\exf@append@buf\exf@solbuf}%
+  \fi%
   \exf@verbatim#2}%
 %    \end{macrocode}
 % End verbatim processing; close |printsolution| environment:
 %    \begin{macrocode}
  {\exf@endverbatim%
-  \exf@addline\exf@solbuf{\@backslashchar end{printsolution}}%
-  \global\exf@solbuf@cleanfalse%
+  \ifexf@scansolution@disable\else%
+   \exf@addline\exf@solbuf{\@backslashchar end{printsolution}}%
+   \global\exf@solbuf@cleanfalse%
+  \fi%
 %    \end{macrocode}
 % Write buffer to file if output file open:
 %    \begin{macrocode}
@@ -6613,8 +7155,8 @@ clean-all:  clean
 %    \end{macrocode}
 % Display solution immediately in various cases:
 %    \begin{macrocode}
-  \exf@ifis\exf@solutionbelow{here}{\exf@showsolutions%
-   {\exf@config@composetitlesolutionsingle}{}}%
+  \exf@ifis\exf@solutionbelow{here}{%
+   \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}}%
   \ifdefined\exf@in@subproblem\else%
    \exf@ifis\exf@solutionbelow{subproblem}{%
     \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}}%
@@ -6632,8 +7174,7 @@ clean-all:  clean
 %    \end{macrocode}
 
 % \macro{solution}
-% Define |solution| environment
-% (potentially using custom name)
+% Define |solution| environment (potentially using custom name)
 % to choose between direct and buffered version:
 %    \begin{macrocode}
 \newenvironment{\exf@solutionname}%
@@ -6780,7 +7321,7 @@ clean-all:  clean
 % \label{sec:imp-metastr}
 %
 % This package transfers some functionality
-% to the package \textsf{metastr} when loaded
+% to the package \ctanpkg{metastr} when loaded
 % previously (preferably with package option |course|)
 % by the package option |metastr|.
 % The following changes apply:
@@ -6789,26 +7330,26 @@ clean-all:  clean
 % The terms specified by the configuration options |term...|,
 % see \secref{sec:imp-config},
 % are transferred to the corresponding term registers
-% |\metaterm{...}| in \textsf{metastr}.
+% |\metaterm{...}| in \ctanpkg{metastr}.
 % This can facilitate internationalisation,
 % and suitable words for English, German, French and Spanish are provided.
 % \item
 % Metadata as described in \secref{sec:metadata}
 % should be filled via |\metaset| rather than |\exercisedata|.
-% The present package will read it from the \textsf{metastr} registers.
+% The present package will read it from the \ctanpkg{metastr} registers.
 % \item
-% Basic PDF metadata is written automatically or manually
+% Basic pdf metadata is written automatically or manually
 % as described in \secref{sec:metadata}.
 % This is done via |\metawritepdfinfo|,
 % consequently, automatic writing of these basic metadata
-% is disabled in \textsf{metastr}.
+% is disabled in \ctanpkg{metastr}.
 % \item
 % Sheet-specific metadata (package option |pdfdata=sheet|)
-% is handled via the \textsf{metastr} registers |sheettitle| and |sheetdata|
+% is handled via the \ctanpkg{metastr} registers |sheettitle| and |sheetdata|
 % rather than |composemetasheet|.
 % \end{itemize}
 %
-% Apply modifications only when package \textsf{metastr} is loaded:
+% Apply modifications only when package \ctanpkg{metastr} is loaded:
 %    \begin{macrocode}
 \ifdefined\metaset
 %    \end{macrocode}
@@ -6816,7 +7357,7 @@ clean-all:  clean
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Transfer Metadata.}
 %
-% Import basic data from \textsf{metastr}:
+% Import basic data from \ctanpkg{metastr}:
 %    \begin{macrocode}
 \exercisedata{author={\metapick[]{author}}}
 \exercisedata{title={\metapick[]{title}}}
@@ -6824,7 +7365,7 @@ clean-all:  clean
 \exercisedata{keyword={\metapick[]{keyword}}}
 \exercisedata{date={\metapick[]{date}}}
 %    \end{macrocode}
-% Import course data from \textsf{metastr}:
+% Import course data from \ctanpkg{metastr}:
 %    \begin{macrocode}
 \ifdefined\mstr@def@course
 \exercisedata{course={\metapick[]{course}}}
@@ -6847,7 +7388,7 @@ clean-all:  clean
 %    \end{macrocode}
 
 % \macro{\exf@writemetadata}
-% Write PDF metadata via \textsf{metastr} package,
+% Write pdf metadata via \ctanpkg{metastr} package,
 % let \textsf{exframe} initiate process (especially for sheet):
 %    \begin{macrocode}
 \metaunset[info]{writepdf}
@@ -6867,8 +7408,8 @@ clean-all:  clean
 \metaset{author}{\exerciseifempty{\getsheetdata{author}}%
   {\metapick[#1]{instructor}}{\metapick[#1]{sheetauthor}}}
 \metaset{subtitle}{%
-  \metaif[use]{sheettitle}
-   {\metapick[#1]{sheettitle}}
+  \metaif[use]{sheettitle}%
+   {\metapick[#1]{sheettitle}}%
    {\metapick[#1]{material}}}
 %    \end{macrocode}
 
@@ -6876,7 +7417,7 @@ clean-all:  clean
 % \paragraph{Terms.}
 %
 % \macro{term...}
-% Transfer term definitions to \textsf{metastr}:
+% Transfer term definitions to \ctanpkg{metastr}:
 %    \begin{macrocode}
 \exerciseconfig{termsheet}{\metaterm{sheet}}
 \exerciseconfig{termsheets}{\metaterm{sheets}}
@@ -6947,7 +7488,7 @@ clean-all:  clean
 \fi
 %    \end{macrocode}
 
-% Close \textsf{metastr} conditional:
+% Close \ctanpkg{metastr} conditional:
 %    \begin{macrocode}
 \fi
 %    \end{macrocode}

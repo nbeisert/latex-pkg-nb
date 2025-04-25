@@ -1,5 +1,5 @@
-exframe v3.4
-Copyright 2011-2020 Niklas Beisert
+exframe v3.5
+Copyright 2011-2024 Niklas Beisert
 
 exframe is a LaTeX2e package which provides a general purpose
 framework to describe and typeset exercises and exam questions
@@ -44,6 +44,6 @@ This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3
 of this license or (at your option) any later version.
 The latest version of this license is in
-  http://www.latex-project.org/lppl.txt
-and version 1.3 or later is part of all distributions of LaTeX
-version 2005/12/01 or later.
+  https://www.latex-project.org/lppl.txt
+and version 1.3c or later is part of all distributions of LaTeX
+version 2008 or later.
