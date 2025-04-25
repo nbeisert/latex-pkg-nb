@@ -1,6 +1,6 @@
 % \iffalse
 %
-% graphbox.dtx Copyright (C) 2013-2014 Niklas Beisert
+% graphbox.dtx Copyright (C) 2013-2018 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -18,21 +18,35 @@
 % and the derived files graphbox.sty, gboxsamp.tex and gboxsamp.mps
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{graphbox}[2014/08/31 v1.0 extension for graphicx to adjust containing box]
-%<sample>\ProvidesFile{gboxsamp.tex}[2014/08/31 v1.0 sample for graphbox]
+%<package>\ProvidesPackage{graphbox}[2018/01/17 v1.1 extension for graphicx to adjust containing box]
+%<sample>\ProvidesFile{gboxsamp.tex}[2018/01/17 v1.1 sample for graphbox]
 %<figure>%!PS-Adobe-3.0 EPSF-3.0
 %<*driver>
-%\ProvidesFile{graphbox.drv}[2014/08/31 v1.0 graphbox Reference Manual file]
+%\ProvidesFile{graphbox.drv}[2018/01/17 v1.1 graphbox Reference Manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
 \usepackage[margin=35mm]{geometry}
 \usepackage{hyperref}
+\usepackage{hyperxmp}
 \usepackage[usenames]{color}
 
 \hypersetup{colorlinks=true}
 \hypersetup{pdfstartview=FitH}
 \hypersetup{pdfpagemode=UseNone}
+\hypersetup{pdfsource={}}
+\hypersetup{pdflang={en-UK}}
+\hypersetup{pdfcopyright={Copyright 2013-2018 Niklas Beisert.
+  This work may be distributed and/or modified under the
+  conditions of the LaTeX Project Public License, either version 1.3
+  of this license or (at your option) any later version.}}
+\hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
+\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K, Wolfgang-Pauli-Strasse 27}}
+\hypersetup{pdfcontactpostcode={8093}}
+\hypersetup{pdfcontactcity={Zurich}}
+\hypersetup{pdfcontactcountry={Switzerland}}
+\hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
+\hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
 \begin{document}
 
@@ -45,7 +59,7 @@
         \href{mailto:nbeisert@itp.phys.ethz.ch}{\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package graphbox}}
-\date{31 August 2014, \textsf{v1.0}}
+\date{17 January 2018, \textsf{v1.1}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -292,7 +306,7 @@ graphics while reserving the space it would otherwise occupy:
 \]
 %
 Moreover, in conjunction with the \textsf{beamer} class,
-the definition of the |\includegraphics| command 
+the definition of the |\includegraphics| command
 is altered such that it uses the same amount of
 space in all visibility modes (specified through the
 |\pause| mechanism and the |<...>| extension).
@@ -311,38 +325,6 @@ Visibility is handled by automatically setting the |hide| option:
 \mbox{after}
 }
 \]
-%
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Related CTAN Packages}
-
-The \textsf{graphbox} package extends the
-package \href{http://ctan.org/pkg/graphicx}{\textsf{graphicx}}.
-It also changes some functionality of the class
-\href{http://ctan.org/pkg/beamer}{\textsf{beamer}}
-if present:
-%
-\begin{itemize}
-\item
-Compatibility with the \textsf{graphicx} package
-has been tested with
-v1.0f (1999/02/16) and
-v1.0g (2014/04/25).
-
-\item
-The changes of functionality are described
-in section~\ref{sec:hide}.
-Compatibility with the
-\textsf{beamer} class
-has been tested with v3.33 (2013/12/25).
-
-\end{itemize}
-%
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -541,65 +523,20 @@ of the \textsf{beamer} class for |\includegraphics|;
 as usual, graphics will occupy no space when covered.
 \end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Feature Suggestions}
-%
-%\begin{itemize}
-%\item
-%Combine hshift and vshift into one definition. how? which order?
-%\item
-%negative bmargin
-%\end{itemize}
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\appendix
+\section{Information}
 
-\settowidth\MacroIndent{\rmfamily\scriptsize 000\ }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Copyright}
+
+\begingroup
 \parskip1ex
 \parindent0pt
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Files and Installation}
-
-The package consists of the files
-%
-\begin{center}
-\begin{tabular}{ll}
-    |README|       & readme file \\
-    |graphbox.ins| & installation file \\
-    |graphbox.dtx| & source file \\
-    |graphbox.sty| & package file \\
-    |gboxsamp.tex| & sample file \\
-    |gboxsamp.mps| & sample figure \\
-    |graphbox.pdf| & manual
-\end{tabular}
-\end{center}
-%
-The distribution consists of the files
-|README|, |graphbox.ins| and |graphbox.dtx|.
-%
-\begin{itemize}
-\item
-Run (pdf)\LaTeX{} on |graphbox.dtx| to compile the manual |graphbox.pdf| (this file).
-\item
-Run \LaTeX{} on |graphbox.ins| to create the package |graphbox.sty|
-and the sample consisting of |gboxsamp.tex| and |gboxsamp.mps|.
-Copy the file |graphbox.sty| to an appropriate directory of your \LaTeX{}
-distribution, e.g.\ \textit{texmf-root}|/tex/latex/graphbox|.
-\end{itemize}
-
- \DocInput{graphbox.dtx}
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Copyright}
-
-Copyright \copyright{} 2013--2014 Niklas Beisert
+Copyright \copyright{} 2013--2018 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
@@ -613,8 +550,126 @@ This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainer of this work is Niklas Beisert.
 
-This work consists of the files |graphbox.dtx| and |graphbox.ins|
-and the derived files |graphbox.sty|, |gboxsamp.tex| and |gboxsamp.mps|
+This work consists of the files |README.txt|, |graphbox.ins| and |graphbox.dtx|
+as well as the derived files |graphbox.sty|, |gboxsamp.tex| with |gboxsamp.mps|
+and |graphbox.pdf|.
+
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Files and Installation}
+
+The package consists of the files
+%
+\begin{center}
+\begin{tabular}{ll}
+    |README.txt|   & readme file \\
+    |graphbox.ins| & installation file \\
+    |graphbox.dtx| & source file \\
+    |graphbox.sty| & package file \\
+    |gboxsamp.tex| & sample file \\
+    |gboxsamp.mps| & sample figure \\
+    |graphbox.pdf| & manual
+\end{tabular}
+\end{center}
+%
+The distribution consists of the files
+|README.txt|, |graphbox.ins| and |graphbox.dtx|.
+%
+\begin{itemize}
+\item
+Run (pdf)\LaTeX{} on |graphbox.dtx|
+to compile the manual |graphbox.pdf| (this file).
+\item
+Run \LaTeX{} on |graphbox.ins| to create the package |graphbox.sty|
+and the sample consisting of |gboxsamp.tex| and |gboxsamp.mps|.
+Copy the file |graphbox.sty| to an appropriate directory of your \LaTeX{}
+distribution, e.g.\ \textit{texmf-root}|/tex/latex/graphbox|.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Interaction with CTAN Packages}
+
+The \textsf{graphbox} package extends the
+package \href{http://ctan.org/pkg/graphicx}{\textsf{graphicx}}.
+It also changes some functionality of the class
+\href{http://ctan.org/pkg/beamer}{\textsf{beamer}}
+if present:
+%
+\begin{itemize}
+\item
+Compatibility with the \textsf{graphicx} package
+has been tested with
+v1.0f (1999/02/16) and
+v1.0g (2014/04/25).
+
+\item
+The changes of functionality are described
+in section~\ref{sec:hide}.
+Compatibility with the
+\textsf{beamer} class
+has been tested with v3.33 (2013/12/25).
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Feature Suggestions}
+%
+%\begin{itemize}
+%\item
+%Combine hshift and vshift into one definition. how? which order?
+%\item
+%negative bmargin
+%\item
+%change \includegraphics missing file error into a warning?
+%\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1:} 2018/01/17
+
+\begin{itemize}
+\item
+hooked deeper into |\includegraphics| chain
+\item
+manual rearranged
+\item
+minor internal changes
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.0:} 2014/08/31
+
+\begin{itemize}
+\item
+added further placement options
+\item
+manual and installation package added
+\item
+first version published on CTAN
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v0.8:} 2014/08/25
+
+\begin{itemize}
+\item
+basic functionality
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+
+\settowidth\MacroIndent{\rmfamily\scriptsize 000\ }
+\parskip1ex
+\parindent0pt
+
+ \DocInput{graphbox.dtx}
 
 \end{document}
 %</driver>
@@ -633,6 +688,7 @@ and the derived files |graphbox.sty|, |gboxsamp.tex| and |gboxsamp.mps|
 %
 %    \begin{macrocode}
 \documentclass[12pt]{article}
+
 \usepackage[margin=2cm]{geometry}
 \usepackage{graphicx}
 \usepackage{graphbox}
@@ -757,7 +813,7 @@ newpath -20 -20 moveto 20 20 lineto stroke
 %\fi
 %
 % In this section we describe the package |graphbox.sty|.
-%
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Package Options.}
 %
@@ -845,18 +901,17 @@ newpath -20 -20 moveto 20 20 lineto stroke
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Argument Processing.}
 %
-% Next, we overwrite the function |\Ginclude@graphics|
-% called by |\Gin@ii| within |\includegraphics|
+% Next, we overwrite the function |\Gin@setfile| called by |\includegraphics|
 % after the optional parameters have been processed
 % by |\setkeys{Gin}{...}|:
 %    \begin{macrocode}
-\let\old@box@Ginclude@graphics\Ginclude@graphics
-\def\Ginclude@graphics#1{%
+\let\old@box@Gin@setfile\Gin@setfile
+\def\Gin@setfile#1#2#3{%
 %    \end{macrocode}
 % We first save the graphics into the box |\Gin@box@box|
 % and compute its width and height:
 %    \begin{macrocode}
- \sbox{\Gin@box@box}{\old@box@Ginclude@graphics{#1}}%
+ \sbox{\Gin@box@box}{\old@box@Gin@setfile{#1}{#2}{#3}}%
  \settowidth{\Gin@box@width}{\usebox{\Gin@box@box}}%
  \settoheight{\Gin@box@height}{\usebox{\Gin@box@box}}%
 %    \end{macrocode}
@@ -958,16 +1013,14 @@ newpath -20 -20 moveto 20 20 lineto stroke
 % \textsf{beamer} overwrites |\includegraphics|
 % at the beginning of the document body.
 % We have to overwrite it again discarding
-% the changes introduces by \textsf{beamer}:
+% the changes introduced by \textsf{beamer}:
 %    \begin{macrocode}
  \AtBeginDocument{\let\includegraphics=\fibox@includegraphics}
 \fi}{}
 %    \end{macrocode}
-%
+
 %\iffalse
 %</package>
 %\fi
 %
 \endinput
-%
-%% \CheckSum{3381}

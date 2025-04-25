@@ -29,5 +29,5 @@ clean-all: clean
 clean-bak: clean-all
 	rm -f graphbox.dtx.bak graphbox.sty.bak graphbox.ins.bak 
 	rm -f graphbox.dtx~ graphbox.sty~ graphbox.ins~ 
-	rm -f README.bak Makefile.bak
-	rm -f README~ Makefile~
+	rm -f README.txt.bak Makefile.bak
+	rm -f README.txt~ Makefile~
