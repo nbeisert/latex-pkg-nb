@@ -1,4 +1,4 @@
-PACKAGES = collref mpostinl exframe
+PACKAGES = collref mpostinl exframe graphbox
 TARGETS = all touch clean clean-all clean-bak
 
 $(TARGETS): $(PACKAGES)

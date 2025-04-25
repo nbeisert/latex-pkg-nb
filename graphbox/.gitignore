@@ -1,0 +1,10 @@
+#exclude all files
+*
+
+#include relevant files
+!/.gitignore
+!/Makefile
+!/graphbox.sty
+!/graphbox.dtx
+!/graphbox.ins
+!/README
