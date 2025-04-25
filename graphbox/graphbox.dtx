@@ -1,70 +1,90 @@
-% \iffalse
 %
-% graphbox.dtx Copyright (C) 2013-2018 Niklas Beisert
+% \iffalse meta-comment
+%
+% graphbox.dtx Copyright (C) 2013-2025 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
 % of this license or (at your option) any later version.
 % The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
-% and version 1.3 or later is part of all distributions of LaTeX
-% version 2005/12/01 or later.
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008 or later.
 %
 % This work has the LPPL maintenance status `maintained'.
 %
 % The Current Maintainer of this work is Niklas Beisert.
 %
 % This work consists of the files graphbox.dtx and graphbox.ins
-% and the derived files graphbox.sty, gboxsamp.tex and gboxsamp.mps
+% and the derived files graphbox.sty, gboxsamp.tex and gboxsamp.mps.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{graphbox}[2018/01/17 v1.1 extension for graphicx to adjust containing box]
-%<sample>\ProvidesFile{gboxsamp.tex}[2018/01/17 v1.1 sample for graphbox]
+%<package>\ProvidesPackage{graphbox}[2025/03/25 v1.1.1 extension for graphicx to adjust containing box]
+%<sample>\ProvidesFile{gboxsamp.tex}[2025/03/25 v1.1.1 sample for graphbox]
 %<figure>%!PS-Adobe-3.0 EPSF-3.0
 %<*driver>
-%\ProvidesFile{graphbox.drv}[2018/01/17 v1.1 graphbox Reference Manual file]
+\def\thedate#1{2025/03/25}\def\theversion#1{v1.1.1}
+\ProvidesFile{graphbox.dtx}[\thedate{} \theversion{} graphbox reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
 \usepackage[margin=35mm]{geometry}
-\usepackage{hyperref}
+\usepackage[hyperindex=false]{hyperref}
 \usepackage{hyperxmp}
 \usepackage[usenames]{color}
 
-\hypersetup{colorlinks=true}
-\hypersetup{pdfstartview=FitH}
-\hypersetup{pdfpagemode=UseNone}
+\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
+\hypersetup{urlbordercolor={.5 1 1}}
+\hypersetup{linkbordercolor={1 .7 .7}}
+\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
+\hypersetup{keeppdfinfo=true}
 \hypersetup{pdfsource={}}
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfcopyright={Copyright 2013-2018 Niklas Beisert.
+\hypersetup{pdfurl={https://ctan.org/pkg/graphbox}}
+\hypersetup{pdfcopyright={Copyright 2013-2025 Niklas Beisert.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
-\hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
-\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K, Wolfgang-Pauli-Strasse 27}}
+\hypersetup{pdflicenseurl={https://www.latex-project.org/lppl.txt}}
+\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K,
+  Wolfgang-Pauli-Strasse 27}}
 \hypersetup{pdfcontactpostcode={8093}}
 \hypersetup{pdfcontactcity={Zurich}}
 \hypersetup{pdfcontactcountry={Switzerland}}
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
-\hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
+\hypersetup{pdfcontacturl={https://people.phys.ethz.ch/\xmptilde nbeisert/}}
+
+\newcommand{\markpkg}[1]{\textsf{#1}}
+\newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
+\newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
+\newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\markpkg{#1}}}
+
+\def\textvert{\texttt{\char"7C}}
+
+\parskip1ex
+\parindent0pt
+\let\olditemize\itemize
+\def\itemize{\olditemize\parskip0pt}
 
 \begin{document}
 
-\title{The \textsf{graphbox} Package}
+\title{The \markpkg{graphbox} Package}
 \hypersetup{pdftitle={The graphbox Package}}
 \author{Niklas Beisert\\[2ex]
-        Institut f\"ur Theoretische Physik\\
-        Eidgen\"ossische Technische Hochschule Z\"urich\\
-        Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
-        \href{mailto:nbeisert@itp.phys.ethz.ch}{\texttt{nbeisert@itp.phys.ethz.ch}}}
+  Institut f\"ur Theoretische Physik\\
+  Eidgen\"ossische Technische Hochschule Z\"urich\\
+  Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
+  \href{mailto:nbeisert@itp.phys.ethz.ch}
+  {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package graphbox}}
-\date{17 January 2018, \textsf{v1.1}}
+\date{\thedate{}, \theversion{}\\[1ex]
+\url{https://ctan.org/pkg/graphbox}}
 \maketitle
 
 \begin{abstract}\noindent
-\textsf{graphbox} is an extension for the \LaTeXe{} package
-\textsf{graphicx} to facilitate the placement of graphics
+\markpkg{graphbox} is an extension for the \LaTeXe{} package
+\markpkg{graphicx} to facilitate the placement of graphics
 relative to the current position
 using additional optional arguments |[...]|
 of |\includegraphics|.
@@ -72,12 +92,17 @@ For example, changing the vertical alignment is convenient
 for using graphics as elements of (mathematical) formulae.
 Options for shifting, smashing and hiding the graphics
 are mainly intended for designing presentations using,
-e.g., the \textsf{beamer} framework.
+e.g., the \markpkg{beamer} framework.
 \end{abstract}
 
+\begingroup
+\parskip0ex
 \tableofcontents
+\endgroup
 
-% we do not have the sample graphics yet, so we use LaTeX internals:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \newcommand{\drawbox}[1]{%
  \setlength{\unitlength}{#1}%
  \begin{picture}(1, 1)%
@@ -96,7 +121,7 @@ e.g., the \textsf{beamer} framework.
 \section{Introduction}
 
 Changing the placement of graphics using |\includegraphics|
-of the \textsf{graphicx} package is tedious.
+of the \ctanpkg{graphicx} package is tedious.
 The command allows to scale and even rotate a figure
 by the optional arguments |[...]| of |\includegraphics|, namely |scale|
 (|xscale|, |yscale|) and |rotate|.
@@ -203,7 +228,7 @@ the resulting output may easily look like:%
 \qquad\mbox{some text}
 \]
 %
-The present extension \textsf{graphbox} adds the option |align| to
+The present extension \markpkg{graphbox} adds the option |align| to
 |\includegraphics| to simplify the declaration:
 \begin{verbatim}
   \includegraphics[align=c,width=1cm]{...}
@@ -254,7 +279,7 @@ It occupies no space which allows
 to centre the table irrespectively of
 the size of the graphics.
 Unfortunately, the command is not easily readable.
-The \textsf{graphbox} extension abbreviates the declaration
+The \markpkg{graphbox} extension abbreviates the declaration
 and make it much more accessible:
 %
 \begin{verbatim}
@@ -267,12 +292,12 @@ and make it much more accessible:
 
 Sometimes one might wish to hide a graphics while reserving the space
 it would occupy.%
-\footnote{In the \textsf{graphicx} package a
+\footnote{In the \ctanpkg{graphicx} package a
 similar effect achieved by the option |draft|.
 However, here the graphics are replaced by a box containing the file name.}
 For example, this feature is needed in
 presentations where the frames are successively uncovered.
-In this \textsf{beamer} class the uncovering of frames is
+In the \ctanpkg{beamer} class the uncovering of frames is
 conveniently achieved by the command |\pause|.
 Unfortunately, the effect of |\pause| on graphics
 is that they are either displayed or taken out of the text flow.
@@ -295,7 +320,7 @@ can change drastically when graphics elements are uncovered:
 %
 
 
-The \textsf{graphbox} extension adds the option |hide|
+The \markpkg{graphbox} extension adds the option |hide|
 to |\includegraphics| to hide the corresponding
 graphics while reserving the space it would otherwise occupy:
 %
@@ -305,7 +330,7 @@ graphics while reserving the space it would otherwise occupy:
 \fbox{\drawbox{1.5cm}}
 \]
 %
-Moreover, in conjunction with the \textsf{beamer} class,
+Moreover, in conjunction with the \ctanpkg{beamer} class,
 the definition of the |\includegraphics| command
 is altered such that it uses the same amount of
 space in all visibility modes (specified through the
@@ -331,17 +356,17 @@ Visibility is handled by automatically setting the |hide| option:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Usage}
 
-To use \textsf{graphbox} simply add the command
+To use \markpkg{graphbox} simply add the command
 \begin{center}|\usepackage{graphbox}|\end{center}
 to the preamble of your {\LaTeX} document.
 If not yet present,
-the package \textsf{graphicx} will automatically be loaded.
+the package \ctanpkg{graphicx} will automatically be loaded.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Extensions}
 
 The package mainly extends the functionality of
-the |\includegraphics| command of the \textsf{graphicx} package
+the |\includegraphics| command of the \ctanpkg{graphicx} package
 by allowing several additional optional arguments |[...]| as follows:
 
 \begin{itemize}
@@ -519,7 +544,7 @@ The package provides one option:
 |nobeamer|
 
 do not override the overlay processing
-of the \textsf{beamer} class for |\includegraphics|;
+of the \ctanpkg{beamer} class for |\includegraphics|;
 as usual, graphics will occupy no space when covered.
 \end{itemize}
 
@@ -532,19 +557,15 @@ as usual, graphics will occupy no space when covered.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-\begingroup
-\parskip1ex
-\parindent0pt
-
 Copyright \copyright{} 2013--2018 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
 of this license or (at your option) any later version.
 The latest version of this license is in
-  \url{http://www.latex-project.org/lppl.txt}
-and version 1.3 or later is part of all distributions of \LaTeX{}
-version 2005/12/01 or later.
+  \url{https://www.latex-project.org/lppl.txt}
+and version 1.3c or later is part of all distributions of \LaTeX{}
+version 2008 or later.
 
 This work has the LPPL maintenance status `maintained'.
 
@@ -553,8 +574,6 @@ The Current Maintainer of this work is Niklas Beisert.
 This work consists of the files |README.txt|, |graphbox.ins| and |graphbox.dtx|
 as well as the derived files |graphbox.sty|, |gboxsamp.tex| with |gboxsamp.mps|
 and |graphbox.pdf|.
-
-\endgroup
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Files and Installation}
@@ -590,42 +609,67 @@ distribution, e.g.\ \textit{texmf-root}|/tex/latex/graphbox|.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Interaction with CTAN Packages}
 
-The \textsf{graphbox} package extends the
-package \href{http://ctan.org/pkg/graphicx}{\textsf{graphicx}}.
+The \markpkg{graphbox} package extends the
+package \ctanpkg{graphicx}.
 It also changes some functionality of the class
-\href{http://ctan.org/pkg/beamer}{\textsf{beamer}}
+\ctanpkg{beamer}
 if present:
 %
 \begin{itemize}
 \item
-Compatibility with the \textsf{graphicx} package
+Compatibility with the \ctanpkg{graphicx} package
 has been tested with
 v1.0f (1999/02/16) and
 v1.0g (2014/04/25).
 
 \item
-The changes of functionality are described
-in section~\ref{sec:hide}.
 Compatibility with the
-\textsf{beamer} class
+\ctanpkg{beamer} class
 has been tested with v3.33 (2013/12/25).
+The changes of functionality are described
+in \secref{sec:hide}.
 
 \end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Feature Suggestions}
-%
-%\begin{itemize}
-%\item
-%Combine hshift and vshift into one definition. how? which order?
-%\item
-%negative bmargin
-%\item
-%change \includegraphics missing file error into a warning?
-%\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\iffalse
+\subsection{Feature Suggestions}
+
+\begin{itemize}
+\item
+Combine hshift and vshift into one definition. how? which order?
+\item
+negative bmargin
+\item
+change |\includegraphics| missing file error into a warning?
+\item
+similar positioning extensions for |\parbox| and |minipage|
+(extend vertical placement argument |c|, |t|, |b| to keyval);
+thanks to David Ploog for suggestion
+\end{itemize}
+
+\fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\iffalse
+\paragraph{vN.N.N+:} 20YY/MM/NN
+
+\begin{itemize}
+\item
+\ldots
+\end{itemize}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1.1:} 2025/03/25
+
+\begin{itemize}
+\item
+maintenance and manual update
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.1:} 2018/01/17
@@ -666,8 +710,6 @@ basic functionality
 \appendix
 
 \settowidth\MacroIndent{\rmfamily\scriptsize 000\ }
-\parskip1ex
-\parindent0pt
 
  \DocInput{graphbox.dtx}
 
@@ -683,7 +725,7 @@ basic functionality
 %\fi
 %
 % In this section we provide a {\LaTeX} example how to use
-% some of the \textsf{graphbox} extensions to \textsf{graphicx}.
+% some of the \markpkg{graphbox} extensions to \ctanpkg{graphicx}.
 % Preamble:
 %
 %    \begin{macrocode}
@@ -829,7 +871,7 @@ newpath -20 -20 moveto 20 20 lineto stroke
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Required Packages.}
 %
-% The package loads \textsf{graphicx} if not yet present:
+% The package loads \ctanpkg{graphicx} if not yet present:
 %    \begin{macrocode}
 \RequirePackage{graphicx}
 %    \end{macrocode}
@@ -867,7 +909,7 @@ newpath -20 -20 moveto 20 20 lineto stroke
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Additional Arguments.}
 %
-% The optional arguments of |\includegraphics| are parsed by \textsf{keyval}
+% The optional arguments of |\includegraphics| are parsed by \ctanpkg{keyval}
 % which calls the appropriate handlers. We add handlers to introduce additional
 % optional arguments:
 %
@@ -987,7 +1029,7 @@ newpath -20 -20 moveto 20 20 lineto stroke
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\paragraph{Interaction with class beamer.}
 %
-% For the class \textsf{beamer} we want to override the overlay mechanism
+% For the class \ctanpkg{beamer} we want to override the overlay mechanism
 % to always reserve the space the graphics would occupy.
 % Here we have to overwrite the command |\includegraphics|.
 %    \begin{macrocode}
@@ -1010,10 +1052,10 @@ newpath -20 -20 moveto 20 20 lineto stroke
 %    \begin{macrocode}
   \old@box@includegraphics[#1]{#2}}
 %    \end{macrocode}
-% \textsf{beamer} overwrites |\includegraphics|
+% \ctanpkg{beamer} overwrites |\includegraphics|
 % at the beginning of the document body.
 % We have to overwrite it again discarding
-% the changes introduced by \textsf{beamer}:
+% the changes introduced by \ctanpkg{beamer}:
 %    \begin{macrocode}
  \AtBeginDocument{\let\includegraphics=\fibox@includegraphics}
 \fi}{}
