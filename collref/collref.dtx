@@ -1,0 +1,567 @@
+% \iffalse
+%
+% collref.dtx Copyright (C) 2003-2009 Niklas Beisert
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% 
+% The Current Maintainer of this work is Niklas Beisert.
+%
+% This work consists of the files collref.dtx and collref.ins
+% and the derived files collref.sty and collsamp.tex
+%
+%<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
+%<package>\ProvidesPackage{collref}[2009/06/09 v1.0 Collect References]
+%<sample>\ProvidesFile{collsamp.tex}[2009/06/09 v1.0 Sample for Collect References]
+%<*driver>
+%\ProvidesFile{collref.drv}[2009/06/09 v1.0 Collect References Manual file]
+\PassOptionsToClass{10pt,a4paper}{article}
+\documentclass{ltxdoc}
+
+\usepackage[margin=35mm]{geometry}
+\usepackage{hyperref}
+
+\hypersetup{colorlinks=true}
+\hypersetup{pdfstartview=FitH}
+\hypersetup{pdfpagemode=UseNone}
+
+
+%\newenvironment{thebib}
+%{\list{[\theenumi]}{\parsep0cm\usecounter\enumi\def\makelabel##1{\hss\llap{##1}}}}
+%{\endlist}
+
+\newenvironment{thebib}
+{\list{[\theenumi]}{\parsep0pt\usecounter{enumi}}}
+{\endlist}
+
+\begin{document}
+
+\title{The \textsf{collref} Package\thanks{\texttt{AEI-2009-054}}}
+\hypersetup{pdftitle={The collref Package}}
+\author{Niklas Beisert\\[2ex]
+        Max-Planck-Institut f\"ur Gravitationsphysik\\
+        Albert-Einstein-Institut
+        Am M\"uhlenberg 1\\
+        14476 Potsdam, Germany\\[1ex]
+        \href{mailto:nbeisert@aei.mpg.de}{\texttt{nbeisert@aei.mpg.de}}}
+\hypersetup{pdfauthor={Niklas Beisert}}
+\hypersetup{pdfsubject={Manual for the LaTeX2e Package collref}}
+\date{9 June 2009, \textsf{v1.0}}
+\maketitle
+
+\begin{abstract}\noindent
+\textsf{collref} is a \LaTeXe{} package to automatically collect 
+multiple \verb|\bibitem| references which always appear in the same sequence 
+in \verb|\cite| into a single \verb|\bibitem| block.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction} 
+
+Suppose a manuscript uses the following set of four references:
+%
+\begin{thebib}
+\item Reference A
+\item Reference B
+\item Reference C
+\item Reference D
+\end{thebib}
+%
+Now if references B and C cover similar or related material,
+they might always be cited together as in ``[\ldots, 2, 3, \ldots]''
+throughout the manuscript. 
+In some (physics) journals it is then customary to collect the two
+references into a single reference
+%
+\begin{thebib}
+\item Reference A
+\item Reference B 
+\par Reference C
+\item Reference D
+\end{thebib}
+%
+and cite it by ``[\ldots, 2, \ldots]''.
+The package \textsf{collref} automates this process
+by analysing the \verb|\cite| commands
+and identifying blocks of references 
+which always appear in conjunction.
+These blocks are collapsed to a single item
+in the bibliography.
+Please note that \textsf{collref} requires the sequence 
+of \verb|\bibitem| entries to match with 
+the sequence of \verb|\cite| blocks.
+This is most easily achieved through the use of \BibTeX{}
+with any \emph{unsorted} style.
+
+\paragraph{Similar CTAN Packages.}
+The objective and some of the implementation 
+of the \textsf{collref} package is similar to the 
+CTAN packages \href{http://www.ctan.org/tex-archive/macros/latex/contrib/mcite/}{\textsf{mcite}} by Thorsten Ohl 
+and \href{http://www.ctan.org/tex-archive/macros/latex/contrib/mciteplus/}{\textsf{mciteplus}} by Michael Shell,
+but the functionality is different is several respects:
+%
+\begin{itemize}
+\item
+\textsf{collref} is intended to work transparently:
+\LaTeX{} documents which compile with \textsf{collref}
+should also compile fine without invoking \textsf{collref}
+(obviously without collected references).
+The package decides automatically which references 
+can be collapsed,
+no further interaction of the author is required.
+
+\textsf{mcite} and \textsf{mciteplus} leave the 
+decision/duty to collapse certain references 
+using the modified syntax \verb|\cite{A,*B,*C}|.
+ 
+\item
+\textsf{mcite} and \textsf{mciteplus} are intended to handle punctuations
+in collapsed references correctly. 
+This requires a specialised \BibTeX{} style.
+
+No effort is made in \textsf{collref} in this regard.
+Some minor modification in \texttt{collref.sty} 
+together with a modified \BibTeX{} style 
+might achieve basic punctuation features similar to \textsf{mcite}.
+\end{itemize}
+%
+
+  
+
+\section{Usage} 
+
+\paragraph{Inclusion.}
+To use \textsf{collref} simply add the command 
+\begin{center}\verb|\usepackage{collref}|\end{center}
+to the preamble of your \LaTeX{} document.
+No further interaction is required.
+
+\paragraph{Bibliography Preparation.}
+Please note that only such blocks of references can be collapsed
+which appear in the same order for 
+\verb|\cite| commands as for \verb|thebibliography|.
+It is recommended to prepare the bibliography through \BibTeX{}
+which does this automatically.
+You must use a style which does not sort the references
+but preserves the order in which they were \verb|\cite|'d,
+e.g.\ \texttt{unsrt.bst}.
+
+\paragraph{Separators.}
+\textsf{collref} does not provide correct linguistic punctuation 
+between collected references, but it allows to specify how
+collected references are separated.
+This is specified through the package options 
+\verb|\usepackage[|\textit{opt}\verb|]{collref}|
+where \textit{opt} is one of the following
+\par\vspace{2ex}
+\begin{minipage}[t]{0.3\linewidth}
+\centerline{\texttt{nosep} (default)}\par\vspace{1ex}
+no separator:
+\begin{thebib}
+\item A
+\item B C
+\item D
+\end{thebib}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.3\linewidth}
+\centerline{\texttt{parsep}}\par\vspace{1ex}
+separated by \verb|\par|:
+\begin{thebib}
+\item A
+\item B 
+\par C
+\item D
+\end{thebib}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.3\linewidth}
+\centerline{\texttt{bulletsep}}\par\vspace{1ex}
+separated by $\bullet$:
+\begin{thebib}
+\item A
+\item B $\bullet$ C
+\item D
+\end{thebib}
+\end{minipage}
+\par\vspace{2ex}\noindent
+%
+Alternative separators can be specified in the preamble through the
+command:
+\begin{center}
+\verb|\collectsep{|\textit{separator}\verb|}|
+\end{center}
+
+\paragraph{Control.}
+
+The package \textsf{collref} provides one command to control
+which references (not) to collect:
+%
+\begin{center}
+\verb|\nocollect{|\textit{label}\verb|}|
+\end{center}
+%
+It ensures that the label \textit{label} starts
+a new \verb|\bibitem|. 
+It is not collapsed with earlier references. 
+Later references, however, can still be collapsed 
+to the end of \textit{label}.
+
+
+\paragraph{Interaction with CTAN Packages.}
+
+The package \textsf{collref} has been tested with other
+CTAN packages concerned with the citations and the bibliography:
+%
+\begin{itemize}
+\item\textsf{cite}: 
+\textsf{collref} works in conjunction with \textsf{cite}.
+Note that you must load \textsf{cite} \emph{before} \textsf{collref}
+so that the latter can pass the correctly reduced list of 
+references down to \textsf{cite}.
+Tested with \textsf{cite v5.1}.
+
+\item
+\textsf{hyperref}: 
+\textsf{collref} works in conjunction with \textsf{hyperref}.
+The two packages can be loaded in any sequence.
+Tested with \textsf{hyperref v6.78s}.
+
+\end{itemize}
+
+
+\appendix
+
+\section{Files and Installation}
+
+The package consists of the files 
+%
+\begin{center}
+\begin{tabular}{ll}
+    \texttt{README}      & readme file \\
+    \texttt{collref.ins} & installation file \\
+    \texttt{collref.dtx} & source file \\
+    \texttt{collref.sty} & package file \\
+    \texttt{collsamp.tex}& sample file \\
+    \texttt{collref.pdf} & manual 
+\end{tabular}
+\end{center}
+%
+The distribution consists of the files 
+\texttt{README}, \texttt{collref.ins} and \texttt{collref.dtx}.
+%
+\begin{itemize}
+\item
+Run (pdf)\LaTeX{} on \texttt{collref.dtx} to compile the manual \texttt{collref.pdf} (this file).
+\item
+Run \LaTeX{} on \texttt{collref.ins} to create the package \texttt{collref.sty} 
+and the sample \texttt{collsamp.tex}.
+Copy the file \texttt{collref.sty} to an appropriate directory of your \LaTeX{}
+distribution, e.g.\ \textit{texmf-root}\verb|/tex/latex/collref|.
+\end{itemize}
+
+ \DocInput{collref.dtx}
+
+\section{Copyright}
+
+Copyright \copyright{} 2003--2009 Niklas Beisert
+
+This work may be distributed and/or modified under the
+conditions of the \LaTeX{} Project Public License, either version 1.3
+of this license or (at your option) any later version.
+The latest version of this license is in
+  \url{http://www.latex-project.org/lppl.txt}
+and version 1.3 or later is part of all distributions of \LaTeX{}
+version 2005/12/01 or later.
+
+This work has the LPPL maintenance status `maintained'.
+
+The Current Maintainer of this work is Niklas Beisert.
+
+This work consists of the files \texttt{collref.dtx} and \texttt{collref.ins}
+and the derived files \texttt{collref.sty} and \texttt{collsamp.tex}
+
+
+\end{document}
+%</driver>
+% \fi
+%
+%
+% 
+% \section{Sample File}
+%\iffalse
+%<*sample>
+%\fi
+%
+% In this section we provide a sample file.
+%
+%    \begin{macrocode}
+\documentclass{article}
+%\usepackage{cite}
+\usepackage[bulletsep]{collref}
+%\usepackage{hyperref}
+
+\begin{document}
+
+\cite{c1,c2,c3,c4}
+\nocollect{c3}
+\cite{c5,c6,c7,c8,c9}
+\cite{c5,c6,c7}
+\cite{c7,c8,c9}
+
+\begin{thebibliography}{11}
+\bibitem{c1} reference 1
+\bibitem{c2} reference 2
+\bibitem{c3} reference 3
+\bibitem{c4} reference 4
+\bibitem{c5} reference 5
+\bibitem{c6} reference 6
+\bibitem{c7} reference 7
+\bibitem{c8} reference 8
+\bibitem{c9} reference 9
+\end{thebibliography}
+
+\end{document}
+%    \end{macrocode}
+%\iffalse
+%</sample>
+%\fi
+% It produces the output:
+% \vspace{2ex}
+%
+% [1, 2]  [3, 4, 5] [3, 4] [4, 5]
+%
+% \begin{thebib}
+% \item reference 1 $\bullet$ reference 2
+% \item reference 3 $\bullet$ reference 4
+% \item reference 5 $\bullet$ reference 6
+% \item reference 7 
+% \item reference 8 $\bullet$ reference 9
+% \end{thebib}
+
+
+
+
+% \section{Implementation}
+%\iffalse
+%<*package>
+%\fi
+% 
+% \parskip1ex
+% \parindent0pt
+%
+% In this section we describe the package \texttt{collref.sty}.
+%
+% \paragraph{Internal Lists.}
+%
+% For each bibliography label \textit{label} the package 
+% maintains a predecessor \verb|\nc@p@|\textit{label}
+% and a successor \verb|\nc@s@|\textit{label}.
+% These are initially undefined.
+% When a label \textit{label} is first cited these labels
+% are set to the \textit{predecessor} and \textit{successor} labels, respectively,
+% in \verb|\cite{|\textit{\ldots, predecessor, label, successor, \ldots}\verb|}|.
+% An empty \verb|\nc@p@|\textit{label} or \verb|\nc@s@|\textit{label}
+% refers to the beginning and end of a block, respectively.
+% Whenever \verb|\cite| finds conflicting blocks 
+% (non-matching predecessors or successors in two \verb|\cite|'s),
+% it terminates the blocks to the maximum common overlap.
+% 
+% 
+% \paragraph{Interface.}
+% The package provides two public commands, described above:
+%    \begin{macrocode}
+\newcommand{\collectsep}[1]{\def\nc@sep{#1}}
+\newcommand{\nocollect}[1]{\nc@breakbefore{#1}}
+%    \end{macrocode}
+%
+% \paragraph{Package Options.}
+% The package provides three predefined separators, described above:
+%    \begin{macrocode}
+\DeclareOption{nosep}{\collectsep{}}
+\DeclareOption{parsep}{\collectsep{\par}}
+\DeclareOption{bulletsep}{\collectsep{$\bullet$ }}
+\ExecuteOptions{nosep}
+\ProcessOptions
+%    \end{macrocode}
+%
+% \paragraph{Internal Commands.}
+% Some internal commands for abbreviation:
+%    \begin{macrocode}
+\newcommand{\nc@getcsname}[1]{\csname #1\endcsname}
+\newcommand{\nc@setcsname}[2]{\expandafter\xdef\csname #1\endcsname{#2}}
+%    \end{macrocode}
+% Command to terminate the chain before a label:
+% The predecessor of the label is terminated.
+% If the predecessor was active, its successor is also terminated. 
+%    \begin{macrocode}
+\newcommand{\nc@breakbefore}[1]{%
+  \edef\nc@citepred{\@ifundefined{nc@p@#1}{}{\nc@getcsname{nc@p@#1}}}%
+  \ifx\nc@citepred\@empty\else\nc@setcsname{nc@s@\nc@citepred}{}\fi%
+  \nc@setcsname{nc@p@#1}{}%
+}
+%    \end{macrocode}
+% Command to terminate the chain after a label. Similar to the above command.
+%    \begin{macrocode}
+\newcommand{\nc@breakafter}[1]{%
+  \edef\nc@citesucc{\@ifundefined{nc@s@#1}{}{\nc@getcsname{nc@s@#1}}}%
+  \ifx\nc@citesucc\@empty\else\nc@setcsname{nc@p@\nc@citesucc}{}\fi%
+  \nc@setcsname{nc@s@#1}{}%
+}
+%    \end{macrocode}
+%
+% \paragraph{Citations.}
+%
+% Hack for \verb|\@citex|:
+% It is assumed that (as in \LaTeXe) \verb|\cite| eventually
+% passes down to \verb|\@citex|.
+%    \begin{macrocode}
+\let\nc@old@citex\@citex
+
+\def\@citex[#1]#2{%
+  \let\nc@citecomma\@empty%
+  \let\nc@citestring\@empty%
+  \let\nc@citelast\@empty%
+%    \end{macrocode}
+% Main loop to process the arguments of \verb|\cite|. 
+% The current label is stored in \verb|\nc@citethis|.
+%    \begin{macrocode}
+  \@for\nc@citethis:=#2\do{%
+    \edef\nc@citethis{\expandafter\@firstofone\nc@citethis\@empty}%
+%    \end{macrocode}
+% The first entry has no predecessor, terminate the chain.
+%    \begin{macrocode}
+    \ifx\nc@citelast\@empty%
+      \nc@breakbefore{\nc@citethis}%
+    \else% 
+%    \end{macrocode}
+% Non-first entry. Fill undefined successor and predecessors entries 
+% with the current chain sequence.
+%    \begin{macrocode}
+      \@ifundefined{nc@s@\nc@citelast}%
+                   {\nc@setcsname{nc@s@\nc@citelast}{\nc@citethis}}{}%
+      \@ifundefined{nc@p@\nc@citethis}%
+                   {\nc@setcsname{nc@p@\nc@citethis}{\nc@citelast}}{}%
+%    \end{macrocode}
+% Get the successor and predecessors for the last and current entry, respectively. 
+%    \begin{macrocode}
+      \edef\nc@citesucc{\nc@getcsname{nc@s@\nc@citelast}}%
+      \edef\nc@citepred{\nc@getcsname{nc@p@\nc@citethis}}%
+%    \end{macrocode}
+% In case of mismatching chains: terminate all links.
+%    \begin{macrocode}
+      \ifx\nc@citesucc\nc@citethis%
+        \ifx\nc@citepred\nc@citelast%
+        \else%
+          \nc@breakafter{\nc@citelast}%
+          \nc@breakbefore{\nc@citethis}%
+        \fi%
+      \else%
+        \nc@breakafter{\nc@citelast}%
+        \nc@breakbefore{\nc@citethis}%
+      \fi%
+    \fi%
+%    \end{macrocode}
+% Get content of \verb|\b@|\textit{label} entry to find out
+% whether the \verb|\bibitem{label}| entry exists.
+% We need to take special care of extended label definitions in \textsf{hyperref}.
+%    \begin{macrocode}
+    {\def\hyper@@link[##1]##2##3##4{##4}%
+      \xdef\nc@citelabel{\nc@getcsname{b@\nc@citethis}}}%
+%    \end{macrocode}
+% Only add those labels which actually exist to the pass-on string.
+% This removes collaped references from the citation marks.
+%    \begin{macrocode}
+    \ifx\nc@citelabel\@empty\else%
+      \edef\nc@citestring{\nc@citestring\nc@citecomma\nc@citethis}%
+    \fi%
+%    \end{macrocode}
+% Write \verb|\citation| tag to .aux file in original order. 
+% Some duplicate \verb|\citation|'s will be written by 
+% the original \verb|\citex| code, but these will have no impact.
+%    \begin{macrocode}
+    \if@filesw\immediate\write\@auxout{\string\citation{\nc@citethis}}\fi%
+%    \end{macrocode}
+% Continue to next label
+%    \begin{macrocode}
+    \edef\nc@citelast{\nc@citethis}%
+    \def\nc@citecomma{,}%
+  }%
+%    \end{macrocode}
+% The last entry has no successor, terminate the chain.
+%    \begin{macrocode}
+  \nc@breakafter{\nc@citelast}%
+%    \end{macrocode}
+% Pass on to original \LaTeX{} code.
+%    \begin{macrocode}
+  \nc@old@citex[#1]{\nc@citestring}%
+}
+%    \end{macrocode}
+ 
+% \paragraph{Bibliography.}
+%
+% Enhance the \verb|thebibliography| environment to 
+% a) reset the \verb|\nc@biblast| label to something, and
+% b) convert linebreaks into whitespaces (avoid implicit \verb|\par|'s)
+%
+%    \begin{macrocode}
+\let\nc@old@thebibliography\thebibliography
+
+\def\thebibliography{%
+  \xdef\nc@biblast{asldjfhasklfh}%
+  \catcode`\^^M=10%
+\nc@old@thebibliography}
+%    \end{macrocode}
+% 
+% Overwrite \verb|\bibitem|:
+% It is assumed that the native \LaTeXe{} code
+% is equivalent but with the \LaTeX{}
+% internals \verb|\@lbibitem| and \verb|\@bibitem|.
+% Some other packages may also redefine \verb|\bibitem|
+% and this will inevitable cause compatibility issues.
+% This implementation is safe with current versions of \textsf{hyperref}.
+%    \begin{macrocode}
+\def\bibitem{\@ifnextchar[\nc@lbibitem\nc@bibitem}
+%    \end{macrocode}
+% 
+% \verb|\nc@noitem| is invoked in place of the original \verb|\@bibitem| or \verb|\@lbibitem|
+% for collapsed references:
+%    \begin{macrocode}
+\def\nc@noitem#1{%
+  \nc@sep%
+  \if@filesw\immediate\write\@auxout{\string\bibcite{#1}{}}\fi%
+\ignorespaces}
+%    \end{macrocode}
+% 
+% The hack for \verb|@bibitem|: It checks whether 
+% this reference is part of a block. 
+% If so, collect by \verb|\nc@noitem|, otherwise pass down to \verb|\@bibitem|
+%    \begin{macrocode}
+\def\nc@bibitem#1{%
+  \edef\nc@bibpred{\@ifundefined{nc@p@#1}{}{\nc@getcsname{nc@p@#1}}}%
+  \ifx\nc@biblast\nc@bibpred\nc@noitem{#1}\else\@bibitem{#1}\fi%
+  \xdef\nc@biblast{#1}%
+\ignorespaces}
+%    \end{macrocode}
+% 
+% Similar hack for \verb|@lbibitem|:
+%    \begin{macrocode}
+\def\nc@lbibitem[#1]#2{%
+  \edef\nc@bibpred{\@ifundefined{nc@p@#2}{}{\nc@getcsname{nc@p@#2}}}%
+  \ifx\nc@biblast\nc@bibpred\nc@noitem{#2}\else\@lbibitem[#1]{#2}\fi%
+  \xdef\nc@biblast{#2}%
+\ignorespaces}
+%    \end{macrocode}
+%\iffalse
+%</package>
+%\fi
+
+\endinput
+
+%% \CheckSum{3381}

@@ -1,0 +1,23 @@
+collref v1.0
+Copyright 2003-2009 Niklas Beisert
+
+collref is a LaTeX2e package to automatically collect 
+multiple \bibitem references which always appear in the same sequence 
+in \cite into a single \bibitem block.
+
+The package consists of the files 
+
+    \texttt{README}      & readme file \\
+    \texttt{collref.ins} & installation file \\
+    \texttt{collref.dtx} & source file \\
+    \texttt{collref.sty} & package file \\
+    \texttt{collsamp.tex}& sample file \\
+    \texttt{collref.pdf} & manual 
+
+The distribution consists of the files README, collref.ins and collref.dtx.
+
+Run "(pdf)latex collref.dtx" to compile the manual collref.pdf.
+
+Run "tex collref.ins" to create the package collref.sty and the sample collsamp.tex.
+Copy the file collref.sty to an appropriate directory of your LaTeX
+distribution, e.g. texmf-root/tex/latex/collref.

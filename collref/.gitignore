@@ -4,8 +4,7 @@
 #include relevant files
 !/.gitignore
 !/Makefile
-!/README.md
-!/LICENSE.md
-
-#include packages
-!/collref/
+!/collref.dtx
+!/collref.ins
+!/collref.sty
+!/README
