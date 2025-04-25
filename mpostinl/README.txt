@@ -1,5 +1,5 @@
-mpostinl v1.5
-Copyright 2010-2018 Niklas Beisert
+mpostinl v1.5.1
+Copyright 2010-2025 Niklas Beisert
 
 mpostinl is a LaTeX2e package
 which enables the embedding of metapost figures
@@ -27,13 +27,13 @@ Run "(pdf)latex mpostinl.dtx" to compile the manual mpostinl.pdf.
 
 Run "latex mpostinl.ins" to create the package mpostinl.sty
 and the sample mpinlsamp.tex.
-Copy the file mpostinl.sty to an appropriate directory of your LaTeX
-distribution, e.g. texmf-root/tex/latex/mpostinl.
+Copy the file mpostinl.sty to an appropriate directory
+of your LaTeX distribution, e.g. texmf-root/tex/latex/mpostinl.
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3
 of this license or (at your option) any later version.
 The latest version of this license is in
-  http://www.latex-project.org/lppl.txt
-and version 1.3 or later is part of all distributions of LaTeX
-version 2005/12/01 or later.
+  https://www.latex-project.org/lppl.txt
+and version 1.3c or later is part of all distributions of LaTeX
+version 2008 or later.

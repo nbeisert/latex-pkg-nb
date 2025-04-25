@@ -1,57 +1,66 @@
-% \iffalse
 %
-% mpostinl.dtx Copyright (C) 2010-2018 Niklas Beisert
+% \iffalse meta-comment
+%
+% mpostinl.dtx Copyright (C) 2010-2025 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
 % of this license or (at your option) any later version.
 % The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
-% and version 1.3 or later is part of all distributions of LaTeX
-% version 2005/12/01 or later.
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008 or later.
 %
 % This work has the LPPL maintenance status `maintained'.
 %
 % The Current Maintainer of this work is Niklas Beisert.
 %
 % This work consists of the files mpostinl.dtx and mpostinl.ins
-% and the derived files mpostinl.sty and mpinlsmp.tex
+% and the derived files mpostinl.sty and mpinlsmp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mpostinl}[2018/12/30 v1.5 metapost inline figures]
-%<sample>\ProvidesFile{mpinlsmp.tex}[2018/12/30 v1.5 sample for mpostinl]
+%<package>\ProvidesPackage{mpostinl}[2025/03/25 v1.5.1 metapost inline figures]
+%<sample>\ProvidesFile{mpinlsmp.tex}[2025/03/25 v1.5.1 sample for mpostinl]
 %<*driver>
-%\ProvidesFile{mpostinl.drv}[2018/12/30 v1.5 mpostinl reference manual file]
+\def\thedate#1{2025/03/25}\def\theversion#1{v1.5.1}
+\ProvidesFile{mpostinl.dtx}[\thedate{} \theversion{} mpostinl reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
 \usepackage[margin=35mm]{geometry}
-\usepackage{hyperref}
+\usepackage[hyperindex=false]{hyperref}
 \usepackage{hyperxmp}
 \usepackage[usenames]{color}
-\usepackage{amsmath,amsfonts}
 \usepackage{mflogo}
 \usepackage[utf8]{inputenc}
 
-\hypersetup{colorlinks=true}
-\hypersetup{pdfstartview=FitH}
-\hypersetup{pdfpagemode=UseNone}
+\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
+\hypersetup{urlbordercolor={.5 1 1}}
+\hypersetup{linkbordercolor={1 .7 .7}}
+\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
+\hypersetup{keeppdfinfo=true}
 \hypersetup{pdfsource={}}
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfcopyright={Copyright 2010-2018 Niklas Beisert.
+\hypersetup{pdfurl={https://ctan.org/pkg/mpostinl}}
+\hypersetup{pdfcopyright={Copyright 2010-2025 Niklas Beisert.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
-\hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
+\hypersetup{pdflicenseurl={https://www.latex-project.org/lppl.txt}}
 \hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K,
   Wolfgang-Pauli-Strasse 27}}
 \hypersetup{pdfcontactpostcode={8093}}
 \hypersetup{pdfcontactcity={Zurich}}
 \hypersetup{pdfcontactcountry={Switzerland}}
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
-\hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
+\hypersetup{pdfcontacturl={https://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
+\newcommand{\markpkg}[1]{\textsf{#1}}
 \newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
+\newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
+\newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\markpkg{#1}}}
+
+\def\textvert{\texttt{\char"7C}}
 
 \parskip1ex
 \parindent0pt
@@ -60,7 +69,7 @@
 
 \begin{document}
 
-\title{The \textsf{mpostinl} Package}
+\title{The \markpkg{mpostinl} Package}
 \hypersetup{pdftitle={The mpostinl Package}}
 \author{Niklas Beisert\\[2ex]
   Institut f\"ur Theoretische Physik\\
@@ -70,11 +79,12 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package mpostinl}}
-\date{30 December 2018, \textsf{v1.5}}
+\date{\thedate{}, \theversion{}\\[1ex]
+\url{https://ctan.org/pkg/mpostinl}}
 \maketitle
 
 \begin{abstract}\noindent
-\textsf{mpostinl} is a \LaTeXe{} package
+\markpkg{mpostinl} is a \LaTeXe{} package
 which enables the embedding of \MP{} figures
 within a \LaTeX{} document.
 The package automatically collects the embedded
@@ -132,7 +142,7 @@ to compile labels via \LaTeX{}.
 Distribute source and figures as separate files.
 \end{itemize}
 %
-The current \LaTeX{} package \textsf{mpostinl}
+The current \LaTeX{} package \ctanpkg{mpostinl}
 helps in the management of metapost figures
 by embedding them into the \LaTeX{} source:
 %
@@ -185,22 +195,22 @@ which offer a similar functionality:
 %
 \begin{itemize}
 \item
-The package \href{http://www.ctan.org/pkg/emp}{\textsf{emp}}
+The package \ctanpkg{emp}
 provides similar basic functionality to compose a metapost file,
 but it does not automatically compile it.
 Analogously to the |picture| environment
 the size for every figure must be specified explicitly.
 \item
-The package \href{http://ci.uofl.edu/tom/software/LaTeX/}{\textsf{mpfig}}
+The package \href{http://ci.uofl.edu/tom/software/LaTeX/}{\markpkg{mpfig}}
 by Tomasz Cholewo (not available on CTAN)
 provides very basic functionality to compose a metapost file.
 \item
-The package \href{http://www.ctan.org/pkg/mpgraphics}{\textsf{mpgraphics}}
+The package \ctanpkg{mpgraphics}
 provides similar functionality to compose and compile a metapost file.
 It processes all figures immediately and does not offer labels
 for recycling figures.
 \item
-The package \href{http://www.ctan.org/pkg/gmp}{\textsf{gmp}}
+The package \ctanpkg{gmp}
 provides similar functionality to compose and compile a metapost file.
 It processes all figures immediately and allows to inject \LaTeX{}
 definitions into the metapost code at the price of
@@ -229,13 +239,13 @@ with the \MP{} figure description language.
 The \MP{} manual is a recommended introduction
 and an excellent reference.
 
-To use the package \textsf{mpostinl} add the command
+To use the package \ctanpkg{mpostinl} add the command
 \begin{center}
 |\usepackage{mpostinl}|
 \end{center}
 to the preamble of your \LaTeX{} document.
 If not yet present,
-the package \textsf{graphicx} will be loaded automatically.
+the package \ctanpkg{graphicx} will be loaded automatically.
 Metapost figures and definitions are to be specified using
 the environments |mpostfig| and |mpostdef|, respectively,
 as described in \secref{sec:figuresdefinitions}.
@@ -315,7 +325,7 @@ The optional argument \textit{opts} of the |mpostfig| environment
 is a comma-separated list of options:
 %
 \begin{itemize}
-\item |show|[|=true|$\vert$|false|]
+\item |show|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 Show the figure in place.
 If neither |file| nor |label| are specified,
@@ -330,18 +340,18 @@ Label for later use by the command |\mpostuse{|\textit{label}|}|.
 \item |opt=|\textit{opt} --
 Options to be passed on to |\includegraphics[|\textit{opt}|]|.
 
-\item |now|[|=true|$\vert$|false|]
+\item |now|[|=true|\textbar|false|]
 (no value implies |true|, overrides global setting |nowall|) --
 Compile figure immediately. Requires global option |now| to work.
 
-\item |twice|[|=true|$\vert$|false|]
+\item |twice|[|=true|\textbar|false|]
 (no value implies |true|, overrides global setting |twice|) --
 Compile this figure twice.
 
 \end{itemize}
 %
 Please note the following restrictions
-due to the implementation via the package \textsf{verbatim}:
+due to the implementation via the package \ctanpkg{verbatim}:
 %
 \begin{itemize}
 \item
@@ -386,7 +396,7 @@ can be recycled any number of times with the command:
 The options are passed on to
 |\includegraphics[|\textit{opt}|]{|\textit{filename}|}|.
 Note that |\mpostuse| accepts the overlay specification
-from the \textsf{beamer} package
+from the \ctanpkg{beamer} package
 \begin{center}
 |\mpostuse<|\textit{overlay}|>[|\textit{opts}|]{|\textit{label}|}|
 \end{center}
@@ -418,12 +428,12 @@ The optional argument \textit{opts}
 is a comma-separated list of options:
 %
 \begin{itemize}
-\item |global|[|=true|$\vert$|false|]
+\item |global|[|=true|\textbar|false|]
 (no value implies |true|, overrides global setting |globaldef|) --
 In a setup with multiple metapost files, the block \textit{code}
 is applied to all files, not just the current file.
 
-\item |tex|[|=true|$\vert$|false|]
+\item |tex|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 The block \textit{code} represents \TeX{} or \LaTeX{} definitions
 rather than \MP{} code,
@@ -453,12 +463,12 @@ The optional argument \textit{opts}
 is a comma-separated list of options:
 %
 \begin{itemize}
-\item |global|[|=true|$\vert$|false|]
+\item |global|[|=true|\textbar|false|]
 (no value implies |true|, overrides global setting |globaldef|) --
 In a setup with multiple metapost files, the block \textit{code}
 is applied to all files, not just the current file.
 
-\item |dual|[|=true|$\vert$|false|]
+\item |dual|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 The definitions within the block \textit{code}
 will be available to both metapost figures and subsequent \LaTeX{} code.
@@ -490,7 +500,7 @@ while some of the more relevant options are discussed
 in detail in the following sections:
 %
 \begin{itemize}
-\item |draft|[|=true|$\vert$|false|]
+\item |draft|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 Enable/disable |draft| mode by declaring |draft:=1|
 at the top of the metapost file.
@@ -498,31 +508,31 @@ at the top of the metapost file.
 \item |final| --
 Same as |draft=false|.
 
-\item |write|[|=true|$\vert$|false|]
+\item |write|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable writing to metapost file.
 
-\item |compile|[|=true|$\vert$|false|]
+\item |compile|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable automatic compilation of metapost file.
 Requires shell escapes to work properly.
 
-\item |twice|[|=true|$\vert$|false|]
+\item |twice|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 Enable/disable secondary metapost compilation.
 Some metapost files may require this to produce the intended output.
 
-\item |clean|[|=true|$\vert$|false|]
+\item |clean|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable cleaning of figure files prior to compilation.
 A dummy figure will be shown in case metapost cannot generate a figure.
 
-\item |checksum|[|=true|$\vert$|false|]
+\item |checksum|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 Enable/disable update detection.
 Compiles figures only if the metapost code has changed.
 
-\item |fonts|[|=true|$\vert$|false|]
+\item |fonts|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 Enable/disable embedding of fonts in metapost figures
 by setting |prologues:=3| thus making them proper
@@ -536,15 +546,15 @@ Has no effect if |prologues| option is specified.
 Declares |prologues:=|\textit{value} at the top of the metapost file.
 Set \textit{value} to empty to disable the |prologues| statement.
 
-\item |lineno|[|=true|$\vert$|false|]
+\item |lineno|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 Enable/disable line number indicators in the metapost file.
 All blocks in the metapost file will start with the line number
 where this block can be found in the \LaTeX{} source file.
 To view the source file name
-you should load the package \textsf{currfile}.
+you should load the package \ctanpkg{currfile}.
 
-\item |labelnames|[|=true|$\vert$|false|]
+\item |labelnames|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 Use the figure label instead of a consecutive number
 to construct the name for figure files.
@@ -559,7 +569,7 @@ better only use alphanumeric characters,
 and bear in mind that some operating systems do
 not distinguish upper- and lowercase letters.
 
-\item |latex|[|=true|$\vert$|false|]
+\item |latex|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
 Switch between \TeX{} (|false|) and \LaTeX{} (|true|)
 processing of labels.
@@ -598,7 +608,7 @@ By default the \MP{} program |mpost| is invoked
 to compile the generated metapost files
 (with appropriate command line options).
 
-\item |now|[|=true|$\vert$|false|]
+\item |now|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 Activate/deactivate immediate mode.
 In immediate mode, figures can be processed immediately
@@ -609,13 +619,13 @@ of all the required definitions
 so that immediate processing will be possible,
 but it does not activate immediate processing per se.
 
-\item |nowall|[|=true|$\vert$|false|]
+\item |nowall|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 Enable/disable immediate processing for all figures by default.
 This option will call the \MP{} compiler for every figure.
 While convenient, it requires heavier processing.
 
-\item |nowkeep|[|=true|$\vert$|false|]
+\item |nowkeep|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 Enable/disable immediate generation
 of figures by individual metapost files.
@@ -626,7 +636,7 @@ will be \textit{filename}|.mp|.
 Otherwise the metapost code is stored in a temporary file and
 is overwritten by any subsequent immediate processing.
 
-\item |globaldef|[|=true|$\vert$|false|]
+\item |globaldef|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 Enable/disable the |global| option
 for the |mpostdef| and |mposttex| environments by default.
@@ -658,12 +668,12 @@ stabilises the figure numbering
 by making changes to the sequence have
 effects only within the present section or chapter.
 
-\item |beamer|[|=true|$\vert$|false|]
+\item |beamer|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable processing of overlay parameters |<|\ldots|>|
-by |\mpostuse| defined by the \textsf{beamer} package.
+by |\mpostuse| defined by the \ctanpkg{beamer} package.
 
-\item |warnunused|[|=true|$\vert$|false|]
+\item |warnunused|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable warnings for unused figure labels.
 
@@ -745,9 +755,9 @@ specified by the package option |compiler|.
 \paragraph{Compiling Options.}
 
 When the figure files are in a final form
-it may make sense to disable the compiling
+it may make sense to disable the cleaning, compiling
 or even the writing of the metapost file(s)
-by setting the package options |compile|
+by setting the package options |compile|, |clean|
 or |write| to |false|.
 In particular, this may be desirable
 if the \LaTeX{} source is uploaded to a repository
@@ -777,7 +787,7 @@ prepending every block in the metapost file
 by the corresponding location in the \LaTeX{} source.
 If the \LaTeX{} source is distributed over several files,
 the source filename can also be provided
-if the package \textsf{currfile} is loaded.
+if the package \ctanpkg{currfile} is loaded.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Filename Options.}
@@ -830,7 +840,7 @@ of the present metapost file.
 \subsection{Multiple Files}
 \label{sec:multiplefiles}
 
-By default the package \textsf{mpostinl} writes out a single file
+By default the package \ctanpkg{mpostinl} writes out a single file
 \textit{source}|.mp| if the \LaTeX{} source is called \textit{source}|.tex|.
 However, the package can also be configured
 to write out several metapost files.
@@ -865,7 +875,7 @@ A new metapost file is started by the command:
 %
 \textit{filename} is the filename without |.mp| extension.
 \textit{opt} is a comma-separated list of options:
-the only available option is |include|[|=true|$\vert$|false|]
+the only available option is |include|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|)
 which declares whether the file is an include file.
 
@@ -1038,9 +1048,9 @@ The following lists some potential issues in
 the interaction with other \LaTeX{} packages:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Package \textsf{inputenc}.}
+\paragraph{Package \ctanpkg{inputenc}.}
 This package should not interfere with the input encoding
-selected via the package \textsf{inputenc}, e.g.\ |utf8| encoding.
+selected via the package \ctanpkg{inputenc}, e.g.\ |utf8| encoding.
 Extended characters are passed on
 unchanged by the |mpostfig| environment.
 If you declare an input encoding for your \LaTeX{} source by:
@@ -1058,9 +1068,9 @@ in the metapost figures by means of:
 \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Package \textsf{beamer}.}
+\paragraph{Package \markpkg{beamer}.}
 
-The package \textsf{beamer} is a popular package for
+The package \ctanpkg{beamer} is a popular package for
 preparing slideshow presentations.
 In particular, slides can be presented in several steps
 by means on an overlay mechanism.
@@ -1073,36 +1083,36 @@ and can be displayed by |\mpostuse| within the |frame| environment.
 Note that |\mpostuse| accepts the overlay parameter |<|\ldots|>|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Package \textsf{graphbox}.}
+\paragraph{Package \markpkg{graphbox}.}
 
 Figures are eventually displayed by the |\includegraphics| command
 which aligns the graphics with the bottom of the current line.
 To achieve different alignments or placements takes some efforts.
-The package \textsf{graphbox} extends the optional
+The package \ctanpkg{graphbox} extends the optional
 arguments of |\includegraphics| to customise the alignment conveniently.
 Since graphics arguments are passed on directly to |\includegraphics|
-the \textsf{graphbox} package can be used without restrictions.
+the \ctanpkg{graphbox} package can be used without restrictions.
 For instance, to align a figure vertically with the centre of the line,
 you may use |\||begin{mpostfig}[opt={align}]|
 or |\mpostuse[align]{|\textit{label}|}|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Package \textsf{latexmp}.}
+\paragraph{Package \markpkg{latexmp}.}
 
-The \MP{} package \textsf{latexmp} writes its own \LaTeX{} structure
+The \MP{} package \ctanpkg{latexmp} writes its own \LaTeX{} structure
 to the metapost file.
-Therefore \textsf{mpostinl} must not write the \LaTeX{} structure,
+Therefore \ctanpkg{mpostinl} must not write the \LaTeX{} structure,
 but still use the |latex| compiler.
-Furthermore \textsf{latexmp} needs two \MP{} passes.
+Furthermore \ctanpkg{latexmp} needs two \MP{} passes.
 The required options are:
 \begin{center}
 |\mpostsetup{latex=false,format,compiler=latex,twice}|
 \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Script \textsf{mplatex}.}
+\paragraph{Script \markpkg{mplatex}.}
 
-The \MP{} processing script \textsf{mplatex} expects the default metapost
+The \MP{} processing script \ctanpkg{mplatex} expects the default metapost
 file naming convention (\textit{filename}|.|\textit{nn})
 and no |prologues| statement.
 Moreover, it provides the \LaTeX{} structure.
@@ -1131,15 +1141,15 @@ does not seem to work with pdf\LaTeX{}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-Copyright \copyright{} 2010--2018 Niklas Beisert
+Copyright \copyright{} 2010--2025 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
 of this license or (at your option) any later version.
 The latest version of this license is in
-  \url{http://www.latex-project.org/lppl.txt}
-and version 1.3 or later is part of all distributions of \LaTeX{}
-version 2005/12/01 or later.
+  \url{https://www.latex-project.org/lppl.txt}
+and version 1.3c or later is part of all distributions of \LaTeX{}
+version 2008 or later.
 
 This work has the LPPL maintenance status `maintained'.
 
@@ -1184,26 +1194,26 @@ distribution, e.g.\ \textit{texmf-root}|/tex/latex/mpostinl|.
 The package relies on other packages and software:
 \begin{itemize}
 \item
-This package relies on some functionality of the package \textsf{verbatim}
+This package relies on some functionality of the package \ctanpkg{verbatim}
 to read verbatim code from the \LaTeX{} source without expansion of macros.
-Compatibility with the \textsf{verbatim} package
+Compatibility with the \ctanpkg{verbatim} package
 has been tested with v1.5q (2014/10/28).
 \item
-This package uses the package \textsf{graphicx}
-from the \textsf{graphics} bundle to include graphics files.
-Compatibility with the \textsf{graphicx} package
+This package uses the package \ctanpkg{graphicx}
+from the \ctanpkg{graphics} bundle to include graphics files.
+Compatibility with the \ctanpkg{graphicx} package
 has been tested with v1.0g (2014/10/28).
 \item
-This package uses the package \textsf{keyval}
-from the \textsf{graphics} bundle
+This package uses the package \ctanpkg{keyval}
+from the \ctanpkg{graphics} bundle
 to process the options for the package, environments and macros.
-Compatibility with the \textsf{keyval} package
+Compatibility with the \ctanpkg{keyval} package
 has been tested with v1.15 (2014/10/28).
 \item
 This package uses the command |\currfilename|
-provided by the package \textsf{currfile} (if available and loaded)
+provided by the package \ctanpkg{currfile} (if available and loaded)
 to indicate the \LaTeX{} source file in the generated metapost file.
-Compatibility with the \textsf{currfile} package
+Compatibility with the \ctanpkg{currfile} package
 has been tested with v0.7c (2015/04/23).
 \item
 The package assumes a \TeX{} installation with \MP{}
@@ -1225,11 +1235,11 @@ versions of this package:
 \begin{itemize}
 \item
 A method to expand \LaTeX{} macros to the metapost code
-to match the corresponding feature of package \textsf{gmp}:
+to match the corresponding feature of package \ctanpkg{gmp}:
 One difficulty is that direct insertion of \LaTeX{} macros
 requires a substantially different implementation of the
 block scanning method
-because the method supplied by \textsf{verbatim} does not work.
+because the method supplied by \ctanpkg{verbatim} does not work.
 Furthermore, some escape mechanism is required
 either to expand selected \LaTeX{} macros
 or to prevent their expansion (within |btex| \ldots\ |etex| blocks).
@@ -1256,6 +1266,24 @@ to the usual \TeX{} philosophy.
 \subsection{Revision History}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\iffalse
+\paragraph{vN.N.N+:} 20YY/MM/NN
+
+\begin{itemize}
+\item
+\ldots
+\end{itemize}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.5.1:} 2025/03/25
+
+\begin{itemize}
+\item
+maintenance and manual update
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.5:} 2018/12/30
 
 \begin{itemize}
@@ -1276,7 +1304,7 @@ when scanning metapost blocks
 \begin{itemize}
 \item
 |\mpostuse| now accepts overlay options |<|\ldots|>|
-of the \textsf{beamer} package;
+of the \ctanpkg{beamer} package;
 new option |beamer| to control the feature
 \item
 issue warnings for unused labels;
@@ -1314,7 +1342,7 @@ new option |checksum| to compile only modified files
 \item
 warn if some figures may not be up to date
 \item
-bugfix for example if \textsf{graphbox} is not available
+bugfix for example if \ctanpkg{graphbox} is not available
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1324,7 +1352,7 @@ bugfix for example if \textsf{graphbox} is not available
 \item
 bugfix for blank |mpostfig| display
 due to changes in the basic
-\LaTeX{} or \textsf{graphicx} system
+\LaTeX{} or \ctanpkg{graphicx} system
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1340,8 +1368,8 @@ implementation of |fonts| option repaired
 
 \begin{itemize}
 \item
-improved compatibility with package \textsf{latexmp}
-and script \textsf{mplatex}
+improved compatibility with package \ctanpkg{latexmp}
+and script \ctanpkg{mplatex}
 (thanks to Walter Entenmann for encouragement and testing)
 \item
 options improved to fine-tune structures written to metapost files
@@ -1412,7 +1440,7 @@ basic functionality
 %\fi
 %
 % In this section we provide a \LaTeX{} example how to use
-% some of the \textsf{mpostinl} features.
+% some of the \ctanpkg{mpostinl} features.
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Preamble}
@@ -1428,20 +1456,20 @@ basic functionality
 \parskip6pt
 %    \end{macrocode}
 
-% Include the \textsf{mpostinl} package,
+% Include the \ctanpkg{mpostinl} package,
 % include \MF{} fonts in the metapost figures:
 %    \begin{macrocode}
 \usepackage[fonts=true]{mpostinl}
 %    \end{macrocode}
 
-% We will test labels in UTF-8, so include package \textsf{inputenc}:
+% We will test labels in UTF-8, so include package \ctanpkg{inputenc}:
 %    \begin{macrocode}
 \usepackage[utf8]{inputenc}
 %    \end{macrocode}
 
-% Include packages \textsf{currfile} and \textsf{graphbox} if available,
+% Include packages \ctanpkg{currfile} and \ctanpkg{graphbox} if available,
 % declare dummy option |align| for |\includegraphics|
-% if \textsf{graphbox} is not available:
+% if \ctanpkg{graphbox} is not available:
 %    \begin{macrocode}
 %% optional: add filename to position labels in metapost code
 \IfFileExists{currfile.sty}{\usepackage{currfile}}{}
@@ -1451,7 +1479,7 @@ basic functionality
 %    \end{macrocode}
 
 % Enable immediate mode and line number indicators,
-% prepare some \textsf{mpostinl} options for testing:
+% prepare some \ctanpkg{mpostinl} options for testing:
 %    \begin{macrocode}
 %% some sample package options:
 %% \mpostsetup{write=false}
@@ -1464,7 +1492,7 @@ basic functionality
 %% \mpostsetup{classopt={12pt}}
 %    \end{macrocode}
 
-% Include the package \textsf{inputenc}
+% Include the package \ctanpkg{inputenc}
 % for preparing \LaTeX{} labels within the metapost figures;
 % as we will be generating several metapost files later on,
 % make sure this statement in included in all of them:
@@ -1511,7 +1539,7 @@ label(btex 1 etex, (0,0));
 
 % Use the options for |\includegraphics|.
 % Draw another circle containing a `2' and scale it by factor $1.5$.
-% Also vertically align to the centre (if \textsf{graphbox} is available):
+% Also vertically align to the centre (if \ctanpkg{graphbox} is available):
 %    \begin{macrocode}
 scaled (and aligned to centre if available):\\
 X
@@ -1932,11 +1960,11 @@ filename: \mpostgetname{sec8}
 % \paragraph{Required Packages.}
 %
 % The package loads the packages
-% \textsf{verbatim}, \textsf{graphicx} and \textsf{keyval}
+% \ctanpkg{verbatim}, \ctanpkg{graphicx} and \ctanpkg{keyval}
 % if not yet present.
-% \textsf{verbatim} is used for reading verbatim metapost code.
-% \textsf{graphicx} is used for including graphics files.
-% \textsf{keyval} is used for extended options processing.
+% \ctanpkg{verbatim} is used for reading verbatim metapost code.
+% \ctanpkg{graphicx} is used for including graphics files.
+% \ctanpkg{keyval} is used for extended options processing.
 %    \begin{macrocode}
 \RequirePackage{verbatim}
 \RequirePackage{graphicx}
@@ -1968,7 +1996,7 @@ filename: \mpostgetname{sec8}
 \def\thempi@count{\arabic{mpi@count}}
 %    \end{macrocode}
 
-% The package has some boolean \textsf{keyval} options
+% The package has some boolean \ctanpkg{keyval} options
 % which can be set to |true| or |false|.
 %    \begin{macrocode}
 \newif\ifmpi@draft\mpi@draftfalse
@@ -2011,7 +2039,7 @@ filename: \mpostgetname{sec8}
 % Warn and disable compiling if |\write18| is unavailable:
 %    \begin{macrocode}
 \def\mpi@warncompile{\ifmpi@compile\ifeof18%
-  \PackageWarning{mpostinl}{write18 disabled, %
+  \PackageWarningNoLine{mpostinl}{write18 disabled, %
     manual metapost compiling required}{}%
   \global\mpi@compilefalse\fi\fi}
 %    \end{macrocode}
@@ -2051,7 +2079,7 @@ filename: \mpostgetname{sec8}
 }
 %    \end{macrocode}
 
-% Pass undeclared options on to \textsf{keyval} processing:
+% Pass undeclared options on to \ctanpkg{keyval} processing:
 %    \begin{macrocode}
 \DeclareOption*{\expandafter\setkeys\expandafter\mpi@group%
   \expandafter{\CurrentOption}}
@@ -2210,7 +2238,7 @@ filename: \mpostgetname{sec8}
 %    \begin{macrocode}
 \newcommand{\mpi@warnmod}{%
   \ifmpi@checksum\ifmpi@warnmod%
-    \PackageWarning{mpostinl}{figure(s) may have changed. %
+    \PackageWarningNoLine{mpostinl}{figure(s) may have changed. %
       Rerun to update figures}{}%
   \fi\fi%
 }
@@ -2223,7 +2251,7 @@ filename: \mpostgetname{sec8}
 \def\mpi@warnunused#1{%
   \begingroup\def\mpi@tmp{#1}\ifx\mpi@tmp\mpi@empty\else%
     \ifcsname mpi@lu@#1\endcsname\else
-      \PackageWarning{mpostinl}{figure label `#1' not used}{}%
+      \PackageWarningNoLine{mpostinl}{figure label `#1' not used}{}%
     \fi%
     \def\mpi@tmp{\mpi@warnunused}%
   \fi\expandafter\endgroup\mpi@tmp%
@@ -2269,7 +2297,7 @@ filename: \mpostgetname{sec8}
 
 % \macro{\mpi@verbatim}
 % Start reading the block from the source file
-% using the \textsf{verbatim} package;
+% using the \ctanpkg{verbatim} package;
 % add each line to the buffer:
 %    \begin{macrocode}
 \newcommand{\mpi@verbatim}{%
@@ -2316,7 +2344,7 @@ filename: \mpostgetname{sec8}
 % \macro{\mpi@putlineno}
 % Write current position in source file to buffer;
 % write line number and source file name
-% (if available via package \textsf{currfile}):
+% (if available via package \ctanpkg{currfile}):
 %    \begin{macrocode}
 \newcommand{\mpi@putlineno}{%
   \ifmpi@lineno%
@@ -3019,7 +3047,7 @@ filename: \mpostgetname{sec8}
 % \macro{\mpostuse<>}
 % This overwrites the definition of |\mpostfile|
 % to accept the overlay option |<|\ldots|>|
-% of the \textsf{beamer} package:
+% of the \ctanpkg{beamer} package:
 %    \begin{macrocode}
 \ifmpi@beamer\@ifclassloaded{beamer}{
   \let\mpi@plain@mpostuse\mpostuse%
