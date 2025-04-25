@@ -1,4 +1,4 @@
-mpostinl v1.2
+mpostinl v1.21
 Copyright 2010-2018 Niklas Beisert
 
 mpostinl is a LaTeX2e package
@@ -13,7 +13,7 @@ to manage the generation of files and compilation.
 
 The package consists of the files
 
-    README        readme file
+    README.txt    readme file
     mpostinl.ins  installation file
     mpostinl.dtx  source file
     mpostinl.sty  package file
@@ -21,7 +21,7 @@ The package consists of the files
     mpostinl.pdf  manual
 
 The distribution consists of the files
-README, mpostinl.ins and mpostinl.dtx.
+README.txt, mpostinl.ins and mpostinl.dtx.
 
 Run "(pdf)latex mpostinl.dtx" to compile the manual mpostinl.pdf.
 

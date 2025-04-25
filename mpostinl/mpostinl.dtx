@@ -18,15 +18,16 @@
 % and the derived files mpostinl.sty and mpinlsmp.tex
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mpostinl}[2018/01/05 v1.2 metapost inline figures]
-%<sample>\ProvidesFile{mpinlsmp.tex}[2018/01/05 v1.2 sample for mpostinl]
+%<package>\ProvidesPackage{mpostinl}[2018/01/17 v1.21 metapost inline figures]
+%<sample>\ProvidesFile{mpinlsmp.tex}[2018/01/17 v1.21 sample for mpostinl]
 %<*driver>
-%\ProvidesFile{mpostinl.drv}[2018/01/05 v1.2 mpostinl reference manual file]
+%\ProvidesFile{mpostinl.drv}[2018/01/17 v1.21 mpostinl reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
 \usepackage[margin=35mm]{geometry}
 \usepackage{hyperref}
+\usepackage{hyperxmp}
 \usepackage[usenames]{color}
 \usepackage{amsmath,amsfonts}
 \usepackage{mflogo}
@@ -35,6 +36,19 @@
 \hypersetup{colorlinks=true}
 \hypersetup{pdfstartview=FitH}
 \hypersetup{pdfpagemode=UseNone}
+\hypersetup{pdfsource={}}
+\hypersetup{pdflang={en-UK}}
+\hypersetup{pdfcopyright={Copyright 2010-2018 Niklas Beisert.
+  This work may be distributed and/or modified under the
+  conditions of the LaTeX Project Public License, either version 1.3
+  of this license or (at your option) any later version.}}
+\hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
+\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K, Wolfgang-Pauli-Strasse 27}}
+\hypersetup{pdfcontactpostcode={8093}}
+\hypersetup{pdfcontactcity={Zurich}}
+\hypersetup{pdfcontactcountry={Switzerland}}
+\hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
+\hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
 \begin{document}
 
@@ -48,7 +62,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package mpostinl}}
-\date{5 January 2018, \textsf{v1.2}}
+\date{17 January 2018, \textsf{v1.21}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -153,7 +167,7 @@ and generated filenames can be customised.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Related CTAN Packages and Software}
+\subsection{Related CTAN Packages}
 
 There are at least four other \LaTeX{} packages
 which offer a similar functionality:
@@ -193,44 +207,6 @@ customise the management in the desired way.
 The package offers most of the functionality of the above packages,
 but (presently) misses out on some more advanced features,
 see section \ref{sec:suggestions}.
-
-\medskip
-\noindent
-The package relies on other packages and software:
-\begin{itemize}
-\item
-This package relies on some functionality of the package \textsf{verbatim}
-to read verbatim code from the \LaTeX{} source without expansion of macros.
-Compatibility with the \textsf{verbatim} package
-has been tested with v1.5q (2014/10/28).
-\item
-This package uses the package \textsf{graphicx}
-from the \textsf{graphics} bundle to include graphics files.
-Compatibility with the \textsf{graphicx} package
-has been tested with v1.0g (2014/10/28).
-\item
-This package uses the package \textsf{keyval}
-from the \textsf{graphics} bundle
-to process the options for the package, environments and macros.
-Compatibility with the \textsf{keyval} package
-has been tested with v1.15 (2014/10/28).
-\item
-This package uses the command |\currfilename|
-provided by the package \textsf{currfile} (if available and loaded)
-to indicate the \LaTeX{} source file in the generated metapost file.
-Compatibility with the \textsf{currfile} package
-has been tested with v0.7c (2015/04/23).
-\item
-The package assumes a \TeX{} installation with \MP{}
-configured appropriately.
-Recent \textsf{texlive} and MiK\TeX{} distributions should work well.
-Compatibility with the \textsf{texlive} distribution
-has been tested with the 2016 issue containing
-pdf\TeX{} version 3.14159265-2.6-1.40.17
-and \MP{} version 1.9991.
-\end{itemize}
-%
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -355,11 +331,25 @@ Compile this figure twice.
 %
 Please note the following restrictions
 due to the implementation via the package \textsf{verbatim}:
+%
 \begin{itemize}
 \item
 The closing statement |\end{mpostfig}| must be on a line on its own.
 Any amount of leading whitespace is allowed,
 and trailing characters are ignored.
+
+\item
+The opening statement |\begin{mpostfig}| \emph{without} optional arguments
+must not be followed immediately by empty lines
+or by the closing statement |\end{mpostfig}|.
+Note that commented lines do not help.
+Either avoid leading empty lines and empty bodies
+or use empty optional arguments: |\begin{mpostfig}[]|.
+
+\item
+Lines starting with a single `|%|' are ignored and 
+do not appear in the metapost file.
+Double `|%%|' or leading spaces preserve comments in the metapost file.
 
 \item
 The environment |mpostfig|
@@ -1078,8 +1068,8 @@ This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainer of this work is Niklas Beisert.
 
-This work consists of the files |mpostinl.dtx| and |mpostinl.ins|
-and the derived files |mpostinl.sty| and |mpinlsmp.tex|.
+This work consists of the files |README.txt|, |mpostinl.ins| and |mpostinl.dtx|
+as well as the derived files |mpostinl.sty|, |mpinlsmp.tex| and |mpostinl.pdf|.
 
 \endgroup
 
@@ -1090,7 +1080,7 @@ The package consists of the files:
 %
 \begin{center}
 \begin{tabular}{ll}
-    |README|       & readme file \\
+    |README.txt|   & readme file \\
     |mpostinl.ins| & installation file \\
     |mpostinl.dtx| & source file \\
     |mpostinl.sty| & package file \\
@@ -1100,7 +1090,7 @@ The package consists of the files:
 \end{center}
 %
 The distribution consists of the files
-|README|, |mpostinl.ins| and |mpostinl.dtx|.
+|README.txt|, |mpostinl.ins| and |mpostinl.dtx|.
 %
 \begin{itemize}
 \item
@@ -1111,6 +1101,43 @@ Run \LaTeX{} on |mpostinl.ins| to create the package |mpostinl.sty|
 and the sample |mpinlsmp.tex|.
 Copy the file |mpostinl.sty| to an appropriate directory of your \LaTeX{}
 distribution, e.g.\ \textit{texmf-root}|/tex/latex/mpostinl|.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Interaction with Other Packages and Software}
+
+The package relies on other packages and software:
+\begin{itemize}
+\item
+This package relies on some functionality of the package \textsf{verbatim}
+to read verbatim code from the \LaTeX{} source without expansion of macros.
+Compatibility with the \textsf{verbatim} package
+has been tested with v1.5q (2014/10/28).
+\item
+This package uses the package \textsf{graphicx}
+from the \textsf{graphics} bundle to include graphics files.
+Compatibility with the \textsf{graphicx} package
+has been tested with v1.0g (2014/10/28).
+\item
+This package uses the package \textsf{keyval}
+from the \textsf{graphics} bundle
+to process the options for the package, environments and macros.
+Compatibility with the \textsf{keyval} package
+has been tested with v1.15 (2014/10/28).
+\item
+This package uses the command |\currfilename|
+provided by the package \textsf{currfile} (if available and loaded)
+to indicate the \LaTeX{} source file in the generated metapost file.
+Compatibility with the \textsf{currfile} package
+has been tested with v0.7c (2015/04/23).
+\item
+The package assumes a \TeX{} installation with \MP{}
+configured appropriately.
+Recent \textsf{texlive} and MiK\TeX{} distributions should work well.
+Compatibility with the \textsf{texlive} distribution
+has been tested with the 2016 issue containing
+pdf\TeX{} version 3.14159265-2.6-1.40.17
+and \MP{} version 1.9991.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1148,12 +1175,20 @@ to the usual \TeX{} philosophy.
 %\item
 %an environment to pass tex commands to mpost and also compile them locally
 %probably have to write to file and subsequently input the file
-%\item
-%leading / trailing empty lines may be a problem. explain!
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.21:} 2018/01/17
+
+\begin{itemize}
+\item
+remark on leading empty lines added
+\item
+manual rearranged
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.2:} 2018/01/05
@@ -2694,5 +2729,3 @@ filename: \mpostgetname{sec8}
 %\fi
 %
 \endinput
-%
-%% \CheckSum{3381}
