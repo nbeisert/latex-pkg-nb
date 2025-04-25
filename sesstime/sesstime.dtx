@@ -1,6 +1,6 @@
 % \iffalse
 %
-% sesstime.dtx Copyright (C) 2016-2017 Niklas Beisert
+% sesstime.dtx Copyright (C) 2016-2018 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -19,10 +19,10 @@
 % with |stimsmp3.tex| and |stimsmp4.tex|.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{sesstime}[2017/05/01 v1.0 session timing marks]
-%<sample>\ProvidesFile{stimsamp.tex}[2017/05/01 v1.0 sample for sesstime]
+%<package>\ProvidesPackage{sesstime}[2018/01/06 v1.1 session timing marks]
+%<sample>\ProvidesFile{stimsamp.tex}[2018/01/06 v1.1 sample for sesstime]
 %<*driver>
-%\ProvidesFile{sesstime.drv}[2017/05/01 v1.0 sesstime reference manual file]
+%\ProvidesFile{sesstime.drv}[2018/01/06 v1.1 sesstime reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -46,7 +46,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package sesstime}}
-\date{1 May 2017, \textsf{v1.0}}
+\date{6 January 2018, \textsf{v1.1}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -809,6 +809,22 @@ which are typically related to sessions and comments.
 Set duration of automatically determined sessions;
 |0| disables automatic determination.
 
+\item |depthsec=|\textit{depth}
+(initially set to |3|) --
+Set maximum sectioning depth to be displayed
+along with their number in the list of sessions;
+deeper sections are considered as paragraphs
+and are displayed differently.
+Values |0| through |5| correspond to
+|\chapter|, |\section|, |\subsection|,
+|\subsubsection|, |\paragraph| and |\subparagraph|.
+
+\item |depthpar=|\textit{depth}
+(initially set to |5|) --
+Set maximum sectioning depth to be displayed
+in list of sessions
+(similar to the standard \LaTeX{} counter |secnumdepth|).
+
 \item |flags=|\textit{flags}
 --
 Specify a comma-separated list of flags.
@@ -830,7 +846,7 @@ conditionally turn on automatic determination of sessions.
 \parskip1ex
 \parindent0pt
 
-Copyright \copyright{} 2016--2017 Niklas Beisert
+Copyright \copyright{} 2016--2018 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
@@ -925,6 +941,17 @@ Ignore leading and trailing spaces in the list of flags.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1:} 2018/01/06
+
+\begin{itemize}
+\item
+grabbing of section titles improved
+\item
+options |depthsec| and |depthpar| to 
+adjust depth in list of sessions
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.0:} 2017/05/01
@@ -1062,6 +1089,11 @@ basic functionality
   \ifnum #2>0\\at #2 min\fi\fi\vphantom{g}}}
 %    \end{macrocode}
 
+% Overwrite depth of sections in session list:
+%    \begin{macrocode}
+\timingconfigure{depthsec=3,depthpar=4}
+%    \end{macrocode}
+
 % Overwrite display of sessions list:
 %    \begin{macrocode}
 \renewcommand{\timingsessionline}[5]{\ \\%
@@ -1196,6 +1228,11 @@ by inactive timing mark\par
 \timingsplit*{15}
 \subsection{five.two}
 \paragraph{five.two.paragraph.}
+\timingsession
+\lorem
+\timingsplit*{15}
+\subparagraph{five.two.subparagraph.}
+\timingsession
 \lorem
 \timingsplit*{15}
 \lorem
@@ -1389,7 +1426,9 @@ the list of sessions
 % indicates whether timing marks (of particular kind) should be printed.
 % The dimensions |\sti@widthl| and |\sti@widthr| store
 % the width of timing marks on the left and right, respectively.
-% |sti@autosession| stores the duration of automatically generated sessions:
+% |sti@autosession| stores the duration of automatically generated sessions.
+% |\sti@depthsec| and |\sti@depthpar| store the depth of sections
+% to be included in the list of sessions:
 %    \begin{macrocode}
 \newif\ifsti@print\sti@printtrue
 \newif\ifsti@printblock\sti@printblocktrue
@@ -1400,6 +1439,8 @@ the list of sessions
 \newdimen\sti@widthl\setlength{\sti@widthl}{1cm}
 \newdimen\sti@widthr\setlength{\sti@widthr}{1cm}
 \newcounter{sti@autosession}
+\def\sti@depthsec{3}
+\def\sti@depthpar{5}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1419,6 +1460,8 @@ the list of sessions
 \define@key{sti@}{widthr}{\setlength{\sti@widthr}{#1}}
 \define@key{sti@}{autosession}{\setcounter{sti@autosession}{#1}}
 \define@key{sti@}{flags}{\def\sti@flags{#1}}
+\define@key{sti@}{depthsec}{\def\sti@depthsec{#1}}
+\define@key{sti@}{depthpar}{\def\sti@depthpar{#1}}
 %    \end{macrocode}
 
 % \begin{macro}{\timingconfigure}
@@ -1576,47 +1619,58 @@ the list of sessions
 %    \end{macrocode}
 % \end{macro}
 
+% \begin{macro}{\sti@recordtitle}
 % \begin{macro}{\sti@secnum}
-% \begin{macro}{\sti@secmark}
-% \begin{macro}{\sti@parmark}
-% The following code remembers the present sectioning titles
-% as well as the section number
-% for usage in the list of sections.
-% It does so by hooking into the definitions of |\chaptermark|,
-% |\|[|sub|\textbar|subsub|]|sectionmark| and |\|[|sub|]|paragraphmark|:
+% \begin{macro}{\sti@sectitle}
+% \begin{macro}{\sti@partitle}
+% Record the present sectioning title and number
+% for usage in the list of sessions.
+% The depth in the first parameter in comparison to
+% |\sti@depthsec| and |\sti@depthpar| determines
+% whether the information is stored as section or paragraph:
 %    \begin{macrocode}
-\providecommand{\chaptermark}[1]{}
-\let\sti@oldchaptermark=\chaptermark
-\let\sti@oldsectionmark=\sectionmark
-\let\sti@oldsubsectionmark=\subsectionmark
-\let\sti@oldsubsubsectionmark=\subsubsectionmark
-\let\sti@oldparagraphmark=\paragraphmark
-\let\sti@oldsubparagraphmark=\subparagraphmark
-\renewcommand{\chaptermark}[1]{%
-  \expandafter\gdef\expandafter\sti@secnum\expandafter{\thechapter}%
-  \expandafter\gdef\expandafter\sti@secmark\expandafter{#1}%
-  \xdef\sti@parmark{}\sti@oldchaptermark{#1}}
-\renewcommand{\sectionmark}[1]{%
-  \expandafter\gdef\expandafter\sti@secnum\expandafter{\thesection}%
-  \expandafter\gdef\expandafter\sti@secmark\expandafter{#1}%
-  \xdef\sti@parmark{}\sti@oldsectionmark{#1}}
-\renewcommand{\subsectionmark}[1]{%
-  \expandafter\gdef\expandafter\sti@secnum\expandafter{\thesubsection}%
-  \expandafter\gdef\expandafter\sti@secmark\expandafter{#1}%
-  \xdef\sti@parmark{}\sti@oldsubsectionmark{#1}}
-\renewcommand{\subsubsectionmark}[1]{%
-  \expandafter\gdef\expandafter\sti@secnum\expandafter{\thesubsubsection}%
-  \expandafter\gdef\expandafter\sti@secmark\expandafter{#1}%
-  \xdef\sti@parmark{}\sti@oldsubsectionmark{#1}}
-\renewcommand{\paragraphmark}[1]{%
-  \expandafter\gdef\expandafter\sti@parmark\expandafter{#1}%
-  \sti@oldparagraphmark{#1}}
-\renewcommand{\subparagraphmark}[1]{%
-  \expandafter\gdef\expandafter\sti@parmark\expandafter{#1}%
-  \sti@oldsubparagraphmark{#1}}
+\newcommand{\sti@recordtitle}[4]{\ifnum#2>\sti@depthpar\else%
+  \ifnum#2>\sti@depthsec%
+    \xdef\sti@partitle{#4}%
+  \else%
+    \xdef\sti@secnum{#3}%
+    \xdef\sti@sectitle{#4}%
+    \xdef\sti@partitle{}%
+  \fi\fi}
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
+% \end{macro}
+% \end{macro}
+
+% \begin{macro}{\@startsection}
+% The following code hooks into the definition
+% of |\@startsection| to record titles and numbers:
+%    \begin{macrocode}
+\let\sti@old@startsection\@startsection%
+\def\@startsection#1#2#3#4#5#6{\@ifstar%
+    {\sti@ssect{#1}{#2}{#3}{#4}{#5}{#6}}%
+    {\@dblarg{\sti@sect{#1}{#2}{#3}{#4}{#5}{#6}}}}
+\def\sti@ssect#1#2#3#4#5#6#7{\sti@recordtitle{#1}{#2}{}{#7}%
+  \sti@old@startsection{#1}{#2}{#3}{#4}{#5}{#6}*{#7}}
+\def\sti@sect#1#2#3#4#5#6[#7]#8{{\advance\csname c@#1\endcsname1%
+  \sti@recordtitle{#1}{#2}{\csname the#1\endcsname}{#7}}%
+  \sti@old@startsection{#1}{#2}{#3}{#4}{#5}{#6}[#7]{#8}}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\chapter}
+% The following code similarly hooks into the definitions
+% of |\chapter| (if defined):
+%    \begin{macrocode}
+\ifdefined\chapter
+\let\sti@old@chapter\chapter
+\def\chapter{\@ifstar\sti@schapter{\@dblarg{\sti@chapter}}}
+\def\sti@schapter#1{\sti@recordtitle{chapter}{0}{}{#1}\sti@old@chapter*{#1}}
+\def\sti@chapter[#1]#2{{\advance\c@chapter1%
+  \sti@recordtitle{chapter}{0}{\thechapter}{#1}}\sti@old@chapter[#1]{#2}}
+\fi
+%    \end{macrocode}
 % \end{macro}
 
 % \begin{macro}{\timingprintsession}
@@ -1733,7 +1787,7 @@ the list of sessions
 \newcommand{\sti@addsessionline}{%
   \addtocontents{los}{\protect\timingsessionline%
     {\thesti@session}{\thesti@sessiontime}%
-    {\sti@secnum}{\sti@secmark}{\sti@parmark}}}%
+    {\sti@secnum}{\sti@sectitle}{\sti@partitle}}}%
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}

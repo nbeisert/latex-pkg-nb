@@ -6,7 +6,7 @@
 %%
 %% sesstime.dtx  (with options: `package')
 %% 
-%% Copyright (C) 2016-2017 Niklas Beisert
+%% Copyright (C) 2016-2018 Niklas Beisert
 %% 
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either version 1.3
@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{sesstime}[2017/05/01 v1.0 session timing marks]
+\ProvidesPackage{sesstime}[2018/01/06 v1.1 session timing marks]
 \RequirePackage{keyval}
 
 \def\sti@flags{}
@@ -45,6 +45,8 @@
 \newdimen\sti@widthl\setlength{\sti@widthl}{1cm}
 \newdimen\sti@widthr\setlength{\sti@widthr}{1cm}
 \newcounter{sti@autosession}
+\def\sti@depthsec{3}
+\def\sti@depthpar{5}
 
 \define@key{sti@}{print}[true]{\csname sti@print#1\endcsname}
 \define@key{sti@}{block}[true]{\csname sti@printblock#1\endcsname}
@@ -58,6 +60,8 @@
 \define@key{sti@}{widthr}{\setlength{\sti@widthr}{#1}}
 \define@key{sti@}{autosession}{\setcounter{sti@autosession}{#1}}
 \define@key{sti@}{flags}{\def\sti@flags{#1}}
+\define@key{sti@}{depthsec}{\def\sti@depthsec{#1}}
+\define@key{sti@}{depthpar}{\def\sti@depthpar{#1}}
 
 \newcommand{\timingconfigure}[2][]{%
   \sti@processflags{#1}%
@@ -128,35 +132,32 @@
     \csname sti@sessiontotal@#2\endcsname%
   \ifx\timingreturn\relax\def\timingreturn{#1}\fi}
 
-\providecommand{\chaptermark}[1]{}
-\let\sti@oldchaptermark=\chaptermark
-\let\sti@oldsectionmark=\sectionmark
-\let\sti@oldsubsectionmark=\subsectionmark
-\let\sti@oldsubsubsectionmark=\subsubsectionmark
-\let\sti@oldparagraphmark=\paragraphmark
-\let\sti@oldsubparagraphmark=\subparagraphmark
-\renewcommand{\chaptermark}[1]{%
-  \expandafter\gdef\expandafter\sti@secnum\expandafter{\thechapter}%
-  \expandafter\gdef\expandafter\sti@secmark\expandafter{#1}%
-  \xdef\sti@parmark{}\sti@oldchaptermark{#1}}
-\renewcommand{\sectionmark}[1]{%
-  \expandafter\gdef\expandafter\sti@secnum\expandafter{\thesection}%
-  \expandafter\gdef\expandafter\sti@secmark\expandafter{#1}%
-  \xdef\sti@parmark{}\sti@oldsectionmark{#1}}
-\renewcommand{\subsectionmark}[1]{%
-  \expandafter\gdef\expandafter\sti@secnum\expandafter{\thesubsection}%
-  \expandafter\gdef\expandafter\sti@secmark\expandafter{#1}%
-  \xdef\sti@parmark{}\sti@oldsubsectionmark{#1}}
-\renewcommand{\subsubsectionmark}[1]{%
-  \expandafter\gdef\expandafter\sti@secnum\expandafter{\thesubsubsection}%
-  \expandafter\gdef\expandafter\sti@secmark\expandafter{#1}%
-  \xdef\sti@parmark{}\sti@oldsubsectionmark{#1}}
-\renewcommand{\paragraphmark}[1]{%
-  \expandafter\gdef\expandafter\sti@parmark\expandafter{#1}%
-  \sti@oldparagraphmark{#1}}
-\renewcommand{\subparagraphmark}[1]{%
-  \expandafter\gdef\expandafter\sti@parmark\expandafter{#1}%
-  \sti@oldsubparagraphmark{#1}}
+\newcommand{\sti@recordtitle}[4]{\ifnum#2>\sti@depthpar\else%
+  \ifnum#2>\sti@depthsec%
+    \xdef\sti@partitle{#4}%
+  \else%
+    \xdef\sti@secnum{#3}%
+    \xdef\sti@sectitle{#4}%
+    \xdef\sti@partitle{}%
+  \fi\fi}
+
+\let\sti@old@startsection\@startsection%
+\def\@startsection#1#2#3#4#5#6{\@ifstar%
+    {\sti@ssect{#1}{#2}{#3}{#4}{#5}{#6}}%
+    {\@dblarg{\sti@sect{#1}{#2}{#3}{#4}{#5}{#6}}}}
+\def\sti@ssect#1#2#3#4#5#6#7{\sti@recordtitle{#1}{#2}{}{#7}%
+  \sti@old@startsection{#1}{#2}{#3}{#4}{#5}{#6}*{#7}}
+\def\sti@sect#1#2#3#4#5#6[#7]#8{{\advance\csname c@#1\endcsname1%
+  \sti@recordtitle{#1}{#2}{\csname the#1\endcsname}{#7}}%
+  \sti@old@startsection{#1}{#2}{#3}{#4}{#5}{#6}[#7]{#8}}
+
+\ifdefined\chapter
+\let\sti@old@chapter\chapter
+\def\chapter{\@ifstar\sti@schapter{\@dblarg{\sti@chapter}}}
+\def\sti@schapter#1{\sti@recordtitle{chapter}{0}{}{#1}\sti@old@chapter*{#1}}
+\def\sti@chapter[#1]#2{{\advance\c@chapter1%
+  \sti@recordtitle{chapter}{0}{\thechapter}{#1}}\sti@old@chapter[#1]{#2}}
+\fi
 
 \providecommand{\timingprintsession}[2]{\timingprintremark{%
   session #1%
@@ -215,7 +216,7 @@
 \newcommand{\sti@addsessionline}{%
   \addtocontents{los}{\protect\timingsessionline%
     {\thesti@session}{\thesti@sessiontime}%
-    {\sti@secnum}{\sti@secmark}{\sti@parmark}}}%
+    {\sti@secnum}{\sti@sectitle}{\sti@partitle}}}%
 
 \newcommand{\sti@notechaptertotal}[2]{%
   \expandafter\gdef\csname sti@chaptertotal@#1\endcsname{#2}}
