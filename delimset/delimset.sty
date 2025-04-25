@@ -17,7 +17,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{delimset}[2025/03/25 v2.2.1 convenient size control for delimiter sets]
+\ProvidesPackage{delimset}[2025/03/27 v2.2.2 convenient size control for delimiter sets]
 
 \RequirePackage{keyval}
 
@@ -250,14 +250,15 @@
 \newcommand{\dlm@sel@delimtriple}[4]{\ifcase\selecteddelim\selectdeliml#1%
   \or\selectdelim#2\or\selectdelim#3\else\selectdelimr#4\fi}
 
-\newcommand{\usedelim}{%
-  \@ifnextchar]{\parsedelimflags{}{}}{%
-  \@ifnextchar({\parsedelimflags{}{}<.}{%
-  \@ifnextchar|{\parsedelimflags{}{}<.}{%
-  \@ifnextchar,{\parsedelimflags{}{}<.}{%
-  \@ifnextchar){\parsedelimflags{}{}<.}{%
-  \@ifnextchar?{\parsedelimflags{}{}<.}{%
-  \parsedelimflags{}{}<}}}}}}}
+\newcommand{\usedelim}[1]{\begingroup%
+  \def\dlm@use{\parsedelimflags{}{}<{#1}}%
+  \if]#1\def\dlm@use{\parsedelimflags{}{}]}\fi%
+  \if(#1\def\dlm@use{\parsedelimflags{}{}<.(}\fi%
+  \if|#1\def\dlm@use{\parsedelimflags{}{}<.|}\fi%
+  \if,#1\def\dlm@use{\parsedelimflags{}{}<.,}\fi%
+  \if)#1\def\dlm@use{\parsedelimflags{}{}<.)}\fi%
+  \if?#1\def\dlm@use{\parsedelimflags{}{}<.?}\fi%
+  \expandafter\endgroup\dlm@use}
 
 \ifdlm@std
 \providecommand{\brk}[1][r]{\begingroup\def\dlm@use{\delim()}%

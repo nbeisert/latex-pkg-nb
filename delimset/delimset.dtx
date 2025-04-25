@@ -19,10 +19,10 @@
 % and the derived files delimset.sty and dlmssamp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{delimset}[2025/03/25 v2.2.1 convenient size control for delimiter sets]
-%<sample>\ProvidesFile{dlmssamp.tex}[2025/03/25 v2.2.1 sample for delimset]
+%<package>\ProvidesPackage{delimset}[2025/03/27 v2.2.2 convenient size control for delimiter sets]
+%<sample>\ProvidesFile{dlmssamp.tex}[2025/03/27 v2.2.2 sample for delimset]
 %<*driver>
-\def\thedate#1{2025/03/25}\def\theversion#1{v2.2.1}
+\def\thedate#1{2025/03/27}\def\theversion#1{v2.2.2}
 \ProvidesFile{delimset.dtx}[\thedate{} \theversion{} delimset reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -1282,7 +1282,8 @@ has been tested with v2.0+ (2002/03/10).
 %  (must go before parsing, but how to process and react?)
 % make unadjusted size have right height
 % automatic nesting of bracket types? -> depth stack?
-% handle cramped style properly (perhaps impossible)
+% handle cramped style properly (perhaps impossible in older tex engines)
+% semantic definition for () as argument of a function
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
@@ -1296,6 +1297,14 @@ has been tested with v2.0+ (2002/03/10).
 \ldots
 \end{itemize}
 \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v2.2.2:} 2025/03/27
+
+\begin{itemize}
+\item
+parameter fetching mechanism for |\usedelim| changed
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v2.2.1:} 2025/03/25
@@ -2026,14 +2035,15 @@ the final size is not available for the enclosed expressions):
 % by the delimiter selection flag.
 %
 %    \begin{macrocode}
-\newcommand{\usedelim}{%
-  \@ifnextchar]{\parsedelimflags{}{}}{%
-  \@ifnextchar({\parsedelimflags{}{}<.}{%
-  \@ifnextchar|{\parsedelimflags{}{}<.}{%
-  \@ifnextchar,{\parsedelimflags{}{}<.}{%
-  \@ifnextchar){\parsedelimflags{}{}<.}{%
-  \@ifnextchar?{\parsedelimflags{}{}<.}{%
-  \parsedelimflags{}{}<}}}}}}}
+\newcommand{\usedelim}[1]{\begingroup%
+  \def\dlm@use{\parsedelimflags{}{}<{#1}}%
+  \if]#1\def\dlm@use{\parsedelimflags{}{}]}\fi%
+  \if(#1\def\dlm@use{\parsedelimflags{}{}<.(}\fi%
+  \if|#1\def\dlm@use{\parsedelimflags{}{}<.|}\fi%
+  \if,#1\def\dlm@use{\parsedelimflags{}{}<.,}\fi%
+  \if)#1\def\dlm@use{\parsedelimflags{}{}<.)}\fi%
+  \if?#1\def\dlm@use{\parsedelimflags{}{}<.?}\fi%
+  \expandafter\endgroup\dlm@use}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
