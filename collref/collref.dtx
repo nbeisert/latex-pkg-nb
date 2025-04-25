@@ -18,10 +18,10 @@
 % and the derived files collref.sty and collsamp.tex
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{collref}[2009/06/09 v1.0 Collect References]
-%<sample>\ProvidesFile{collsamp.tex}[2009/06/09 v1.0 Sample for Collect References]
+%<package>\ProvidesPackage{collref}[2009/09/07 v2.0 Collect References]
+%<sample>\ProvidesFile{collsamp.tex}[2009/09/07 v2.0 Sample for Collect References]
 %<*driver>
-%\ProvidesFile{collref.drv}[2009/06/09 v1.0 Collect References Manual file]
+%\ProvidesFile{collref.drv}[2009/09/07 v2.0 Collect References Manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -53,7 +53,7 @@
         \href{mailto:nbeisert@aei.mpg.de}{\texttt{nbeisert@aei.mpg.de}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package collref}}
-\date{9 June 2009, \textsf{v1.0}}
+\date{7 September 2009, \textsf{v2.0}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -144,6 +144,60 @@ To use \textsf{collref} simply add the command
 to the preamble of your \LaTeX{} document.
 No further interaction is required.
 
+\paragraph{Punctuation.}
+\textsf{collref} provide basic punctuation between collected references.
+This is specified through the package options 
+\verb|\usepackage[|\textit{opt}\verb|]{collref}|
+where \textit{opt} is one of the following
+\par\vspace{2ex}\noindent%
+\begin{minipage}[t]{0.24\linewidth}
+\centerline{\texttt{nosep} (default)}\par\vspace{1ex}
+no separator:
+\begin{thebib}
+\item A
+\item B C
+\item D
+\end{thebib}
+\end{minipage}%
+\begin{minipage}[t]{0.24\linewidth}
+\centerline{\texttt{parsep}}\par\vspace{1ex}
+separated by \verb|\par|:
+\begin{thebib}
+\item A
+\item B 
+\par C
+\item D
+\end{thebib}
+\end{minipage}%
+\begin{minipage}[t]{0.24\linewidth}
+\centerline{\texttt{bulletsep}}\par\vspace{1ex}
+separated by `\textbullet':
+\begin{thebib}
+\item A
+\item B \textbullet{} C
+\item D
+\end{thebib}
+\end{minipage}%
+\begin{minipage}[t]{0.28\linewidth}
+\centerline{\texttt{punctsep}}\par\vspace{1ex}
+punctuated by `;' and '.':
+\begin{thebib}
+\item A .
+\item B ; C .
+\item D .
+\end{thebib}
+cf.\ note on spacing below.
+\end{minipage}%
+\par\vspace{2ex}\noindent
+%
+Alternative separators can be specified in the preamble through the
+command:
+\begin{center}
+\verb|\collectsep[|\textit{punctuation}|]{|\textit{separator}\verb|}|
+\end{center}
+The \textit{separator} appears between references in a block and 
+the \textit{punctuation} at the end of a block of references.
+
 \paragraph{Bibliography Preparation.}
 Please note that only such blocks of references can be collapsed
 which appear in the same order for 
@@ -154,49 +208,37 @@ You must use a style which does not sort the references
 but preserves the order in which they were \verb|\cite|'d,
 e.g.\ \texttt{unsrt.bst}.
 
-\paragraph{Separators.}
-\textsf{collref} does not provide correct linguistic punctuation 
-between collected references, but it allows to specify how
-collected references are separated.
-This is specified through the package options 
-\verb|\usepackage[|\textit{opt}\verb|]{collref}|
-where \textit{opt} is one of the following
-\par\vspace{2ex}
-\begin{minipage}[t]{0.3\linewidth}
-\centerline{\texttt{nosep} (default)}\par\vspace{1ex}
-no separator:
-\begin{thebib}
-\item A
-\item B C
-\item D
-\end{thebib}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.3\linewidth}
-\centerline{\texttt{parsep}}\par\vspace{1ex}
-separated by \verb|\par|:
-\begin{thebib}
-\item A
-\item B 
-\par C
-\item D
-\end{thebib}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.3\linewidth}
-\centerline{\texttt{bulletsep}}\par\vspace{1ex}
-separated by $\bullet$:
-\begin{thebib}
-\item A
-\item B $\bullet$ C
-\item D
-\end{thebib}
-\end{minipage}
-\par\vspace{2ex}\noindent
-%
-Alternative separators can be specified in the preamble through the
-command:
-\begin{center}
-\verb|\collectsep{|\textit{separator}\verb|}|
-\end{center}
+Also note that \textsf{collref} suppresses 
+new paragraphs invoked by empty lines in the bibliography. 
+This allows to use standard \BibTeX{} styles 
+which commonly separate reference entries by empty lines. 
+If these empty lines would be expanded to new paragraphs, 
+\textsf{collref} would not be able to join two references properly.
+Therefore new paragraphs have to be invoked by the 
+command \verb|\par|.
+
+If you wish to use the style \texttt{punctsep}, please
+refer to the following note on spacing and punctuation.
+
+\paragraph{Spacing and Punctuation.}
+References are usually punctuated in some way. 
+Three of the predefined styles -- 
+\texttt{nosep}, \texttt{parsep} and \texttt{bulletsep} --
+preserve the punctuation from the bibliography.
+
+The fourth predefined style -- \texttt{punctsep} --
+automatically performs the punctuation.
+This however requires care in the preparation 
+of the bibliography:
+The entries have to be provided \emph{without} punctuation. 
+Furthermore, there must not be \emph{whitespaces} at the
+end of an entry. 
+They can be suppressed with `\verb|%|' 
+or \verb|\ignorespaces|
+directly following the last word of the entry. 
+See Appendix \ref{sec:sample} for an example.
+The standard \BibTeX{} styles, e.g.\ \texttt{unsrt.bst},
+have to be adjusted to remove the punctuation and whitespaces.
 
 \paragraph{Control.}
 
@@ -208,16 +250,28 @@ which references (not) to collect:
 \end{center}
 %
 It ensures that the label \textit{label} starts
-a new \verb|\bibitem|. 
+a new block of references. 
 It is not collapsed with earlier references. 
 Later references, however, can still be collapsed 
 to the end of \textit{label}.
 
+\paragraph{Labels for Blocks of References.}
+
+While \textsf{collref} aims to automatically 
+collect similar references into a single block, it is often 
+convenient for the author to refer to such blocks
+with a single citation label. 
+Standard \TeX/\LaTeX{} commands can be used to define such a block:
+\begin{center}
+\verb|\newcommand{|\textit{$\backslash$blocklabel}\verb|}{|\textit{label1, label2, \ldots}\verb|}|
+\end{center}
+Subsequently this block can be referenced with
+\verb|\cite{|\textit{\ldots, $\backslash$blocklabel, \ldots}\verb|}|.
 
 \paragraph{Interaction with CTAN Packages.}
 
 The package \textsf{collref} has been tested with other
-CTAN packages concerned with the citations and the bibliography:
+CTAN packages concerned with citations and the bibliography:
 %
 \begin{itemize}
 \item\textsf{cite}: 
@@ -235,6 +289,42 @@ Tested with \textsf{hyperref v6.78s}.
 
 \end{itemize}
 
+\section{Revision History}
+
+\paragraph{v2.0:}
+2009/09/07
+\begin{itemize}
+\item
+proper punctuation added
+\item
+blocks of references enabled
+\item
+manual extended
+\end{itemize}
+
+\paragraph{v1.0:}
+2009/06/09
+\begin{itemize}
+\item
+streamlined detection of chains
+\item
+manual and installation package added
+\item
+renamed package to \textsf{collref} due to name clash on CTAN
+\item
+first version published on CTAN
+\end{itemize}
+
+\paragraph{v0.9:}
+\begin{itemize}
+\item
+package named \textsf{collect}; unpublished 
+\end{itemize}
+
+\section{Acknowledgements}
+Thanks to Oleg Zhirov 
+for suggesting proper punctuation 
+and labels for blocks of references.
 
 \appendix
 
@@ -264,6 +354,8 @@ Run \LaTeX{} on \texttt{collref.ins} to create the package \texttt{collref.sty}
 and the sample \texttt{collsamp.tex}.
 Copy the file \texttt{collref.sty} to an appropriate directory of your \LaTeX{}
 distribution, e.g.\ \textit{texmf-root}\verb|/tex/latex/collref|.
+Alternatively, you may copy \texttt{collref.sty} to the local directories of
+manuscripts for which you wish to use \textsf{collref}.
 \end{itemize}
 
  \DocInput{collref.dtx}
@@ -284,8 +376,9 @@ This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainer of this work is Niklas Beisert.
 
-This work consists of the files \texttt{collref.dtx} and \texttt{collref.ins}
-and the derived files \texttt{collref.sty} and \texttt{collsamp.tex}
+This work consists of the files \texttt{README}, \texttt{collref.dtx} and \texttt{collref.ins}
+as well as the derived files \texttt{collref.sty}, \texttt{collsamp.tex}
+and \texttt{collref.pdf}.
 
 
 \end{document}
@@ -294,7 +387,7 @@ and the derived files \texttt{collref.sty} and \texttt{collsamp.tex}
 %
 %
 % 
-% \section{Sample File}
+% \section{Sample File}\label{sec:sample}
 %\iffalse
 %<*sample>
 %\fi
@@ -304,27 +397,29 @@ and the derived files \texttt{collref.sty} and \texttt{collsamp.tex}
 %    \begin{macrocode}
 \documentclass{article}
 %\usepackage{cite}
-\usepackage[bulletsep]{collref}
+\usepackage[punctsep]{collref}
 %\usepackage{hyperref}
 
 \begin{document}
 
+\def\tworef{c8,c9}
+
 \cite{c1,c2,c3,c4}
 \nocollect{c3}
-\cite{c5,c6,c7,c8,c9}
+\cite{c5,c6,c7,\tworef}
 \cite{c5,c6,c7}
-\cite{c7,c8,c9}
+\cite{c7,\tworef}
 
 \begin{thebibliography}{11}
-\bibitem{c1} reference 1
-\bibitem{c2} reference 2
-\bibitem{c3} reference 3
-\bibitem{c4} reference 4
+\bibitem{c1} reference 1%
+\bibitem{c2} reference 2%
+\bibitem{c3} reference 3%
+\bibitem{c4} reference 4%
 \bibitem{c5} reference 5
 \bibitem{c6} reference 6
-\bibitem{c7} reference 7
-\bibitem{c8} reference 8
-\bibitem{c9} reference 9
+\bibitem{c7} reference 7 %
+\bibitem{c8} reference 8\ignorespaces
+\bibitem{c9} reference 9\ignorespaces
 \end{thebibliography}
 
 \end{document}
@@ -338,13 +433,14 @@ and the derived files \texttt{collref.sty} and \texttt{collsamp.tex}
 % [1, 2]  [3, 4, 5] [3, 4] [4, 5]
 %
 % \begin{thebib}
-% \item reference 1 $\bullet$ reference 2
-% \item reference 3 $\bullet$ reference 4
-% \item reference 5 $\bullet$ reference 6
-% \item reference 7 
-% \item reference 8 $\bullet$ reference 9
+% \item reference 1; reference 2.
+% \item reference 3; reference 4.
+% \item reference 5 ; reference 6 .
+% \item reference 7 . 
+% \item reference 8; reference 9.
 % \end{thebib}
-
+% Note the different behaviour for references 5, 6 and 7
+% for which trailing whitespaces were not removed.
 
 
 
@@ -377,20 +473,21 @@ and the derived files \texttt{collref.sty} and \texttt{collsamp.tex}
 % \paragraph{Interface.}
 % The package provides two public commands, described above:
 %    \begin{macrocode}
-\newcommand{\collectsep}[1]{\def\nc@sep{#1}}
-\newcommand{\nocollect}[1]{\nc@breakbefore{#1}}
+\newcommand{\collectsep}[2][]{\def\nc@punct{#1}\def\nc@sep{#2}}
+\newcommand{\nocollect}[1]{\nc@breakbefore{#1}\ignorespaces}
 %    \end{macrocode}
-%
+
 % \paragraph{Package Options.}
-% The package provides three predefined separators, described above:
+% The package provides four predefined separators described above:
 %    \begin{macrocode}
 \DeclareOption{nosep}{\collectsep{}}
 \DeclareOption{parsep}{\collectsep{\par}}
-\DeclareOption{bulletsep}{\collectsep{$\bullet$ }}
+\DeclareOption{bulletsep}{\collectsep{\textbullet{} }}
+\DeclareOption{punctsep}{\collectsep[.]{; }}
 \ExecuteOptions{nosep}
 \ProcessOptions
 %    \end{macrocode}
-%
+
 % \paragraph{Internal Commands.}
 % Some internal commands for abbreviation:
 %    \begin{macrocode}
@@ -415,7 +512,7 @@ and the derived files \texttt{collref.sty} and \texttt{collsamp.tex}
   \nc@setcsname{nc@s@#1}{}%
 }
 %    \end{macrocode}
-%
+
 % \paragraph{Citations.}
 %
 % Hack for \verb|\@citex|:
@@ -428,11 +525,12 @@ and the derived files \texttt{collref.sty} and \texttt{collsamp.tex}
   \let\nc@citecomma\@empty%
   \let\nc@citestring\@empty%
   \let\nc@citelast\@empty%
+  \edef\nc@citelist{#2}%
 %    \end{macrocode}
 % Main loop to process the arguments of \verb|\cite|. 
 % The current label is stored in \verb|\nc@citethis|.
 %    \begin{macrocode}
-  \@for\nc@citethis:=#2\do{%
+  \@for\nc@citethis:={\nc@citelist}\do{%
     \edef\nc@citethis{\expandafter\@firstofone\nc@citethis\@empty}%
 %    \end{macrocode}
 % The first entry has no predecessor, terminate the chain.
@@ -441,7 +539,7 @@ and the derived files \texttt{collref.sty} and \texttt{collsamp.tex}
       \nc@breakbefore{\nc@citethis}%
     \else% 
 %    \end{macrocode}
-% Non-first entry. Fill undefined successor and predecessors entries 
+% Non-first entry: Fill undefined successor and predecessors entries 
 % with the current chain sequence.
 %    \begin{macrocode}
       \@ifundefined{nc@s@\nc@citelast}%
@@ -488,7 +586,7 @@ and the derived files \texttt{collref.sty} and \texttt{collsamp.tex}
 %    \begin{macrocode}
     \if@filesw\immediate\write\@auxout{\string\citation{\nc@citethis}}\fi%
 %    \end{macrocode}
-% Continue to next label
+% Continue to next label.
 %    \begin{macrocode}
     \edef\nc@citelast{\nc@citethis}%
     \def\nc@citecomma{,}%
@@ -507,18 +605,27 @@ and the derived files \texttt{collref.sty} and \texttt{collsamp.tex}
 % \paragraph{Bibliography.}
 %
 % Enhance the \verb|thebibliography| environment to 
-% a) reset the \verb|\nc@biblast| label to something, and
-% b) convert linebreaks into whitespaces (avoid implicit \verb|\par|'s)
+% a) set the \verb|\nc@biblast| label to something, 
+%    and empty \verb|\nc@nextpunct| 
+%    (no predecessor for the first entry), 
+% b) convert linebreaks into whitespaces (avoid implicit \verb|\par|'s), and
+% c) put the final punctuation for the last entry.
 %
 %    \begin{macrocode}
 \let\nc@old@thebibliography\thebibliography
+\let\nc@old@endthebibliography\endthebibliography
 
 \def\thebibliography{%
   \xdef\nc@biblast{asldjfhasklfh}%
+  \xdef\nc@nextpunct{}%
   \catcode`\^^M=10%
 \nc@old@thebibliography}
+
+\def\endthebibliography{%
+  \nc@nextpunct%
+\nc@old@endthebibliography}
 %    \end{macrocode}
-% 
+ 
 % Overwrite \verb|\bibitem|:
 % It is assumed that the native \LaTeXe{} code
 % is equivalent but with the \LaTeX{}
@@ -534,28 +641,34 @@ and the derived files \texttt{collref.sty} and \texttt{collsamp.tex}
 % for collapsed references:
 %    \begin{macrocode}
 \def\nc@noitem#1{%
-  \nc@sep%
   \if@filesw\immediate\write\@auxout{\string\bibcite{#1}{}}\fi%
 \ignorespaces}
 %    \end{macrocode}
-% 
-% The hack for \verb|@bibitem|: It checks whether 
+ 
+% The hack for \verb|\@bibitem|: It checks whether 
 % this reference is part of a block. 
-% If so, collect by \verb|\nc@noitem|, otherwise pass down to \verb|\@bibitem|
+% If so, put separator and collect by \verb|\nc@noitem|.
+% Otherwise put punctuation and pass down to \verb|\@bibitem|.
+% Finally let \verb|\nc@biblast| point to current item, 
+% and fill the punctuation \verb|\nc@nextpunct| for the next entry.
 %    \begin{macrocode}
 \def\nc@bibitem#1{%
   \edef\nc@bibpred{\@ifundefined{nc@p@#1}{}{\nc@getcsname{nc@p@#1}}}%
-  \ifx\nc@biblast\nc@bibpred\nc@noitem{#1}\else\@bibitem{#1}\fi%
+  \ifx\nc@biblast\nc@bibpred\nc@sep\nc@noitem{#1}%
+    \else\nc@nextpunct\@bibitem{#1}\fi%
   \xdef\nc@biblast{#1}%
+  \xdef\nc@nextpunct{\nc@punct}%
 \ignorespaces}
 %    \end{macrocode}
-% 
+ 
 % Similar hack for \verb|@lbibitem|:
 %    \begin{macrocode}
 \def\nc@lbibitem[#1]#2{%
   \edef\nc@bibpred{\@ifundefined{nc@p@#2}{}{\nc@getcsname{nc@p@#2}}}%
-  \ifx\nc@biblast\nc@bibpred\nc@noitem{#2}\else\@lbibitem[#1]{#2}\fi%
+  \ifx\nc@biblast\nc@bibpred\nc@sep\nc@noitem{#2}%
+    \else\nc@nextpunct\@lbibitem[#1]{#2}\fi%
   \xdef\nc@biblast{#2}%
+  \xdef\nc@nextpunct{\nc@punct}%
 \ignorespaces}
 %    \end{macrocode}
 %\iffalse
@@ -563,5 +676,3 @@ and the derived files \texttt{collref.sty} and \texttt{collsamp.tex}
 %\fi
 
 \endinput
-
-%% \CheckSum{3381}
