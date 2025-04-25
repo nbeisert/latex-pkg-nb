@@ -1,4 +1,4 @@
-exframe v3.11
+exframe v3.2
 Copyright 2011-2019 Niklas Beisert
 
 exframe is a LaTeX2e package which provides a general purpose
@@ -16,7 +16,16 @@ The package consists of the files
     exframe.ins  installation file
     exframe.dtx  source file
     exframe.sty  package file
-    exfsmp1.tex  sample latex file
+    exfsamp.tex  standalone sample latex file
+    exfserm.tex  multipart sample main file
+    exfser01.tex multipart sample sheet 1
+    exfser02.tex multipart sample sheet 2
+    exfser03.tex multipart sample sheet 3
+    exfseraa.tex multipart sample unused problems
+    exfserpe.tex multipart sample problem E
+    exfserpf.tex multipart sample problem F
+    exfsermk.sh  multipart sample compile script
+    exfsermk.mak multipart sample makefile
     exframe.pdf  manual
 
 The distribution consists of the files
@@ -25,7 +34,9 @@ README.txt, exframe.ins and exframe.dtx.
 Run "(pdf)latex exframe.dtx" to compile the manual exframe.pdf.
 
 Run "latex exframe.ins" to create the package exframe.sty
-and the sample exfsmp1.tex.
+and the samples consisting of exfsamp.tex, exfserm.tex,
+exfser01.tex, exfser02.tex, exfser03.tex, exfseraa.tex,
+exfserpe.tex, exfserpf.tex, exfsermk.sh, exfsermk.mak.
 Copy the file exframe.sty to an appropriate directory of your LaTeX
 distribution, e.g. texmf-root/tex/latex/exframe.
 

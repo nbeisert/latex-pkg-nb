@@ -15,13 +15,16 @@
 % The Current Maintainer of this work is Niklas Beisert.
 %
 % This work consists of the files exframe.dtx and exframe.ins
-% and the derived files exframe.sty and exfsmp1.tex.
+% and the derived files exframe.sty and exfsamp.tex, exfserm.tex,
+% exfser01.tex, exfser02.tex, exfser03.tex, exfseraa.tex,
+% exfserpe.tex, exfserpf.tex, exfsermk.sh, exfsermk.mak.
 %
-%<package|sample1>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{exframe}[2019/04/15 v3.11 Framework for Exercise Problems]
-%<sample1>\ProvidesFile{exfsmp1.tex}[2019/04/15 v3.11 sample 1 for exframe]
+%<package|samplesingle|samplemultimain>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
+%<package>\ProvidesPackage{exframe}[2019/05/01 v3.2 Framework for Exercise Problems]
+%<samplesingle>\ProvidesFile{exfsamp.tex}[2019/05/01 v3.2 standalone sample for exframe]
+%<samplemultimain>\ProvidesFile{exfserm.tex}[2019/05/01 v3.2 multipart sample for exframe]
 %<*driver>
-\def\thedate#1{2019/04/15}\def\theversion#1{v3.11}
+\def\thedate#1{2019/05/01}\def\theversion#1{v3.2}
 \ProvidesFile{exframe.dtx}[\thedate{} \theversion{} exframe reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -325,17 +328,21 @@ Note that typically solutions are defined at the end of a (sub)problem
 and therefore the choice |here| is similar to (|sub|)|problem|.
 The latter form, however, makes sure that a solution
 does not inherit the margin of the parent block.
+The alternate mode |here*| does not intermediately store
+the solution block content in a token buffer;
+this might resolve some tokenisation issues
+in special circumstances.
 The alternate modes |problem*| and |subproblem*|
 positions the solution \emph{after} the (sub)problem block
 such that it does not inherit any layout,
-but also the no definitions made in the parent block.
+but also no definitions made in the parent block.
 In |manual| mode, all solutions are collected (with appropriate headers)
 until they are output by the directive |\insertsolutions|.
 If no solutions are stored in the buffer
 (or if the mode is not |manual|), |\insertsolutions| has no effect.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\DescribeMacro{\readsolutions}
+\DescribeMacro{\writesolutions}
 Another option to handle solutions is to write them to a file
 for later use.
 Writing to a file is initiated by:
@@ -727,6 +734,11 @@ so that only fractions with powers of two as denominators
 More general fractional decimal numbers such as multiples of 0.2
 will be subject to rounding errors and will not display nicely.
 
+Bonus points can be specified in the format
+|points=|[\textit{regular}][|+|\textit{bonus}].
+By default, such points will be printed as
+[\textit{regular}][|+|\textit{bonus}] where 0 components are omitted.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DescribeMacro{pointsat}
 \DescribeMacro{subpointsat}
@@ -773,6 +785,7 @@ the points can be accessed by:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DescribeMacro{\getsheetpoints}
 \DescribeMacro{\getproblempoints}
+\DescribeMacro{\extractpoints}
 The package allows to read the point totals
 for other sheets and problems:
 %
@@ -785,6 +798,11 @@ for other sheets and problems:
 %
 Here \textit{tag} is the tag assigned to the corresponding sheet or problem,
 see \secref{sec:labels}.
+If bonus points are used, the points will be returned
+in the format [\textit{regular}][|+|\textit{bonus}];
+the components \textit{regular} and \textit{bonus}
+can be extracted from the returned expression
+by |\extractpoints| and |\extractpoints*|, respectively.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DescribeMacro{\awardpoints}
@@ -1085,8 +1103,8 @@ The package defines a couple of standard styles:
 %
 \begin{itemize}
 \item |solutionbelow=|\textit{pos}
-(can take values |here|, |subproblem|, |subproblem*|, |problem|, |problem*|,
-|sheet| and |manual|;
+(can take values |here|, |here*|, |subproblem|, |subproblem*|,
+|problem|, |problem*|, |sheet| and |manual|;
 initially set to |subproblem|) --
 positions the solutions below the indicated blocks;
 see \secref{sec:solutions} for details.
@@ -1347,7 +1365,10 @@ This work has the LPPL maintenance status `maintained'.
 The Current Maintainer of this work is Niklas Beisert.
 
 This work consists of the files |README.txt|, |exframe.ins| and |exframe.dtx|
-as well as the derived files |exframe.sty|, |exfsmp1.tex| and |exframe.pdf|.
+as well as the derived files |exframe.sty|, |exfsamp.tex|, |exfserm.tex|,
+|exfser|\textit{nn}|.tex| (\textit{nn}=|01|, |02|, |03|, |aa|),
+|exfserpe.tex|, |exfserpf.tex|, |exfsermk.sh|, |exfsermk.mak|
+and |exframe.pdf|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Files and Installation}
@@ -1360,7 +1381,16 @@ The package consists of the files:
     |exframe.ins|  & installation file \\
     |exframe.dtx|  & source file \\
     |exframe.sty|  & package file \\
-    |exfsmp1.tex|  & sample file \\
+    |exfsamp.tex|  & sample file \\
+    |exfserm.tex|  & multipart sample main file \\
+    |exfser01.tex| & multipart sample sheet 1 \\
+    |exfser02.tex| & multipart sample sheet 2 \\
+    |exfser03.tex| & multipart sample sheet 3 \\
+    |exfseraa.tex| & multipart sample unused problems \\
+    |exfserpe.tex| & multipart sample problem E \\
+    |exfserpf.tex| & multipart sample problem F \\
+    |exfsermk.sh|  & multipart sample compile script \\
+    |exfsermk.mak| & multipart sample makefile \\
     |exframe.pdf|  & manual
 \end{tabular}
 \end{center}
@@ -1374,7 +1404,9 @@ Run (pdf)\LaTeX{} on |exframe.dtx|
 to compile the manual |exframe.pdf| (this file).
 \item
 Run \LaTeX{} on |exframe.ins| to create the package |exframe.sty|
-and the sample |exfsmp1.tex|.
+and the samples consisting of |exfsamp.tex|, |exfserm.tex|,
+|exfser01.tex|, |exfser02.tex|, |exfser03.tex|, |exfseraa.tex|,
+|exfserpe.tex|, |exfserpf.tex|, |exfsermk.sh|, |exfsermk.mak|.
 Copy the file |exframe.sty| to an appropriate directory of your \LaTeX{}
 distribution, e.g.\ \textit{texmf-root}|/tex/latex/exframe|.
 \end{itemize}
@@ -1414,11 +1446,6 @@ provided by the package \textsf{currfile} (if available and loaded)
 to indicate the \LaTeX{} source file in the generated metapost file.
 Compatibility with the \textsf{currfile} package
 has been tested with v0.7c (2015/04/23).
-\item
-This package cooperates well with the package
-\href{http://ctan.org/pkg/childdoc}{\textsf{childdoc}}
-to produce individual sheets, single problems
-as well as a collection of all exercises.
 \end{itemize}
 
 There are several other \LaTeX{} packages
@@ -1513,23 +1540,32 @@ this is difficult to implement because the problem block
 cannot simply be discarded, but must be scanned very carefully
 for the embedded solution.
 \item
-Provide an example with multiple sheets in the same document
-such that the sheet can be compiled individually or as a collection.
-\item
 Define structures for multiple-choice questions.
-\item
-Option to specify bonus points in parallel to regular points.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v3.2:} 2019/05/01
+
+\begin{itemize}
+\item
+bonus points can be specified as
+|points=|[\textit{regular}][|+|\textit{bonus}]
+\item
+|solutionbelow| mode |here*| added
+for direct processing of the solution block
+\item
+multipart sample added
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v3.11:} 2019/04/15
 
 \begin{itemize}
 \item
-fix interaction with 
+fix interaction with
 package \href{http://ctan.org/pkg/calc}{\textsf{calc}}
 (thanks to Johannes Hahn for bug report)
 \item
@@ -1637,25 +1673,20 @@ dedicated layout and macros for author's exercise sheets
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Sample Files}
-% \label{sec:sample}
-%
-% This section provides examples of how to use
-% some of the \textsf{exframe} features.
-% The resulting layout will be somewhat messy
-% due to a random selection of features\ldots
-%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \subsection{Single Exercise Sheet}
-% \label{sec:sample1}
+% \section{Standalone Sample}
+% \label{sec:samplesingle}
 %\iffalse
-%<*sample1>
+%<*samplesingle>
 %\fi
 %
-% The first (and presently only) example
-% describes a single exercise sheet.
+% This section provides an example of how to use
+% some of the \textsf{exframe} features.
+% The resulting layout will be somewhat messy
+% due to a random selection of features.
+%
+% This example file describes a single exercise sheet.
 % The other sheet of the series would be declared
-% in independent documents.
+% analogously in independent documents.
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Preamble.}
@@ -1733,6 +1764,11 @@ dedicated layout and macros for author's exercise sheets
 \exercisestyle{pointsat=margin}
 \reversemarginpar
 \exerciseconfig{composepointsmargin}[1]{#1p.}
+\exerciseconfig{composepointspairmargin}[2]{
+  \ifdim#2pt=0pt#1p.%
+  \else\ifdim#1pt=0pt+#2p.%
+  \else#1+#2p.%
+  \fi\fi}
 %    \end{macrocode}
 
 % Change the basic font style for all titles to be bold sans-serif:
@@ -1800,7 +1836,7 @@ dedicated layout and macros for author's exercise sheets
 
 % Start a problem with a title:
 %    \begin{macrocode}
-\begin{problem}[title={Sums}]
+\begin{problem}[title={Sums},points=99+4]
 %    \end{macrocode}
 
 % Some introduction to the problem:
@@ -1835,7 +1871,7 @@ The result is
 
 % Another subproblem:
 %    \begin{macrocode}
-\begin{subproblem}[points=97,difficulty=lengthy]
+\begin{subproblem}[points=97+0.5,difficulty=lengthy]
 Compute the sum
 \begin{equation}
 1+2+3+\ldots+98+99+100.
@@ -1852,7 +1888,7 @@ Keep calm and calculate!
 \begin{solution}[author={C.\ F.\ Gau\ss}]
 We use the result $1+2+3=6$ from part \ref{\problemtag-simplesum}
 to jumpstart the calculation. The remaining sums yield
-\awardpoints[1 for each remaining sum]{97}
+\awardpoints*[1 for each remaining sum]{97}
 \begin{equation}
 6+4+5+\ldots+99+100=5050.
 \end{equation}
@@ -1869,7 +1905,7 @@ Therefore the sum equals
 \begin{equation}
 1+2+\ldots+99+100=50\cdot 101=5050.
 \end{equation}
-\textit{Ligget se!} \awardpoints*{97}
+\textit{Ligget se!} \awardpoints{97+0.5}
 \end{solution}
 %    \end{macrocode}
 
@@ -1880,8 +1916,10 @@ You may give the final part a try:
 
 % Final subproblem; this one is optional:
 %    \begin{macrocode}
-\begin{subproblem}[optional={optional}, difficulty={requires inspiration}]
+\begin{subproblem}[optional={optional},
+  difficulty={requires inspiration},points={+3.5}]
 Compute the series
+\showpoints
 \begin{equation}
 1+2+3+\ldots
 \end{equation}
@@ -1890,7 +1928,7 @@ Compute the series
 % Provide a solution:
 %    \begin{macrocode}
 \begin{solution}
-The series is divergent, so the result is $\infty$ \awardpoints*{1}.
+The series is divergent, so the result is $\infty$ \awardpoints{+1}.
 \par
 However, after subtracting the divergent part,
 the result clearly is
@@ -1903,7 +1941,7 @@ where the zeta-function $\zeta(s)$ is defined by
 \end{equation}
 This definition holds only for $s>1$ where the sum is convergent,
 but one can continue the complex analytic function to $s<0$
-\awardpoints*{1.5}.
+\awardpoints{+1.5}.
 \par
 Another way of understanding the result
 is to use the indefinite summation formula
@@ -1920,7 +1958,7 @@ but with the wrong sign
 (in fact, the constant term of an indefinite sum is ambiguous;
 for the claim we merely set $j=0$
 in the expression which holds for others values of $j$)
-\awardpoints*{0.5}.
+\awardpoints{+0.5}.
 In order to understand the sign,
 we propose that the above formula describes the regularised result
 for the sum with limits $+\infty$ and $n$
@@ -1931,7 +1969,7 @@ for the sum with limits $+\infty$ and $n$
 \end{equation}
 Then we flip the summation limits of the desired sum
 to bring it into the above form
-\awardpoints*{0.5}
+\awardpoints{+0.5}
 \begin{equation}
 \sum_{k=1}^\infty k^s
 = -\sum_{k=\infty}^0 k^s
@@ -1983,7 +2021,958 @@ This is beyond the scope of this example.
 \end{document}
 %    \end{macrocode}
 %\iffalse
-%</sample1>
+%</samplesingle>
+%\fi
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Multipart Sample}
+% \label{sec:samplemulti}
+%
+% The second example describes a series of exercise sheets
+% which can be compiled as a collection or as individual sheets.
+% This example describes a versatile setup
+% with several convenient features;
+% most of these features can be adjusted or removed easily as they
+% mostly enhance the setup and do not interact with each other strongly.
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Main File}
+% \label{sec:samplemultimain}
+%\iffalse
+%<*samplemultimain>
+%\fi
+%
+% The main source file is called |exfserm.tex|.
+% It is referenced at several places within the setup,
+% and when changing the name they need to be adjusted accordingly.
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{childdoc Mechanism.}
+%
+% The setup uses the package \textsf{childdoc} to allow compilation
+% of the series as a whole or in parts and with various sets of options:
+%    \begin{macrocode}
+\input{childdoc.def}
+\childdocmain{exfserm}
+%    \end{macrocode}
+% The parameter of |\childdocmain| must match the main file name |exfserm|.
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Compilation Switches.}
+%
+% Define compilation switches and declare their default settings.
+% |\printsol| controls whether solutions should be printed or not;
+% by default solutions are activated for compilation of a part,
+% but not for the complete document.
+% |\draftver| controls whether the final version of
+% the document is to be compiled;
+% concretely this affects the compilations of metapost figures, see below:
+%    \begin{macrocode}
+\providecommand{\draftver}{y}
+\ifchilddoc
+\providecommand{\printsol}{y}
+\else
+\providecommand{\printsol}{n}
+\fi
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Preamble.}
+%
+% Standard document class:
+%    \begin{macrocode}
+\documentclass[12pt]{article}
+%    \end{macrocode}
+
+%    \begin{macrocode}
+% \textsf{graphicx} package to display license logo:
+\RequirePackage{graphicx}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{hyperref Package.}
+%
+% Use the \textsf{hyperref} package.
+% Declare some options, e.g.\ use bookmarks only for complete document:
+%    \begin{macrocode}
+\PassOptionsToPackage{bookmarks=\ifchilddoc false\else true\fi}{hyperref}
+\PassOptionsToPackage{bookmarksopen=true}{hyperref}
+\RequirePackage{hyperref}
+%    \end{macrocode}
+% Use the \textsf{hyperxmp} package for inclusion of
+% copyright metadata in the compiled pdf files:
+%    \begin{macrocode}
+\IfFileExists{hyperxmp.sty}{\RequirePackage{hyperxmp}}{}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{exframe Package.}
+%
+% Invoke \textsf{exframe} with extended data and styles:
+%    \begin{macrocode}
+\RequirePackage[extdata,extstyle]{exframe}
+%    \end{macrocode}
+
+% Set solutions switch and declare two-sided layout only
+% if no solutions are printed:
+%    \begin{macrocode}
+\if\printsol n
+\exercisesetup{solutions=false}
+\exercisesetup{twoside=true}
+\else
+\exercisesetup{solutions=true}
+\exercisesetup{twoside=false}
+\fi
+%    \end{macrocode}
+
+% Might want to display some metadata (only for partial compile):
+%    \begin{macrocode}
+%%\if\printsol n\else\showprobleminfo{author,source,recycle}\fi
+%    \end{macrocode}
+
+% Set some options. Automatically assign labels to problems.
+% Include sheets and problems in table of contents.
+% Separate solutions by horizontal rules.
+% Count problems, equations and pages by sheet
+% (unless compiling single problem).
+% Collect solutions below each problem.
+% Write pdf metadata for sheet when compiling single sheet.
+%    \begin{macrocode}
+\exercisesetup{autolabelproblem}
+\exercisestyle{contents,solutionsep}
+\ifchilddocmanual\else
+\exercisestyle{pagebysheet,problembysheet,equationbysheet,sheetequation}
+\fi
+\exercisestyle{solutionbelow={problem}}
+\ifchilddoc\ifchilddocmanual\else\exercisesetup{pdfdata=sheet}\fi\fi
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Layout Definitions.}
+%
+% Set page dimensions and layout:
+%    \begin{macrocode}
+\RequirePackage[a4paper,margin=2.5cm]{geometry}
+\pagestyle{plain}
+%    \end{macrocode}
+% Remove paragraph indentation:
+%    \begin{macrocode}
+\setlength\parindent{0pt}
+\setlength\parskip{\smallskipamount}
+%    \end{macrocode}
+% Show overfull lines:
+%    \begin{macrocode}
+\setlength\overfullrule{5pt}
+%    \end{macrocode}
+% Define turn page over mark; hide when printing solutions:
+%    \begin{macrocode}
+\newcommand{\turnover}{\ifsolutions\else\vfill%
+  \hfill{\mathversion{bold}$\longrightarrow$}\newpage\fi}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Sheet Banner.}
+%
+% Use standard sheet banner;
+% show sheet |editdate| below banner (if declared);
+% when compiling single sheet, display sheet due date instead:
+%    \begin{macrocode}
+\exercisestyle{plainheader}
+\exerciseconfig{composeheaderbelowright}
+ {\sheetdataempty{editdate}{}{version: \getsheetdata{editdate}}}
+\ifchilddoc\ifsolutions\else
+ \exerciseconfig{composeheaderbelowright}
+  {\sheetdataempty{due}{}{due: \getsheetdata{due}}}
+\fi\fi
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Lorem.}
+%
+% Define a macro |\lorem| to write out some paragraph of text
+% for the example:
+%    \begin{macrocode}
+\def\lorem{Lorem ipsum dolor sit amet, consectetur adipisici elit,
+  sed eiusmod tempor incidunt ut labore et dolore magna aliqua.
+  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+  nisi ut aliquid ex ea commodi consequat.
+  Quis aute iure reprehenderit in voluptate velit esse
+  cillum dolore eu fugiat nulla pariatur.
+  Excepteur sint obcaecat cupiditat non proident,
+  sunt in culpa qui officia deserunt mollit anim id est laborum.\par}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{metapost Setup.}
+%
+% Use package \textsf{mpostinl} (if available)
+% to include some metapost figures within the source of the problems:
+%    \begin{macrocode}
+\IfFileExists{mpostinl.sty}{\RequirePackage{mpostinl}}{}
+\ifdefined\mpostsetup
+%    \end{macrocode}
+
+% Setup \textsf{mpostinl}.
+% Use checksums to invoke metapost only when figures change.
+% Process all figures individually and immediately when in
+% draft mode (avoids a second compilation pass).
+% Number figures within sheet to provide a stable numbering
+% upon insertion/deletion of new figures or partial compilation.
+% Do not warn about unused figures when preparing without solutions
+% (figures for solutions should be declared outside |solution| blocks):
+%    \begin{macrocode}
+\mpostsetup{checksum}
+\if\draftver y\mpostsetup{now,nowall}\fi
+\ifchilddocmanual\else\mpostsetup{numberwithin={sheet}}\fi
+\ifsolutions\else\mpostsetup{warnunused=false}\fi
+%    \end{macrocode}
+
+% Global metapost definitions.
+% Define some latex macro to demonstrate
+% usage of latex for typesetting labels.
+% Define some global metapost variables,
+% |paths| is an array of path variables,
+% |xu| serves as a length unit to
+% scale individual figures
+% (use |interim xu:=...;| to set scale for local figure only):
+%    \begin{macrocode}
+\mpostsetup{globaldef=true}
+\begin{mposttex}
+\def\figure{figure}
+\end{mposttex}
+\begin{mpostdef}
+path paths[];
+newinternal numeric xu;
+xu:=1cm;
+\end{mpostdef}
+\mpostsetup{globaldef=false}
+%    \end{macrocode}
+
+% Close optional \textsf{mpostinl} processing:
+%    \begin{macrocode}
+\fi
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Document Data.}
+%
+% Set document data for series of problem sheets:
+%    \begin{macrocode}
+\exercisedata{course={exframe package samples}}
+\exercisedata{instructor={N.\ Beisert}}
+\exercisedata{institution={exframe academy}}
+\exercisedata{period={spring 2019}}
+\exercisedata{date={2019}}
+%    \end{macrocode}
+
+% Assemble some entries from given data:
+%    \begin{macrocode}
+\exercisedata{material={\ifsolutions\getexerciseconfig{termsolutions}%
+  \else\getexerciseconfig{termsheets}\fi}}
+\exerciseconfig{composetitlesheet}[2]{\exerciseifempty{#2}%
+  {\ifsolutions\getexerciseconfig{termsolutions}\else%
+   \getexerciseconfig{termsheet}\fi\ #1}%
+  {\ifsolutions\getexerciseconfig{termsolutions}\fi\ #2}}
+\exerciseconfig{composemetasheet}[2]{\if\draftver yDRAFT: \fi%
+  \getexercisedata{course},
+  \getexerciseconfig{composetitlesheet}{#1}{#2}}
+%    \end{macrocode}
+
+% Set general purpose metadata:
+%    \begin{macrocode}
+\exercisedata{title={\if\draftver yDRAFT: \fi%
+  \getexercisedata{course}, \getexercisedata{material}}}
+\exercisedata{author={Niklas Beisert, \getexercisedata{institution}}}
+\exercisedata{subject={lecture series at \getexercisedata{institution},
+  \getexercisedata{period}}}
+%    \end{macrocode}
+
+% Redefine some terms:
+%    \begin{macrocode}
+\exerciseconfig{termsheet}{sheet}
+\exerciseconfig{termsheets}{sample sheets}
+\exerciseconfig{termsolution}{Solution}
+\exerciseconfig{termsolutions}{solutions}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{License.}
+%
+% It is always useful to specify a copyright line
+% and a license for the document.
+% Define some restrictive default text.
+%    \begin{macrocode}
+\def\copyrightmessage
+  {This document as well as its parts is protected by copyright.}
+\def\licensemessage
+  {Reproduction of any part of this work in any form
+  without prior written consent of \getexercisedata{institution}
+  is not permissible.}
+%    \end{macrocode}
+
+% Apply Creative Commons BY-SA license
+% under certain conditions (no solutions, final version):
+%    \begin{macrocode}
+\ifsolutions\else\if\draftver y\else
+\def\licensecctype{by-sa}
+\def\licenseccname{Attribution-ShareAlike \licenseccver{} International}
+\fi\fi
+%    \end{macrocode}
+
+% Write applicable Creative Commons license information.
+% Use Creative Commons logos included in package \textsf{doclicense}:
+%    \begin{macrocode}
+\ifdefined\licensecctype
+\ifdefined\licenseccver\else\def\licenseccver{4.0}\fi
+\def\licenseurl
+  {https://creativecommons.org/licenses/\licensecctype/\licenseccver}
+\def\licensemessage{\texorpdfstring
+  {This work is licensed under the Creative Commons ``\licenseccname'' License
+  (CC \MakeUppercase{\licensecctype} \licenseccver).\par
+  \IfFileExists{doclicense.sty}{
+   \begin{center}\includegraphics{doclicense-CC-\licensecctype}\end{center}}{}
+  To view a copy of this license, visit: \url{\licenseurl}}
+  {This work is licensed under the Creative Commons \licenseccname{} License.}}
+\fi
+%    \end{macrocode}
+
+% Write copyright and license as pdf metadata
+% (using package \textsf{hyperxmp} if available):
+%    \begin{macrocode}
+\ifdefined\xmptilde
+\hypersetup{pdfcopyright={Copyright \getexercisedata{date}
+  \getexercisedata{author}. \copyrightmessage{} \licensemessage}}
+\ifdefined\sourceurl\hypersetup{pdflicenseurl={\sourceurl}}\else
+\ifdefined\licenseurl\hypersetup{pdflicenseurl={\licenseurl}}\fi\fi
+\ifdefined\XMPLangAlt
+\hypersetup{pdfsource={}}
+\XMPLangAlt{en}{pdfcopyright={Copyright \getexercisedata{date}
+  \getexercisedata{author}. \copyrightmessage{} \licensemessage}}
+\fi
+\fi
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Body.}
+%
+% Start document body:
+%    \begin{macrocode}
+\begin{document}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Single Problem Display.}
+%
+% The following code handles the compilation
+% of individual problems from their own source file.
+% Make sure to leave the conditional before issuing |\end{document}|:
+%    \begin{macrocode}
+\def\tmp{}
+\ifchilddocmanual
+\def\tmp{\end{document}}
+\input{\childdocname}
+\fi\tmp
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Frontmatter.}
+%
+% Do not print frontmatter for individual sheets.
+% Define a plain page counter for frontmatter:
+%    \begin{macrocode}
+\setcounter{section}{-1}
+\begingroup\ifchilddoc\else
+\renewcommand{\thepage}{\arabic{page}}
+%    \end{macrocode}
+
+% Prepare a title page to display some relevant data:
+%    \begin{macrocode}
+\pdfbookmark[1]{Title Page}{title}
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+\begingroup\bfseries\LARGE\getexercisedata{course}\par\endgroup
+\vspace{0.5cm}
+\begingroup\large\getexercisedata{material}\par\endgroup
+\vspace{0.5cm}
+\begingroup\large\getexercisedata{institution},
+  \getexercisedata{period}\par\endgroup
+\vspace{2cm}
+\begingroup\scshape\Large\getexercisedata{instructor}\par\endgroup
+\end{center}
+\vspace*{\fill}\vspace*{\fill}
+\newpage
+%    \end{macrocode}
+
+% Prepare a copyright and license page using data specified above:
+%    \begin{macrocode}
+\phantomsection\pdfbookmark[1]{Copyright}{copyright}
+\thispagestyle{empty}
+\vspace*{\fill}\vspace*{\fill}
+\begin{center}
+\begin{minipage}{11cm}\raggedright
+{\copyright} \getexercisedata{date} \getexercisedata{author}
+\par\medskip
+\copyrightmessage{}
+\licensemessage
+\ifdefined\sourcemessage\par\medskip\sourcemessage\fi
+\ifdefined\attributionmessage\par\medskip\attributionmessage\fi
+\end{minipage}\end{center}
+\vspace*{\fill}\vspace*{\fill}\vspace*{\fill}
+\newpage
+%    \end{macrocode}
+
+% Print table of contents:
+%    \begin{macrocode}
+\makeatletter\renewcommand\@pnumwidth{2.4em}\makeatother
+\setcounter{tocdepth}{2}
+\phantomsection\pdfbookmark[1]{Contents}{contents}
+{\parskip0pt\tableofcontents}
+\exercisecleardoublepage\setcounter{page}{1}
+%    \end{macrocode}
+
+% End of frontmatter:
+%    \begin{macrocode}
+\fi\endgroup
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Include Sheets.}
+%
+% Include problem sheets:
+%    \begin{macrocode}
+\include{exfser01}
+\include{exfser02}
+\include{exfser03}
+%    \end{macrocode}
+
+% Include sheet to collect unused problems
+% (only process for individual sheets, i.e.\ itself):
+%    \begin{macrocode}
+\def\jobnameunused{exfseraa}
+\ifx\childdocname\jobnameunused\include{\jobnameunused}\fi
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{End.}
+%
+% End of document body:
+%    \begin{macrocode}
+\end{document}
+%    \end{macrocode}
+%
+%\iffalse
+%</samplemultimain>
+%\fi
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Sheet File}
+% \label{sec:samplemultisheets}
+%\iffalse
+%<*samplemultisheet1|samplemultisheet2|samplemultisheet3|samplemultisheeta>
+%\fi
+%
+% Provide some source files
+% |exfser01.tex|, |exfser02.tex|, |exfser03.tex|, |exfseraa.tex|
+% for problem sheets.
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{childdoc Mechanism.}
+%
+% Instruct the package \textsf{childdoc} to compile
+% only the present sheet if source is compiled by latex:
+%    \begin{macrocode}
+%%\providecommand{\printsol}{n}
+\input{childdoc.def}
+\childdocof{exfserm}
+%    \end{macrocode}
+%\iffalse
+%</samplemultisheet1|samplemultisheet2|samplemultisheet3|samplemultisheeta>
+%<samplemultiprobleme|samplemultiproblemf>%%\providecommand{\printsol}{n}
+%<samplemultiprobleme|samplemultiproblemf>\input{childdoc.def}
+%<samplemultiprobleme|samplemultiproblemf>\childdocby{exfserm}
+%<*samplemultisheet1>
+%\fi
+% The parameter of |\childdocof| must match the main file name |exfserm|.
+% Uncommenting the commented line suppressed printing of the solution.
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Sheet Environment.}
+%
+% Declare a sheet with intended due date:
+%    \begin{macrocode}
+\begin{sheet}[due={2019-04-29}]
+%    \end{macrocode}
+% Adjust due date for each sheet.
+% For sheet containing unused problems |exfseraa.tex|,
+% declare a sheet |title={unused problems}| instead of due date.
+%\iffalse
+%</samplemultisheet1>
+%<samplemultisheet2>\begin{sheet}[due={2019-05-06}]
+%<samplemultisheet3>\begin{sheet}[due={2019-05-13}]
+%<samplemultisheeta>\begin{sheet}[title={unused problems}]
+%<*samplemultisheet1>
+%\fi
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Problems.}
+%
+% Start a problem:
+%    \begin{macrocode}
+\begin{problem}[title={Sample A}]
+%    \end{macrocode}
+%
+%\iffalse
+%</samplemultisheet1>
+%<samplemultisheet2>\begin{problem}[title={Sample C}]
+%<samplemultisheet3>\input{exfserpe}
+%<samplemultisheeta>\begin{problem}[title={Sample X}]
+%<samplemultiprobleme>\begin{problem}[title={Sample E}]
+%<*samplemultisheet1|samplemultisheet2|samplemultisheeta|samplemultiprobleme>
+%\fi
+
+% Let us declare a figure using \textsf{mpostinl} (if available).
+% Denote it by the label \textit{tag}|-fig|,
+% where \textit{tag} is the tag of the problem
+% (in order to avoid potential conflicts with other problems;
+% \textit{tag} is assigned automatically or by specifying
+% the option |tag| for the |problem| environment):
+%    \begin{macrocode}
+\ifdefined\mpostuse
+\begin{mpostfig}[label={\problemtag-fig}]
+interim xu:=1.5cm;
+paths[1]:=fullcircle scaled 1xu;
+fill paths[1] withgreyscale 0.7;
+draw paths[1] withpen pencircle scaled 1pt;
+label(btex \figure etex, center(paths[1]));
+\end{mpostfig}
+\fi
+%    \end{macrocode}
+
+% Write a problem body with figure, some subproblems and a solution:
+%    \begin{macrocode}
+\lorem
+
+\begin{subproblem}
+\lorem
+\begin{center}
+\ifdefined\mpostuse\mpostuse{\problemtag-fig}\else figure\fi
+\end{center}
+\lorem
+\end{subproblem}
+
+\begin{solution}
+\lorem
+\end{solution}
+
+\begin{subproblem}
+\lorem
+\end{subproblem}
+
+\begin{solution}
+\lorem
+\end{solution}
+
+\lorem
+
+\begin{subproblem}
+\lorem
+\end{subproblem}
+
+\begin{solution}
+\lorem
+\end{solution}
+%    \end{macrocode}
+
+% End the problem:
+%    \begin{macrocode}
+\end{problem}
+%    \end{macrocode}
+%\iffalse
+%</samplemultisheet1|samplemultisheet2|samplemultisheeta|samplemultiprobleme>
+%<*samplemultisheet1|samplemultisheet2|samplemultisheet3|samplemultisheeta>
+%\fi
+
+% Start new page:
+%    \begin{macrocode}
+\turnover
+%    \end{macrocode}
+
+%\iffalse
+%</samplemultisheet1|samplemultisheet2|samplemultisheet3|samplemultisheeta>
+%<*samplemultisheet1>
+%\fi
+% Write a second problem to accompany the first one:
+%    \begin{macrocode}
+\begin{problem}[title={Sample B}]
+%    \end{macrocode}
+%
+%\iffalse
+%</samplemultisheet1>
+%<samplemultisheet2>\begin{problem}[title={Sample D}]
+%<samplemultisheet3>\input{exfserpf}
+%<samplemultisheeta>\begin{problem}[title={Sample Y}]
+%<samplemultiproblemf>\begin{problem}[title={Sample F}]
+%<*samplemultisheet1|samplemultisheet2|samplemultisheeta|samplemultiproblemf>
+%\fi
+
+% Problem body without a figure;
+% this time the |solution| environments are
+% included in the |subproblem| blocks:
+%    \begin{macrocode}
+\lorem
+
+\begin{subproblem}
+\lorem
+\begin{solution}
+\lorem
+\end{solution}
+\end{subproblem}
+
+\begin{subproblem}
+\lorem
+\begin{solution}
+\lorem
+\end{solution}
+\end{subproblem}
+%    \end{macrocode}
+
+% End the problem:
+%    \begin{macrocode}
+\end{problem}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{End Sheet.}
+%\iffalse
+%</samplemultisheet1|samplemultisheet2|samplemultisheeta|samplemultiproblemf>
+%<*samplemultisheet1|samplemultisheet2|samplemultisheet3|samplemultisheeta>
+%\fi
+% End the sheet:
+%    \begin{macrocode}
+\end{sheet}
+%    \end{macrocode}
+
+%\iffalse
+%</samplemultisheet1|samplemultisheet2|samplemultisheet3|samplemultisheeta>
+%\fi
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Individual Problem Files}
+% \label{sec:samplemultisheet3}
+%\iffalse
+%<*discard>
+%\fi
+%
+% It may be more convenient to define each problem in an individual file,
+% so that a sheet can be composed by including the appropriate
+% problem files.
+% In such a setup, the \textsf{childdoc} mechanism
+% allows to compile each problem individually.
+%
+% To that end, prepare a file |exfserp|\textit{nn}|.tex|
+% containing the problem block |\begin{problem}| \ldots |\end{problem}|.
+% This file should start with:
+%    \begin{macrocode}
+%%\providecommand{\printsol}{n}
+\input{childdoc.def}
+\childdocby{exfserm}
+%    \end{macrocode}
+% and end with |\endinput|.
+% Then compose the problem sheet
+% by including the appropriate set of problem files
+% via |\input{exfserp|\textit{nn}|}|.
+%
+% In the example, a sheet file |exfser03.tex|
+% includes two problem files |exfserpe.tex| and |exfserpf.tex|.
+%
+%\iffalse
+%</discard>
+%\fi
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Make Scripts}
+% \label{sec:samplemultimake}
+%\iffalse
+%<*samplemultiscript>
+%\fi
+%
+% The setup allows the compilation in various modes for editing purposes.
+% In order to generate and update a complete set of documents for distribution
+% (all individual sheets and a collection of sheets;
+% with and without solutions),
+% it makes sense to use the software development utility |make|.
+% The compilation of individual components is simplified
+% by a |bash| shell script.
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Compile Script.}
+%
+% The |bash| shell script |exfsermk.sh| compiles one part of
+% the collection of problem sheets in a given mode.
+%
+% Shebang for |bash| script:
+%    \begin{macrocode}
+#!/bin/bash
+%    \end{macrocode}
+
+% Display usage:
+%    \begin{macrocode}
+if [ -z $1 ]
+then
+  echo "Usage:
+  $0 number [version]
+    number: number of sheet, 0 for combined document
+    version: 1 for problems, 2 for solutions
+  $0 filename
+    filename: target file to be compiled"
+  exit 1
+fi
+%    \end{macrocode}
+%\iffalse$\fi
+
+% Configure and declare variables with default values.
+% |num| takes the sheet number;
+% |ver| takes the compile mode;
+% |main| defines the name of the main source file;
+% |source|\textit{nn} defines the name of the sheet source file;
+% |target1|[\textit{nn}] defines the target file name in mode 1;
+% |target2|[\textit{nn}] defines the target file name in mode 2;
+% |sheets| is a list of allowable sheet identifiers \textit{nn}:
+%    \begin{macrocode}
+num="$1"
+ver="$2"
+main="exfserm"
+source="exfser"
+target1="Problems"
+target2="Solutions"
+sheets="01 02 03 aa"
+nl=$'\n'
+sheetokay=""
+make=".pdf"
+%    \end{macrocode}
+%\iffalse$\fi
+
+% Check if the parameter matches any of the acceptable output file names:
+%    \begin{macrocode}
+for v in $target1 $target2
+do
+  if [[ $num =~ ^$v ]]
+  then
+    ver=$v
+    num=${num#$v}
+    if [[ $num =~ ^.*\.tex$ ]]; then make=".tex"; fi
+    num=${num%%.*}
+  fi
+done
+%    \end{macrocode}
+
+% Ensure that |num| is a two-digit number, prepend `0' otherwise:
+%    \begin{macrocode}
+if [[ $num =~ ^[0-9]$ ]]; then num="0$num"; fi
+if [[ $num == "00" ]]; then num=""; fi
+%    \end{macrocode}
+
+% Check whether |num| is acceptable:
+%    \begin{macrocode}
+if [[ -z $num ]]; then sheetokay="okay"; fi
+for v in $sheets
+do
+  if [[ "$num" == "$v" ]]; then sheetokay="okay"; fi
+done
+%    \end{macrocode}
+
+% Otherwise display error message and exit:
+%    \begin{macrocode}
+if [[ -z $sheetokay ]]
+then
+  echo "error: unknown sheet"
+  exit 1
+fi
+%    \end{macrocode}
+%\iffalse$\fi
+
+% Function to compile a component.
+% Set up \textsf{childdoc} mechanism according to desired component.
+% Compile two passes, first in |-draftmode|.
+% Suppress messages by |mpost|.
+% Display warning messages in log file:
+%    \begin{macrocode}
+function docompile
+{
+  if [[ -z $num ]]; then job=$main; else job=$source$num; fi
+  for par in -draftmode ""
+  do
+    body="\\def\\jobname{$job}\\def\\draftver{n}\\def\\printsol{$sol}"
+    body="$body\\input{childdoc.def}"
+    if [[ -z $num ]]
+    then
+      body="$body\\childdocforward{$main}"
+    else
+      body="$body\\childdocforward[$main]{$source$num}"
+    fi
+    drop="This is|entering extended mode|\\write18"
+    drop="$drop|Preloading the plain mem file|mpost\.mp|plain\.mp"
+    pdflatex -shell-escape -interaction=batchmode $par \
+      -jobname "$target$num" "$body" | grep -vE "$drop"
+  done
+  grep -E "Warning|Error|Undefined|Overfull|Underfull" "$target$num.log"
+}
+%    \end{macrocode}
+%\iffalse$\fi
+
+% Function to generate a \textsf{childdoc} compile file with specific options:
+%    \begin{macrocode}
+function writesource
+{
+  body="\\def\\draftver{n}$nl\\def\\printsol{$sol}$nl"
+  body="$body\\input{childdoc.def}$nl"
+  if [[ -z $num ]]
+  then
+    body="$body\\childdocforward{$main}"
+  else
+    body="$body\\childdocforwardprefix[$main]{$target}{$source}"
+  fi
+  echo "$body" > $target$num.tex
+}
+%    \end{macrocode}
+
+% Configure variables and select appropriate function for intended task:
+%    \begin{macrocode}
+function process
+{
+  target=$1
+  sol=$2
+  if [[ "$make" == ".pdf" ]]; then docompile; else writesource; fi
+}
+%    \end{macrocode}
+%\iffalse$\fi
+
+% Translate versions to parameter values:
+%    \begin{macrocode}
+if [[ -z $ver || "$ver" == "$target1" || $ver = 1 ]]
+then
+  process $target1 n
+fi
+if [[ -z $ver || "$ver" == "$target2" || $ver = 2 ]]
+then
+  process $target2 y
+fi
+%    \end{macrocode}
+
+% Finish with blank line:
+%    \begin{macrocode}
+echo
+%    \end{macrocode}
+%
+%\iffalse
+%</samplemultiscript>
+%\fi
+%
+%\iffalse
+%<*samplemultimake>
+%\fi
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Makefile.}
+%
+% \catcode9=13\def^^I{~~~~~~~~}
+%
+% Define a make file |exfsermk.mak| for the project.
+% The compilation is then started by
+% |make -f exfsermk.mak| \ldots.
+% More conveniently, in a single-project setup within the directory,
+% this file would be called |Makefile| in which case it suffices
+% to just run |make| \ldots.
+%
+% Configuration definitions:
+%    \begin{macrocode}
+MAIN = exfserm
+SOURCE = exfser
+PROBLEM = exfserp
+SCRIPT = exfsermk.sh
+MAKEFILE = exfsermk.mak
+TARGETLIST = Problems Solutions
+SHEETNUM = 01 02 03 aa
+PREREQS = $(MAIN).tex
+SOURCES = $(SHEETNUM:%=$(SOURCE)%.tex)
+SHEETS = $(foreach trg,$(TARGETLIST),$(trg).pdf $(SHEETNUM:%=$(trg)%.pdf))
+TARGETS = $(foreach trg,$(TARGETLIST),$(trg).pdf)
+GENFILES = $(foreach trg,$(TARGETLIST),$(trg).tex $(SHEETNUM:%=$(trg)%.tex))
+BAKFILES = $(SOURCES) $(MAIN).tex $(MAKEFILE) $(SCRIPT) $(PROBLEM)*
+%    \end{macrocode}
+%\iffalse$\fi
+
+% Define some abstract targets;
+% |default| is the default target when no parameters are given:
+%    \begin{macrocode}
+default: sheets ;
+sheets: $(SHEETS) ;
+main: $(TARGETS) ;
+sheet%: $(foreach trg,$(TARGETLIST),$(trg)%.pdf) ;
+all: main sheets ;
+sources: $(GENFILES) ;
+%    \end{macrocode}
+%\iffalse$\fi
+
+% Compile particular files via |exfsermk.sh| bash script.
+% Note that command lines have to start with a tab character
+% (represented by 8 spaces here):
+%    \begin{macrocode}
+$(TARGETS): $(SOURCES) $(PREREQS)
+	bash ./$(SCRIPT) $@
+$(word 1,$(TARGETLIST))%.pdf: $(SOURCE)%.tex $(PREREQS)
+	bash ./$(SCRIPT) $@
+$(word 2,$(TARGETLIST))%.pdf: $(SOURCE)%.tex $(PREREQS)
+	bash ./$(SCRIPT) $@
+$(GENFILES):
+	bash ./$(SCRIPT) $@
+%    \end{macrocode}
+%\iffalse$\fi
+
+% Touch main file for recompile:
+%    \begin{macrocode}
+touch:
+	touch $(MAIN).tex
+%    \end{macrocode}
+%\iffalse$\fi
+% Define |clean| target to remove all intermediate compilation files:
+%    \begin{macrocode}
+clean:
+	rm -f $(SHEETNUM:%=$(SOURCE)%.aux)
+	rm -f $(SHEETNUM:%=$(SOURCE)%.log)
+	rm -f $(foreach trg,$(TARGETLIST),$(SHEETNUM:%=$(trg)%.log) $(trg).log)
+	rm -f $(patsubst %,$(MAIN)%,.aux .log .out .toc)
+	rm -f $(patsubst %,$(MAIN)%,.mp .mpx -*.mps -tmp.log -tmp.mp -tmp.mpx)
+	rm -f mpxerr.tex mpxerr.log mpxerr.dvi texput.log
+	rm -f $(patsubst %,$(PROBLEM)*%,.aux .log .mp .mpx -*.mps)
+	rm -f $(patsubst %,$(PROBLEM)*%,-tmp.log -tmp.mp -tmp.mpx)
+%    \end{macrocode}
+%\iffalse$\fi
+% Define |clean-bak| target to remove all backup files
+% ending in `|~|' or `|.bak|':
+%    \begin{macrocode}
+clean-bak:
+	rm -f $(BAKFILES:%=%~) $(BAKFILES:%=%.bak)
+%    \end{macrocode}
+% Define |clean-all| target to remove all generated files
+% for a clean source directory:
+%    \begin{macrocode}
+clean-all:  clean
+	rm -f $(SHEETS) $(TARGETS)
+	rm -f $(SHEETNUM:%=$(SOURCE)%.pdf) $(MAIN).pdf
+	rm -f $(foreach trg,$(TARGETLIST),$(SHEETNUM:%=$(trg)%.tex) $(trg).tex)
+	rm -f $(PROBLEM)*.pdf
+%    \end{macrocode}
+%\iffalse$\fi
+% \catcode9=9
+%
+%\iffalse
+%</samplemultimake>
 %\fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2058,18 +3047,20 @@ This is beyond the scope of this example.
 \long\def\exf@prepend@def#1#2{\exf@exptwo\exf@prepend@switch{#1}{\def#1}{#2}}
 %    \end{macrocode}
 
-% \macro{\exf@gaddtolength}
-% Globally add to length:
-%    \begin{macrocode}
-\def\exf@gaddtolength#1#2{\global\advance#1 #2\relax}
-%    \end{macrocode}
-
 % \macro{\exf@expsetkeys}
 % A version of |\setkeys| from \textsf{xkeyval} which expands first:
 %    \begin{macrocode}
 \newcommand{\exf@expsetkeys}[2]{\edef\exf@tmp{#2}%
   \exf@exparg{\setkeys{#1}}{\exf@tmp}}
 %    \end{macrocode}
+
+% \macro{\exf@isif}
+% Execute |#3| if content of macro |#1| equals |#2|:
+%    \begin{macrocode}
+\newcommand{\exf@ifis}[3]%
+  {\def\exf@tmp{#2}\ifx#1\exf@tmp#3\fi}
+%    \end{macrocode}
+
 
 % \macro{\exf@href}
 % Display text with hyperreference passed by macro |#1|
@@ -2523,7 +3514,7 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
 \exerciseconfig{composetitlesubproblem}[1]{#1}
 %    \end{macrocode}
-% Compose solution item; argument is problem or subproblem number:
+% Compose solution item; arguments are problem and subproblem number:
 %    \begin{macrocode}
 \exerciseconfig{composeitemsolution}[2]{#1.}
 \exerciseconfig{composeitemsolutionsub}[2]{#2}
@@ -2574,7 +3565,7 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % Compose label:
 %    \begin{macrocode}
-\exerciseconfig{composeitemsolution}[2]{#1#2}
+\exerciseconfig{composeitemsolutionlabel}[2]{#1#2}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2619,6 +3610,44 @@ This is beyond the scope of this example.
   {(\getexerciseconfig{composepoints}{#1}*\exerciseifnotempty{#2}{; #2})}
 %    \end{macrocode}
 
+% Compose pairs of points; omit 0 components:
+%    \begin{macrocode}
+\exerciseconfig{composepointspair}[2]{%
+  \ifdim#2pt=0pt%
+   \getexerciseconfig{composepoints}{#1}%
+  \else\ifdim#1pt=0pt%
+   +\getexerciseconfig{composepoints}{#2}%
+  \else%
+   \getexerciseconfig{composepointsnum}{#1}+%
+   \getexerciseconfig{composepointsnum}{#2}~%
+   \getexerciseconfig{termpoints}%
+  \fi\fi}
+%    \end{macrocode}
+% Compose pairs of points for designated use;
+% recycle plain definition if no bonus points given:
+%    \begin{macrocode}
+\exerciseconfig{composepointspairbody}[2]{%
+  \ifdim#2pt=0pt\getexerciseconfig{composepointsbody}{#1}\else%
+  (\getexerciseconfig{composepointspair}{#1}{#2})\fi}
+\exerciseconfig{composepointspairstart}[2]{%
+  \ifdim#2pt=0pt\getexerciseconfig{composepointsstart}{#1}\else%
+  (\getexerciseconfig{composepointspair}{#1}{#2})\fi}
+\exerciseconfig{composepointspairmargin}[2]{%
+  \ifdim#2pt=0pt\getexerciseconfig{composepointsmargin}{#1}\else%
+  \getexerciseconfig{composepointspair}{#1}{#2}\fi}
+\exerciseconfig{composepointspairsheet}[2]{%
+  \ifdim#2pt=0pt\getexerciseconfig{composepointssheet}{#1}\else%
+  \getexerciseconfig{composepointspair}{#1}{#2}\fi}
+\exerciseconfig{composepointspairaward}[3]{%
+  \ifdim#2pt=0pt\getexerciseconfig{composepointsaward}{#1}{#3}\else%
+  (\getexerciseconfig{composepointspair}{#1}{#2}%
+   \exerciseifnotempty{#3}{; #3})\fi}
+\exerciseconfig{composepointspairawardalt}[3]{%
+  \ifdim#2pt=0pt\getexerciseconfig{composepointsawardalt}{#1}{#3}\else%
+  (\getexerciseconfig{composepointspair}{#1}{#2}*%
+   \exerciseifnotempty{#3}{; #3})\fi}
+%    \end{macrocode}
+
 % Display points in the margin:
 %    \begin{macrocode}
 \exerciseconfig{insertpointsmargin}[1]{\marginpar{\footnotesize #1}}
@@ -2628,6 +3657,11 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
 \exerciseconfig{insertwarnpoints}[3]
   {\textbf{points mismatch for #1 (#2 determined vs.\ #3 given)}}
+%    \end{macrocode}
+% Display warning about points changed:
+%    \begin{macrocode}
+\exerciseconfig{insertwarnpointsrerun}[1]
+  {\textbf{points changed for #1 (please recompile)}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2712,13 +3746,8 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
 \def\exf@solutionbelow{subproblem}
 \define@choicekey{exf@style}{solutionbelow}%
-  {here,subproblem,subproblem*,problem,problem*,sheet,manual}%
-  {\def\exf@solutionbelow{#1}}
-%    \end{macrocode}
-% Conditionals to compare solution locations:
-%    \begin{macrocode}
-\newcommand{\exf@solbelowis}[2]%
-  {\def\exf@tmp{#1}\ifx\exf@solutionbelow\exf@tmp#2\fi}
+  {here,here*,subproblem,subproblem*,problem,problem*,sheet,manual}%
+  {\ifexf@infile\else\def\exf@solutionbelow{#1}\fi}
 %    \end{macrocode}
 %
 % \macro{sheetequation}
@@ -2742,13 +3771,6 @@ This is beyond the scope of this example.
 \def\exf@subpointsat{end}
 \define@choicekey{exf@style}{subpointsat}%
   {start,start*,margin,end,manual,off}{\def\exf@subpointsat{#1}}
-%    \end{macrocode}
-% Conditionals to compare point locations:
-%    \begin{macrocode}
-\newcommand{\exf@pointsatis}[2]%
-  {\def\exf@tmp{#1}\ifx\exf@pointsat\exf@tmp#2\fi}
-\newcommand{\exf@subpointsatis}[2]%
-  {\def\exf@tmp{#1}\ifx\exf@subpointsat\exf@tmp#2\fi}
 %    \end{macrocode}
 %
 % \macro{problemby}
@@ -2975,9 +3997,8 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % Special points processing:
 %    \begin{macrocode}
-\def\exf@data@sheet@rawpoints{}
-\def\exf@data@sheet@points{\exf@config@composepointssheet%
-  {\exf@data@sheet@rawpoints}}%
+\def\exf@data@sheet@points{\ifdefined\exf@sheet@points%
+   \expandafter\exf@config@composepointspairsheet\exf@sheet@points\fi}%
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3183,15 +4204,14 @@ This is beyond the scope of this example.
 
 % Automatic writing at |\begin{document}|:
 %    \begin{macrocode}
-\AtBeginDocument{\def\exf@tmp{auto}\ifx\exf@metadata\exf@tmp%
-  \exf@writemetadata{}\fi}
+\AtBeginDocument{\exf@ifis\exf@metadata{auto}{\exf@writemetadata{}}}
 %    \end{macrocode}
 
 % \macro{\writeexercisedata}
 % Write metadata manually:
 %    \begin{macrocode}
-\newcommand{\writeexercisedata}{\def\exf@tmp{manual}\ifx\exf@metadata\exf@tmp%
-  \exf@writemetadata{}\fi}
+\newcommand{\writeexercisedata}{%
+  \exf@ifis\exf@metadata{manual}{\exf@writemetadata{}}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3434,6 +4454,113 @@ This is beyond the scope of this example.
 % \label{sec:imp-points}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Points Arithmetic.}
+%
+% \macro{\exf@addtopoints}
+% Add points |#2|+|#3| to macro |#1| using metric register:
+%    \begin{macrocode}
+\newcommand{\exf@addtopoints}[3]{%
+  \ifdefined#1\else\def#1{{0}{0}}\fi%
+  \setlength\exf@tmpdim{\expandafter\@firstoftwo#1pt}%
+  \addtolength\exf@tmpdim{#2pt}%
+  \edef\exf@tmp{\strip@pt\exf@tmpdim}%
+  \setlength\exf@tmpdim{\expandafter\@secondoftwo#1pt}%
+  \addtolength\exf@tmpdim{#3pt}%
+  \xdef#1{{\exf@tmp}{\strip@pt\exf@tmpdim}}}
+%    \end{macrocode}
+%
+% \macro{\exf@pointsmismatch}
+% Execute |#3| if points disagree:
+%    \begin{macrocode}
+\newcommand{\exf@pointsmismatch}[3]{%
+  \let\exf@tmp\@undefined%
+  \ifdim\expandafter\@firstoftwo#1pt=\expandafter\@firstoftwo#2pt\else%
+   \def\exf@tmp{}\fi%
+  \ifdim\expandafter\@secondoftwo#1pt=\expandafter\@secondoftwo#2pt\else%
+   \def\exf@tmp{}\fi%
+  \ifdefined\exf@tmp#3\fi}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Points Expansion.}
+%
+% \macro{\exf@outpoints}
+% If points macro |#3| is set,
+% expand |#3|, pass on as |#1{\protect#2}#3| and clear |#3| globally:
+%    \begin{macrocode}
+\def\exf@outpoints#1#2#3{\ifdefined#3%
+   \exf@exptwo\exf@outpoints@switch{#3}{#1}{#2}%
+   \global\let#3\@undefined\fi}
+\def\exf@outpoints@switch#1#2#3{#2{\protect#3#1}}
+%    \end{macrocode}
+
+% \macro{\exf@scanpoints}
+% Call as |\exf@scanpoints#1|[\textit{regular}][|+|\textit{bonus}]|++&| to
+% write |{|\textit{regular}|}{|\textit{bonus}|}| into |#1|;
+% fill with 0 if empty:
+%    \begin{macrocode}
+\def\exf@scanpoints#1#2+#3+#4&{%
+  \edef#1{\if&#2&0\else#2\fi}%
+  \edef#1{{#1}{\if&#3&0\else#3\fi}}}
+%    \end{macrocode}
+% \macro{\exf@formatpoints}
+% Format as [|#1|][|+#2|]; remove 0 components:
+%    \begin{macrocode}
+\def\exf@formatpoints#1#2{\ifdim#2pt=0pt#1\else%
+  \ifdim#1pt=0pt+#2\else#1+#2\fi\fi}
+%    \end{macrocode}
+
+% \macro{\extractpoints}
+% Extract main (plain) or bonus (starred) part from saved points register:
+%    \begin{macrocode}
+\newcommand{\extractpoints}{\@ifstar{\exf@extractpoints\@secondoftwo}%
+  {\exf@extractpoints\@firstoftwo}}
+\newcommand{\exf@extractpoints}[2]{\edef\exf@tmp{#2}%
+  \exf@exptwo\exf@scanpoints\exf@tmp\exf@tmp++&%
+  \expandafter#1\exf@tmp}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Tools.}
+%
+% \macro{\exf@makepointsmargin}
+% Combination to typeset points in margin:
+%    \begin{macrocode}
+\newcommand{\exf@makepointsmargin}[2]{%
+  \exf@config@insertpointsmargin{\exf@config@composepointspairmargin{#1}{#2}}}
+%    \end{macrocode}
+
+% \macro{\exf@warnmismatch}
+% If points |#3| and |#4| are defined and disagree,
+% issue a warning message:
+%    \begin{macrocode}
+\newcommand{\exf@warnmismatch}[4]{%
+  \ifdefined#4\ifdefined#3\exf@pointsmismatch#3#4{%
+   \let\exf@tmp\PackageWarning%
+   \ifx#1\exf@solutionname\let\exf@tmp\PackageWarningNoLine\fi%
+   \exf@tmp{exframe}{points mismatch %
+    (\expandafter\exf@formatpoints#3 determined %
+    vs. \expandafter\exf@formatpoints#4 given) %
+    for #1 \csname the#2\endcsname}%
+   \ifexf@warntext\edef\exf@tmp{%
+    {\expandafter\exf@formatpoints#3}{\expandafter\exf@formatpoints#4}}%
+    \exf@exptwo\exf@config@insertwarnpoints#1\exf@tmp\fi}%
+  \fi\fi}
+%    \end{macrocode}
+%
+% \macro{\exf@warnrerun}
+% If points |#3| and |#4| are defined and disagree,
+% issue advice to recompile:
+%    \begin{macrocode}
+\newcommand{\exf@warnrerun}[4]{%
+  \ifdefined#4\ifdefined#3\exf@pointsmismatch#3#4{%
+   \PackageWarning{exframe}{points changed %
+    for #1 \csname the#2\endcsname; rerun to fix}%
+   \ifexf@warntext\exf@config@insertwarnpointsrerun#1\fi}%
+  \fi\fi}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Binary Rational Numbers.}
 %
 % \macro{\exf@splitsign}
@@ -3483,12 +4610,6 @@ This is beyond the scope of this example.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Sheet Points Code.}
 %
-% \macro{\exf@sheet@points@dim}
-% Declare a metric register to sum overall points on a sheet;
-% equate unit |pt| to a point:
-%    \begin{macrocode}
-\newlength{\exf@sheet@points@dim}
-%    \end{macrocode}
 % \macro{\exf@notesheetpoints}
 % Store a sheet point number in a macro:
 %    \begin{macrocode}
@@ -3503,8 +4624,9 @@ This is beyond the scope of this example.
 % \macro{\exf@writesheetpoints}
 % Write sheet points to the |.aux| file:
 %    \begin{macrocode}
-\newcommand{\exf@writesheetpoints}[1]%
-  {\immediate\write\@auxout{\string\exf@notesheetpoints{\sheettag}{#1}}}
+\newcommand{\exf@writesheetpoints}[2]%
+  {\immediate\write\@auxout{\string\exf@notesheetpoints{\sheettag}%
+   {\exf@formatpoints{#1}{#2}}}}
 %    \end{macrocode}
 % \macro{\getsheetpoints}
 % Read sheet points stored in |.aux| file:
@@ -3516,12 +4638,6 @@ This is beyond the scope of this example.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Problem Points Code.}
 %
-% \macro{\exf@problem@points@dim}
-% Declare a metric register to sum overall points in a problem;
-% equate unit |pt| to a point:
-%    \begin{macrocode}
-\newlength{\exf@problem@points@dim}
-%    \end{macrocode}
 % \macro{\exf@noteproblempoints}
 % Store a problem point number in a macro:
 %    \begin{macrocode}
@@ -3536,8 +4652,9 @@ This is beyond the scope of this example.
 % \macro{\exf@writeproblempoints}
 % Write problem points to the |.aux| file:
 %    \begin{macrocode}
-\newcommand{\exf@writeproblempoints}[1]%
-  {\immediate\write\@auxout{\string\exf@noteproblempoints{\problemtag}{#1}}}
+\newcommand{\exf@writeproblempoints}[2]%
+  {\immediate\write\@auxout{\string\exf@noteproblempoints{\problemtag}%
+   {\exf@formatpoints{#1}{#2}}}}
 %    \end{macrocode}
 % \macro{\getproblempoints}
 % Read problem points stored in |.aux| file:
@@ -3550,43 +4667,33 @@ This is beyond the scope of this example.
 % Show points within a problem or subproblem:
 %    \begin{macrocode}
 \newcommand{\showpoints}{%
-  \ifdefined\exf@in@subproblem%
-   \ifdefined\exf@subproblem@points%
-    \exf@ensuretext{\exf@config@composepointsbody{\exf@subproblem@points}}%
-    \global\let\exf@subproblem@points\@undefined%
-   \fi%
-  \else\ifdefined\exf@in@problem%
-   \ifdefined\exf@problem@pointsshow%
-    \exf@ensuretext{\exf@config@composepointsbody{\exf@problem@pointsshow}}%
-    \global\let\exf@problem@pointsshow\@undefined%
-   \fi%
+  \ifdefined\exf@in@subproblem\exf@outpoints{\exf@ensuretext}%
+   {\exf@config@composepointspairbody}{\exf@subproblem@points}%
+  \else\ifdefined\exf@in@problem\exf@outpoints{\exf@ensuretext}%
+   {\exf@config@composepointspairbody}{\exf@problem@points@show}%
   \fi\fi}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Solution Points Code.}
 %
-% \macro{\exf@solution@points@dim}
-% Declare a metric register to sum overall (mandatory) points in a solution;
-% equate unit |pt| to a point:
-%    \begin{macrocode}
-\newlength{\exf@solution@points@dim}
-%    \end{macrocode}
-
 % \macro{\exf@awardpointsalt}
 % Award points for alternative or optional solution;
 % does not count towards solution total:
 %    \begin{macrocode}
-\newcommand{\exf@awardpointsalt}[2][]{%
-  \exf@ensuretext{\exf@config@composepointsawardalt{#2}{#1}}}
+\newcommand{\exf@awardpointsalt}[2][]{\exf@scanpoints\exf@tmp#2++&%
+  \exf@exptwo\exf@ensuretext{%
+   \expandafter\exf@config@composepointspairawardalt\exf@tmp{#1}}}
 %    \end{macrocode}
 % \macro{\exf@awardpointsreg}
 % Award points for regular solution;
 % counts towards solution total:
 %    \begin{macrocode}
-\newcommand{\exf@awardpointsreg}[2][]{%
-  \exf@gaddtolength{\exf@solution@points@dim}{#2 pt}%
-  \exf@ensuretext{\exf@config@composepointsaward{#2}{#1}}}
+\newcommand{\exf@awardpointsreg}[2][]{\exf@scanpoints\exf@tmp#2++&%
+  \exf@exptwo\exf@addtopoints\exf@solution@points@total\exf@tmp%
+  \exf@scanpoints\exf@tmp#2++&%
+  \exf@exptwo\exf@ensuretext{%
+   \expandafter\exf@config@composepointspairaward\exf@tmp{#1}}}
 %    \end{macrocode}
 % \macro{\awardpoints}
 % Award points within solution with optional starred form:
@@ -3604,7 +4711,7 @@ This is beyond the scope of this example.
 % \macro{exf@sheet}
 % Define options for |sheet| environment:
 %    \begin{macrocode}
-\define@key{exf@sheet}{points}{\def\exf@points@given{#1}}
+\define@key{exf@sheet}{points}{\exf@scanpoints\exf@points@given#1++&}
 \define@key{exf@sheet}{number}{\setcounter{\exf@sheetcounter}{#1}}
 \define@key{exf@sheet}{label}{\def\exf@label{#1}}
 \define@key{exf@sheet}{tag}{\def\sheettag{#1}}
@@ -3633,7 +4740,7 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
   \let\exf@points@given\@undefined%
   \def\sheettag{\csname the\exf@sheetcounter\endcsname}%
-  \setlength{\exf@sheet@points@dim}{0pt}%
+  \let\exf@sheet@points@total\@undefined%
   \let\exf@label\@undefined%
   \setkeys{exf@sheet}{#1}%
 %    \end{macrocode}
@@ -3644,16 +4751,17 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % Set points from explicit input or from |.aux| storage:
 %    \begin{macrocode}
+  \let\exf@sheet@points\@undefined%
   \ifdefined\exf@points@given%
-   \let\exf@data@sheet@rawpoints\exf@points@given%
+   \let\exf@sheet@points\exf@points@given%
   \else\ifcsname exf@sheetpoints@\sheettag\endcsname%
-   \exf@csdotwo\let\exf@data@sheet@rawpoints{exf@sheetpoints@\sheettag}%
+   \exf@csdotwo\let\exf@tmp{exf@sheetpoints@\sheettag}%
+   \exf@exptwo\exf@scanpoints\exf@sheet@points\exf@tmp++&%
   \fi\fi%
 %    \end{macrocode}
 % Process metadata:
 %    \begin{macrocode}
-  \def\exf@tmp{sheet}\ifx\exf@metadata\exf@tmp%
-   \exf@writemetadata{sheet}\fi%
+  \exf@ifis\exf@metadata{sheet}{\exf@writemetadata{sheet}}%
 %    \end{macrocode}
 % Insert hook code:
 %    \begin{macrocode}
@@ -3675,44 +4783,29 @@ This is beyond the scope of this example.
 % perform sanity check on total points if given explicitly:
 %    \begin{macrocode}
  {\ifdefined\exf@points@given%
-   \ifdim\exf@sheet@points@dim=0pt\else%
-    \ifdim\exf@sheet@points@dim=\exf@data@sheet@rawpoints pt\else%
-     \PackageWarning{exframe}{points mismatch for %
-      \exf@sheetname\space\csname the\exf@sheetcounter\endcsname}%
-     \ifexf@warntext\exf@config@insertwarnpoints{\exf@sheetname}%
-      {\strip@pt\exf@sheet@points@dim}{\exf@data@sheet@rawpoints}\fi%
-   \fi\fi%
+   \exf@warnmismatch{\exf@sheetname}{\exf@sheetcounter}%
+    {\exf@sheet@points@total}{\exf@sheet@points}%
 %    \end{macrocode}
 % Test whether points have changed since last compile:
 %    \begin{macrocode}
   \else%
-   \ifx\exf@data@sheet@rawpoints\exf@empty\else%
-    \ifdim\exf@sheet@points@dim=\exf@data@sheet@rawpoints pt\else%
-     \PackageWarning{exframe}{points changed for %
-      \exf@sheetname\space\csname the\exf@sheetcounter\endcsname;
-      rerun to fix}%
-     \ifexf@warntext\exf@config@insertwarnpoints{\exf@sheetname}%
-      {\strip@pt\exf@sheet@points@dim}{\exf@data@sheet@rawpoints}\fi%
-   \fi\fi%
+   \exf@warnrerun{\exf@sheetname}{\exf@sheetcounter}%
+    {\exf@sheet@points@total}{\exf@sheet@points}%
 %    \end{macrocode}
-% Store points if not given explicitly:
+% Store points:
 %    \begin{macrocode}
-   \ifdim\exf@sheet@points@dim=0pt%
-    \def\exf@data@sheet@rawpoints{}%
-   \else%
-    \edef\exf@data@sheet@rawpoints{\strip@pt\exf@sheet@points@dim}%
-   \fi%
+   \let\exf@sheet@points\exf@sheet@points@total%
   \fi%
 %    \end{macrocode}
 % Write sheet points to |.aux| file:
 %    \begin{macrocode}
-  \ifx\exf@data@sheet@rawpoints\exf@empty\else%
-   \exf@writesheetpoints{\exf@data@sheet@rawpoints}%
+  \ifdefined\exf@sheet@points%
+   \expandafter\exf@writesheetpoints\exf@sheet@points%
   \fi%
 %    \end{macrocode}
 % Insert solutions:
 %    \begin{macrocode}
-  \exf@solbelowis{sheet}{\insertsolutions}%
+  \exf@ifis\exf@solutionbelow{sheet}{\insertsolutions}%
 %    \end{macrocode}
 % Insert hook code:
 %    \begin{macrocode}
@@ -3745,7 +4838,7 @@ This is beyond the scope of this example.
 % \macro{exf@problem}
 % Define options for |problem| environment:
 %    \begin{macrocode}
-\define@key{exf@problem}{points}{\def\exf@points@given{#1}}
+\define@key{exf@problem}{points}{\exf@scanpoints\exf@points@given#1++&}
 \define@key{exf@problem}{label}{\def\exf@label{#1}}
 \define@key{exf@problem}{tag}{\def\problemtag{#1}}
 \define@key{exf@problem}{sollabel}{\xdef\exf@sollabel{#1}}
@@ -3789,7 +4882,7 @@ This is beyond the scope of this example.
   \let\exf@points@given\@undefined%
   \let\exf@label\@undefined%
   \global\let\exf@sollabel\@undefined%
-  \setlength{\exf@problem@points@dim}{0pt}%
+  \let\exf@problem@points@total\@undefined%
   \setkeys{exf@problem,exf@probleminfo}{#1}%
 %    \end{macrocode}
 % Process automatic and manual labels:
@@ -3806,9 +4899,9 @@ This is beyond the scope of this example.
     \csname theH\exf@problemcounter\endcsname}%
   \fi%
   \ifx\exf@data@problem@rawtitle\exf@empty%
-    \global\let\exf@prevprobtitle\@undefined%
+   \global\let\exf@prevprobtitle\@undefined%
   \else%
-    \protected@xdef\exf@prevprobtitle{\exf@data@problem@rawtitle}%
+   \protected@xdef\exf@prevprobtitle{\exf@data@problem@rawtitle}%
   \fi%
   \global\let\exf@prevsubprob\@undefined%
   \global\let\exf@prevsubprobhref\@undefined%
@@ -3818,31 +4911,27 @@ This is beyond the scope of this example.
   \let\exf@problem@points\@undefined%
   \ifdefined\exf@points@given%
    \let\exf@problem@points\exf@points@given%
-  \else%
-   \ifcsname exf@problempoints@\problemtag\endcsname%
-    \exf@csdotwo\let\exf@problem@points{exf@problempoints@\problemtag}%
+  \else\ifcsname exf@problempoints@\problemtag\endcsname%
+   \exf@csdotwo\let\exf@tmp{exf@problempoints@\problemtag}%
+   \exf@exptwo\exf@scanpoints\exf@problem@points\exf@tmp++&%
   \fi\fi%
   \global\let\exf@prevpoints\exf@problem@points%
-  \let\exf@problem@pointsshow\@undefined%
-  \ifdefined\exf@problem@points\ifdim\exf@problem@points pt=0pt\else%
-   \let\exf@problem@pointsshow\exf@problem@points%
-  \fi\fi%
+  \let\exf@problem@points@show\@undefined%
+  \ifdefined\exf@problem@points%
+   \let\exf@problem@points@show\exf@problem@points%
+  \fi%
 %    \end{macrocode}
 % Disable points display if desired:
 %    \begin{macrocode}
-  \exf@pointsatis{off}{\let\exf@problem@pointsshow\@undefined}%
+  \exf@ifis\exf@pointsat{off}{\let\exf@problem@points@show\@undefined}%
 %    \end{macrocode}
 % Display points in opening line if desired;
 % expand points into argument and remove points:
 %    \begin{macrocode}
-  \exf@pointsatis{start}{\ifdefined\exf@problem@pointsshow%
-   \exf@exptwo\exf@append@intro{\expandafter%
-    \exf@config@composepointsstart\expandafter{\exf@problem@pointsshow}}%
-   \let\exf@problem@pointsshow\@undefined\fi}%
-  \exf@pointsatis{start*}{\ifdefined\exf@problem@pointsshow%
-   \exf@exptwo\exf@prepend@intro{\expandafter%
-    \exf@config@composepointsstart\expandafter{\exf@problem@pointsshow}}%
-   \let\exf@problem@pointsshow\@undefined\fi}%
+  \exf@ifis\exf@pointsat{start}{\exf@outpoints{\exf@append@intro}%
+   {\exf@config@composepointspairstart}{\exf@problem@points@show}}%
+  \exf@ifis\exf@pointsat{start*}{\exf@outpoints{\exf@prepend@intro}%
+   {\exf@config@composepointspairstart}{\exf@problem@points@show}}%
 %    \end{macrocode}
 % Insert hook code, set problem body style:
 %    \begin{macrocode}
@@ -3888,12 +4977,9 @@ This is beyond the scope of this example.
 % Write points into margin if desired;
 % expand points into argument and remove points:
 %    \begin{macrocode}
-  \exf@pointsatis{margin}{\ifdefined\exf@problem@pointsshow%
-   \expandafter\exf@prepend@def\expandafter\exf@introitem\expandafter%
-    {\expandafter\protect\expandafter%
-     \exf@config@insertpointsmargin\expandafter{\expandafter%
-      \exf@config@composepointsmargin\expandafter{\exf@problem@pointsshow}}}%
-   \let\exf@problem@pointsshow\@undefined\fi}%
+  \exf@ifis\exf@pointsat{margin}{%
+   \exf@outpoints{\exf@prepend@def\exf@introitem}%
+   {\exf@makepointsmargin}{\exf@problem@points@show}}%
 %    \end{macrocode}
 % Write out opening line:
 %    \begin{macrocode}
@@ -3911,50 +4997,32 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % End environment, show points if desired:
 %    \begin{macrocode}
- {\exf@pointsatis{end}{\showpoints}%
+ {\exf@ifis\exf@pointsat{end}{\showpoints}%
 %    \end{macrocode}
 % Perform sanity checks on total points if given explicitly:
 %    \begin{macrocode}
   \ifdefined\exf@points@given%
-   \ifdim\exf@problem@points@dim=0pt\else%
-    \ifdim\exf@problem@points@dim=\exf@problem@points pt\else%
-     \PackageWarning{exframe}{points mismatch for %
-      \exf@problemname\space\csname the\exf@problemcounter\endcsname}%
-     \ifexf@warntext\exf@config@insertwarnpoints{\exf@problemname}%
-      {\strip@pt\exf@problem@points@dim}{\exf@problem@points}\fi%
-   \fi\fi%
+   \exf@warnmismatch{\exf@problemname}{\exf@problemcounter}%
+    {\exf@problem@points@total}{\exf@problem@points}%
 %    \end{macrocode}
 % Warn if calculated total points have changed:
 %    \begin{macrocode}
   \else%
-   \ifdefined\exf@problem@points%
-    \ifdim\exf@problem@points@dim=\exf@problem@points pt\else%
-     \PackageWarning{exframe}{points changed for %
-      \exf@problemname\space\csname the\exf@problemcounter\endcsname;
-      rerun to fix}%
-     \ifexf@warntext\exf@config@insertwarnpoints{\exf@problemname}%
-      {\strip@pt\exf@problem@points@dim}{\exf@problem@points}\fi%
-   \fi\fi%
+   \exf@warnrerun{\exf@problemname}{\exf@problemcounter}%
+    {\exf@problem@points@total}{\exf@problem@points}%
 %    \end{macrocode}
-% Read computed total points, check whether zero:
+% Read computed total points:
 %    \begin{macrocode}
-   \ifdim\exf@problem@points@dim=0pt%
-    \let\exf@problem@points\@undefined%
-   \else%
-    \edef\exf@problem@points{\strip@pt\exf@problem@points@dim}%
-   \fi%
+   \let\exf@problem@points\exf@problem@points@total%
   \fi%
 %    \end{macrocode}
 % Write points to |.aux| file; add to sheet total:
 %    \begin{macrocode}
   \ifdefined\exf@problem@points%
-   \exf@writeproblempoints{\exf@problem@points}%
-   \exf@gaddtolength{\exf@sheet@points@dim}{\exf@problem@points pt}%
+   \expandafter\exf@writeproblempoints\exf@problem@points%
+   \exf@exptwo\exf@addtopoints\exf@sheet@points@total\exf@problem@points%
   \fi%
-%    \end{macrocode}
-% Warn if some but not all problems on sheet declare points:
-%    \begin{macrocode}
-  \ifdefined\exf@problem@points\else\ifdim\exf@sheet@points@dim=0pt\else%
+  \ifdefined\exf@problem@points\else\ifdefined\exf@sheet@points@total%
    \PackageWarning{exframe}{no points defined for \exf@problemname}%
   \fi\fi%
 %    \end{macrocode}
@@ -3969,7 +5037,7 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % Display solution if desired:
 %    \begin{macrocode}
-  \exf@solbelowis{problem}{%
+  \exf@ifis\exf@solutionbelow{problem}{%
    \exf@config@insertproblemsolution%
    \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}}%
 %    \end{macrocode}
@@ -3991,7 +5059,7 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % Display solution if desired:
 %    \begin{macrocode}
-  \exf@solbelowis{problem*}{%
+  \exf@ifis\exf@solutionbelow{problem*}{%
    \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}}%
 %    \end{macrocode}
 % Done:
@@ -4005,7 +5073,7 @@ This is beyond the scope of this example.
 % \macro{exf@subproblem}
 % Define options for |subproblem| environment:
 %    \begin{macrocode}
-\define@key{exf@subproblem}{points}{\def\exf@subproblem@points{#1}}
+\define@key{exf@subproblem}{points}{\exf@scanpoints\exf@subproblem@points#1++&}
 \define@key{exf@subproblem}{label}{\def\exf@label{#1}}
 %    \end{macrocode}
 
@@ -4051,31 +5119,27 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
   \ifdefined\exf@subproblem@points%
    \global\let\exf@prevpoints\exf@subproblem@points%
-   \exf@gaddtolength{\exf@problem@points@dim}{\exf@subproblem@points pt}%
+   \exf@exptwo\exf@addtopoints\exf@problem@points@total\exf@subproblem@points%
 %    \end{macrocode}
 % Warn if no points given for present subproblem but previously:
 %    \begin{macrocode}
   \else%
-   \ifdim\exf@problem@points@dim=0pt\else%
+   \ifdefined\exf@problem@points@total%
     \PackageWarning{exframe}{no points defined for \exf@subproblemname}%
    \fi%
   \fi%
 %    \end{macrocode}
 % Disable points display if desired:
 %    \begin{macrocode}
-  \exf@subpointsatis{off}{\let\exf@subproblem@points\@undefined}%
+  \exf@ifis\exf@subpointsat{off}{\let\exf@subproblem@points\@undefined}%
 %    \end{macrocode}
 % Display points in opening line if desired;
 % expand points into argument and remove points:
 %    \begin{macrocode}
-  \exf@subpointsatis{start}{\ifdefined\exf@subproblem@points%
-   \exf@exptwo\exf@append@intro{\expandafter%
-    \exf@config@composepointsstart\expandafter{\exf@subproblem@points}}%
-   \let\exf@subproblem@points\@undefined\fi}%
-  \exf@subpointsatis{start*}{\ifdefined\exf@subproblem@points%
-   \exf@exptwo\exf@prepend@intro{\expandafter%
-    \exf@config@composepointsstart\expandafter{\exf@subproblem@points}}%
-   \let\exf@subproblem@points\@undefined\fi}%
+  \exf@ifis\exf@subpointsat{start}{\exf@outpoints{\exf@append@intro}%
+   {\exf@config@composepointspairstart}{\exf@subproblem@points}}%
+  \exf@ifis\exf@subpointsat{start*}{\exf@outpoints{\exf@prepend@intro}%
+   {\exf@config@composepointspairstart}{\exf@subproblem@points}}%
 %    \end{macrocode}
 % Insert hook code:
 %    \begin{macrocode}
@@ -4113,12 +5177,9 @@ This is beyond the scope of this example.
 % Write points into margin if desired;
 % expand points into argument and remove points:
 %    \begin{macrocode}
-  \exf@subpointsatis{margin}{\ifdefined\exf@subproblem@points%
-   \expandafter\exf@prepend@def\expandafter\exf@introitem\expandafter%
-    {\expandafter\protect\expandafter%
-     \exf@config@insertpointsmargin\expandafter{\expandafter%
-      \exf@config@composepointsmargin\expandafter{\exf@subproblem@points}}}%
-   \let\exf@subproblem@points\@undefined\fi}%
+  \exf@ifis\exf@subpointsat{margin}{%
+   \exf@outpoints{\exf@prepend@def\exf@introitem}%
+   {\exf@makepointsmargin}{\exf@subproblem@points}}%
 %    \end{macrocode}
 % Write out opening line:
 %    \begin{macrocode}
@@ -4130,7 +5191,7 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % End environment, show points if desired:
 %    \begin{macrocode}
- {\exf@subpointsatis{end}{\showpoints}%
+ {\exf@ifis\exf@subpointsat{end}{\showpoints}%
 %    \end{macrocode}
 % End paragraph and block:
 %    \begin{macrocode}
@@ -4138,7 +5199,7 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % Display solution if desired:
 %    \begin{macrocode}
-  \exf@solbelowis{subproblem*}{%
+  \exf@ifis\exf@solutionbelow{subproblem*}{%
    \exf@config@insertsubproblemsolution%
    \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}}%
 %    \end{macrocode}
@@ -4153,7 +5214,7 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % Display solution if desired:
 %    \begin{macrocode}
-  \exf@solbelowis{subproblem}{%
+  \exf@ifis\exf@solutionbelow{subproblem}{%
    \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}}%
 %    \end{macrocode}
 % Done:
@@ -4173,7 +5234,7 @@ This is beyond the scope of this example.
 \define@key{exf@solution}{sheettag}{\def\sheettag{#1}}
 \define@key{exf@solution}{href}{\def\exf@solhref{#1}}
 \define@key{exf@solution}{label}{\def\exf@label{#1}}
-\define@key{exf@solution}{points}{\def\exf@solution@points{#1}}
+\define@key{exf@solution}{points}{\exf@scanpoints\exf@solution@points#1++&}
 \define@key{exf@solution}{probtitle}{\def\exf@solprobtitle{#1}}
 %    \end{macrocode}
 
@@ -4207,7 +5268,7 @@ This is beyond the scope of this example.
   \def\exf@solprob{}%
   \def\exf@solsubprob{}%
   \let\exf@label\@undefined%
-  \setlength{\exf@solution@points@dim}{0pt}%
+  \let\exf@solution@points@total\@undefined%
   \def\exf@solhref{}%
   \exf@init@block{\exf@config@skipsolutioninfo}%
   \setkeys{exf@solution,exf@probleminfo}{#1}%
@@ -4215,7 +5276,7 @@ This is beyond the scope of this example.
 % Set solution counter to reflect associated problem:
 %    \begin{macrocode}
   \exf@csdo\def{the\exf@solutioncounter}%
-   {\exf@config@composeitemsolution{\exf@solprob}{\exf@solsubprob}}%
+   {\exf@config@composeitemsolutionlabel{\exf@solprob}{\exf@solsubprob}}%
   \refstepcounter{\exf@solutioncounter}%
 %    \end{macrocode}
 % Set label:
@@ -4293,12 +5354,8 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % End environment, show points if desired, perform sanity check:
 %    \begin{macrocode}
- {\ifdefined\exf@solution@points\ifdim\exf@solution@points@dim=0pt\else%
-   \ifdim\exf@solution@points@dim=\exf@solution@points pt\else%
-    \PackageWarning{exframe}{points mismatch in \exf@solutionname}%
-    \ifexf@warntext\exf@config@insertwarnpoints{\exf@solutionname}%
-     {\strip@pt\exf@solution@points@dim}{\exf@solution@points}\fi%
-  \fi\fi\fi%
+ {\exf@warnmismatch{\exf@solutionname}{\exf@solutioncounter}%
+   {\exf@solution@points@total}{\exf@solution@points}%
 %    \end{macrocode}
 % End paragraph and block:
 %    \begin{macrocode}
@@ -4345,9 +5402,9 @@ This is beyond the scope of this example.
   \let\exf@composetitle\exf@config@composetitlesolutionsproblemmulti%
   \def\exf@solutionstoc{\exf@addcontentsline{\exf@config@toclevelsolution}%
     {\exf@config@composetocsolution{\exf@solprob}{\exf@solprobtitle}}}%
-  \exf@solbelowis{problem}{\let\exf@composetitle%
+  \exf@ifis\exf@solutionbelow{problem}{\let\exf@composetitle%
     \exf@config@composetitlesolutionsproblemsingle}%
-  \exf@solbelowis{problem*}{\let\exf@composetitle%
+  \exf@ifis\exf@solutionbelow{problem*}{\let\exf@composetitle%
     \exf@config@composetitlesolutionsproblemsingle}%
 %    \end{macrocode}
 % Write section line:
@@ -4364,11 +5421,15 @@ This is beyond the scope of this example.
 %
 % \macro{solution}
 % Define |solution| environment (potentially using custom name);
-% pass on to |exf@scansolution| environment via
-% |\exf@scanblock| mechanism:
+% pass to |exf@scansolution| environment via
+% |\exf@scanblock| mechanism;
+% redefine |\exf@scanblock| in |solutionbelow=here*| mode:
 %    \begin{macrocode}
 \newenvironment{\exf@solutionname}%
-  {\exf@scanblock{\exf@scansolution}}{\endexf@scansolution}%
+  {\exf@ifis\exf@solutionbelow{here*}{%
+    \newcommand{\exf@scanblockplain}[1][]{\exf@scansolution{##1}{}}%
+    \def\exf@scanblock##1{\exf@scanblockplain}}%
+   \exf@scanblock{\exf@scansolution}}{\endexf@scansolution}%
 %    \end{macrocode}
 
 % \macro{exf@scansolution}
@@ -4379,7 +5440,8 @@ This is beyond the scope of this example.
 % If solution is to be displayed immediately,
 % make sure to display points first:
 %    \begin{macrocode}
-  \exf@solbelowis{here}{\showpoints}%
+  \exf@ifis\exf@solutionbelow{here}{\showpoints}%
+  \exf@ifis\exf@solutionbelow{here*}{\showpoints}%
   \global\exf@bufcleanfalse%
 %    \end{macrocode}
 % If this is the first solution within a new section,
@@ -4390,9 +5452,10 @@ This is beyond the scope of this example.
     \ifdefined\exf@prevprobtitle,probtitle={\exf@prevprobtitle}\fi%
     \ifdefined\exf@prevprobhref,href={\exf@prevprobhref}\fi%
     \ifdefined\exf@sollabel,label={\exf@sollabel}\fi}%
-   \exf@solbelowis{here}{\let\exf@probarg\@undefined}%
-   \exf@solbelowis{subproblem}{\let\exf@probarg\@undefined}%
-   \exf@solbelowis{subproblem*}{\let\exf@probarg\@undefined}%
+   \exf@ifis\exf@solutionbelow{here}{\let\exf@probarg\@undefined}%
+   \exf@ifis\exf@solutionbelow{here*}{\let\exf@probarg\@undefined}%
+   \exf@ifis\exf@solutionbelow{subproblem}{\let\exf@probarg\@undefined}%
+   \exf@ifis\exf@solutionbelow{subproblem*}{\let\exf@probarg\@undefined}%
    \ifdefined\exf@probarg%
     \ifexf@lineno\exf@addbufline{\exf@linesep}\exf@addbufline{\exf@lineno}\fi%
     \exf@addbufline{\@backslashchar solutionssection{\exf@probarg}}%
@@ -4410,13 +5473,13 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
   \def\exf@subprobarg{%
     \ifdefined\exf@prevprob prob={\exf@prevprob},\fi%
-    \ifdefined\exf@prevsubprob%
-     subprob={\exf@prevsubprob},%
+    \ifdefined\exf@prevsubprob subprob={\exf@prevsubprob},%
      \ifdefined\exf@prevsubprobhref href={\exf@prevsubprobhref},\fi%
     \else%
      \ifdefined\exf@prevprobhref href={\exf@prevprobhref},\fi%
     \fi%
-    \ifdefined\exf@prevpoints points={\exf@prevpoints},\fi%
+    \ifdefined\exf@prevpoints points=%
+     {\expandafter\exf@formatpoints\exf@prevpoints},\fi%
     \ifdefined\sheettag sheettag={\sheettag},\fi%
     \ifdefined\problemtag problemtag={\problemtag},\fi}%
 %    \end{macrocode}
@@ -4429,6 +5492,16 @@ This is beyond the scope of this example.
   \global\let\exf@prevsubprob\@undefined%
   \global\let\exf@prevsubprobhref\@undefined%
   \global\let\exf@prevpoints\@undefined%
+%    \end{macrocode}
+% In |here*| mode, output solution immediately;
+% overwrite verbatim macros to display solution:
+%    \begin{macrocode}
+  \exf@ifis\exf@solutionbelow{here*}{%
+   \def\exf@verbatim{\exf@clearbuf\begingroup%
+    \edef\exf@subprobarg{\exf@subprobarg}%
+    \exf@showsolutionsin{\exf@config@composetitlesolutionsingle}%
+    \exf@exptwo\printsolution{\exf@subprobarg#1}}%
+   \def\exf@endverbatim{\endprintsolution\exf@showsolutionsout\endgroup}}%
 %    \end{macrocode}
 % Verbatim read block to buffer:
 %    \begin{macrocode}
@@ -4455,17 +5528,17 @@ This is beyond the scope of this example.
 %    \end{macrocode}
 % Display solution immediately in various cases:
 %    \begin{macrocode}
-  \exf@solbelowis{here}{\exf@showsolutions%
+  \exf@ifis\exf@solutionbelow{here}{\exf@showsolutions%
    {\exf@config@composetitlesolutionsingle}{}}%
   \ifdefined\exf@in@subproblem\else%
-   \exf@solbelowis{subproblem}{%
+   \exf@ifis\exf@solutionbelow{subproblem}{%
     \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}}%
-   \exf@solbelowis{subproblem*}{%
+   \exf@ifis\exf@solutionbelow{subproblem*}{%
     \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}}\fi%
   \ifdefined\exf@in@problem\else%
-   \exf@solbelowis{problem}{%
+   \exf@ifis\exf@solutionbelow{problem}{%
     \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}}%
-   \exf@solbelowis{problem*}{%
+   \exf@ifis\exf@solutionbelow{problem*}{%
     \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}}\fi%
 %    \end{macrocode}
 % Done:
@@ -4490,7 +5563,7 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
    \ifdefined#5%
     \exf@csdo\def{the\exf@solutioncounter}%
-     {\exf@config@composeitemsolution{\exf@solprob}{\exf@solsubprob}}%
+     {\exf@config@composeitemsolutionlabel{\exf@solprob}{\exf@solsubprob}}%
     \refstepcounter{\exf@solutioncounter}\label{#5}%
    \fi%
 %    \end{macrocode}
@@ -4512,6 +5585,32 @@ This is beyond the scope of this example.
     {\exf@config@composetocsolutions}}{\@undefined}{\@undefined}}
 %    \end{macrocode}
 
+% \macro{\exf@showsolutionsin}
+% Output solutions intro:
+%    \begin{macrocode}
+\newcommand{\exf@showsolutionsin}[1]{%
+%    \end{macrocode}
+% Set solution body style; add vertical space; insert hook code:
+%    \begin{macrocode}
+  \par\exf@config@styletext\addvspace{\exf@config@skipsolutionsabove}%
+  \exf@config@styletextsolution%
+  \exf@config@insertsolutionsbefore%
+  \let\exf@composetitle#1}
+%    \end{macrocode}
+
+% \macro{\exf@showsolutionsout}
+% Output solutions outro:
+%    \begin{macrocode}
+\newcommand{\exf@showsolutionsout}{%
+%    \end{macrocode}
+% Ignore most recent skip; insert hook code;
+% close paragraph; add vertical space:
+%    \begin{macrocode}
+  \removelastskip%
+  \exf@config@insertsolutionsafter%
+  \par\exf@config@styletext\addvspace{\exf@config@skipsolutionbelow}}
+%    \end{macrocode}
+
 % \macro{\exf@showsolutions}
 % Output solutions in buffer:
 %    \begin{macrocode}
@@ -4521,12 +5620,9 @@ This is beyond the scope of this example.
 %    \begin{macrocode}
   \ifexf@bufclean\else\begingroup%
 %    \end{macrocode}
-% Set solution body style; add vertical space; insert hook code:
+% Execute output solutions intro:
 %    \begin{macrocode}
-   \par\exf@config@styletext\addvspace{\exf@config@skipsolutionsabove}%
-   \exf@config@styletextsolution%
-   \exf@config@insertsolutionsbefore%
-   \let\exf@composetitle#1%
+   \exf@showsolutionsin{#1}%
    #2%
 %    \end{macrocode}
 % Source and clear buffer:
@@ -4534,12 +5630,9 @@ This is beyond the scope of this example.
    \exf@sourcebuf%
    \exf@clearbuf%
 %    \end{macrocode}
-% Ignore most recent skip; insert hook code;
-% close paragraph; add vertical space:
+% Execute output solutions outro:
 %    \begin{macrocode}
-   \removelastskip%
-   \exf@config@insertsolutionsafter%
-   \par\exf@config@styletext\addvspace{\exf@config@skipsolutionbelow}%
+   \exf@showsolutionsout%
   \endgroup\fi}
 %    \end{macrocode}
 

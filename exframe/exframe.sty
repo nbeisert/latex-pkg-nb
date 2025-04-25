@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{exframe}[2019/04/15 v3.11 Framework for Exercise Problems]
+\ProvidesPackage{exframe}[2019/05/01 v3.2 Framework for Exercise Problems]
 
 \RequirePackage{verbatim}
 \RequirePackage{xkeyval}
@@ -36,10 +36,11 @@
 \long\def\exf@prepend@switch#1#2#3{#2{#3#1}}
 \long\def\exf@prepend@def#1#2{\exf@exptwo\exf@prepend@switch{#1}{\def#1}{#2}}
 
-\def\exf@gaddtolength#1#2{\global\advance#1 #2\relax}
-
 \newcommand{\exf@expsetkeys}[2]{\edef\exf@tmp{#2}%
   \exf@exparg{\setkeys{#1}}{\exf@tmp}}
+
+\newcommand{\exf@ifis}[3]%
+  {\def\exf@tmp{#2}\ifx#1\exf@tmp#3\fi}
 
 \newcommand{\exf@href}[2]{%
   \ifdefined#1\ifx#1\exf@empty#2\else%
@@ -203,7 +204,7 @@
   {\getexerciseconfig{termsolution}}
 \exerciseconfig{composetitlesolutionsproblemmulti}[2]%
   {\exerciseifempty{#2}{\getexerciseconfig{termproblem} #1}{#1. #2}}
-\exerciseconfig{composeitemsolution}[2]{#1#2}
+\exerciseconfig{composeitemsolutionlabel}[2]{#1#2}
 
 \exerciseconfig{composepointsnum}[1]{#1}
 \exerciseconfig{composepoints}[1]{\getexerciseconfig{composepointsnum}{#1}~%
@@ -219,10 +220,43 @@
 \exerciseconfig{composepointsawardalt}[2]%
   {(\getexerciseconfig{composepoints}{#1}*\exerciseifnotempty{#2}{; #2})}
 
+\exerciseconfig{composepointspair}[2]{%
+  \ifdim#2pt=0pt%
+   \getexerciseconfig{composepoints}{#1}%
+  \else\ifdim#1pt=0pt%
+   +\getexerciseconfig{composepoints}{#2}%
+  \else%
+   \getexerciseconfig{composepointsnum}{#1}+%
+   \getexerciseconfig{composepointsnum}{#2}~%
+   \getexerciseconfig{termpoints}%
+  \fi\fi}
+\exerciseconfig{composepointspairbody}[2]{%
+  \ifdim#2pt=0pt\getexerciseconfig{composepointsbody}{#1}\else%
+  (\getexerciseconfig{composepointspair}{#1}{#2})\fi}
+\exerciseconfig{composepointspairstart}[2]{%
+  \ifdim#2pt=0pt\getexerciseconfig{composepointsstart}{#1}\else%
+  (\getexerciseconfig{composepointspair}{#1}{#2})\fi}
+\exerciseconfig{composepointspairmargin}[2]{%
+  \ifdim#2pt=0pt\getexerciseconfig{composepointsmargin}{#1}\else%
+  \getexerciseconfig{composepointspair}{#1}{#2}\fi}
+\exerciseconfig{composepointspairsheet}[2]{%
+  \ifdim#2pt=0pt\getexerciseconfig{composepointssheet}{#1}\else%
+  \getexerciseconfig{composepointspair}{#1}{#2}\fi}
+\exerciseconfig{composepointspairaward}[3]{%
+  \ifdim#2pt=0pt\getexerciseconfig{composepointsaward}{#1}{#3}\else%
+  (\getexerciseconfig{composepointspair}{#1}{#2}%
+   \exerciseifnotempty{#3}{; #3})\fi}
+\exerciseconfig{composepointspairawardalt}[3]{%
+  \ifdim#2pt=0pt\getexerciseconfig{composepointsawardalt}{#1}{#3}\else%
+  (\getexerciseconfig{composepointspair}{#1}{#2}*%
+   \exerciseifnotempty{#3}{; #3})\fi}
+
 \exerciseconfig{insertpointsmargin}[1]{\marginpar{\footnotesize #1}}
 
 \exerciseconfig{insertwarnpoints}[3]
   {\textbf{points mismatch for #1 (#2 determined vs.\ #3 given)}}
+\exerciseconfig{insertwarnpointsrerun}[1]
+  {\textbf{points changed for #1 (please recompile)}}
 
 \exerciseconfig{countersheet}{\arabic{\exf@sheetcounter}}
 \exerciseconfig{counterproblem}{\arabic{\exf@problemcounter}}
@@ -253,10 +287,8 @@
 
 \def\exf@solutionbelow{subproblem}
 \define@choicekey{exf@style}{solutionbelow}%
-  {here,subproblem,subproblem*,problem,problem*,sheet,manual}%
-  {\def\exf@solutionbelow{#1}}
-\newcommand{\exf@solbelowis}[2]%
-  {\def\exf@tmp{#1}\ifx\exf@solutionbelow\exf@tmp#2\fi}
+  {here,here*,subproblem,subproblem*,problem,problem*,sheet,manual}%
+  {\ifexf@infile\else\def\exf@solutionbelow{#1}\fi}
 \defexercisestyle{sheetequation}{}
 \defexercisestyle{problemequation}{}
 \defexercisestyle{solutionequation}{}
@@ -267,10 +299,6 @@
 \def\exf@subpointsat{end}
 \define@choicekey{exf@style}{subpointsat}%
   {start,start*,margin,end,manual,off}{\def\exf@subpointsat{#1}}
-\newcommand{\exf@pointsatis}[2]%
-  {\def\exf@tmp{#1}\ifx\exf@pointsat\exf@tmp#2\fi}
-\newcommand{\exf@subpointsatis}[2]%
-  {\def\exf@tmp{#1}\ifx\exf@subpointsat\exf@tmp#2\fi}
 \defexercisestylearg{problemby}{\exf@numberproblemwithin{#1}}
 \defexercisestylearg{equationby}{\exf@numberequationwithin{#1}}
 \defexercisestyle{pagebysheet}{%
@@ -372,9 +400,8 @@
 \define@key{exf@sheet}{title}{\def\exf@data@sheet@rawtitle{#1}}
 \def\exf@data@sheet@title{\exf@config@composetitlesheet%
   {\csname the\exf@sheetcounter\endcsname}{\exf@data@sheet@rawtitle}}%
-\def\exf@data@sheet@rawpoints{}
-\def\exf@data@sheet@points{\exf@config@composepointssheet%
-  {\exf@data@sheet@rawpoints}}%
+\def\exf@data@sheet@points{\ifdefined\exf@sheet@points%
+   \expandafter\exf@config@composepointspairsheet\exf@sheet@points\fi}%
 
 \newcommand{\defproblemdata}[1]{%
   \exf@csdo\def{exf@data@problem@#1}{}%
@@ -471,11 +498,10 @@
   \fi%
   \gdef\exf@metadata{off}}
 
-\AtBeginDocument{\def\exf@tmp{auto}\ifx\exf@metadata\exf@tmp%
-  \exf@writemetadata{}\fi}
+\AtBeginDocument{\exf@ifis\exf@metadata{auto}{\exf@writemetadata{}}}
 
-\newcommand{\writeexercisedata}{\def\exf@tmp{manual}\ifx\exf@metadata\exf@tmp%
-  \exf@writemetadata{}\fi}
+\newcommand{\writeexercisedata}{%
+  \exf@ifis\exf@metadata{manual}{\exf@writemetadata{}}}
 
 \newcounter{\exf@sheetcounter}
 \newcounter{\exf@problemcounter}
@@ -586,6 +612,61 @@
 \def\exf@scanblock@noopt#1#2{#1{}{\scantokens#2}}
 \def\exf@scanblock@opt#1[#2]{#1{#2}{}}
 
+\newcommand{\exf@addtopoints}[3]{%
+  \ifdefined#1\else\def#1{{0}{0}}\fi%
+  \setlength\exf@tmpdim{\expandafter\@firstoftwo#1pt}%
+  \addtolength\exf@tmpdim{#2pt}%
+  \edef\exf@tmp{\strip@pt\exf@tmpdim}%
+  \setlength\exf@tmpdim{\expandafter\@secondoftwo#1pt}%
+  \addtolength\exf@tmpdim{#3pt}%
+  \xdef#1{{\exf@tmp}{\strip@pt\exf@tmpdim}}}
+\newcommand{\exf@pointsmismatch}[3]{%
+  \let\exf@tmp\@undefined%
+  \ifdim\expandafter\@firstoftwo#1pt=\expandafter\@firstoftwo#2pt\else%
+   \def\exf@tmp{}\fi%
+  \ifdim\expandafter\@secondoftwo#1pt=\expandafter\@secondoftwo#2pt\else%
+   \def\exf@tmp{}\fi%
+  \ifdefined\exf@tmp#3\fi}
+
+\def\exf@outpoints#1#2#3{\ifdefined#3%
+   \exf@exptwo\exf@outpoints@switch{#3}{#1}{#2}%
+   \global\let#3\@undefined\fi}
+\def\exf@outpoints@switch#1#2#3{#2{\protect#3#1}}
+
+\def\exf@scanpoints#1#2+#3+#4&{%
+  \edef#1{\if&#2&0\else#2\fi}%
+  \edef#1{{#1}{\if&#3&0\else#3\fi}}}
+\def\exf@formatpoints#1#2{\ifdim#2pt=0pt#1\else%
+  \ifdim#1pt=0pt+#2\else#1+#2\fi\fi}
+
+\newcommand{\extractpoints}{\@ifstar{\exf@extractpoints\@secondoftwo}%
+  {\exf@extractpoints\@firstoftwo}}
+\newcommand{\exf@extractpoints}[2]{\edef\exf@tmp{#2}%
+  \exf@exptwo\exf@scanpoints\exf@tmp\exf@tmp++&%
+  \expandafter#1\exf@tmp}
+
+\newcommand{\exf@makepointsmargin}[2]{%
+  \exf@config@insertpointsmargin{\exf@config@composepointspairmargin{#1}{#2}}}
+
+\newcommand{\exf@warnmismatch}[4]{%
+  \ifdefined#4\ifdefined#3\exf@pointsmismatch#3#4{%
+   \let\exf@tmp\PackageWarning%
+   \ifx#1\exf@solutionname\let\exf@tmp\PackageWarningNoLine\fi%
+   \exf@tmp{exframe}{points mismatch %
+    (\expandafter\exf@formatpoints#3 determined %
+    vs. \expandafter\exf@formatpoints#4 given) %
+    for #1 \csname the#2\endcsname}%
+   \ifexf@warntext\edef\exf@tmp{%
+    {\expandafter\exf@formatpoints#3}{\expandafter\exf@formatpoints#4}}%
+    \exf@exptwo\exf@config@insertwarnpoints#1\exf@tmp\fi}%
+  \fi\fi}
+\newcommand{\exf@warnrerun}[4]{%
+  \ifdefined#4\ifdefined#3\exf@pointsmismatch#3#4{%
+   \PackageWarning{exframe}{points changed %
+    for #1 \csname the#2\endcsname; rerun to fix}%
+   \ifexf@warntext\exf@config@insertwarnpointsrerun#1\fi}%
+  \fi\fi}
+
 \def\exf@splitsign#1-#2-#3&{\def\exf@splitnum{#1#2}\def\exf@splitminus{#3}}
 \def\exf@splitdecimal#1.#2.#3&{\def\exf@splitint{#1}\def\exf@splitdec{#2}}
 
@@ -614,49 +695,44 @@
    \mskip-4mu/\mskip-2mu%
    _{\exf@text{#3}}$\fi}
 
-\newlength{\exf@sheet@points@dim}
 \newcommand{\exf@notesheetpoints}[2]{%
   \exf@csdo\gdef{exf@sheetpoints@#1}{#2}}
 \AtBeginDocument{\immediate\write\@auxout{%
   \string\providecommand{\string\exf@notesheetpoints}[2]{}}}
-\newcommand{\exf@writesheetpoints}[1]%
-  {\immediate\write\@auxout{\string\exf@notesheetpoints{\sheettag}{#1}}}
+\newcommand{\exf@writesheetpoints}[2]%
+  {\immediate\write\@auxout{\string\exf@notesheetpoints{\sheettag}%
+   {\exf@formatpoints{#1}{#2}}}}
 \newcommand{\getsheetpoints}[1]{\ifcsname exf@sheetpoints@#1\endcsname%
   \csname exf@sheetpoints@#1\endcsname\else 0\fi}
 
-\newlength{\exf@problem@points@dim}
 \newcommand{\exf@noteproblempoints}[2]{%
   \exf@csdo\gdef{exf@problempoints@#1}{#2}}
 \AtBeginDocument{\immediate\write\@auxout{%
   \string\providecommand{\string\exf@noteproblempoints}[2]{}}}
-\newcommand{\exf@writeproblempoints}[1]%
-  {\immediate\write\@auxout{\string\exf@noteproblempoints{\problemtag}{#1}}}
+\newcommand{\exf@writeproblempoints}[2]%
+  {\immediate\write\@auxout{\string\exf@noteproblempoints{\problemtag}%
+   {\exf@formatpoints{#1}{#2}}}}
 \newcommand{\getproblempoints}[1]{\ifcsname exf@problempoints@#1\endcsname%
   \csname exf@problempoints@#1\endcsname\else 0\fi}
 
 \newcommand{\showpoints}{%
-  \ifdefined\exf@in@subproblem%
-   \ifdefined\exf@subproblem@points%
-    \exf@ensuretext{\exf@config@composepointsbody{\exf@subproblem@points}}%
-    \global\let\exf@subproblem@points\@undefined%
-   \fi%
-  \else\ifdefined\exf@in@problem%
-   \ifdefined\exf@problem@pointsshow%
-    \exf@ensuretext{\exf@config@composepointsbody{\exf@problem@pointsshow}}%
-    \global\let\exf@problem@pointsshow\@undefined%
-   \fi%
+  \ifdefined\exf@in@subproblem\exf@outpoints{\exf@ensuretext}%
+   {\exf@config@composepointspairbody}{\exf@subproblem@points}%
+  \else\ifdefined\exf@in@problem\exf@outpoints{\exf@ensuretext}%
+   {\exf@config@composepointspairbody}{\exf@problem@points@show}%
   \fi\fi}
 
-\newlength{\exf@solution@points@dim}
-
-\newcommand{\exf@awardpointsalt}[2][]{%
-  \exf@ensuretext{\exf@config@composepointsawardalt{#2}{#1}}}
-\newcommand{\exf@awardpointsreg}[2][]{%
-  \exf@gaddtolength{\exf@solution@points@dim}{#2 pt}%
-  \exf@ensuretext{\exf@config@composepointsaward{#2}{#1}}}
+\newcommand{\exf@awardpointsalt}[2][]{\exf@scanpoints\exf@tmp#2++&%
+  \exf@exptwo\exf@ensuretext{%
+   \expandafter\exf@config@composepointspairawardalt\exf@tmp{#1}}}
+\newcommand{\exf@awardpointsreg}[2][]{\exf@scanpoints\exf@tmp#2++&%
+  \exf@exptwo\exf@addtopoints\exf@solution@points@total\exf@tmp%
+  \exf@scanpoints\exf@tmp#2++&%
+  \exf@exptwo\exf@ensuretext{%
+   \expandafter\exf@config@composepointspairaward\exf@tmp{#1}}}
 \newcommand{\awardpoints}{\@ifstar\exf@awardpointsalt\exf@awardpointsreg}
 
-\define@key{exf@sheet}{points}{\def\exf@points@given{#1}}
+\define@key{exf@sheet}{points}{\exf@scanpoints\exf@points@given#1++&}
 \define@key{exf@sheet}{number}{\setcounter{\exf@sheetcounter}{#1}}
 \define@key{exf@sheet}{label}{\def\exf@label{#1}}
 \define@key{exf@sheet}{tag}{\def\sheettag{#1}}
@@ -672,18 +748,19 @@
   \fi%
   \let\exf@points@given\@undefined%
   \def\sheettag{\csname the\exf@sheetcounter\endcsname}%
-  \setlength{\exf@sheet@points@dim}{0pt}%
+  \let\exf@sheet@points@total\@undefined%
   \let\exf@label\@undefined%
   \setkeys{exf@sheet}{#1}%
   \ifexf@autolabelsheet\label{\exf@config@labelsheet{\sheettag}}\fi%
   \ifdefined\exf@label\label{\exf@label}\fi%
+  \let\exf@sheet@points\@undefined%
   \ifdefined\exf@points@given%
-   \let\exf@data@sheet@rawpoints\exf@points@given%
+   \let\exf@sheet@points\exf@points@given%
   \else\ifcsname exf@sheetpoints@\sheettag\endcsname%
-   \exf@csdotwo\let\exf@data@sheet@rawpoints{exf@sheetpoints@\sheettag}%
+   \exf@csdotwo\let\exf@tmp{exf@sheetpoints@\sheettag}%
+   \exf@exptwo\exf@scanpoints\exf@sheet@points\exf@tmp++&%
   \fi\fi%
-  \def\exf@tmp{sheet}\ifx\exf@metadata\exf@tmp%
-   \exf@writemetadata{sheet}\fi%
+  \exf@ifis\exf@metadata{sheet}{\exf@writemetadata{sheet}}%
   \exf@config@insertsheetbefore%
   \ifx\exf@config@toclevelsheet\exf@empty\else%
    \ifdefined\phantomsection\phantomsection\fi\fi%
@@ -692,32 +769,17 @@
     {\exf@data@sheet@rawtitle}}%
   \exf@config@insertsheettitle}%
  {\ifdefined\exf@points@given%
-   \ifdim\exf@sheet@points@dim=0pt\else%
-    \ifdim\exf@sheet@points@dim=\exf@data@sheet@rawpoints pt\else%
-     \PackageWarning{exframe}{points mismatch for %
-      \exf@sheetname\space\csname the\exf@sheetcounter\endcsname}%
-     \ifexf@warntext\exf@config@insertwarnpoints{\exf@sheetname}%
-      {\strip@pt\exf@sheet@points@dim}{\exf@data@sheet@rawpoints}\fi%
-   \fi\fi%
+   \exf@warnmismatch{\exf@sheetname}{\exf@sheetcounter}%
+    {\exf@sheet@points@total}{\exf@sheet@points}%
   \else%
-   \ifx\exf@data@sheet@rawpoints\exf@empty\else%
-    \ifdim\exf@sheet@points@dim=\exf@data@sheet@rawpoints pt\else%
-     \PackageWarning{exframe}{points changed for %
-      \exf@sheetname\space\csname the\exf@sheetcounter\endcsname;
-      rerun to fix}%
-     \ifexf@warntext\exf@config@insertwarnpoints{\exf@sheetname}%
-      {\strip@pt\exf@sheet@points@dim}{\exf@data@sheet@rawpoints}\fi%
-   \fi\fi%
-   \ifdim\exf@sheet@points@dim=0pt%
-    \def\exf@data@sheet@rawpoints{}%
-   \else%
-    \edef\exf@data@sheet@rawpoints{\strip@pt\exf@sheet@points@dim}%
-   \fi%
+   \exf@warnrerun{\exf@sheetname}{\exf@sheetcounter}%
+    {\exf@sheet@points@total}{\exf@sheet@points}%
+   \let\exf@sheet@points\exf@sheet@points@total%
   \fi%
-  \ifx\exf@data@sheet@rawpoints\exf@empty\else%
-   \exf@writesheetpoints{\exf@data@sheet@rawpoints}%
+  \ifdefined\exf@sheet@points%
+   \expandafter\exf@writesheetpoints\exf@sheet@points%
   \fi%
-  \exf@solbelowis{sheet}{\insertsolutions}%
+  \exf@ifis\exf@solutionbelow{sheet}{\insertsolutions}%
   \exf@config@insertsheetafter%
   \exf@config@insertsheetclearpage%
   \ifexf@style@sheetequation%
@@ -730,7 +792,7 @@
   \clearpage\ifexf@twoside\ifodd\value{page}\else%
   \thispagestyle{empty}\hbox{}\newpage\fi\fi}
 
-\define@key{exf@problem}{points}{\def\exf@points@given{#1}}
+\define@key{exf@problem}{points}{\exf@scanpoints\exf@points@given#1++&}
 \define@key{exf@problem}{label}{\def\exf@label{#1}}
 \define@key{exf@problem}{tag}{\def\problemtag{#1}}
 \define@key{exf@problem}{sollabel}{\xdef\exf@sollabel{#1}}
@@ -752,7 +814,7 @@
   \let\exf@points@given\@undefined%
   \let\exf@label\@undefined%
   \global\let\exf@sollabel\@undefined%
-  \setlength{\exf@problem@points@dim}{0pt}%
+  \let\exf@problem@points@total\@undefined%
   \setkeys{exf@problem,exf@probleminfo}{#1}%
   \ifexf@autolabelproblem\label{\exf@config@labelproblem{\problemtag}}\fi%
   \ifdefined\exf@label\label{\exf@label}\fi%
@@ -763,33 +825,29 @@
     \csname theH\exf@problemcounter\endcsname}%
   \fi%
   \ifx\exf@data@problem@rawtitle\exf@empty%
-    \global\let\exf@prevprobtitle\@undefined%
+   \global\let\exf@prevprobtitle\@undefined%
   \else%
-    \protected@xdef\exf@prevprobtitle{\exf@data@problem@rawtitle}%
+   \protected@xdef\exf@prevprobtitle{\exf@data@problem@rawtitle}%
   \fi%
   \global\let\exf@prevsubprob\@undefined%
   \global\let\exf@prevsubprobhref\@undefined%
   \let\exf@problem@points\@undefined%
   \ifdefined\exf@points@given%
    \let\exf@problem@points\exf@points@given%
-  \else%
-   \ifcsname exf@problempoints@\problemtag\endcsname%
-    \exf@csdotwo\let\exf@problem@points{exf@problempoints@\problemtag}%
+  \else\ifcsname exf@problempoints@\problemtag\endcsname%
+   \exf@csdotwo\let\exf@tmp{exf@problempoints@\problemtag}%
+   \exf@exptwo\exf@scanpoints\exf@problem@points\exf@tmp++&%
   \fi\fi%
   \global\let\exf@prevpoints\exf@problem@points%
-  \let\exf@problem@pointsshow\@undefined%
-  \ifdefined\exf@problem@points\ifdim\exf@problem@points pt=0pt\else%
-   \let\exf@problem@pointsshow\exf@problem@points%
-  \fi\fi%
-  \exf@pointsatis{off}{\let\exf@problem@pointsshow\@undefined}%
-  \exf@pointsatis{start}{\ifdefined\exf@problem@pointsshow%
-   \exf@exptwo\exf@append@intro{\expandafter%
-    \exf@config@composepointsstart\expandafter{\exf@problem@pointsshow}}%
-   \let\exf@problem@pointsshow\@undefined\fi}%
-  \exf@pointsatis{start*}{\ifdefined\exf@problem@pointsshow%
-   \exf@exptwo\exf@prepend@intro{\expandafter%
-    \exf@config@composepointsstart\expandafter{\exf@problem@pointsshow}}%
-   \let\exf@problem@pointsshow\@undefined\fi}%
+  \let\exf@problem@points@show\@undefined%
+  \ifdefined\exf@problem@points%
+   \let\exf@problem@points@show\exf@problem@points%
+  \fi%
+  \exf@ifis\exf@pointsat{off}{\let\exf@problem@points@show\@undefined}%
+  \exf@ifis\exf@pointsat{start}{\exf@outpoints{\exf@append@intro}%
+   {\exf@config@composepointspairstart}{\exf@problem@points@show}}%
+  \exf@ifis\exf@pointsat{start*}{\exf@outpoints{\exf@prepend@intro}%
+   {\exf@config@composepointspairstart}{\exf@problem@points@show}}%
   \exf@config@insertprobleminfo%
   \exf@config@styletextproblem%
   \ifdim\exf@config@skipproblemitem=0pt%
@@ -816,52 +874,34 @@
      \exf@config@composetitleproblem{\exf@empty}{\exf@data@problem@rawtitle}}}%
    \fi%
   \fi%
-  \exf@pointsatis{margin}{\ifdefined\exf@problem@pointsshow%
-   \expandafter\exf@prepend@def\expandafter\exf@introitem\expandafter%
-    {\expandafter\protect\expandafter%
-     \exf@config@insertpointsmargin\expandafter{\expandafter%
-      \exf@config@composepointsmargin\expandafter{\exf@problem@pointsshow}}}%
-   \let\exf@problem@pointsshow\@undefined\fi}%
+  \exf@ifis\exf@pointsat{margin}{%
+   \exf@outpoints{\exf@prepend@def\exf@introitem}%
+   {\exf@makepointsmargin}{\exf@problem@points@show}}%
   \exf@open@block{\exf@config@skipproblemtitle}%
   \exf@addcontentsline{\exf@config@toclevelproblem}%
    {\exf@config@composetocproblem{\csname the\exf@problemcounter\endcsname}%
     {\exf@data@problem@rawtitle}}%
   \@afterindentfalse}%
- {\exf@pointsatis{end}{\showpoints}%
+ {\exf@ifis\exf@pointsat{end}{\showpoints}%
   \ifdefined\exf@points@given%
-   \ifdim\exf@problem@points@dim=0pt\else%
-    \ifdim\exf@problem@points@dim=\exf@problem@points pt\else%
-     \PackageWarning{exframe}{points mismatch for %
-      \exf@problemname\space\csname the\exf@problemcounter\endcsname}%
-     \ifexf@warntext\exf@config@insertwarnpoints{\exf@problemname}%
-      {\strip@pt\exf@problem@points@dim}{\exf@problem@points}\fi%
-   \fi\fi%
+   \exf@warnmismatch{\exf@problemname}{\exf@problemcounter}%
+    {\exf@problem@points@total}{\exf@problem@points}%
   \else%
-   \ifdefined\exf@problem@points%
-    \ifdim\exf@problem@points@dim=\exf@problem@points pt\else%
-     \PackageWarning{exframe}{points changed for %
-      \exf@problemname\space\csname the\exf@problemcounter\endcsname;
-      rerun to fix}%
-     \ifexf@warntext\exf@config@insertwarnpoints{\exf@problemname}%
-      {\strip@pt\exf@problem@points@dim}{\exf@problem@points}\fi%
-   \fi\fi%
-   \ifdim\exf@problem@points@dim=0pt%
-    \let\exf@problem@points\@undefined%
-   \else%
-    \edef\exf@problem@points{\strip@pt\exf@problem@points@dim}%
-   \fi%
+   \exf@warnrerun{\exf@problemname}{\exf@problemcounter}%
+    {\exf@problem@points@total}{\exf@problem@points}%
+   \let\exf@problem@points\exf@problem@points@total%
   \fi%
   \ifdefined\exf@problem@points%
-   \exf@writeproblempoints{\exf@problem@points}%
-   \exf@gaddtolength{\exf@sheet@points@dim}{\exf@problem@points pt}%
+   \expandafter\exf@writeproblempoints\exf@problem@points%
+   \exf@exptwo\exf@addtopoints\exf@sheet@points@total\exf@problem@points%
   \fi%
-  \ifdefined\exf@problem@points\else\ifdim\exf@sheet@points@dim=0pt\else%
+  \ifdefined\exf@problem@points\else\ifdefined\exf@sheet@points@total%
    \PackageWarning{exframe}{no points defined for \exf@problemname}%
   \fi\fi%
   \global\let\exf@prevsubprob\@undefined%
   \global\let\exf@prevsubprobhref\@undefined%
   \par\exf@close@block%
-  \exf@solbelowis{problem}{%
+  \exf@ifis\exf@solutionbelow{problem}{%
    \exf@config@insertproblemsolution%
    \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}}%
   \ifexf@style@problemequation%
@@ -871,11 +911,11 @@
   \endgroup%
   \exf@config@insertproblemafter%
   \addvspace{\exf@config@skipproblembelow}%
-  \exf@solbelowis{problem*}{%
+  \exf@ifis\exf@solutionbelow{problem*}{%
    \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}}%
   \ignorespacesafterend}
 
-\define@key{exf@subproblem}{points}{\def\exf@subproblem@points{#1}}
+\define@key{exf@subproblem}{points}{\exf@scanpoints\exf@subproblem@points#1++&}
 \define@key{exf@subproblem}{label}{\def\exf@label{#1}}
 
 \newenvironment{\exf@subproblemname}[1][]{%
@@ -896,21 +936,17 @@
   \fi%
   \ifdefined\exf@subproblem@points%
    \global\let\exf@prevpoints\exf@subproblem@points%
-   \exf@gaddtolength{\exf@problem@points@dim}{\exf@subproblem@points pt}%
+   \exf@exptwo\exf@addtopoints\exf@problem@points@total\exf@subproblem@points%
   \else%
-   \ifdim\exf@problem@points@dim=0pt\else%
+   \ifdefined\exf@problem@points@total%
     \PackageWarning{exframe}{no points defined for \exf@subproblemname}%
    \fi%
   \fi%
-  \exf@subpointsatis{off}{\let\exf@subproblem@points\@undefined}%
-  \exf@subpointsatis{start}{\ifdefined\exf@subproblem@points%
-   \exf@exptwo\exf@append@intro{\expandafter%
-    \exf@config@composepointsstart\expandafter{\exf@subproblem@points}}%
-   \let\exf@subproblem@points\@undefined\fi}%
-  \exf@subpointsatis{start*}{\ifdefined\exf@subproblem@points%
-   \exf@exptwo\exf@prepend@intro{\expandafter%
-    \exf@config@composepointsstart\expandafter{\exf@subproblem@points}}%
-   \let\exf@subproblem@points\@undefined\fi}%
+  \exf@ifis\exf@subpointsat{off}{\let\exf@subproblem@points\@undefined}%
+  \exf@ifis\exf@subpointsat{start}{\exf@outpoints{\exf@append@intro}%
+   {\exf@config@composepointspairstart}{\exf@subproblem@points}}%
+  \exf@ifis\exf@subpointsat{start*}{\exf@outpoints{\exf@prepend@intro}%
+   {\exf@config@composepointspairstart}{\exf@subproblem@points}}%
   \exf@config@insertsubprobleminfo%
   \ifdim\exf@config@skipsubproblemitem=0pt%
    \exf@prepend@intro{{%
@@ -932,23 +968,20 @@
      {\csname the\exf@subproblemcounter\endcsname}%
     \exf@config@composeitemsubproblemsep}}%
   \fi%
-  \exf@subpointsatis{margin}{\ifdefined\exf@subproblem@points%
-   \expandafter\exf@prepend@def\expandafter\exf@introitem\expandafter%
-    {\expandafter\protect\expandafter%
-     \exf@config@insertpointsmargin\expandafter{\expandafter%
-      \exf@config@composepointsmargin\expandafter{\exf@subproblem@points}}}%
-   \let\exf@subproblem@points\@undefined\fi}%
+  \exf@ifis\exf@subpointsat{margin}{%
+   \exf@outpoints{\exf@prepend@def\exf@introitem}%
+   {\exf@makepointsmargin}{\exf@subproblem@points}}%
   \exf@open@block{\exf@config@skipsubproblemtitle}%
   \@afterindentfalse}%
- {\exf@subpointsatis{end}{\showpoints}%
+ {\exf@ifis\exf@subpointsat{end}{\showpoints}%
   \par\exf@close@block%
-  \exf@solbelowis{subproblem*}{%
+  \exf@ifis\exf@solutionbelow{subproblem*}{%
    \exf@config@insertsubproblemsolution%
    \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}}%
   \endgroup%
   \exf@config@insertsubproblemafter%
   {\exf@config@styletext\addvspace{\exf@config@skipsubproblembelow}}%
-  \exf@solbelowis{subproblem}{%
+  \exf@ifis\exf@solutionbelow{subproblem}{%
    \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}}%
   \ignorespacesafterend}
 
@@ -958,7 +991,7 @@
 \define@key{exf@solution}{sheettag}{\def\sheettag{#1}}
 \define@key{exf@solution}{href}{\def\exf@solhref{#1}}
 \define@key{exf@solution}{label}{\def\exf@label{#1}}
-\define@key{exf@solution}{points}{\def\exf@solution@points{#1}}
+\define@key{exf@solution}{points}{\exf@scanpoints\exf@solution@points#1++&}
 \define@key{exf@solution}{probtitle}{\def\exf@solprobtitle{#1}}
 
 \newenvironment{printsolution}[1]{%
@@ -974,12 +1007,12 @@
   \def\exf@solprob{}%
   \def\exf@solsubprob{}%
   \let\exf@label\@undefined%
-  \setlength{\exf@solution@points@dim}{0pt}%
+  \let\exf@solution@points@total\@undefined%
   \def\exf@solhref{}%
   \exf@init@block{\exf@config@skipsolutioninfo}%
   \setkeys{exf@solution,exf@probleminfo}{#1}%
   \exf@csdo\def{the\exf@solutioncounter}%
-   {\exf@config@composeitemsolution{\exf@solprob}{\exf@solsubprob}}%
+   {\exf@config@composeitemsolutionlabel{\exf@solprob}{\exf@solsubprob}}%
   \refstepcounter{\exf@solutioncounter}%
   \ifdefined\exf@label\label{\exf@label}\fi%
   \exf@config@insertsolutioninfo%
@@ -1027,12 +1060,8 @@
   \fi%
   \exf@open@block{\exf@config@skipsolutiontitle}%
   \@afterindentfalse}%
- {\ifdefined\exf@solution@points\ifdim\exf@solution@points@dim=0pt\else%
-   \ifdim\exf@solution@points@dim=\exf@solution@points pt\else%
-    \PackageWarning{exframe}{points mismatch in \exf@solutionname}%
-    \ifexf@warntext\exf@config@insertwarnpoints{\exf@solutionname}%
-     {\strip@pt\exf@solution@points@dim}{\exf@solution@points}\fi%
-  \fi\fi\fi%
+ {\exf@warnmismatch{\exf@solutionname}{\exf@solutioncounter}%
+   {\exf@solution@points@total}{\exf@solution@points}%
   \par\exf@close@block%
   \ifexf@style@solutionequation%
    \setcounter{exf@solutionequation}{\value{equation}}%
@@ -1053,9 +1082,9 @@
   \let\exf@composetitle\exf@config@composetitlesolutionsproblemmulti%
   \def\exf@solutionstoc{\exf@addcontentsline{\exf@config@toclevelsolution}%
     {\exf@config@composetocsolution{\exf@solprob}{\exf@solprobtitle}}}%
-  \exf@solbelowis{problem}{\let\exf@composetitle%
+  \exf@ifis\exf@solutionbelow{problem}{\let\exf@composetitle%
     \exf@config@composetitlesolutionsproblemsingle}%
-  \exf@solbelowis{problem*}{\let\exf@composetitle%
+  \exf@ifis\exf@solutionbelow{problem*}{\let\exf@composetitle%
     \exf@config@composetitlesolutionsproblemsingle}%
   \exf@solutionssection{\exf@config@styletitlesolutionsproblem}%
    {\exf@composetitle{\exf@solprob}{\exf@solprobtitle}}%
@@ -1064,19 +1093,24 @@
   \endgroup}
 
 \newenvironment{\exf@solutionname}%
-  {\exf@scanblock{\exf@scansolution}}{\endexf@scansolution}%
+  {\exf@ifis\exf@solutionbelow{here*}{%
+    \newcommand{\exf@scanblockplain}[1][]{\exf@scansolution{##1}{}}%
+    \def\exf@scanblock##1{\exf@scanblockplain}}%
+   \exf@scanblock{\exf@scansolution}}{\endexf@scansolution}%
 
 \newenvironment{exf@scansolution}[2]{%
-  \exf@solbelowis{here}{\showpoints}%
+  \exf@ifis\exf@solutionbelow{here}{\showpoints}%
+  \exf@ifis\exf@solutionbelow{here*}{\showpoints}%
   \global\exf@bufcleanfalse%
   \ifdefined\exf@problem@solnewsec%
    \def\exf@probarg{\ifdefined\exf@prevprob prob={\exf@prevprob}\fi%
     \ifdefined\exf@prevprobtitle,probtitle={\exf@prevprobtitle}\fi%
     \ifdefined\exf@prevprobhref,href={\exf@prevprobhref}\fi%
     \ifdefined\exf@sollabel,label={\exf@sollabel}\fi}%
-   \exf@solbelowis{here}{\let\exf@probarg\@undefined}%
-   \exf@solbelowis{subproblem}{\let\exf@probarg\@undefined}%
-   \exf@solbelowis{subproblem*}{\let\exf@probarg\@undefined}%
+   \exf@ifis\exf@solutionbelow{here}{\let\exf@probarg\@undefined}%
+   \exf@ifis\exf@solutionbelow{here*}{\let\exf@probarg\@undefined}%
+   \exf@ifis\exf@solutionbelow{subproblem}{\let\exf@probarg\@undefined}%
+   \exf@ifis\exf@solutionbelow{subproblem*}{\let\exf@probarg\@undefined}%
    \ifdefined\exf@probarg%
     \ifexf@lineno\exf@addbufline{\exf@linesep}\exf@addbufline{\exf@lineno}\fi%
     \exf@addbufline{\@backslashchar solutionssection{\exf@probarg}}%
@@ -1087,19 +1121,25 @@
   \ifexf@lineno\exf@addbufline{\exf@linesep}\exf@addbufline{\exf@lineno}\fi%
   \def\exf@subprobarg{%
     \ifdefined\exf@prevprob prob={\exf@prevprob},\fi%
-    \ifdefined\exf@prevsubprob%
-     subprob={\exf@prevsubprob},%
+    \ifdefined\exf@prevsubprob subprob={\exf@prevsubprob},%
      \ifdefined\exf@prevsubprobhref href={\exf@prevsubprobhref},\fi%
     \else%
      \ifdefined\exf@prevprobhref href={\exf@prevprobhref},\fi%
     \fi%
-    \ifdefined\exf@prevpoints points={\exf@prevpoints},\fi%
+    \ifdefined\exf@prevpoints points=%
+     {\expandafter\exf@formatpoints\exf@prevpoints},\fi%
     \ifdefined\sheettag sheettag={\sheettag},\fi%
     \ifdefined\problemtag problemtag={\problemtag},\fi}%
   \exf@addbufline{\@backslashchar begin{printsolution}{\exf@subprobarg#1}}%
   \global\let\exf@prevsubprob\@undefined%
   \global\let\exf@prevsubprobhref\@undefined%
   \global\let\exf@prevpoints\@undefined%
+  \exf@ifis\exf@solutionbelow{here*}{%
+   \def\exf@verbatim{\exf@clearbuf\begingroup%
+    \edef\exf@subprobarg{\exf@subprobarg}%
+    \exf@showsolutionsin{\exf@config@composetitlesolutionsingle}%
+    \exf@exptwo\printsolution{\exf@subprobarg#1}}%
+   \def\exf@endverbatim{\endprintsolution\exf@showsolutionsout\endgroup}}%
   \exf@verbatim#2}%
  {\exf@endverbatim%
   \exf@addbufline{\@backslashchar end{printsolution}}%
@@ -1108,17 +1148,17 @@
    \exf@clearbuf%
   \fi%
   \ifsolutions\else\exf@clearbuf\fi%
-  \exf@solbelowis{here}{\exf@showsolutions%
+  \exf@ifis\exf@solutionbelow{here}{\exf@showsolutions%
    {\exf@config@composetitlesolutionsingle}{}}%
   \ifdefined\exf@in@subproblem\else%
-   \exf@solbelowis{subproblem}{%
+   \exf@ifis\exf@solutionbelow{subproblem}{%
     \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}}%
-   \exf@solbelowis{subproblem*}{%
+   \exf@ifis\exf@solutionbelow{subproblem*}{%
     \exf@showsolutions{\exf@config@composetitlesolutionsingle}{}}\fi%
   \ifdefined\exf@in@problem\else%
-   \exf@solbelowis{problem}{%
+   \exf@ifis\exf@solutionbelow{problem}{%
     \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}}%
-   \exf@solbelowis{problem*}{%
+   \exf@ifis\exf@solutionbelow{problem*}{%
     \exf@showsolutions{\exf@config@composetitlesolutionmulti}{}}\fi%
   \ignorespacesafterend}
 
@@ -1127,7 +1167,7 @@
   \ifx\exf@solutionstitleexp\exf@empty\else%
    \ifdefined#5%
     \exf@csdo\def{the\exf@solutioncounter}%
-     {\exf@config@composeitemsolution{\exf@solprob}{\exf@solsubprob}}%
+     {\exf@config@composeitemsolutionlabel{\exf@solprob}{\exf@solsubprob}}%
     \refstepcounter{\exf@solutioncounter}\label{#5}%
    \fi%
    \exf@section{#3}{\exf@config@styletitle\exf@config@styletitlesolution#1%
@@ -1141,18 +1181,24 @@
    {\exf@addcontentsline{\exf@config@toclevelsolutions}%
     {\exf@config@composetocsolutions}}{\@undefined}{\@undefined}}
 
+\newcommand{\exf@showsolutionsin}[1]{%
+  \par\exf@config@styletext\addvspace{\exf@config@skipsolutionsabove}%
+  \exf@config@styletextsolution%
+  \exf@config@insertsolutionsbefore%
+  \let\exf@composetitle#1}
+
+\newcommand{\exf@showsolutionsout}{%
+  \removelastskip%
+  \exf@config@insertsolutionsafter%
+  \par\exf@config@styletext\addvspace{\exf@config@skipsolutionbelow}}
+
 \newcommand{\exf@showsolutions}[2]{%
   \ifexf@bufclean\else\begingroup%
-   \par\exf@config@styletext\addvspace{\exf@config@skipsolutionsabove}%
-   \exf@config@styletextsolution%
-   \exf@config@insertsolutionsbefore%
-   \let\exf@composetitle#1%
+   \exf@showsolutionsin{#1}%
    #2%
    \exf@sourcebuf%
    \exf@clearbuf%
-   \removelastskip%
-   \exf@config@insertsolutionsafter%
-   \par\exf@config@styletext\addvspace{\exf@config@skipsolutionbelow}%
+   \exf@showsolutionsout%
   \endgroup\fi}
 
 \newcommand{\writesolutions}[1][\jobname]{\exf@closefile\exf@startfile{#1}}
