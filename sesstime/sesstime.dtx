@@ -1,14 +1,15 @@
-% \iffalse
 %
-% sesstime.dtx Copyright (C) 2016-2019 Niklas Beisert
+% \iffalse meta-comment
+%
+% sesstime.dtx Copyright (C) 2016-2025 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
 % of this license or (at your option) any later version.
 % The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
-% and version 1.3 or later is part of all distributions of LaTeX
-% version 2005/12/01 or later.
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008 or later.
 %
 % This work has the LPPL maintenance status `maintained'.
 %
@@ -16,41 +17,49 @@
 %
 % This work consists of the files sesstime.dtx and sesstime.ins
 % and the derived files sesstime.sty and stimsamp.tex
-% with |stimsmp3.tex| and |stimsmp4.tex|.
+% with stimsmp3.tex and stimsmp4.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{sesstime}[2019/01/17 v1.12 session timing marks]
-%<sample>\ProvidesFile{stimsamp.tex}[2019/01/17 v1.12 sample for sesstime]
+%<package>\ProvidesPackage{sesstime}[2025/03/25 v1.1.3 session timing marks]
+%<sample>\ProvidesFile{stimsamp.tex}[2025/03/25 v1.1.3 sample for sesstime]
 %<*driver>
-\def\thedate#1{2019/01/17}\def\theversion#1{v1.12}
-\ProvidesFile{sesstime.drv}[\thedate{} \theversion{} sesstime reference manual file]
+\def\thedate#1{2025/03/25}\def\theversion#1{v1.1.3}
+\ProvidesFile{sesstime.dtx}[\thedate{} \theversion{} sesstime reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
 \usepackage[margin=35mm]{geometry}
-\usepackage{hyperref}
+\usepackage[hyperindex=false]{hyperref}
 \usepackage{hyperxmp}
 \usepackage[usenames]{color}
 
-\hypersetup{colorlinks=true}
-\hypersetup{pdfstartview=FitH}
-\hypersetup{pdfpagemode=UseNone}
+\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
+\hypersetup{urlbordercolor={.5 1 1}}
+\hypersetup{linkbordercolor={1 .7 .7}}
+\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
+\hypersetup{keeppdfinfo=true}
 \hypersetup{pdfsource={}}
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfcopyright={Copyright 2016-2019 Niklas Beisert.
+\hypersetup{pdfurl={https://ctan.org/pkg/sesstime}}
+\hypersetup{pdfcopyright={Copyright 2016-2025 Niklas Beisert.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
-\hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
+\hypersetup{pdflicenseurl={https://www.latex-project.org/lppl.txt}}
 \hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K,
   Wolfgang-Pauli-Strasse 27}}
 \hypersetup{pdfcontactpostcode={8093}}
 \hypersetup{pdfcontactcity={Zurich}}
 \hypersetup{pdfcontactcountry={Switzerland}}
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
-\hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
+\hypersetup{pdfcontacturl={https://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
+\newcommand{\markpkg}[1]{\textsf{#1}}
 \newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
+\newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
+\newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\markpkg{#1}}}
+
+\def\textvert{\texttt{\char"7C}}
 
 \parskip1ex
 \parindent0pt
@@ -59,7 +68,7 @@
 
 \begin{document}
 
-\title{The \textsf{sesstime} Package}
+\title{The \markpkg{sesstime} Package}
 \hypersetup{pdftitle={The sesstime Package}}
 \author{Niklas Beisert\\[2ex]
   Institut f\"ur Theoretische Physik\\
@@ -69,11 +78,12 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package sesstime}}
-\date{\thedate{}, \theversion{}}
+\date{\thedate{}, \theversion{}\\[1ex]
+\url{https://ctan.org/pkg/sesstime}}
 \maketitle
 
 \begin{abstract}\noindent
-\textsf{sesstime} is a \LaTeXe{} package
+\markpkg{sesstime} is a \LaTeXe{} package
 to add timing marks to lecture notes
 in order to help managing the time available
 for presenting a given section of the document.
@@ -164,9 +174,9 @@ This section describes the structures, markup and mechanisms
 provided by the package and some hints how to structure and maintain
 the information within the document.
 A complete reference of commands
-and configuration options in given in section \ref{sec:commands}.
+and configuration options in given in \secref{sec:commands}.
 
-To use the package \textsf{sesstime} add the command
+To use the package \ctanpkg{sesstime} add the command
 \begin{center}
 |\usepackage{sesstime}|
 \end{center}
@@ -516,12 +526,12 @@ To turn off all marks, use the package option:
 %
 Also individual types of timing marks can be suppressed
 by similar package options,
-see section \ref{sec:packageoptions}.
+see \secref{sec:packageoptions}.
 For a finer selection or suppression of comments,
 one could use an optional argument such as
 |[if=private]| (only in the private version)
 or |[not=public]| (only in the public version),
-see section \ref{sec:flags}.
+see \secref{sec:flags}.
 
 Please note that the package uses a simple
 mechanism to place timing marks and comments in the margin
@@ -560,7 +570,7 @@ and/or |\timingsessionline|
 to show the time instead of the session number.
 See appendix \ref{sec:sample} for a sample implementation.
 
-Please refer to the command reference in section \ref{sec:commands}
+Please refer to the command reference in \secref{sec:commands}
 as well as the implementation in appendix \ref{sec:implementation}
 to find out about commands to be customised:
 Commands suitable for customisation are among
@@ -594,7 +604,7 @@ Timing information is entered using the block commands:
 \end{center}
 The optional argument \textit{cond}
 is a comma-separated list of options described in
-section \ref{sec:flagsref}.
+\secref{sec:flagsref}.
 The argument \textit{abstime} represents the absolute time at this instant;
 it can be specified in minutes
 or in the format \textit{hour}|:|\textit{minutes}.
@@ -792,27 +802,27 @@ or&|\timingconfigure[|\textit{cond}|]{|\textit{opts}|}|
 Below we provide a complete list of available options:
 %
 \begin{itemize}
-\item |print|[|=true|$\vert$|false|]
+\item |print|[|=true|\textvert|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable printing all timing marks.
 
-\item |block|[|=true|$\vert$|false|]
+\item |block|[|=true|\textvert|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable printing block marks.
 
-\item |chapter|[|=true|$\vert$|false|]
+\item |chapter|[|=true|\textvert|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable printing chapter marks.
 
-\item |session|[|=true|$\vert$|false|]
+\item |session|[|=true|\textvert|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable printing session marks.
 
-\item |comment|[|=true|$\vert$|false|]
+\item |comment|[|=true|\textvert|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable printing comments.
 
-\item |warning|[|=true|$\vert$|false|]
+\item |warning|[|=true|\textvert|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable printing warnings.
 
@@ -868,15 +878,15 @@ conditionally turn on automatic determination of sessions.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-Copyright \copyright{} 2016--2019 Niklas Beisert
+Copyright \copyright{} 2016--2025 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
 of this license or (at your option) any later version.
 The latest version of this license is in
-  \url{http://www.latex-project.org/lppl.txt}
-and version 1.3 or later is part of all distributions of \LaTeX{}
-version 2005/12/01 or later.
+  \url{https://www.latex-project.org/lppl.txt}
+and version 1.3c or later is part of all distributions of \LaTeX{}
+version 2008 or later.
 
 This work has the LPPL maintenance status `maintained'.
 
@@ -925,10 +935,10 @@ distribution, e.g.\ \textit{texmf-root}|/tex/latex/sesstime|.
 The package relies on other packages:
 \begin{itemize}
 \item
-This package uses the package \textsf{keyval}
-from the \textsf{graphics} bundle
+This package uses the package \ctanpkg{keyval}
+from the \ctanpkg{graphics} bundle
 to process the options for the package, environments and macros.
-Compatibility with the \textsf{keyval} package
+Compatibility with the \ctanpkg{keyval} package
 has been tested with v1.15 (2014/10/28).
 \end{itemize}
 
@@ -963,6 +973,24 @@ Ignore leading and trailing spaces in the list of flags.
 \subsection{Revision History}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\iffalse
+\paragraph{vN.N.N+:} 20YY/MM/NN
+
+\begin{itemize}
+\item
+\ldots
+\end{itemize}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1.3:} 2025/03/25
+
+\begin{itemize}
+\item
+maintenance and manual update
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.12:} 2019/01/17
 
 \begin{itemize}
@@ -986,7 +1014,7 @@ bugfix for section titles including |\texorpdfstring|
 \item
 grabbing of section titles improved
 \item
-options |depthsec| and |depthpar| to 
+options |depthsec| and |depthpar| to
 adjust depth in list of sessions
 \end{itemize}
 
@@ -1068,7 +1096,7 @@ basic functionality
 %\fi
 %
 % In this section we provide an example of how to use
-% some of the \textsf{sesstime} features.
+% some of the \ctanpkg{sesstime} features.
 % We also test the behaviour in some special cases.
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1079,7 +1107,7 @@ basic functionality
 \documentclass[12pt]{article}
 %    \end{macrocode}
 
-% Use package \textsf{geometry} to adjust the page layout,
+% Use package \ctanpkg{geometry} to adjust the page layout,
 % adjust the paragraph shape:
 %    \begin{macrocode}
 \usepackage{geometry}
@@ -1089,7 +1117,7 @@ basic functionality
 \parindent0pt
 %    \end{macrocode}
 
-% Include the \textsf{sesstime} package:
+% Include the \ctanpkg{sesstime} package:
 %    \begin{macrocode}
 \RequirePackage{sesstime}
 %    \end{macrocode}
@@ -1400,9 +1428,9 @@ the list of sessions
 % \paragraph{Required Packages.}
 %
 % The package loads the package
-% \textsf{keyval}
+% \ctanpkg{keyval}
 % if not yet present.
-% \textsf{keyval} is used for extended options processing:
+% \ctanpkg{keyval} is used for extended options processing:
 %    \begin{macrocode}
 \RequirePackage{keyval}
 %    \end{macrocode}
@@ -1509,7 +1537,7 @@ the list of sessions
 %    \end{macrocode}
 % \end{macro}
 
-% Pass undeclared options on to \textsf{keyval} processing:
+% Pass undeclared options on to \ctanpkg{keyval} processing:
 %    \begin{macrocode}
 \DeclareOption*{\expandafter\timingconfigure\expandafter{\CurrentOption}}
 %    \end{macrocode}

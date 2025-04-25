@@ -22,7 +22,7 @@ touch:
 
 clean:
 	rm -f stimsamp.aux stimsmp3.aux stimsmp4.aux stimsamp.los stimsamp.log
-	rm -f sesstime.aux sesstime.log	sesstime.out sesstime.toc
+	rm -f sesstime.aux sesstime.log	sesstime.out sesstime.toc sesstime.hd
 
 clean-all: clean
 	rm -f sesstime.sty stimsamp.tex stimsmp3.tex stimsmp4.tex
