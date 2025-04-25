@@ -1,5 +1,5 @@
-delimset v1.1
-Copyright 2016-2018 Niklas Beisert
+delimset v2.0
+Copyright 2016-2024 Niklas Beisert
 
 delimset is a LaTeX2e package to typeset and declare sets of delimiters
 in math mode whose size can be adjusted conveniently.

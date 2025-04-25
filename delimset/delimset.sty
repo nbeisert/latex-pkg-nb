@@ -6,7 +6,7 @@
 %%
 %% delimset.dtx  (with options: `package')
 %% 
-%% Copyright (C) 2016-2018 Niklas Beisert
+%% Copyright (C) 2016-2024 Niklas Beisert
 %% 
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either version 1.3
@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{delimset}[2018/12/30 v1.1 convenient size control for delimiter sets]
+\ProvidesPackage{delimset}[2024/07/17 v2.0 convenient size control for delimiter sets]
 
 \RequirePackage{amsmath}
 \RequirePackage{keyval}
@@ -47,106 +47,220 @@
   {\bBigg@choice{\scriptscriptstyle}{0.5}{#1}{#2}}}}
 \fi
 
-\newcommand{\bigp}{\mathpunct\big}
-\newcommand{\Bigp}{\mathpunct\Big}
-\newcommand{\biggp}{\mathpunct\bigg}
-\newcommand{\Biggp}{\mathpunct\Bigg}
-\newcommand{\bigb}{\mathbin\big}
-\newcommand{\Bigb}{\mathbin\Big}
-\newcommand{\biggb}{\mathbin\bigg}
-\newcommand{\Biggb}{\mathbin\Bigg}
+\providecommand{\bigp}{\mathpunct\big}
+\providecommand{\Bigp}{\mathpunct\Big}
+\providecommand{\biggp}{\mathpunct\bigg}
+\providecommand{\Biggp}{\mathpunct\Bigg}
+\providecommand{\bigb}{\mathbin\big}
+\providecommand{\Bigb}{\mathbin\Big}
+\providecommand{\biggb}{\mathbin\bigg}
+\providecommand{\Biggb}{\mathbin\Bigg}
+\providecommand{\bigi}{\mathinner\big}
+\providecommand{\Bigi}{\mathinner\Big}
+\providecommand{\biggi}{\mathinner\bigg}
+\providecommand{\Biggi}{\mathinner\Bigg}
 
+\newlength\delimsize
+\newcommand{\dlm@setvar}{\let\dlm@ifvar\@firstoftwo\delimsize1.5\big@size}
+\newcommand{\dlm@setsize}[1]{\let\dlm@ifvar\@secondoftwo%
+  \delimsize#1\big@size\advance\delimsize by\big@size\delimsize0.5\delimsize}
+\newcommand{\dlm@setabssize}[1]{\let\dlm@ifvar\@secondoftwo\delimsize#1\relax}
+\newcommand{\dlm@big@}[1]{{\mathchoice%
+  {\dlm@big@choice{\displaystyle}{1}{#1}}%
+  {\dlm@big@choice{\textstyle}{1}{#1}}%
+  {\dlm@big@choice{\scriptstyle}{0.7}{#1}}%
+  {\dlm@big@choice{\scriptscriptstyle}{0.5}{#1}}}}
+\newcommand{\dlm@big@choice}[3]{\@mathmeasure\z@{\nulldelimiterspace\z@}%
+  {#1\left#3\vcenter to#2\delimsize{}\right.}\box\z@}
+\newcommand{\kerndelim}[1]{{\delimsize#1\delimsize%
+  \mkern\muexpr1.2mu*\delimsize/\big@size\relax}}
+
+\newcommand{\dlm@big}[2]{\dlm@plain{#1}{\dlm@big@#2}}
+\newcommand{\dlm@plain}[2]{\dlm@class{#1}{\dlm@phantom{#2}}}
 \newcommand{\dlm@class}[1]{\csname dlm@class@#1\endcsname}
-\newcommand{\dlm@class@}{}
-\newcommand{\dlm@class@l}{\mathopen}
-\newcommand{\dlm@class@r}{\mathclose}
-\newcommand{\dlm@class@o}{\mathopen}
-\newcommand{\dlm@class@c}{\mathclose}
-\newcommand{\dlm@class@m}{\mathrel}
-\newcommand{\dlm@class@p}{\mathpunct}
-\newcommand{\dlm@class@b}{\mathbin}
-\newcommand{\dlm@norm}[1]{\dlm@class{#1}\bBigg@{0.0}}
-\newcommand{\dlm@big}[1]{\dlm@class{#1}\big}
-\newcommand{\dlm@Big}[1]{\dlm@class{#1}\Big}
-\newcommand{\dlm@bigg}[1]{\dlm@class{#1}\bigg}
-\newcommand{\dlm@Bigg}[1]{\dlm@class{#1}\Bigg}
+\let\dlm@class@\@firstofone
+\let\dlm@class@o\mathord
+\let\dlm@class@c\mathord
+\let\dlm@class@p\mathpunct
+\let\dlm@class@i\mathinner
+\let\dlm@class@b\mathbin
+\let\dlm@class@m\mathrel
+
+\newcommand{\dlm@var@null}[1]{\if.#1\kern-\nulldelimiterspace\fi}
+\newcommand{\dlm@var@kern}[1]{\nonscript\mkern#1}
 \newcommand{\dlm@var}[1]{\csname dlm@var@#1\endcsname}
-\newcommand{\dlm@var@}[1]{\middle#1}
-\newcommand{\dlm@var@l}[1]{\mathopen{}\mathclose\bgroup\left#1}
-\newcommand{\dlm@var@r}[1]{\right#1\egroup}
-\newcommand{\dlm@var@o}[1]{\mathopen{}\middle#1\mathopen{}}
-\newcommand{\dlm@var@c}[1]{\mathclose{}\middle#1\mathclose{}}
-\newcommand{\dlm@var@m}[1]{\mathrel{}\middle#1\mathrel{}}
-\newcommand{\dlm@var@p}[1]{\middle#1\mathpunct{}}
-\newcommand{\dlm@var@b}[1]{\mathbin{}{}\mkern-\medmuskip%
-  \middle#1\mkern-\medmuskip{}\mathbin{}}
+\newcommand{\dlm@var@}[1]{\dlm@var@null#1\middle#1}
+\let\dlm@var@o\dlm@var@
+\let\dlm@var@c\dlm@var@
+\newcommand{\dlm@var@p}[1]{\dlm@var@#1\dlm@var@kern\thinmuskip}
+\newcommand{\dlm@var@i}[1]{\dlm@var@kern\thinmuskip%
+  \dlm@var@#1\dlm@var@kern\thinmuskip}
+\newcommand{\dlm@var@b}[1]{\dlm@var@kern\medmuskip%
+  \dlm@var@#1\dlm@var@kern\medmuskip}
+\newcommand{\dlm@var@m}[1]{\dlm@var@kern\thickmuskip%
+  \dlm@var@#1\dlm@var@kern\thickmuskip}
 
-\newcommand{\dlm@parsesize}[1]{\@ifnextchar\bgroup%
-  {\dlm@parsesize@{#1}{0}}{\dlm@parsesize@{#1}}}
-\newcommand{\dlm@parsesize@}[2]{\let\dlm@arg\dlm@norm%
-  \if0#2\let\dlm@arg\dlm@norm\fi%
-  \if1#2\let\dlm@arg\dlm@big\fi%
-  \if+#2\let\dlm@arg\dlm@big\fi%
-  \if!#2\let\dlm@arg\dlm@big\fi%
-  \if2#2\let\dlm@arg\dlm@Big\fi%
-  \if3#2\let\dlm@arg\dlm@bigg\fi%
-  \if4#2\let\dlm@arg\dlm@Bigg\fi%
-  \if*#2\let\dlm@arg\dlm@var\fi%
-  #1}
+\newcommand{\dlm@open@i}{\mathinner{}\mathclose{}\mathopen}
+\newcommand{\dlm@close@i}{\mathclose{}\mathopen{}\mathinner}
+\newcommand{\dlm@inner@oc}{\mathopen{}\mathclose}
+\newcommand{\dlm@enclose@openclose}{%
+  \let\dlm@open\mathopen\let\dlm@close\mathclose\let\dlm@inner\dlm@inner@oc}
+\newcommand{\dlm@enclose@inner}{%
+  \let\dlm@open\dlm@open@i\let\dlm@close\dlm@close@i\let\dlm@inner\mathinner}
 
-\newcommand{\selectdelim}[2][]{\if.#1#2\else\dlm@arg{#1}#2\fi}
+\newcommand{\dlm@inline@l}[1]{\dlm@open{#1}}
+\newcommand{\dlm@inline@r}[1]{\dlm@close{#1}}
+\newcommand{\dlm@block@l}[1]{\dlm@inner\bgroup\mathopen{#1}}
+\newcommand{\dlm@block@r}[1]{\mathclose{#1}\egroup}
+\newcommand{\dlm@enclose@inline}{%
+  \let\dlm@class@l\dlm@inline@l\let\dlm@class@r\dlm@inline@r}
+\newcommand{\dlm@enclose@block}{%
+  \let\dlm@class@l\dlm@block@l\let\dlm@class@r\dlm@block@r}
+
+\newcommand{\dlm@plain@l}[1]{\dlm@class@l{\dlm@phantom{#1}}}
+\newcommand{\dlm@plain@r}[1]{\dlm@class@r{\dlm@phantom{#1}}}
+\newcommand{\dlm@big@l}[1]{\dlm@plain@l{\dlm@big@#1}}
+\newcommand{\dlm@big@r}[1]{\dlm@plain@r{\dlm@big@#1}}
+\newcommand{\dlm@var@l}[1]{\dlm@inner\bgroup\dlm@var@null#1\left#1}
+\newcommand{\dlm@var@r}[1]{\right#1\dlm@var@null#1\egroup}
+\newcommand{\dlm@var@pl}[1]{\dlm@var@l.\mathopen{#1}}
+\newcommand{\dlm@var@pr}[1]{\mathclose{#1}\dlm@var@r.}
+
+\newcommand{\dlm@reg@save@init}[1]{%
+  \xdef#1{\delimsize\the\delimsize}\ifx\dlm@inner\mathinner%
+  \expandafter\gdef\expandafter#1\expandafter{#1\dlm@enclose@inner}\fi}
+\newcommand{\dlm@reg@save}[2]{%
+  \expandafter\dlm@reg@save@init\csname dlm@reg@init@#1\endcsname%
+  \expandafter\gdef\csname dlm@reg@sel@#1\endcsname{#2}}
+\newcommand{\dlm@reg@init}[1]{\csname dlm@reg@init@#1\endcsname}
+\newcommand{\dlm@reg@sel}[1]{\csname dlm@reg@sel@#1\endcsname}
+
+\newcommand{\parsedelimflags}{\dlm@setsize{0.6}\let\dlm@phantom\@firstofone%
+  \dlm@enclose@openclose\dlm@enclose@inline\dlm@parseflags}
+\newcommand{\dlm@parseflags}[2]{%
+  \@ifnextchar\bgroup{#1}{\dlm@parseflag{#1}{#2}}}
+\newcommand{\dlm@parseflag}[3]{\begingroup%
+  \ifcsname dlm@parseflag@\string#3\endcsname%
+  \def\dlm@do{\csname dlm@parseflag@\string#3\endcsname{#1}{#2}}\else%
+  \def\dlm@do{\PackageError{delimset}%
+  {unknown delimiter set flag `\string#3'}{}#1}%
+  \fi\expandafter\endgroup\dlm@do}
+\newcommand{\dlm@parsedef}[3]{%
+  \expandafter\def\csname dlm@parseflag@\string#1\endcsname ##1##2#2{#3}}
+
+\dlm@parsedef{!}{}{\dlm@setsize{1}\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{+}{}{\dlm@setsize{1}\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{0}{}{\dlm@setsize{0.6}\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{1}{}{\dlm@setsize{1}\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{2}{}{\dlm@setsize{2}\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{3}{}{\dlm@setsize{3}\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{4}{}{\dlm@setsize{4}\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{^}{#3}{\dlm@setsize{#3}\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{_}{#3}{\dlm@setabssize{#3}\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{*}{}{\dlm@setvar\dlm@parseflags{#1}{#2}}
+
+\dlm@parsedef{(}{}{\def\selecteddelim{0}#2}
+\dlm@parsedef{|}{}{\def\selecteddelim{1}#2}
+\dlm@parsedef{,}{}{\def\selecteddelim{1}#2}
+\dlm@parsedef{)}{}{\def\selecteddelim{9}#2}
+\dlm@parsedef{?}{#3}{\def\selecteddelim{#3}#2}
+
+\dlm@parsedef{[}{}{\dlm@reg@save{.}{#2}\def\selecteddelim{0}#2}
+\dlm@parsedef{]}{}{\dlm@reg@init{.}\def\selecteddelim{9}\dlm@reg@sel{.}}
+\dlm@parsedef{>}{#3}{\dlm@reg@save{#3}{#2}}
+\dlm@parsedef{<}{#3}{\dlm@reg@init{#3}\dlm@parseflags%
+  {\PackageError{delimset}{must select delimiter}{}}{\dlm@reg@sel{#3}}}
+
+\dlm@parsedef{.}{}{#1}
+\dlm@parsedef{:}{}{\dlm@enclose@block\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{'}{}{\dlm@enclose@openclose\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{"}{}{\dlm@enclose@inner\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{-}{}{\let\dlm@phantom\phantom\dlm@parseflags{#1}{#2}}
+
+\newcommand{\selectdelim}[1][]{\begingroup\def\dlm@do{\@ifstar{\dlm@plain{#1}}%
+  {\dlm@ifvar{\dlm@var{#1}}{\dlm@big{#1}}}}%
+  \if.#1\let\dlm@do\@empty\fi\expandafter\endgroup\dlm@do}
+\newcommand{\selectdeliml}{\@ifstar%
+  {\dlm@ifvar\dlm@var@pl\dlm@plain@l}{\dlm@ifvar\dlm@var@l\dlm@big@l}}
+\newcommand{\selectdelimr}{\@ifstar%
+  {\dlm@ifvar\dlm@var@pr\dlm@plain@r}{\dlm@ifvar\dlm@var@r\dlm@big@r}}
 
 \newcommand{\DeclareMathDelimiterSet}[1]{\expandafter\dlm@declare%
   \csname dlm@dcl@\expandafter\@gobble\string#1\endcsname{#1}}
-\def\dlm@declare#1#2{\newcommand{#2}{\dlm@parsesize{#1}}\newcommand{#1}}
+\def\dlm@declare#1#2{\expandafter\dlm@declare@%
+  \csname dlm@sel@\expandafter\@gobble\string#2\endcsname{#1}{#2}}
+\def\dlm@declare@#1#2#3{\newcommand{#3}{\parsedelimflags{#2}{#1}}%
+  \providecommand{#1}{}\newcommand{#2}}
+\newcommand{\DeclareMathDelimiterSel}[3]{\expandafter\def%
+  \csname dlm@sel@\expandafter\@gobble\string#1\endcsname%
+  {\ifcase\selecteddelim#2\else#3\fi}}
 
-\newcommand{\delim}[2]
-  {\dlm@parsesize{\dlm@dcl@delim{#1}{#2}}}
-\newcommand{\dlm@dcl@delim}[3]
-  {\selectdelim[l]#1{#3}\selectdelim[r]#2}
+\newcommand{\delim}[2]{%
+  \parsedelimflags{\dlm@dcl@delim{#1}{#2}}{\dlm@sel@delim{#1}{#2}}}
+\newcommand{\dlm@dcl@delim}[3]{%
+  \selectdeliml#1{#3}\selectdelimr#2}
+\newcommand{\dlm@sel@delim}[2]{\ifcase\selecteddelim\selectdeliml#1%
+  \else\selectdelimr#2\fi}
 
-\newcommand{\delimpair}[3]
-  {\dlm@parsesize{\dlm@dcl@delimpair{#1}{#2}{#3}}}
-\newcommand{\dlm@dcl@delimpair}[5]
-  {\selectdelim[l]#1{#4}\selectdelim#2{#5}\selectdelim[r]#3}
+\newcommand{\delimpair}[3]{%
+  \parsedelimflags{\dlm@dcl@delimpair{#1}{#2}{#3}}%
+  {\dlm@sel@delimpair{#1}{#2}{#3}}}
+\newcommand{\dlm@dcl@delimpair}[5]{%
+  \selectdeliml#1{#4}\selectdelim#2{#5}\selectdelimr#3}
+\newcommand{\dlm@sel@delimpair}[3]{\ifcase\selecteddelim\selectdeliml#1%
+  \or\selectdelim#2\else\selectdelimr#3\fi}
 
-\newcommand{\delimtriple}[4]
-  {\dlm@parsesize{\dlm@dcl@delimtriple{#1}{#2}{#3}{#4}}}
-\newcommand{\dlm@dcl@delimtriple}[7]
-  {\selectdelim[l]#1{#5}\selectdelim#2{#6}\selectdelim#3{#7}\selectdelim[r]#4}
+\newcommand{\delimtriple}[4]{%
+  \parsedelimflags{\dlm@dcl@delimtriple{#1}{#2}{#3}{#4}}%
+  {\dlm@sel@delimtriple{#1}{#2}{#3}{#4}}}
+\newcommand{\dlm@dcl@delimtriple}[7]{%
+  \selectdeliml#1{#5}\selectdelim#2{#6}\selectdelim#3{#7}\selectdelimr#4}
+\newcommand{\dlm@sel@delimtriple}[4]{\ifcase\selecteddelim\selectdeliml#1%
+  \or\selectdelim#2\or\selectdelim#3\else\selectdelimr#4\fi}
+
+\newcommand{\usedelim}{\@ifnextchar]{\parsedelimflags{}{}}{\parsedelimflags%
+  {\PackageError{delimset}{must select delimiter}{}}{}<}}
 
 \ifdlm@std
 \providecommand{\brk}[1][r]{\begingroup\def\dlm@use{\delim()}%
-  \if r#1 \def\dlm@use{\delim()}\fi%
-  \if s#1 \def\dlm@use{\delim[]}\fi%
-  \if c#1 \def\dlm@use{\delim\{\}}\fi%
-  \if a#1 \def\dlm@use{\delim<>}\fi%
+  \if r#1\def\dlm@use{\delim()}\fi%
+  \if s#1\def\dlm@use{\delim[]}\fi%
+  \if c#1\def\dlm@use{\delim\{\}}\fi%
+  \if a#1\def\dlm@use{\delim<>}\fi%
   \expandafter\endgroup\dlm@use}
 \providecommand{\eval}[1][v]{\begingroup\def\dlm@use{\delim.\rvert}%
-  \if v#1 \def\dlm@use{\delim.\rvert}\fi%
-  \if s#1 \def\dlm@use{\delim[]}\fi%
+  \if v#1\def\dlm@use{\delim.\rvert}\fi%
+  \if s#1\def\dlm@use{\delim[]}\fi%
   \expandafter\endgroup\dlm@use}
 \providecommand{\abs}{\delim\lvert\rvert}
 \providecommand{\norm}{\delim\lVert\rVert}
 \fi
 
 \ifdlm@ext
-\providecommand{\pair}{\delimpair({[.],})}
+\providecommand{\pair}{\delimpair({[p]*,})}
 \providecommand{\set}{\delim\{\}}
 \providecommand{\setcond}{\delimpair\{|\}}
-\providecommand{\intv}[1][c]{\begingroup\def\dlm@use{\delimpair[{[.],}]}%
-  \if c#1 \def\dlm@use{\delimpair[{[.],}]}\fi%
-  \if l#1 \def\dlm@use{\delimpair]{[.],}]}\fi%
-  \if r#1 \def\dlm@use{\delimpair[{[.],}[}\fi%
-  \if o#1 \def\dlm@use{\delimpair]{[.],}[}\fi%
+\providecommand{\intv}[1][c]{\begingroup%
+  \def\dlm@use{\delimpair[{[p]*,}]}%
+  \if c#1\def\dlm@use{\delimpair[{[p]*,}]}\fi%
+  \if l#1\def\dlm@use{\delimpair]{[p]*,}]}\fi%
+  \if r#1\def\dlm@use{\delimpair[{[p]*,}[}\fi%
+  \if o#1\def\dlm@use{\delimpair]{[p]*,}[}\fi%
   \expandafter\endgroup\dlm@use}
 \providecommand{\avg}{\delim<>}
 \providecommand{\corr}{\delim<>}
-\providecommand{\comm}{\delimpair[{[.],}]}
-\providecommand{\acomm}{\delimpair\{{[.],}\}}
+\providecommand{\comm}{\delimpair[{[p]*,}]}
+\providecommand{\acomm}{\delimpair\{{[p]*,}\}}
 \providecommand{\bra}{\delim<|}
 \providecommand{\ket}{\delim|>}
 \providecommand{\braket}{\delimpair<|>}
+\providecommand{\lfrac}[1][]{\begingroup%
+  \def\dlm@use{\delimpair./.}%
+  \if r#1\def\dlm@use{\delimpair(/)}\fi%
+  \if s#1\def\dlm@use{\delimpair[/]}\fi%
+  \if c#1\def\dlm@use{\delimpair\{/\}}\fi%
+  \if a#1\def\dlm@use{\delimpair</>}\fi%
+  \expandafter\endgroup\dlm@use}
 \fi
 
 \endinput
