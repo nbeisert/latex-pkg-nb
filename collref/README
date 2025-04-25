@@ -1,5 +1,5 @@
-collref v2.0
-Copyright 2003-2009 Niklas Beisert
+collref v2.0b
+Copyright 2003-2014 Niklas Beisert
 
 collref is a LaTeX2e package to automatically collect 
 multiple \bibitem references which always appear in the same sequence 
