@@ -31,5 +31,5 @@ clean-all: clean
 clean-bak: clean-all
 	rm -f sesstime.dtx.bak sesstime.sty.bak sesstime.ins.bak
 	rm -f sesstime.dtx~ sesstime.sty~ sesstime.ins~
-	rm -f README.bak Makefile.bak
-	rm -f README~ Makefile~
+	rm -f README.txt.bak Makefile.bak
+	rm -f README.txt~ Makefile~

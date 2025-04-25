@@ -19,20 +19,34 @@
 % with |stimsmp3.tex| and |stimsmp4.tex|.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{sesstime}[2018/01/06 v1.1 session timing marks]
-%<sample>\ProvidesFile{stimsamp.tex}[2018/01/06 v1.1 sample for sesstime]
+%<package>\ProvidesPackage{sesstime}[2018/01/17 v1.11 session timing marks]
+%<sample>\ProvidesFile{stimsamp.tex}[2018/01/17 v1.11 sample for sesstime]
 %<*driver>
-%\ProvidesFile{sesstime.drv}[2018/01/06 v1.1 sesstime reference manual file]
+%\ProvidesFile{sesstime.drv}[2018/01/17 v1.11 sesstime reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
 \usepackage[margin=35mm]{geometry}
 \usepackage{hyperref}
+\usepackage{hyperxmp}
 \usepackage[usenames]{color}
 
 \hypersetup{colorlinks=true}
 \hypersetup{pdfstartview=FitH}
 \hypersetup{pdfpagemode=UseNone}
+\hypersetup{pdfsource={}}
+\hypersetup{pdflang={en-UK}}
+\hypersetup{pdfcopyright={Copyright 2016-2018 Niklas Beisert.
+  This work may be distributed and/or modified under the
+  conditions of the LaTeX Project Public License, either version 1.3
+  of this license or (at your option) any later version.}}
+\hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
+\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K, Wolfgang-Pauli-Strasse 27}}
+\hypersetup{pdfcontactpostcode={8093}}
+\hypersetup{pdfcontactcity={Zurich}}
+\hypersetup{pdfcontactcountry={Switzerland}}
+\hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
+\hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
 \begin{document}
 
@@ -46,7 +60,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package sesstime}}
-\date{6 January 2018, \textsf{v1.1}}
+\date{17 January 2018, \textsf{v1.11}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -860,9 +874,9 @@ This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainer of this work is Niklas Beisert.
 
-This work consists of the files |sesstime.dtx| and |sesstime.ins|
-and the derived files |sesstime.sty| and |stimsamp.tex|
-with |stimsmp3.tex| and |stimsmp4.tex|.
+This work consists of the files |README.txt|, |sesstime.ins| and |sesstime.dtx|
+as well as the derived files |sesstime.sty|, |stimsamp.tex|
+with |stimsmp3.tex|, |stimsmp4.tex| and |sesstime.pdf|.
 
 \endgroup
 
@@ -873,7 +887,7 @@ The package consists of the files:
 %
 \begin{center}
 \begin{tabular}{ll}
-    |README|       & readme file \\
+    |README.txt|   & readme file \\
     |sesstime.ins| & installation file \\
     |sesstime.dtx| & source file \\
     |sesstime.sty| & package file \\
@@ -885,7 +899,7 @@ The package consists of the files:
 \end{center}
 %
 The distribution consists of the files
-|README|, |sesstime.ins| and |sesstime.dtx|.
+|README.txt|, |sesstime.ins| and |sesstime.dtx|.
 %
 \begin{itemize}
 \item
@@ -900,9 +914,9 @@ distribution, e.g.\ \textit{texmf-root}|/tex/latex/sesstime|.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Related CTAN Packages}
+\subsection{Interaction with CTAN Packages}
 
-The package relies on other packages and software:
+The package relies on other packages:
 \begin{itemize}
 \item
 This package uses the package \textsf{keyval}
@@ -941,6 +955,14 @@ Ignore leading and trailing spaces in the list of flags.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.11:} 2018/01/17
+
+\begin{itemize}
+\item
+bugfix for section titles including |\texorpdfstring|
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.1:} 2018/01/06
@@ -1631,11 +1653,11 @@ the list of sessions
 %    \begin{macrocode}
 \newcommand{\sti@recordtitle}[4]{\ifnum#2>\sti@depthpar\else%
   \ifnum#2>\sti@depthsec%
-    \xdef\sti@partitle{#4}%
+    \gdef\sti@partitle{#4}%
   \else%
     \xdef\sti@secnum{#3}%
-    \xdef\sti@sectitle{#4}%
-    \xdef\sti@partitle{}%
+    \gdef\sti@sectitle{#4}%
+    \gdef\sti@partitle{}%
   \fi\fi}
 %    \end{macrocode}
 % \end{macro}
@@ -2211,5 +2233,3 @@ the list of sessions
 %\fi
 %
 \endinput
-%
-%% \CheckSum{3381}

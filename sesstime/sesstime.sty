@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{sesstime}[2018/01/06 v1.1 session timing marks]
+\ProvidesPackage{sesstime}[2018/01/17 v1.11 session timing marks]
 \RequirePackage{keyval}
 
 \def\sti@flags{}
@@ -134,11 +134,11 @@
 
 \newcommand{\sti@recordtitle}[4]{\ifnum#2>\sti@depthpar\else%
   \ifnum#2>\sti@depthsec%
-    \xdef\sti@partitle{#4}%
+    \gdef\sti@partitle{#4}%
   \else%
     \xdef\sti@secnum{#3}%
-    \xdef\sti@sectitle{#4}%
-    \xdef\sti@partitle{}%
+    \gdef\sti@sectitle{#4}%
+    \gdef\sti@partitle{}%
   \fi\fi}
 
 \let\sti@old@startsection\@startsection%

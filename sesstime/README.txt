@@ -1,4 +1,4 @@
-sesstime v1.1
+sesstime v1.11
 Copyright 2016-2018 Niklas Beisert
 
 sesstime is a LaTeX2e package to add timing marks to lecture notes
@@ -8,7 +8,7 @@ estimate the progress throughout the course.
 
 The package consists of the files
 
-    README        readme file
+    README.txt    readme file
     sesstime.ins  installation file
     sesstime.dtx  source file
     sesstime.sty  package file
@@ -17,7 +17,8 @@ The package consists of the files
     stimsmp4.tex  sample include file
     sesstime.pdf  manual
 
-The distribution consists of the files README, sesstime.ins and sesstime.dtx.
+The distribution consists of the files
+README.txt, sesstime.ins and sesstime.dtx.
 
 Run "(pdf)latex sesstime.dtx" to compile the manual sesstime.pdf.
 
