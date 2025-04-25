@@ -18,10 +18,10 @@
 % and the derived files mpostinl.sty and mpinlsmp.tex
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mpostinl}[2018/03/01 v1.4 metapost inline figures]
-%<sample>\ProvidesFile{mpinlsmp.tex}[2018/03/01 v1.4 sample for mpostinl]
+%<package>\ProvidesPackage{mpostinl}[2018/12/30 v1.5 metapost inline figures]
+%<sample>\ProvidesFile{mpinlsmp.tex}[2018/12/30 v1.5 sample for mpostinl]
 %<*driver>
-%\ProvidesFile{mpostinl.drv}[2018/03/01 v1.4 mpostinl reference manual file]
+%\ProvidesFile{mpostinl.drv}[2018/12/30 v1.5 mpostinl reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -43,12 +43,20 @@
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
 \hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
-\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K, Wolfgang-Pauli-Strasse 27}}
+\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K,
+  Wolfgang-Pauli-Strasse 27}}
 \hypersetup{pdfcontactpostcode={8093}}
 \hypersetup{pdfcontactcity={Zurich}}
 \hypersetup{pdfcontactcountry={Switzerland}}
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
 \hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
+
+\newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
+
+\parskip1ex
+\parindent0pt
+\let\olditemize\itemize
+\def\itemize{\olditemize\parskip0pt}
 
 \begin{document}
 
@@ -62,7 +70,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package mpostinl}}
-\date{1 March 2018, \textsf{v1.4}}
+\date{30 December 2018, \textsf{v1.5}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -77,7 +85,10 @@ It also allows for various configuration options
 to manage the generation of files and compilation.
 \end{abstract}
 
+\begingroup
+\parskip0ex
 \tableofcontents
+\endgroup
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -206,7 +217,7 @@ but which offers several configuration options to
 customise the management in the desired way.
 The package offers most of the functionality of the above packages,
 but (presently) misses out on some more advanced features,
-see section \ref{sec:suggestions}.
+see \secref{sec:suggestions}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -227,7 +238,7 @@ If not yet present,
 the package \textsf{graphicx} will be loaded automatically.
 Metapost figures and definitions are to be specified using
 the environments |mpostfig| and |mpostdef|, respectively,
-as described in section \ref{sec:figuresdefinitions}.
+as described in \secref{sec:figuresdefinitions}.
 
 The package collects the figure files
 contained in the \LaTeX{} source,
@@ -237,7 +248,7 @@ This means that the figures (or their updates)
 will normally \emph{not} be available
 in the first \LaTeX{} run and a secondary run is required
 for the correct output,
-see section \ref{sec:immediate} for strategies
+see \secref{sec:immediate} for strategies
 to avoid a second pass.
 
 You should make sure that \LaTeX{} allows
@@ -264,13 +275,13 @@ must be compiled manually:
 
 Some extended configuration options and situations are described in
 the following sections:
-package options are listed in section \ref{sec:packageoptions};
+package options are listed in \secref{sec:packageoptions};
 some options for writing and compiling are discussed
-in section \ref{sec:compiling};
+in \secref{sec:compiling};
 the generation of multiple metapost files
-is described in \ref{sec:multiplefiles};
+is described in \secref{sec:multiplefiles};
 finally, some issues regarding other \LaTeX{} packages
-are discussed in section \ref{sec:interactions}.
+are discussed in \secref{sec:interactions}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -282,9 +293,9 @@ The main functionality provided
 by the package is the |mpostfig| environment:
 \begin{center}
 \begin{tabular}{l}
-|\begin{mpostfig}[|\textit{opts}|]|\\
+|\||begin{mpostfig}[|\textit{opts}|]|\\
 |  |\textit{metapost code}\\
-|\end{mpostfig}|
+|\||end{mpostfig}|
 \end{tabular}
 \end{center}
 %
@@ -334,22 +345,25 @@ due to the implementation via the package \textsf{verbatim}:
 %
 \begin{itemize}
 \item
-The closing statement |\end{mpostfig}| must be on a line on its own.
+The closing statement |\||end{mpostfig}| must be on a line on its own.
 Any amount of leading whitespace is allowed,
 and trailing characters are ignored.
 
 \item
-The opening statement |\begin{mpostfig}| \emph{without} optional arguments
-must not be followed immediately by empty lines
-or by the closing statement |\end{mpostfig}|.
-Note that commented lines do not help.
-Either avoid leading empty lines and empty bodies
-or use empty optional arguments: |\begin{mpostfig}[]|.
+The opening statement |\||begin{mpostfig}| has to find out
+whether an optional argument is provided
+by scanning into the block of metapost content.
+If none is given, all the code already scanned needs to be
+(re)interpreted as metapost content.
+In special circumstances this may cause problems.
+It should then help to use an empty optional argument:
+|\||begin{mpostfig}[]|.
 
 \item
-Lines starting with a single `|%|' are ignored and
-do not appear in the metapost file.
-Double `|%%|' or leading spaces preserve comments in the metapost file.
+Lines starting with a single `|%|'
+are ignored and do not appear in the metapost file.
+Double `|%%|'
+or leading spaces preserve comments in the metapost file.
 
 \item
 The environment |mpostfig|
@@ -362,8 +376,6 @@ display it via the command |\mpostuse| (see below).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\medskip
-\noindent
 \DescribeMacro{\mpostuse}
 Figures which have been previously declared
 with a label \textit{label}
@@ -381,24 +393,22 @@ from the \textsf{beamer} package
 and passes it on to |\includegraphics|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\medskip
-\noindent
 \DescribeMacro{\mpostgetname}
 Furthermore, the filename of a figure can be obtained by
 calling |\mpostgetname{|\textit{label}|}|.
 The filename is returned in the macro |\mpostfigurename|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\medskip\noindent
 \DescribeEnv{mpostdef}
 Plain metapost code which is not part of a figure
 (definitions, assignments)
 can be specified by the |mpostdef| environment:
+%
 \begin{center}
 \begin{tabular}{l}
-|\begin{mpostdef}[|\textit{opts}|]|\\
+|\||begin{mpostdef}[|\textit{opts}|]|\\
 |  |\textit{code}\\
-|\end{mpostdef}|
+|\||end{mpostdef}|
 \end{tabular}
 \end{center}
 %
@@ -408,16 +418,50 @@ The optional argument \textit{opts}
 is a comma-separated list of options:
 %
 \begin{itemize}
+\item |global|[|=true|$\vert$|false|]
+(no value implies |true|, overrides global setting |globaldef|) --
+In a setup with multiple metapost files, the block \textit{code}
+is applied to all files, not just the current file.
+
 \item |tex|[|=true|$\vert$|false|]
 (no value implies |true|, initially set to |false|) --
 The block \textit{code} represents \TeX{} or \LaTeX{} definitions
 rather than \MP{} code,
 which will be enclosed in the metapost file by |verbatimtex| and |etex|.
+This feature is superseded by the environment |mposttex| described below.
+The |tex| option is deprecated, and provided for backward compatibility only.
 
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeEnv{mposttex}
+\TeX{} or \LaTeX{} definitions for use in metapost labels
+can be specified by the |mposttex| environment:
+%
+\begin{center}
+\begin{tabular}{l}
+|\||begin{mposttex}[|\textit{opts}|]|\\
+|  |\textit{code}\\
+|\||end{mposttex}|
+\end{tabular}
+\end{center}
+%
+The code will be enclosed in the metapost file by |verbatimtex| and |etex|.
+Note that the same restrictions as for |mpostfig| (see above)
+apply to |mposttex|.
+The optional argument \textit{opts}
+is a comma-separated list of options:
+%
+\begin{itemize}
 \item |global|[|=true|$\vert$|false|]
 (no value implies |true|, overrides global setting |globaldef|) --
 In a setup with multiple metapost files, the block \textit{code}
 is applied to all files, not just the current file.
+
+\item |dual|[|=true|$\vert$|false|]
+(no value implies |true|, initially set to |false|) --
+The definitions within the block \textit{code}
+will be available to both metapost figures and subsequent \LaTeX{} code.
 
 \end{itemize}
 
@@ -585,7 +629,7 @@ is overwritten by any subsequent immediate processing.
 \item |globaldef|[|=true|$\vert$|false|]
 (no value implies |true|, initially set to |false|) --
 Enable/disable the |global| option
-for the |mpostdef| environments by default.
+for the |mpostdef| and |mposttex| environments by default.
 This option can be used to specify a global block of definitions
 by enclosing it with appropriate |\mpostsetup| statements.
 
@@ -634,6 +678,7 @@ and/or to satisfy some personal taste regarding
 how things should be managed.
 
 \DescribeMacro{\mpostplaceholder}
+\DescribeMacro{\mpostdisplaylabel}
 Finally, the package allows to customise the placeholder
 which is displayed when a figure file is not (yet) present
 after the first \LaTeX{} pass (or in case of some compile error)
@@ -647,6 +692,9 @@ and \textit{name} is the missing filename or label.
 By default this command displays a 1''$\times$0.6'' box
 containing the missing filename or label.
 This behaviour can be customised by overwriting the macro.
+It makes sense to display the filename or label through
+|\mpostdisplaylabel| which can handle some special characters
+such as an underscore.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Writing and Compiling Options}
@@ -686,7 +734,7 @@ The default document class is |article| without options.
 An alternative class and options can be specified
 by the package options |class| and |classopt|.
 Further packages or macros should be declared as usual
-by specifying them in a |mpostdef| enviroment in |tex| mode.
+by specifying them in a |mposttex| enviroment.
 If no \LaTeX{} structure is desired,
 set the package option |latex| to |false|.
 If the typesetting requires an advanced compiler
@@ -805,14 +853,10 @@ individually by means of |\includeonly|,
 in which case only the relevant metapost file
 is generated and compiled.
 
-\medskip
-
 The contents of each metapost file should be enclosed
 by |\mpostfile| and |\mpostdone|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\medskip
-\noindent
 \DescribeMacro{\mpostfile}
 A new metapost file is started by the command:
 \begin{center}
@@ -826,8 +870,6 @@ the only available option is |include|[|=true|$\vert$|false|]
 which declares whether the file is an include file.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\medskip
-\noindent
 \DescribeMacro{\mpostdone}
 The present metapost file is completed by the command
 |\mpostdone| which also compiles the contained figures.
@@ -837,12 +879,12 @@ at the end of the \LaTeX{} document.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Global Definitions.}
 
-Definitions in |mpostdef| environments apply to the
+Definitions in |mpostdef| and |mposttex| environments apply to the
 present metapost file only. However, definitions can also be
 specified for all metapost files
 by means of the option |global|:
 \begin{center}
-|\begin{mpostdef}[global]|%\end{mpostdef}
+|\||begin{mpostdef}[global]|
 \end{center}
 These definitions are stored internally and will be written
 to all subsequent metapost files.
@@ -1009,9 +1051,9 @@ you should select the \emph{same} input encoding for the labels
 in the metapost figures by means of:
 \begin{center}
 \begin{tabular}{l}
-|\begin{mpostdef}[tex]|\\
+|\||begin{mposttex}|\\
 |\usepackage[|\textit{enc}|]{inputenc}|\\
-|\end{mpostdef}|
+|\||end{mposttex}|
 \end{tabular}
 \end{center}
 
@@ -1024,7 +1066,7 @@ In particular, slides can be presented in several steps
 by means on an overlay mechanism.
 To that end the |frame| environment
 saves the enclosed block and processes it in several passes.
-Therefore, the environments |mpostfig| and |mpostdef|
+Therefore, the environments |mpostfig|, |mpostdef| and |mposttex|
 must not be used within the |frame| environment.
 Instead, figures should be declared outside the |frame| environment
 and can be displayed by |\mpostuse| within the |frame| environment.
@@ -1041,7 +1083,7 @@ arguments of |\includegraphics| to customise the alignment conveniently.
 Since graphics arguments are passed on directly to |\includegraphics|
 the \textsf{graphbox} package can be used without restrictions.
 For instance, to align a figure vertically with the centre of the line,
-you may use |\begin{mpostfig}[opt={align}]|
+you may use |\||begin{mpostfig}[opt={align}]|
 or |\mpostuse[align]{|\textit{label}|}|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1089,10 +1131,6 @@ does not seem to work with pdf\LaTeX{}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-\begingroup
-\parskip1ex
-\parindent0pt
-
 Copyright \copyright{} 2010--2018 Niklas Beisert
 
 This work may be distributed and/or modified under the
@@ -1109,8 +1147,6 @@ The Current Maintainer of this work is Niklas Beisert.
 
 This work consists of the files |README.txt|, |mpostinl.ins| and |mpostinl.dtx|
 as well as the derived files |mpostinl.sty|, |mpinlsmp.tex| and |mpostinl.pdf|.
-
-\endgroup
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Files and Installation}
@@ -1212,16 +1248,27 @@ or remove files not needed after processing.
 However, both appear to be somewhat in contrast
 to the usual \TeX{} philosophy.
 %\item
-%an environment to pass tex commands to mpost and also compile them locally
-%probably have to write to file and subsequently input the file
-%perhaps could use \scantokens!
-%\item
 %improve detection of changed figure files?
 %allow to declare extra include files for update detection
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.5:} 2018/12/30
+
+\begin{itemize}
+\item
+new environment |mposttex| for \TeX{} or \LaTeX{} definitions
+to replace option |tex| of |mpostdef|;
+can be used in |dual| mode
+\item
+allow underscore, caret and ampersand in figure labels and filenames
+\item
+improve handling of optional arguments and special situations
+when scanning metapost blocks
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.4:} 2018/03/01
@@ -1350,8 +1397,6 @@ basic functionality
 \appendix
 
 \settowidth\MacroIndent{\rmfamily\scriptsize 000\ }
-\parskip1ex
-\parindent0pt
 
  \DocInput{mpostinl.dtx}
 
@@ -1425,9 +1470,9 @@ basic functionality
 % make sure this statement in included in all of them:
 %    \begin{macrocode}
 %% declare packages to be used for processing labels:
-\begin{mpostdef}[tex,global]
+\begin{mposttex}[global]
 \usepackage[utf8]{inputenc}
-\end{mpostdef}
+\end{mposttex}
 %    \end{macrocode}
 
 % Define an internal variable |unit| and initialise to 1cm;
@@ -1551,7 +1596,7 @@ display by \verb+\includegraphics+ (if file exists):\\
 % triggers a warning and displays a box:
 %    \begin{macrocode}
 label does not exist:\\
-\mpostuse{notexist}
+\mpostuse{not_exist}
 %    \end{macrocode}
 
 % Display a figure with a label containing special characters in UTF-8.
@@ -1563,6 +1608,36 @@ utf-8 test:\\
 interim unit:=1.5cm;
 draw fullcircle scaled unit;
 label(btex àáâãäåæ etex, (0,0));
+\end{mpostfig}
+%    \end{macrocode}
+
+% Write a totally empty figure
+%    \begin{macrocode}
+empty figure:\\
+\begin{mpostfig}
+\end{mpostfig}
+%    \end{macrocode}
+
+% Write a figure with an empty line
+%    \begin{macrocode}
+empty figure:\\
+\begin{mpostfig}
+
+\end{mpostfig}
+%    \end{macrocode}
+
+% Make a dual definition
+%    \begin{macrocode}
+\begin{mposttex}[dual]
+\def\mymacro{hello!}
+\end{mposttex}
+%    \end{macrocode}
+% and test it
+%    \begin{macrocode}
+dual definition `\mymacro':\\
+\begin{mpostfig}
+draw unitsquare shifted (-0.5,-0.5) xscaled 3 scaled unit;
+label(btex \mymacro etex, (0,0));
 \end{mpostfig}
 %    \end{macrocode}
 
@@ -1871,10 +1946,10 @@ filename: \mpostgetname{sec8}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Package Options.}
 %
-% \begin{macro}{\mpostfilename}
-% \begin{macro}{\mpi@nowname}
-% \begin{macro}{\mpi@extension}
-% \begin{macro}{\mpi@template}
+% \macro{\mpostfilename}
+% \macro{\mpi@nowname}
+% \macro{\mpi@extension}
+% \macro{\mpi@template}
 % |\mpostfilename| stores the metapost filename,
 % |\mpi@nowname| stores the filename for immediate processing,
 % and |\mpi@template| is the template to generate the figure filenames:
@@ -1885,18 +1960,13 @@ filename: \mpostgetname{sec8}
 \def\mpi@template#1{\mpostfilename-#1%
   \ifx\mpi@extension\mpi@empty\else.\fi\mpi@extension}
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{mpi@count}
+% \macro{mpi@count}
 % Declare a counter for figure filenames:
 %    \begin{macrocode}
 \newcounter{mpi@count}
 \def\thempi@count{\arabic{mpi@count}}
 %    \end{macrocode}
-% \end{macro}
 
 % The package has some boolean \textsf{keyval} options
 % which can be set to |true| or |false|.
@@ -1916,15 +1986,16 @@ filename: \mpostgetname{sec8}
 \newif\ifmpi@nowkeep\mpi@nowkeepfalse
 \newif\ifmpi@include\mpi@includefalse
 \newif\ifmpi@defglobal\mpi@defglobalfalse
+\newif\ifmpi@texdual\mpi@texdualfalse
 \newif\ifmpi@warnunused\mpi@warnunusedtrue
 \newif\ifmpi@beamer\mpi@beamertrue
 %    \end{macrocode}
 
-% \begin{macro}{\mpi@mpostmem}
-% \begin{macro}{\mpi@mpostcompiler}
-% \begin{macro}{\mpi@latexclass}
-% \begin{macro}{\mpi@latexoptions}
-% \begin{macro}{\mpi@documentclass}
+% \macro{\mpi@mpostmem}
+% \macro{\mpi@mpostcompiler}
+% \macro{\mpi@latexclass}
+% \macro{\mpi@latexoptions}
+% \macro{\mpi@documentclass}
 % These definitions store the options for processing labels via
 % \TeX{} or \LaTeX{}:
 %    \begin{macrocode}
@@ -1935,13 +2006,8 @@ filename: \mpostgetname{sec8}
 \def\mpi@documentclass{\@backslashchar documentclass%
   \mpi@latexoptions{\mpi@latexclass}}
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\mpi@warncompile}
+% \macro{\mpi@warncompile}
 % Warn and disable compiling if |\write18| is unavailable:
 %    \begin{macrocode}
 \def\mpi@warncompile{\ifmpi@compile\ifeof18%
@@ -1949,7 +2015,6 @@ filename: \mpostgetname{sec8}
     manual metapost compiling required}{}%
   \global\mpi@compilefalse\fi\fi}
 %    \end{macrocode}
-% \end{macro}
 
 % Process package options:
 %    \begin{macrocode}
@@ -2004,52 +2069,45 @@ filename: \mpostgetname{sec8}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Internal Commands and Definitions.}
 %
-% \begin{macro}{\mpi@empty}
+% \macro{\mpi@empty}
 % Define an empty macro for comparison via |\ifx|:
 %    \begin{macrocode}
 \def\mpi@empty{}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@unusedlist}
+% \macro{\mpi@unusedlist}
 % Initialise a list of unused figure labels:
 %    \begin{macrocode}
 \def\mpi@unusedlist{}
 %    \end{macrocode}
-% \end{macro}
 
 
-% \begin{macro}{\mpi@dblquotchar}
+% \macro{\mpi@dblquotchar}
 % Define a bare double quotation character for writing to the file:
 %    \begin{macrocode}
 \begingroup\catcode`\"=12\relax\gdef\mpi@dblquotchar{"}\endgroup
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\ifmpi@infile}
-% \begin{macro}{\ifmpi@inbody}
+% \macro{\ifmpi@infile}
+% \macro{\ifmpi@inbody}
 % |\ifmpi@infile| indicates whether a file is open,
 % |\ifmpi@inbody| indicates whether the content section has started:
 %    \begin{macrocode}
 \newif\ifmpi@infile\mpi@infilefalse
 \newif\ifmpi@inbody\mpi@inbodyfalse
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\ifmpi@inclmod}
-% \begin{macro}{\ifmpi@filemod}
+% \macro{\ifmpi@inclmod}
+% \macro{\ifmpi@filemod}
 % |\ifmpi@inclmod| indicates whether an include file has been modified,
 % |\ifmpi@filemod| indicates whether the current file is modified:
 %    \begin{macrocode}
 \newif\ifmpi@inclmod\mpi@inclmodfalse
 \newif\ifmpi@filemod
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\ifmpi@warnmod}
-% \begin{macro}{\ifmpi@showinfile}
+% \macro{\ifmpi@warnmod}
+% \macro{\ifmpi@showinfile}
 % |\ifmpi@warnmod| indicates whether a rerun warning is to be issued,
 % |\ifmpi@showinfile| indicates whether a figure has been displayed
 %   while a file is being composed:
@@ -2057,37 +2115,31 @@ filename: \mpostgetname{sec8}
 \newif\ifmpi@warnmod\mpi@warnmodfalse
 \newif\ifmpi@showinfile
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\mpi@out}
-% \begin{macro}{\mpi@outnow}
+% \macro{\mpi@out}
+% \macro{\mpi@outnow}
 % File handles for the metapost file (|\mpi@out|)
 % and for immediate output (|\mpi@outnow|):
 %    \begin{macrocode}
 \newwrite\mpi@out
 \newwrite\mpi@outnow
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\mpi@writebuf}
+% \macro{\mpi@writebuf}
 % Write to the file:
 %    \begin{macrocode}
 \def\mpi@writebuf{\ifmpi@write\immediate\write\mpi@out{\the\mpi@buf}\fi}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@writenow}
+% \macro{\mpi@writenow}
 % Write to the immediate buffer:
 %    \begin{macrocode}
 \def\mpi@writenow{\ifmpi@nowactive\mpi@addtoexp\mpi@nowbuf{\the\mpi@buf^^J}\fi}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@buf}
-% \begin{macro}{\mpi@defbuf}
-% \begin{macro}{\mpi@nowbuf}
+% \macro{\mpi@buf}
+% \macro{\mpi@defbuf}
+% \macro{\mpi@nowbuf}
 % Declare three token buffers to store the current block (|\mpi@buf|),
 % global definitions (|\mpi@defbuf|)
 % and the definitions for immediate processing (|\mpi@nowbuf|):
@@ -2095,14 +2147,12 @@ filename: \mpostgetname{sec8}
 \newtoks\mpi@buf
 \newtoks\mpi@defbuf
 \newtoks\mpi@nowbuf
+\newtoks\mpi@verbbuf
 \mpi@defbuf={}
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\mpi@addto}
-% \begin{macro}{\mpi@addtoexp}
+% \macro{\mpi@addto}
+% \macro{\mpi@addtoexp}
 % |\mpi@addto| adds the second argument to a global token buffer
 % without expansion.
 % |\mpi@addtoexp| first expands the second argument (once)
@@ -2111,25 +2161,24 @@ filename: \mpostgetname{sec8}
 \def\mpi@addto#1#2{\global#1=\expandafter{\the#1#2}}
 \def\mpi@addtoexp#1#2{\expandafter\mpi@addto\expandafter#1\expandafter{#2}}
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\mpi@clearbuf}
-% \begin{macro}{\mpi@addbufexp}
-% \begin{macro}{\mpi@addbuf}
+% \macro{\mpi@clearbuf}
+% \macro{\mpi@addbufexp}
+% \macro{\mpi@addbufbuf}
+% \macro{\mpi@addbuf}
 % |\mpi@clearbuf| clears the current block buffer.
-% |\mpi@addbufexp| expands (once) and adds to the current block buffer.
+% |\mpi@addbufexp| expands the first token
+% and adds to the current block buffer.
+% |\mpi@addbufbuf| adds a buffer to the current block buffer.
 % |\mpi@addbuf| adds to the current block buffer via |\protected@edef|:
 %    \begin{macrocode}
 \def\mpi@clearbuf{\global\mpi@buf={}}
 \def\mpi@addbufexp#1{\mpi@addtoexp\mpi@buf{#1^^J}}
+\def\mpi@addbufbuf#1{\mpi@addtoexp\mpi@buf{\the#1}}
 \def\mpi@addbuf#1{{\protected@edef\mpi@tmp{#1}\mpi@addbufexp\mpi@tmp}}
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\mpi@stripext}
+% \macro{\mpi@stripext}
 % Strip |.mps| or |.eps| ending of a figure filename,
 % return result in |\mpi@stripped|:
 %    \begin{macrocode}
@@ -2154,9 +2203,8 @@ filename: \mpostgetname{sec8}
   \expandafter\endgroup\mpi@tmp%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@warnmod}
+% \macro{\mpi@warnmod}
 % Warn if some figure has been displayed while a file has been written
 % (potentially the displayed figure is old):
 %    \begin{macrocode}
@@ -2167,9 +2215,8 @@ filename: \mpostgetname{sec8}
   \fi\fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@warnunused}
+% \macro{\mpi@warnunused}
 % This macro processes the list of all figure labels
 % and issues a warning for every unused ones:
 %    \begin{macrocode}
@@ -2186,21 +2233,29 @@ filename: \mpostgetname{sec8}
 %    \begin{macrocode}
 \AtEndDocument{\expandafter\mpi@warnunused\mpi@unusedlist{}}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpostplaceholder}
+% \macro{\mpostdisplaylabel}
+% Rescan a string potentially containing the special characters
+% underscore (`|_|'), caret (`|^|') and ampersand (`|&|'):
+%    \begin{macrocode}
+\newcommand{\mpostdisplaylabel}[1]{{%
+  \catcode`\_=11\catcode`\^=11\catcode`\&=11%
+  \edef\mpi@tmp{#1}\expandafter\scantokens\expandafter{\mpi@tmp}}}
+%    \end{macrocode}
+
+% \macro{\mpostplaceholder}
 % Display a placeholder for non-existing files or labels;
 % this function may be overwritten by the user for customisation purposes
 % (optional argument contains either `|file|' or `|label|'):
 %    \begin{macrocode}
 \newcommand{\mpostplaceholder}[2][]{\parbox[c]{1in}{%
   \hrule\vrule\hfill%
-  \parbox[c]{0pt}{\rule{0cm}{0.6in}}\makebox[0pt][c]{\scriptsize\tt #2}%
+  \parbox[c]{0pt}{\rule{0cm}{0.6in}}%
+    \makebox[0pt][c]{\scriptsize\tt\mpostdisplaylabel{#2}}%
   \hfill\vrule\hrule}}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@graphics}
+% \macro{\mpi@graphics}
 % Display a figure;
 % if the file does not exist (yet) issue a warning and display a placeholder,
 % otherwise expand filename properly and pass on to |\includegraphics|:
@@ -2211,9 +2266,8 @@ filename: \mpostgetname{sec8}
     {\typeout{graphics file `#2' missing}\mpostplaceholder[file]{#2}}%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@verbatim}
+% \macro{\mpi@verbatim}
 % Start reading the block from the source file
 % using the \textsf{verbatim} package;
 % add each line to the buffer:
@@ -2223,13 +2277,13 @@ filename: \mpostgetname{sec8}
   \@bsphack%
   \let\do\@makeother\dospecials%
   \catcode`\^^M\active%
-  \def\verbatim@processline{\mpi@addbufexp{\the\verbatim@line}}%
+  \global\mpi@verbbuf={}%
+  \def\verbatim@processline{\mpi@addtoexp\mpi@verbbuf{\the\verbatim@line^^J}}%
   \verbatim@start%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@endverbatim}
+% \macro{\mpi@endverbatim}
 % End reading the block from the source file:
 %    \begin{macrocode}
 \newcommand{\mpi@endverbatim}{%
@@ -2237,9 +2291,29 @@ filename: \mpostgetname{sec8}
   \endgroup%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@putlineno}
+% \macro{\mpi@scanblock}
+% Read one optional argument and pass on
+% to an environment which reads a block from the source file.
+% Handle special cases of an initial empty line
+% or a completely empty block.
+% Pass prefetched tokens as second argument:
+%    \begin{macrocode}
+\def\mpi@scanblock#1{%
+  \@ifnextchar\par{\mpi@scanblock@par{#1}}{\mpi@scanblock@sel{#1}}}
+\long\def\mpi@scanblock@par#1\par{\mpi@scanblock@sel{#1}[]}
+\def\mpi@scanblock@sel#1{\@ifnextchar[{\mpi@scanblock@opt{#1}}%
+  {\@ifnextchar\end{\mpi@scanblock@end{#1}}{\mpi@scanblock@noopt{#1}}}}
+\def\mpi@scanblock@end#1\end#2{%
+  \def\mpi@tmp{#2}\ifx\mpi@tmp\@currenvir%
+    \def\mpi@verbatim{\global\mpi@verbbuf={}}\def\mpi@endverbatim{}%
+  \fi%
+  #1{}{\scantokens{\end{#2}}}}
+\def\mpi@scanblock@noopt#1#2{#1{}{\scantokens#2}}
+\def\mpi@scanblock@opt#1[#2]{#1{#2}{}}
+%    \end{macrocode}
+
+% \macro{\mpi@putlineno}
 % Write current position in source file to buffer;
 % write line number and source file name
 % (if available via package \textsf{currfile}):
@@ -2253,9 +2327,8 @@ filename: \mpostgetname{sec8}
   \fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@beginfig}
+% \macro{\mpi@beginfig}
 % Write beginning of figure block to buffer;
 % write filename and |beginfig| statement:
 %    \begin{macrocode}
@@ -2264,9 +2337,8 @@ filename: \mpostgetname{sec8}
   \mpi@addbuf{beginfig(\arabic{mpi@count})}%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@endfig}
+% \macro{\mpi@endfig}
 % Write end of figure block to buffer;
 % write |endfig| statement:
 %    \begin{macrocode}
@@ -2274,9 +2346,8 @@ filename: \mpostgetname{sec8}
   \mpi@addbuf{endfig;}%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@declaredoc}
+% \macro{\mpi@declaredoc}
 % Write |\documentclass| statement in \LaTeX{} mode to buffer:
 %    \begin{macrocode}
 \newcommand{\mpi@declaredoc}{%
@@ -2288,11 +2359,10 @@ filename: \mpostgetname{sec8}
   \fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@begindoc}
+% \macro{\mpi@begindoc}
 % Write beginning of content section to buffer;
-% write |\begin{document}| statement in \LaTeX{} mode:
+% write |\||begin{document}| statement in \LaTeX{} mode:
 %    \begin{macrocode}
 \newcommand{\mpi@begindoc}{%
   \ifmpi@latex%
@@ -2303,11 +2373,10 @@ filename: \mpostgetname{sec8}
   \fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@enddoc}
+% \macro{\mpi@enddoc}
 % Write end of content section to buffer;
-% write |\end{document}| statement in \LaTeX{} mode:
+% write |\||end{document}| statement in \LaTeX{} mode:
 %    \begin{macrocode}
 \newcommand{\mpi@enddoc}{%
   \ifmpi@latex%
@@ -2318,9 +2387,8 @@ filename: \mpostgetname{sec8}
   \fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@declareformat}
+% \macro{\mpi@declareformat}
 % Write \TeX{} format specifier to buffer:
 %    \begin{macrocode}
 \newcommand{\mpi@declareformat}{%
@@ -2334,9 +2402,8 @@ filename: \mpostgetname{sec8}
   \fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@composehead}
+% \macro{\mpi@composehead}
 % Write file header to buffer;
 % declare font inclusion and draft mode,
 % write \TeX{} format specifier and \LaTeX{} header:
@@ -2354,9 +2421,8 @@ filename: \mpostgetname{sec8}
   \mpi@declaredoc%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@beginfile}
+% \macro{\mpi@beginfile}
 % Write beginning of file to buffer;
 % write generated file comment and header:
 %    \begin{macrocode}
@@ -2367,13 +2433,12 @@ filename: \mpostgetname{sec8}
   \mpi@addbuf{\@percentchar generated from file `\jobname' by mpostinl.sty}%
   \ifmpi@include\else%
     \mpi@composehead%
-    \mpi@addbufexp{\the\mpi@defbuf}%
+    \mpi@addbufbuf{\mpi@defbuf}%
   \fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@endfile}
+% \macro{\mpi@endfile}
 % Write end of file to buffer;
 % write |end| statement:
 %    \begin{macrocode}
@@ -2384,18 +2449,16 @@ filename: \mpostgetname{sec8}
   \fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@getchecksum}
+% \macro{\mpi@getchecksum}
 % Compute the MD5 checksum for a metapost file and store in macro:
 %    \begin{macrocode}
 \newcommand{\mpi@getchecksum}[3]{%
   \IfFileExists{#3}{#1\edef#2{\pdfmdfivesum file{#3}}}{#1\let#2=\@undefined}%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@startfile}
+% \macro{\mpi@startfile}
 % Start a new file if not already open:
 %    \begin{macrocode}
 \newcommand{\mpi@startfile}{%
@@ -2443,9 +2506,8 @@ filename: \mpostgetname{sec8}
   \fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@startcontent}
+% \macro{\mpi@startcontent}
 % Start content section of file;
 % make sure the file is open,
 % prepare start of content section and write to file,
@@ -2462,9 +2524,8 @@ filename: \mpostgetname{sec8}
   \fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@compile}
+% \macro{\mpi@compile}
 % Compile the metapost file (if writing and compiling is enabled):
 %    \begin{macrocode}
 \newcommand{\mpi@compile}[1]{%
@@ -2506,9 +2567,8 @@ filename: \mpostgetname{sec8}
   \fi\fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@cleanfile}
+% \macro{\mpi@cleanfile}
 % Write a mps file containing a plain cross:
 %    \begin{macrocode}
 \newcommand{\mpi@cleanfile}[1]{%
@@ -2528,9 +2588,8 @@ filename: \mpostgetname{sec8}
   \immediate\closeout\mpi@outnow%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@cleanfiles}
+% \macro{\mpi@cleanfiles}
 % Clean all figure files prior to compilation:
 %    \begin{macrocode}
 \newcommand{\mpi@cleanfiles}[1]{%
@@ -2540,9 +2599,8 @@ filename: \mpostgetname{sec8}
   \expandafter\endgroup\mpi@tmp%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@closefile}
+% \macro{\mpi@closefile}
 % Close the file, compile and reset:
 %    \begin{macrocode}
 \newcommand{\mpi@closefile}{%
@@ -2575,7 +2633,8 @@ filename: \mpostgetname{sec8}
 % during composition:
 %    \begin{macrocode}
     \ifmpi@filemod\ifmpi@inbody%
-      \ifmpi@clean\expandafter\mpi@cleanfiles\mpi@filelist{}\fi%
+      \ifmpi@clean\ifmpi@write\ifmpi@compile%
+        \expandafter\mpi@cleanfiles\mpi@filelist{}\fi\fi\fi%
       \mpi@compile{\mpostfilename.mp}%
     \fi\fi%
     \ifmpi@filemod\ifmpi@showinfile\global\mpi@warnmodtrue\fi\fi%
@@ -2589,9 +2648,8 @@ filename: \mpostgetname{sec8}
   \fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpi@processnow}
+% \macro{\mpi@processnow}
 % Write present figure to an individual file and process immediately:
 %    \begin{macrocode}
 \newcommand{\mpi@processnow}{%
@@ -2623,7 +2681,6 @@ filename: \mpostgetname{sec8}
   \fi\fi\fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
 % Make sure to close and process the file at the end.
 % Warn if figures may need another compiler pass:
@@ -2637,7 +2694,7 @@ filename: \mpostgetname{sec8}
 %
 % The following commands are the interface of the package.
 %
-% \begin{macro}{\mpostsetup}
+% \macro{\mpostsetup}
 % |\mpostsetup| processes package options
 % when the package has already been loaded:
 %    \begin{macrocode}
@@ -2647,9 +2704,8 @@ filename: \mpostgetname{sec8}
   \ifdefined\pdfmdfivesum\else\mpi@checksumfalse\fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{mpostdef}
+% \macro{mpostdef}
 % Declare options for the |mpostdef| environment:
 %    \begin{macrocode}
 \newif\ifmpi@deftex
@@ -2658,9 +2714,11 @@ filename: \mpostgetname{sec8}
 %    \end{macrocode}
 
 % The environment |mpostdef| adds a block
-% of definitions to the metapost file:
+% of definitions to the metapost file.
+% Pass on to |\mpi@scanblock| mechanism:
 %    \begin{macrocode}
-\newenvironment{mpostdef}[1][]{%
+\def\mpostdef{\mpi@scanblock{\mpi@mpostdef}}
+\def\mpi@mpostdef#1#2{%
 %    \end{macrocode}
 % Process optional arguments:
 %    \begin{macrocode}
@@ -2687,14 +2745,16 @@ filename: \mpostgetname{sec8}
   \ifmpi@deftex%
     \mpi@addbuf{verbatimtex}%
   \fi%
-  \mpi@verbatim%
+  \mpi@verbatim#2%
 }
 %    \end{macrocode}
 % Postprocessing; add `|etex|' if in \TeX{} mode,
 % add to appropriate buffer(s).
 %    \begin{macrocode}
+\def\endmpostdef
 {%
   \mpi@endverbatim%
+  \mpi@addbufbuf{\mpi@verbbuf}%
   \ifmpi@deftex%
     \mpi@addbuf{etex}%
   \fi%
@@ -2710,9 +2770,79 @@ filename: \mpostgetname{sec8}
   \fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{mpostfig}
+% \macro{mposttex}
+% Declare options for the |mposttex| environment:
+%    \begin{macrocode}
+\newif\ifmpi@deftex
+\define@key{mpi@tex}{dual}[true]{\csname mpi@texdual#1\endcsname}
+\define@key{mpi@tex}{global}[true]{\csname mpi@defglobal#1\endcsname}
+%    \end{macrocode}
+
+% The environment |mposttex| adds a block
+% of tex definitions to the metapost file.
+% Pass on to |\mpi@scanblock| mechanism:
+%    \begin{macrocode}
+\def\mposttex{\mpi@scanblock{\mpi@mposttex}}
+\def\mpi@mposttex#1#2{%
+%    \end{macrocode}
+% Process optional arguments:
+%    \begin{macrocode}
+  \mpi@texdualfalse%
+  \setkeys{mpi@tex}{#1}%
+%    \end{macrocode}
+% \TeX{} definitions cannot be in an include file:
+%    \begin{macrocode}
+  \ifmpi@defglobal\else\ifmpi@include%
+    \PackageWarning{mpostinl}{tex definitions within an include file %
+      will be ignored by mpost; switching to global definition}{}%
+    \mpi@defglobaltrue%
+  \fi\fi%
+%    \end{macrocode}
+% Prepare for recording; start the file if not open and not global,
+% clear buffer, write current position, and add `|verbatimtex|':
+%    \begin{macrocode}
+  \ifmpi@defglobal\else%
+    \mpi@startfile%
+  \fi%
+  \mpi@clearbuf%
+  \mpi@putlineno%
+  \mpi@addbuf{verbatimtex}%
+  \mpi@verbatim#2%
+}
+%    \end{macrocode}
+% Postprocessing; add `|etex|',
+% add to appropriate buffer(s).
+%    \begin{macrocode}
+\def\endmposttex
+{%
+  \mpi@endverbatim%
+  \mpi@addbufbuf{\mpi@verbbuf}%
+  \mpi@addbuf{etex}%
+  \ifmpi@defglobal%
+    \mpi@addtoexp\mpi@defbuf{\the\mpi@buf^^J}%
+    \ifmpi@include\else\ifmpi@infile%
+      \mpi@writebuf%
+      \mpi@writenow%
+    \fi\fi%
+  \else%
+    \mpi@writebuf%
+    \ifmpi@include\else\mpi@writenow\fi%
+  \fi%
+%    \end{macrocode}
+% Hack |\ignorespacesafterend| mechanism to
+% ship out block contents after environment group:
+%    \begin{macrocode}
+  \ifmpi@texdual%
+    \ignorespacesafterend%
+    \global\let\mpi@ignorespaces\ignorespaces%
+    \gdef\ignorespaces{\expandafter\scantokens\expandafter{\the\mpi@verbbuf}%
+      \global\let\ignorespaces\mpi@ignorespaces}%
+  \fi%
+}
+%    \end{macrocode}
+
+% \macro{mpostfig}
 % Declare options for the |mpostfig| environment:
 %    \begin{macrocode}
 \newif\ifmpi@figshow
@@ -2724,9 +2854,11 @@ filename: \mpostgetname{sec8}
 \define@key{mpi@fig}{now}[true]{\csname mpi@now#1\endcsname}
 %    \end{macrocode}
 
-% The environment |mpostfig| adds a figure to the metapost file:
+% The environment |mpostfig| adds a figure to the metapost file.
+% Pass on to |\mpi@scanblock| mechanism:
 %    \begin{macrocode}
-\newenvironment{mpostfig}[1][]{%
+\def\mpostfig{\mpi@scanblock{\mpi@mpostfig}}
+\def\mpi@mpostfig#1#2{%
 %    \end{macrocode}
 % Make sure that include files do not contain figures:
 %    \begin{macrocode}
@@ -2780,14 +2912,16 @@ filename: \mpostgetname{sec8}
   \mpi@clearbuf%
   \mpi@putlineno%
   \mpi@beginfig{\mpi@figfile}%
-  \mpi@verbatim%
+  \mpi@verbatim#2%
 }
 %    \end{macrocode}
 % Postprocessing; end figure block, add to buffer, add file to list,
 % process immediately if desired:
 %    \begin{macrocode}
+\def\endmpostfig
 {%
   \mpi@endverbatim%
+  \mpi@addbufbuf{\mpi@verbbuf}%
   \mpi@endfig%
   \mpi@writebuf%
   \xdef\mpi@filelist{\mpi@filelist{\mpi@figfile}}%
@@ -2821,9 +2955,8 @@ filename: \mpostgetname{sec8}
   \fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpostuse}
+% \macro{\mpostuse}
 % |\mpostuse| includes a metapost figure which was declared earlier
 % via its label. The optional argument is passed as the optional
 % argument for |\includegraphics|.
@@ -2841,9 +2974,8 @@ filename: \mpostgetname{sec8}
   \fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpostgetname}
+% \macro{\mpostgetname}
 % |\mpostgetname| gets the filename of a figure declared earlier
 % via its label and returns it in the macro |\mpostfigurename|.
 % Remember that the label has been used:
@@ -2858,9 +2990,8 @@ filename: \mpostgetname{sec8}
   \fi%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpostfile}
+% \macro{\mpostfile}
 % Declare options for |\mpostfile|:
 %    \begin{macrocode}
 \define@key{mpi@file}{include}[true]{\csname mpi@include#1\endcsname}
@@ -2877,17 +3008,15 @@ filename: \mpostgetname{sec8}
   \xdef\mpostfilename{#2}%
 }
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpostdone}
+% \macro{\mpostdone}
 % |\mpostdone| closes the present metapost file
 % and processes it if applicable:
 %    \begin{macrocode}
 \newcommand{\mpostdone}{\mpi@closefile}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\mpostuse<>}
+% \macro{\mpostuse<>}
 % This overwrites the definition of |\mpostfile|
 % to accept the overlay option |<|\ldots|>|
 % of the \textsf{beamer} package:
@@ -2900,7 +3029,6 @@ filename: \mpostgetname{sec8}
     \mpi@plain@mpostuse[#1]{#2}\endgroup}%
 }{}\fi
 %    \end{macrocode}
-% \end{macro}
 
 %\iffalse
 %</package>

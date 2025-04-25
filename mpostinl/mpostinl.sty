@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{mpostinl}[2018/03/01 v1.4 metapost inline figures]
+\ProvidesPackage{mpostinl}[2018/12/30 v1.5 metapost inline figures]
 
 \RequirePackage{verbatim}
 \RequirePackage{graphicx}
@@ -47,6 +47,7 @@
 \newif\ifmpi@nowkeep\mpi@nowkeepfalse
 \newif\ifmpi@include\mpi@includefalse
 \newif\ifmpi@defglobal\mpi@defglobalfalse
+\newif\ifmpi@texdual\mpi@texdualfalse
 \newif\ifmpi@warnunused\mpi@warnunusedtrue
 \newif\ifmpi@beamer\mpi@beamertrue
 
@@ -126,6 +127,7 @@
 \newtoks\mpi@buf
 \newtoks\mpi@defbuf
 \newtoks\mpi@nowbuf
+\newtoks\mpi@verbbuf
 \mpi@defbuf={}
 
 \def\mpi@addto#1#2{\global#1=\expandafter{\the#1#2}}
@@ -133,6 +135,7 @@
 
 \def\mpi@clearbuf{\global\mpi@buf={}}
 \def\mpi@addbufexp#1{\mpi@addtoexp\mpi@buf{#1^^J}}
+\def\mpi@addbufbuf#1{\mpi@addtoexp\mpi@buf{\the#1}}
 \def\mpi@addbuf#1{{\protected@edef\mpi@tmp{#1}\mpi@addbufexp\mpi@tmp}}
 
 \def\mpi@stripext#1{\edef\mpi@tmp{#1}\expandafter%
@@ -173,9 +176,14 @@
 }
 \AtEndDocument{\expandafter\mpi@warnunused\mpi@unusedlist{}}
 
+\newcommand{\mpostdisplaylabel}[1]{{%
+  \catcode`\_=11\catcode`\^=11\catcode`\&=11%
+  \edef\mpi@tmp{#1}\expandafter\scantokens\expandafter{\mpi@tmp}}}
+
 \newcommand{\mpostplaceholder}[2][]{\parbox[c]{1in}{%
   \hrule\vrule\hfill%
-  \parbox[c]{0pt}{\rule{0cm}{0.6in}}\makebox[0pt][c]{\scriptsize\tt #2}%
+  \parbox[c]{0pt}{\rule{0cm}{0.6in}}%
+    \makebox[0pt][c]{\scriptsize\tt\mpostdisplaylabel{#2}}%
   \hfill\vrule\hrule}}
 
 \newcommand{\mpi@graphics}[2][]{%
@@ -189,7 +197,8 @@
   \@bsphack%
   \let\do\@makeother\dospecials%
   \catcode`\^^M\active%
-  \def\verbatim@processline{\mpi@addbufexp{\the\verbatim@line}}%
+  \global\mpi@verbbuf={}%
+  \def\verbatim@processline{\mpi@addtoexp\mpi@verbbuf{\the\verbatim@line^^J}}%
   \verbatim@start%
 }
 
@@ -197,6 +206,19 @@
   \@esphack%
   \endgroup%
 }
+
+\def\mpi@scanblock#1{%
+  \@ifnextchar\par{\mpi@scanblock@par{#1}}{\mpi@scanblock@sel{#1}}}
+\long\def\mpi@scanblock@par#1\par{\mpi@scanblock@sel{#1}[]}
+\def\mpi@scanblock@sel#1{\@ifnextchar[{\mpi@scanblock@opt{#1}}%
+  {\@ifnextchar\end{\mpi@scanblock@end{#1}}{\mpi@scanblock@noopt{#1}}}}
+\def\mpi@scanblock@end#1\end#2{%
+  \def\mpi@tmp{#2}\ifx\mpi@tmp\@currenvir%
+    \def\mpi@verbatim{\global\mpi@verbbuf={}}\def\mpi@endverbatim{}%
+  \fi%
+  #1{}{\scantokens{\end{#2}}}}
+\def\mpi@scanblock@noopt#1#2{#1{}{\scantokens#2}}
+\def\mpi@scanblock@opt#1[#2]{#1{#2}{}}
 
 \newcommand{\mpi@putlineno}{%
   \ifmpi@lineno%
@@ -274,7 +296,7 @@
   \mpi@addbuf{\@percentchar generated from file `\jobname' by mpostinl.sty}%
   \ifmpi@include\else%
     \mpi@composehead%
-    \mpi@addbufexp{\the\mpi@defbuf}%
+    \mpi@addbufbuf{\mpi@defbuf}%
   \fi%
 }
 
@@ -397,7 +419,8 @@
     \fi%
     \ifmpi@include\ifmpi@filemod\global\mpi@inclmodtrue\fi\fi%
     \ifmpi@filemod\ifmpi@inbody%
-      \ifmpi@clean\expandafter\mpi@cleanfiles\mpi@filelist{}\fi%
+      \ifmpi@clean\ifmpi@write\ifmpi@compile%
+        \expandafter\mpi@cleanfiles\mpi@filelist{}\fi\fi\fi%
       \mpi@compile{\mpostfilename.mp}%
     \fi\fi%
     \ifmpi@filemod\ifmpi@showinfile\global\mpi@warnmodtrue\fi\fi%
@@ -441,7 +464,8 @@
 \define@key{mpi@def}{tex}[true]{\csname mpi@deftex#1\endcsname}
 \define@key{mpi@def}{global}[true]{\csname mpi@defglobal#1\endcsname}
 
-\newenvironment{mpostdef}[1][]{%
+\def\mpostdef{\mpi@scanblock{\mpi@mpostdef}}
+\def\mpi@mpostdef#1#2{%
   \mpi@deftexfalse%
   \setkeys{mpi@def}{#1}%
   \ifmpi@defglobal\else\ifmpi@deftex\ifmpi@include%
@@ -457,10 +481,12 @@
   \ifmpi@deftex%
     \mpi@addbuf{verbatimtex}%
   \fi%
-  \mpi@verbatim%
+  \mpi@verbatim#2%
 }
+\def\endmpostdef
 {%
   \mpi@endverbatim%
+  \mpi@addbufbuf{\mpi@verbbuf}%
   \ifmpi@deftex%
     \mpi@addbuf{etex}%
   \fi%
@@ -476,6 +502,50 @@
   \fi%
 }
 
+\newif\ifmpi@deftex
+\define@key{mpi@tex}{dual}[true]{\csname mpi@texdual#1\endcsname}
+\define@key{mpi@tex}{global}[true]{\csname mpi@defglobal#1\endcsname}
+
+\def\mposttex{\mpi@scanblock{\mpi@mposttex}}
+\def\mpi@mposttex#1#2{%
+  \mpi@texdualfalse%
+  \setkeys{mpi@tex}{#1}%
+  \ifmpi@defglobal\else\ifmpi@include%
+    \PackageWarning{mpostinl}{tex definitions within an include file %
+      will be ignored by mpost; switching to global definition}{}%
+    \mpi@defglobaltrue%
+  \fi\fi%
+  \ifmpi@defglobal\else%
+    \mpi@startfile%
+  \fi%
+  \mpi@clearbuf%
+  \mpi@putlineno%
+  \mpi@addbuf{verbatimtex}%
+  \mpi@verbatim#2%
+}
+\def\endmposttex
+{%
+  \mpi@endverbatim%
+  \mpi@addbufbuf{\mpi@verbbuf}%
+  \mpi@addbuf{etex}%
+  \ifmpi@defglobal%
+    \mpi@addtoexp\mpi@defbuf{\the\mpi@buf^^J}%
+    \ifmpi@include\else\ifmpi@infile%
+      \mpi@writebuf%
+      \mpi@writenow%
+    \fi\fi%
+  \else%
+    \mpi@writebuf%
+    \ifmpi@include\else\mpi@writenow\fi%
+  \fi%
+  \ifmpi@texdual%
+    \ignorespacesafterend%
+    \global\let\mpi@ignorespaces\ignorespaces%
+    \gdef\ignorespaces{\expandafter\scantokens\expandafter{\the\mpi@verbbuf}%
+      \global\let\ignorespaces\mpi@ignorespaces}%
+  \fi%
+}
+
 \newif\ifmpi@figshow
 \define@key{mpi@fig}{show}[true]{\csname mpi@figshow#1\endcsname}
 \define@key{mpi@fig}{twice}[true]{\csname mpi@twice#1\endcsname}
@@ -484,7 +554,8 @@
 \define@key{mpi@fig}{opt}{\def\mpi@figopt{[#1]}}
 \define@key{mpi@fig}{now}[true]{\csname mpi@now#1\endcsname}
 
-\newenvironment{mpostfig}[1][]{%
+\def\mpostfig{\mpi@scanblock{\mpi@mpostfig}}
+\def\mpi@mpostfig#1#2{%
   \ifmpi@include%
     \PackageError{mpostinl}{cannot write figure to include file}{}%
   \fi%
@@ -515,10 +586,12 @@
   \mpi@clearbuf%
   \mpi@putlineno%
   \mpi@beginfig{\mpi@figfile}%
-  \mpi@verbatim%
+  \mpi@verbatim#2%
 }
+\def\endmpostfig
 {%
   \mpi@endverbatim%
+  \mpi@addbufbuf{\mpi@verbbuf}%
   \mpi@endfig%
   \mpi@writebuf%
   \xdef\mpi@filelist{\mpi@filelist{\mpi@figfile}}%
