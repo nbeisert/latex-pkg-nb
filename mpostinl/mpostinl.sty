@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{mpostinl}[2017/04/01 v1.11 metapost inline figures]
+\ProvidesPackage{mpostinl}[2017/06/24 v1.12 metapost inline figures]
 
 \RequirePackage{verbatim}
 \RequirePackage{graphicx}
@@ -151,11 +151,17 @@
 }
 
 \newcommand{\mpi@verbatim}{%
+  \begingroup%
   \@bsphack%
   \let\do\@makeother\dospecials%
   \catcode`\^^M\active%
   \def\verbatim@processline{\mpi@addbufexp{\the\verbatim@line}}%
   \verbatim@start%
+}
+
+\newcommand{\mpi@endverbatim}{%
+  \@esphack%
+  \endgroup%
 }
 
 \newcommand{\mpi@putlineno}{%
@@ -373,6 +379,7 @@
   \mpi@verbatim%
 }%
 {%
+  \mpi@endverbatim%
   \ifmpi@deftex%
     \mpi@addbuf{etex}%
   \fi%
@@ -386,7 +393,6 @@
     \mpi@writebuf%
     \ifmpi@include\else\mpi@writenow\fi%
   \fi%
-  \@esphack%
 }
 
 \newif\ifmpi@figshow
@@ -428,12 +434,12 @@
   \mpi@verbatim%
 }%
 {%
+  \mpi@endverbatim%
   \mpi@endfig%
   \mpi@writebuf%
   \ifmpi@now%
     \mpi@processnow%
   \fi%
-  \@esphack%
   \ifmpi@figshow%
     \expandafter\mpi@graphics\mpi@figopt{\mpi@figfile}%
   \fi%

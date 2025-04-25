@@ -18,10 +18,10 @@
 % and the derived files mpostinl.sty and mpinlsmp.tex
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mpostinl}[2017/04/01 v1.11 metapost inline figures]
-%<sample>\ProvidesFile{mpinlsmp.tex}[2017/04/01 v1.11 sample for mpostinl]
+%<package>\ProvidesPackage{mpostinl}[2017/06/24 v1.12 metapost inline figures]
+%<sample>\ProvidesFile{mpinlsmp.tex}[2017/06/24 v1.12 sample for mpostinl]
 %<*driver>
-%\ProvidesFile{mpostinl.drv}[2017/04/01 v1.11 mpostinl reference manual file]
+%\ProvidesFile{mpostinl.drv}[2017/06/24 v1.12 mpostinl reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -48,7 +48,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package mpostinl}}
-\date{1 April 2017, \textsf{v1.11}}
+\date{24 June 2017, \textsf{v1.12}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -1023,7 +1023,7 @@ The required options are:
 \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Script \text{mplatex}.}
+\paragraph{Script \textsf{mplatex}.}
 
 The \MP{} processing script \textsf{mplatex} expects the default metapost
 file naming convention (\textit{filename}|.|\textit{nn})
@@ -1073,7 +1073,7 @@ This work has the LPPL maintenance status `maintained'.
 The Current Maintainer of this work is Niklas Beisert.
 
 This work consists of the files |mpostinl.dtx| and |mpostinl.ins|
-and the derived files |mpostinl.sty| and |mpinlsmp.tex|
+and the derived files |mpostinl.sty| and |mpinlsmp.tex|.
 
 \endgroup
 
@@ -1144,10 +1144,25 @@ Compare the generated metapost file to the previous instance
 and compile only in case of changes.
 This could be implemented by a checksum or by some external tool
 such as diff. This feature is probably too difficult to implement.
+%\item
+%an environment to pass tex commands to mpost and also compile them locally
+%probably have to write to file and subsequently input the file
+%\item
+%leading / trailing empty lines may be a problem. explain!
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.12:} 2017/06/24
+
+\begin{itemize}
+\item
+bugfix for blank |mpostfig| display
+due to changes in the basic
+\LaTeX{} or \textsf{graphicx} system
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.11:} 2017/04/01
@@ -2016,11 +2031,22 @@ filename: \mpostgetname{sec8}
 % add each line to the buffer:
 %    \begin{macrocode}
 \newcommand{\mpi@verbatim}{%
+  \begingroup%
   \@bsphack%
   \let\do\@makeother\dospecials%
   \catcode`\^^M\active%
   \def\verbatim@processline{\mpi@addbufexp{\the\verbatim@line}}%
   \verbatim@start%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\mpi@endverbatim}
+% End reading the block from the source file:
+%    \begin{macrocode}
+\newcommand{\mpi@endverbatim}{%
+  \@esphack%
+  \endgroup%
 }
 %    \end{macrocode}
 % \end{macro}
@@ -2409,6 +2435,7 @@ filename: \mpostgetname{sec8}
 % add to appropriate buffer(s).
 %    \begin{macrocode}
 {%
+  \mpi@endverbatim%
   \ifmpi@deftex%
     \mpi@addbuf{etex}%
   \fi%
@@ -2422,7 +2449,6 @@ filename: \mpostgetname{sec8}
     \mpi@writebuf%
     \ifmpi@include\else\mpi@writenow\fi%
   \fi%
-  \@esphack%
 }
 %    \end{macrocode}
 % \end{macro}
@@ -2498,12 +2524,12 @@ filename: \mpostgetname{sec8}
 % process immediately if desired:
 %    \begin{macrocode}
 {%
+  \mpi@endverbatim%
   \mpi@endfig%
   \mpi@writebuf%
   \ifmpi@now%
     \mpi@processnow%
   \fi%
-  \@esphack%
 %    \end{macrocode}
 % Display figure:
 %    \begin{macrocode}
