@@ -1,5 +1,5 @@
-exframe v3.5
-Copyright 2011-2024 Niklas Beisert
+exframe v3.5.1
+Copyright 2011-2025 Niklas Beisert
 
 exframe is a LaTeX2e package which provides a general purpose
 framework to describe and typeset exercises and exam questions
@@ -37,8 +37,8 @@ Run "latex exframe.ins" to create the package exframe.sty
 and the samples consisting of exfsamp.tex, exfserm.tex,
 exfser01.tex, exfser02.tex, exfser03.tex, exfseraa.tex,
 exfserpe.tex, exfserpf.tex, exfsermk.sh, exfsermk.mak.
-Copy the file exframe.sty to an appropriate directory of your LaTeX
-distribution, e.g. texmf-root/tex/latex/exframe.
+Copy the file exframe.sty to an appropriate directory
+of your LaTeX distribution, e.g. texmf-root/tex/latex/exframe.
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3

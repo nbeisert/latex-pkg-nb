@@ -1,6 +1,7 @@
-% \iffalse
 %
-% exframe.dtx Copyright (C) 2011-2024 Niklas Beisert
+% \iffalse meta-comment
+%
+% exframe.dtx Copyright (C) 2011-2025 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -20,27 +21,29 @@
 % exfserpe.tex, exfserpf.tex, exfsermk.sh, exfsermk.mak.
 %
 %<package|samplesingle|samplemultimain>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{exframe}[2024/10/18 v3.5 Framework for Exercise Problems]
-%<samplesingle>\ProvidesFile{exfsamp.tex}[2024/10/18 v3.5 standalone sample for exframe]
-%<samplemultimain>\ProvidesFile{exfserm.tex}[2024/10/18 v3.5 multipart sample for exframe]
+%<package>\ProvidesPackage{exframe}[2025/03/25 v3.5.1 Framework for Exercise Problems]
+%<samplesingle>\ProvidesFile{exfsamp.tex}[2025/03/25 v3.5.1 standalone sample for exframe]
+%<samplemultimain>\ProvidesFile{exfserm.tex}[2025/03/25 v3.5.1 multipart sample for exframe]
 %<*driver>
-\def\thedate#1{2024/10/18}\def\theversion#1{v3.5}
+\def\thedate#1{2025/03/25}\def\theversion#1{v3.5.1}
 \ProvidesFile{exframe.dtx}[\thedate{} \theversion{} exframe reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
 \usepackage[margin=35mm]{geometry}
-\usepackage{hyperref}
+\usepackage[hyperindex=false]{hyperref}
 \usepackage{hyperxmp}
 \usepackage[usenames]{color}
 
-\hypersetup{colorlinks=true}
-\hypersetup{pdfstartview=FitH}
-\hypersetup{pdfpagemode=UseNone}
+\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
+\hypersetup{urlbordercolor={.5 1 1}}
+\hypersetup{linkbordercolor={1 .7 .7}}
+\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
 \hypersetup{keeppdfinfo=true}
 \hypersetup{pdfsource={}}
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfcopyright={Copyright 2010-2024 Niklas Beisert.
+\hypersetup{pdfurl={https://ctan.org/pkg/exframe}}
+\hypersetup{pdfcopyright={Copyright 2010-2025 Niklas Beisert.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
@@ -53,9 +56,12 @@
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
 \hypersetup{pdfcontacturl={https://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
+\newcommand{\markpkg}[1]{\textsf{#1}}
 \newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
 \newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
-\newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\textsf{#1}}}
+\newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\markpkg{#1}}}
+
+\def\textvert{\texttt{\char"7C}}
 
 \parskip1ex
 \parindent0pt
@@ -64,7 +70,7 @@
 
 \begin{document}
 
-\title{The \textsf{exframe} Package}
+\title{The \markpkg{exframe} Package}
 \hypersetup{pdftitle={The exframe Package}}
 \author{Niklas Beisert\\[2ex]
   Institut f\"ur Theoretische Physik\\
@@ -74,11 +80,12 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package exframe}}
-\date{\thedate{}, \theversion{}}
+\date{\thedate{}, \theversion{}\\[1ex]
+\url{https://ctan.org/pkg/exframe}}
 \maketitle
 
 \begin{abstract}\noindent
-\textsf{exframe} is a \LaTeXe{} package
+\markpkg{exframe} is a \LaTeXe{} package
 which provides a general purpose framework to describe and typeset
 exercises and exam questions along with their solutions.
 The package features mechanisms
@@ -168,7 +175,7 @@ numbering independently of whether solutions are output or not.
 \section{Usage}
 \label{sec:usage}
 
-To use the package \textsf{exframe} add the command
+To use the package \ctanpkg{exframe} add the command
 %
 \begin{center}
 |\usepackage{exframe}|
@@ -1413,7 +1420,7 @@ see \secref{sec:imp-metastr} for details.
 redefine environment name |problem|.
 This and the following alike options may be useful in
 quickly adjusting existing sources to
-the \textsf{exframe} framework
+the \ctanpkg{exframe} framework
 if the original framework works similarly
 and no special features are used.
 Otherwise, it is highly advisable to leave the
@@ -1940,7 +1947,7 @@ to the package \ctanpkg{marginnote}:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-Copyright \copyright{} 2011--2024 Niklas Beisert
+Copyright \copyright{} 2011--2025 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
@@ -2088,8 +2095,8 @@ The packages
 \ctanpkg{uassign},
 \ctanpkg{mathexam},
 \ctanpkg{exsol},
-\href{https://github.com/mbauman/homework}{\textsf{homework}},
-\href{https://gist.github.com/jhwilson/1278588}{\textsf{jhwhw}}
+\href{https://github.com/mbauman/homework}{\markpkg{homework}},
+\href{https://gist.github.com/jhwilson/1278588}{\markpkg{jhwhw}}
 provide basic functionality for somewhat more particular situations.
 \end{itemize}
 %
@@ -2143,6 +2150,24 @@ then read solutions from different document.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\iffalse
+\paragraph{vN.N.N+:} 20YY/MM/NN
+
+\begin{itemize}
+\item
+\ldots
+\end{itemize}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v3.5.1:} 2025/03/25
+
+\begin{itemize}
+\item
+maintenance and manual update
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v3.5:} 2024/10/18
@@ -2368,7 +2393,7 @@ dedicated layout and macros for author's exercise sheets
 %\fi
 %
 % This section provides an example of how to use
-% some of the \textsf{exframe} features.
+% some of the \ctanpkg{exframe} features.
 % The resulting layout will be somewhat messy
 % due to a random selection of features.
 %
@@ -2395,9 +2420,9 @@ dedicated layout and macros for author's exercise sheets
 \parskip0.5ex
 %    \end{macrocode}
 
-% Include \ctanpkg{amsmath}, \ctanpkg{hyperref} packages:
+% Include \ctanpkg{amstext}, \ctanpkg{hyperref} packages:
 %    \begin{macrocode}
-\usepackage{amsmath}
+\usepackage{amstext}
 \usepackage{hyperref}
 %    \end{macrocode}
 
@@ -2410,7 +2435,7 @@ dedicated layout and macros for author's exercise sheets
 %%\metasetlang{de}
 %    \end{macrocode}
 
-% Include \textsf{exframe} package:
+% Include \ctanpkg{exframe} package:
 %    \begin{macrocode}
 \usepackage[extstyle]{exframe}
 %    \end{macrocode}
@@ -2937,7 +2962,7 @@ value
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{exframe Package.}
 %
-% Invoke \textsf{exframe} with extended data and styles:
+% Invoke \ctanpkg{exframe} with extended data and styles:
 %    \begin{macrocode}
 \RequirePackage[extdata,extstyle]{exframe}
 %    \end{macrocode}
@@ -3114,7 +3139,7 @@ enddef;
 \metaset{author}{Niklas Beisert, \metapick[#1]{institution}}
 \metaset{institution}{exframe academy}
 \metaset{period}{spring 2019}
-\metaset{copyrightdate}{2019--2024}
+\metaset{copyrightdate}{2019--2025}
 %    \end{macrocode}
 
 % For child documents declare part of:
@@ -7389,7 +7414,7 @@ clean-all:  clean
 
 % \macro{\exf@writemetadata}
 % Write pdf metadata via \ctanpkg{metastr} package,
-% let \textsf{exframe} initiate process (especially for sheet):
+% let \ctanpkg{exframe} initiate process (especially for sheet):
 %    \begin{macrocode}
 \metaunset[info]{writepdf}
 \def\exf@writemetadata{%
