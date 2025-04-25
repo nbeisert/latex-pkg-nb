@@ -1,27 +1,28 @@
 % \iffalse
 %
-% delimset.dtx Copyright (C) 2016-2024 Niklas Beisert
+% delimset.dtx Copyright (C) 2016-2025 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
 % of this license or (at your option) any later version.
 % The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
-% and version 1.3 or later is part of all distributions of LaTeX
-% version 2005/12/01 or later.
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008 or later.
 %
 % This work has the LPPL maintenance status `maintained'.
 %
 % The Current Maintainer of this work is Niklas Beisert.
 %
 % This work consists of the files delimset.dtx and delimset.ins
-% and the derived files delimset.sty and dlmssamp.tex
+% and the derived files delimset.sty and dlmssamp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{delimset}[2024/07/17 v2.0 convenient size control for delimiter sets]
-%<sample>\ProvidesFile{dlmssamp.tex}[2024/07/17 v2.0 sample for delimset]
+%<package>\ProvidesPackage{delimset}[2025/01/05 v2.1 convenient size control for delimiter sets]
+%<sample>\ProvidesFile{dlmssamp.tex}[2025/01/05 v2.1 sample for delimset]
 %<*driver>
-%\ProvidesFile{delimset.drv}[2024/07/17 v2.0 delimset Reference Manual file]
+\def\thedate#1{2025/01/05}\def\theversion#1{v2.1}
+\ProvidesFile{delimset.dtx}[\thedate{} \theversion{} delimset reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -31,24 +32,30 @@
 \usepackage[usenames]{color}
 \usepackage{amsmath,amsfonts}
 
-\hypersetup{colorlinks=true}
-\hypersetup{pdfstartview=FitH}
-\hypersetup{pdfpagemode=UseNone}
+\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
+\hypersetup{urlbordercolor={.5 1 1}}
+\hypersetup{linkbordercolor={1 .7 .7}}
+\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
 \hypersetup{pdfsource={}}
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfcopyright={Copyright 2016-2024 Niklas Beisert.
+\hypersetup{pdfurl={https://ctan.org/pkg/delimset}}
+\hypersetup{pdfcopyright={Copyright 2016-2025 Niklas Beisert.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
-\hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
-\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K, Wolfgang-Pauli-Strasse 27}}
+\hypersetup{pdflicenseurl={https://www.latex-project.org/lppl.txt}}
+\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K,
+  Wolfgang-Pauli-Strasse 27}}
 \hypersetup{pdfcontactpostcode={8093}}
 \hypersetup{pdfcontactcity={Zurich}}
 \hypersetup{pdfcontactcountry={Switzerland}}
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
-\hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
+\hypersetup{pdfcontacturl={https://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
+\newcommand{\markpkg}[1]{\textsf{#1}}
 \newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
+\newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
+\newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\markpkg{#1}}}
 
 \def\textvert{\texttt{\char"7C}}
 
@@ -59,7 +66,7 @@
 
 \begin{document}
 
-\title{The \textsf{delimset} Package}
+\title{The \markpkg{delimset} Package}
 \hypersetup{pdftitle={The delimset Package}}
 \author{Niklas Beisert\\[2ex]
   Institut f\"ur Theoretische Physik\\
@@ -69,12 +76,14 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package delimset}}
-\date{17 July 2024, \textsf{v2.0}}
+\date{\thedate{}, \theversion{}\\[1ex]
+\url{https://ctan.org/pkg/delimset}}
 \maketitle
 
 \begin{abstract}\noindent
-\textsf{delimset} is a \LaTeXe{} package to typeset and declare
-sets of delimiters in math mode whose size can be adjusted conveniently.
+\markpkg{delimset} is a \LaTeXe{} package
+to typeset and declare sets of delimiters in math mode
+whose size can be adjusted conveniently.
 \end{abstract}
 
 \begingroup
@@ -153,7 +162,7 @@ the size |\big(...\big)|:
 \end{aligned}
 \]
 
-The package \textsf{delimset} provides mechanisms to declare sets of delimiters
+The package \ctanpkg{delimset} provides mechanisms to declare sets of delimiters
 whose size can be adjusted conveniently by adding simple flag parameters.
 For example, it provides a general purpose bracket |\brk|
 which can be used as follows:
@@ -258,7 +267,7 @@ that they are based on a fixed font size of 10pt.
 More precisely, they use a vertical phantom of
 height 8.5pt, 11.5pt, 14.5pt or 17.5pt, respectively
 to set the height of the delimiter.
-The package \textsf{amsmath} corrects for font size
+The package \ctanpkg{amsmath} corrects for font size
 by instead placing a (centred) vertical phantom of
 height 1.2, 1.8, 2.4 or 3 times the size
 of the currently selected math font
@@ -277,7 +286,7 @@ they come out way too big:
 \]
 %
 This package modifies the definitions of
-the size modifiers (of \textsf{amsmath})
+the size modifiers (of \ctanpkg{amsmath})
 to automatically adjust to sub/superscripts
 (subject to availability in the font):
 %
@@ -372,7 +381,7 @@ e.g.:
 Depending on the particular situation,
 any of these expressions may be the most appropriate representation.
 
-The package \textsf{delimset} automatically takes care of the math classes
+The package \ctanpkg{delimset} automatically takes care of the math classes
 of the left and right delimiters. It also offers several choices for
 intermediate delimiters to take the context into account.
 
@@ -434,8 +443,8 @@ With those, the above expression can be abbreviated as:
 Here, |\usedelim]|, alternatively |\brk]|,
 closes the delimiter set with
 the type and options previously specified by |\brk...[|.
-For nesting purposes, there also exists a more elaborate
-solution using registers, see below.
+This mechanism respects nesting, and for even broader control
+there exists a more elaborate solution using registers, see below.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Philosophy}
@@ -488,20 +497,20 @@ There are at least three other packages which offer a similar functionality:
 %
 \begin{itemize}
 \item
-The package \href{http://ctan.org/pkg/delim}{\textsf{delim}} supplies a command
+The package \ctanpkg{delim} supplies a command
 |\delimdef| to declare a set of delimiters
 which is similar to the present |\DeclareMathDelimiterSet|.
 The size of delimiters to be used in each case
 is then specified by a prefix command such as |\mbig| or |\mauto|.
 \item
-The package \href{http://ctan.org/pkg/mathtools}{\textsf{mathtools}}
+The package \ctanpkg{mathtools}
 supplies commands |\DeclarePairedDelimiter...| (among many other things)
 which are similar to the present |\DeclareMathDelimiterSet|.
 The size of delimiters to be used in each case
 is then specified by an optional argument
 such as `|*|' or |[\big]|.
 \item
-The package \href{http://ctan.org/pkg/delimseasy}{\textsf{delimseasy}}
+The package \ctanpkg{delimseasy}
 defines a collection of useful delimiters such as |\prn| for
 round parentheses or |\sqpr| square parentheses.
 Modifier letters can be prepended and appended to adjust their size.
@@ -524,11 +533,11 @@ only a single character and a single command.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Usage}
 
-To use the package \textsf{delimset} add the command
+To use the package \ctanpkg{delimset} add the command
 \begin{center}|\usepackage{delimset}|\end{center}
 to the preamble of your \LaTeX{} document.
 If not yet present,
-the package \textsf{amsmath} will be loaded automatically.
+the package \ctanpkg{amsmath} will be loaded automatically.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Delimiter Sets and Presentation Flags}
@@ -577,7 +586,7 @@ to be displayed. It can take one of the following values:
 \end{aligned}
 \]
 %
-The intended delimiter size is stored as the dimension register:
+The intended delimiter size is stored as the dimension variable:
 %
 \[
 |\delimsize|
@@ -613,25 +622,25 @@ It can take one of the following values:
 \\
 \textvert, |,|&\qquad \text{first intermediate delimiter}
 \\
-|)|&\qquad \text{right delimiter}
-\\
 |?|\emph{n}&\qquad \text{\emph{n}-th delimiter (starting with |0|: left)}
+\\
+|)|&\qquad \text{right delimiter}
 \end{aligned}
 \]
 
-Third, register flags store are retrieve delimiter
-for splitting the across blocks or lines:
+Third, register flags store and retrieve delimiter sets
+for splitting them across blocks or lines:
 %
 \[
 \begin{aligned}
-|[|&\qquad \text{store delimiter type to register `|.|',
-display left delimiter (same as `|>.(|')}
+|[|&\qquad \text{push delimiter type to register stack, display left delimiter
+(similar to `|>.(|')}
 \\
-|]|&\qquad \text{display right delimiter stored in default register `|.|'
-(same as `|<.)|')}
+|]|&\qquad \text{pop delimiter type from stack, display right delimiter
+(similar to `|<.)|')}
 \\
 |>|\emph{r}, |>{|\emph{reg}|}|&\qquad \text{store delimiter type
-in register \emph{r} or \emph{reg}}
+to register \emph{r} or \emph{reg}}
 \\
 |<|\emph{r}, |<{|\emph{reg}|}|&\qquad \text{retrieve delimiter type
 from register \emph{r} or \emph{reg}}
@@ -641,15 +650,23 @@ from register \emph{r} or \emph{reg}}
 A register stores the type of delimiter set (|\|\emph{name}),
 the desired size (except for variable size `|*|')
 as well as the math class of the compound (`|'|' vs. `|"|', see below).
+The register stack enables convenient access to nested delimiter sets,
+and the special register `|.|' points to the top of the stack.
 A stored register can be retrieved and displayed by the macro:
 %
 \[
-|\usedelim|\,\emph{r}\ \emph{sel}
+|\usedelim|\,\emph{r}\ \emph{flags}\ \emph{sel}
 \quad\text{or}\quad
-|\usedelim|\{\emph{reg}\}\emph{sel}
+|\usedelim|\{\emph{reg}\}\,\emph{flags}\ \emph{sel}
+\quad\text{or}\quad
+|\usedelim|\,\emph{sel}
 \]
 %
-Here, \emph{sel} is a flag to select an individual delimiter, see above.
+Here, \emph{sel}
+is a flag to select an individual delimiter
+(`|(|', `\textvert', `|,|', `|?|\emph{n}', `|)|' or `|]|'), see above.
+The abbreviated form without register specification operates
+on the top of the register stack.
 
 In addition, there are some general purpose flags:
 %
@@ -721,6 +738,15 @@ for block enclosure which uses |\bgroup| and |\egroup| as well.
 As it does not make much sense to use variable-size (`|*|')
 and block (`|:|') compounds for individual delimiter selection,
 the state of these flags is not stored in the global registers.
+
+\item
+The delimiter selectors `|[|' and `|]|' implement a stack,
+and they must be properly balanced.
+Technically, they access the register `|.|\emph{n}'
+with the stack counter \emph{n}=1,2,3\ldots\ a global variable
+which is increased or decreased, respectively.
+The special register `|.|' points to the current top of the stack
+to enable access to intermediate delimiters.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1107,8 +1133,8 @@ a bra-ket contraction $\langle\emph{expr1}\vert\emph{expr2}\rangle$.
 \item
 |\lfrac[|\emph{type}|]|\emph{flags}|{|\emph{expr1}|}{|\emph{expr2}|}| describes
 the linear representation $\emph{expr1}/\emph{expr2}$ of a fraction.
-An optional argument \emph{type} taking values |[r]|, |[s]|, |[c]|, |[a]| encloses the
-fraction in round, square, curly or angle brackets as for |\brk|.
+An optional argument \emph{type} taking values |[r]|, |[s]|, |[c]|, |[a]|
+encloses the fraction in round, square, curly or angle brackets as for |\brk|.
 \end{itemize}
 %
 The extended definitions need to be activated by
@@ -1175,13 +1201,13 @@ If no value is given |true| is assumed; initially set to |true|.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-Copyright \copyright{} 2016--2024 Niklas Beisert
+Copyright \copyright{} 2016--2025 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
 of this license or (at your option) any later version.
 The latest version of this license is in
-  \url{http://www.latex-project.org/lppl.txt}
+  \url{https://www.latex-project.org/lppl.txt}
 and version 1.3 or later is part of all distributions of \LaTeX{}
 version 2005/12/01 or later.
 
@@ -1228,24 +1254,24 @@ distribution, e.g.\ \textit{texmf-root}|/tex/latex/delimset|.
 The package is related to other packages available at CTAN:
 \begin{itemize}
 \item
-This package relies on some functionality of the package \textsf{amsmath}
+This package relies on some functionality of the package \ctanpkg{amsmath}
 by using and overwriting some native code.
-Compatibility with the \textsf{amsmath} package
+Compatibility with the \ctanpkg{amsmath} package
 has been tested with v2.15d (2016/06/28).
 \item
-This package uses the package \textsf{keyval} from the \textsf{graphics} bundle
-to process optional arguments to the package options.
-Compatibility with the \textsf{keyval} package
+This package uses the package \ctanpkg{keyval} from the
+\ctanpkg{graphics} bundle to process optional arguments to the package options.
+Compatibility with the \ctanpkg{keyval} package
 has been tested with v1.15 (2014/10/28).
 \item
-The package \textsf{icomma} modifies the spacing behaviour
+The package \ctanpkg{icomma} modifies the spacing behaviour
 of the comma character in math mode
 which leads to inadequate spacing when it is used as a middle delimiter.
 To achieve proper spacing in sample code,
 use |{[p]*,}| rather than |{*,}|.
 The extended commands |\intv|, |\comm|, |\acomm| and |\pair|
-are compatible with the \textsf{icomma} package
-has been tested with v2.0 (2002/03/10).
+are compatible with the \ctanpkg{icomma} package
+has been tested with v2.0+ (2002/03/10).
 \end{itemize}
 %
 
@@ -1260,6 +1286,17 @@ has been tested with v2.0 (2002/03/10).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v2.1:} 2025/01/05
+
+\begin{itemize}
+\item
+the flags `|[|' and `|]|' now implement a register stack
+for convenient individual access to nested delimiter sets
+\item
+syntax of |\usedelim| extended for direct access to top of register stack
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v2.0:} 2024/07/17
@@ -1289,7 +1326,7 @@ null delimiter now properly has zero width for variable size
 \item
 internal mechanisms revised
 \item
-compatibility with \textsf{icomma} package
+compatibility with \ctanpkg{icomma} package
 (thanks to Olivier Godin for pointing out the issue)
 \end{itemize}
 
@@ -1353,7 +1390,7 @@ standard definitions
 %\fi
 %
 % In this section we provide a \LaTeX{} example how to use
-% some of the \textsf{delimset} features.
+% some of the \ctanpkg{delimset} features.
 %
 % Preamble and beginning of document body:
 %
@@ -1493,7 +1530,7 @@ alternative representation:
 \]
 %    \end{macrocode}
 
-display individual delimiters of a set:
+display individual delimiters of a set with nesting:
 %    \begin{macrocode}
 \renewcommand{\braket}{\delimpair<|>}
 \[
@@ -1502,7 +1539,9 @@ display individual delimiters of a set:
 \quad
 \braket*( A\big. \braket*| B_{} \braket*),
 \quad
-\braket^1( A \braket^3| B \braket^2)
+\braket^1( A \braket^3| B \braket^2),
+\quad
+\braket^2[ \brk[s]^1[ A \brk] \usedelim| B \usedelim]
 \]
 %    \end{macrocode}
 
@@ -1518,7 +1557,7 @@ the final size is not available for the enclosed expressions):
 \]
 %    \end{macrocode}
 
-% end of document body:
+% End of document body:
 %    \begin{macrocode}
 \end{document}
 %    \end{macrocode}
@@ -1538,10 +1577,10 @@ the final size is not available for the enclosed expressions):
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Required Packages.}
 %
-% The package loads the packages \textsf{amsmath} and \textsf{keyval}
+% The package loads the packages \ctanpkg{amsmath} and \ctanpkg{keyval}
 % if not yet present.
-% \textsf{amsmath} is used for basic delimiter size functionality.
-% \textsf{keyval} is used for extended options processing.
+% \ctanpkg{amsmath} is used for basic delimiter size functionality.
+% \ctanpkg{keyval} is used for extended options processing.
 %
 %    \begin{macrocode}
 \RequirePackage{amsmath}
@@ -1551,7 +1590,7 @@ the final size is not available for the enclosed expressions):
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Package Options.}
 %
-% The package has some boolean \textsf{keyval} options
+% The package has some boolean \ctanpkg{keyval} options
 % which can be set to |true| or |false|.
 %
 %    \begin{macrocode}
@@ -1572,9 +1611,9 @@ the final size is not available for the enclosed expressions):
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Improved Size Adjustments.}
 %
-% Overwrite the \textsf{amsmath} command |\bBigg@|
+% Overwrite the \ctanpkg{amsmath} command |\bBigg@|
 % to select the size according to the present math style
-% (uses the \textsf{amsmath} definitions |\@mathmeasure| and |\big@size|).
+% (uses the \ctanpkg{amsmath} definitions |\@mathmeasure| and |\big@size|).
 % This code is activated only if
 % the package option |scriptstyle| is set to |true|.
 %
@@ -1726,14 +1765,23 @@ the final size is not available for the enclosed expressions):
 % Macros for storing and retrieving delimiter types using global registers.
 %
 %    \begin{macrocode}
+\newcount\dlm@reg@lvl
+\dlm@reg@lvl\z@
+\def\dlm@reg@dot{.}
+\newcommand{\dlm@reg@set}[1]{\edef\dlm@reg@cur{#1}\ifx\dlm@reg@cur\dlm@reg@dot%
+  \edef\dlm@reg@cur{\dlm@reg@dot\the\dlm@reg@lvl}\fi}
+\newcommand{\dlm@reg@step}[1]{\global\advance\dlm@reg@lvl#1%
+  \ifnum\dlm@reg@lvl<\z@\PackageError{delimset}{register stack exhausted}{}%
+  \dlm@reg@lvl\z@\fi}
 \newcommand{\dlm@reg@save@init}[1]{%
   \xdef#1{\delimsize\the\delimsize}\ifx\dlm@inner\mathinner%
   \expandafter\gdef\expandafter#1\expandafter{#1\dlm@enclose@inner}\fi}
-\newcommand{\dlm@reg@save}[2]{%
-  \expandafter\dlm@reg@save@init\csname dlm@reg@init@#1\endcsname%
-  \expandafter\gdef\csname dlm@reg@sel@#1\endcsname{#2}}
-\newcommand{\dlm@reg@init}[1]{\csname dlm@reg@init@#1\endcsname}
-\newcommand{\dlm@reg@sel}[1]{\csname dlm@reg@sel@#1\endcsname}
+\newcommand{\dlm@reg@save}[2]{\dlm@reg@set{#1}%
+  \expandafter\dlm@reg@save@init\csname dlm@reg@init@\dlm@reg@cur\endcsname%
+  \expandafter\gdef\csname dlm@reg@sel@\dlm@reg@cur\endcsname{#2}}
+\newcommand{\dlm@reg@init}[1]{\dlm@reg@set{#1}%
+  \csname dlm@reg@init@\dlm@reg@cur\endcsname}
+\newcommand{\dlm@reg@sel}{\csname dlm@reg@sel@\dlm@reg@cur\endcsname}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1796,11 +1844,13 @@ the final size is not available for the enclosed expressions):
 % Flags to access registers.
 %
 %    \begin{macrocode}
-\dlm@parsedef{[}{}{\dlm@reg@save{.}{#2}\def\selecteddelim{0}#2}
-\dlm@parsedef{]}{}{\dlm@reg@init{.}\def\selecteddelim{9}\dlm@reg@sel{.}}
+\dlm@parsedef{[}{}{\dlm@reg@step\@ne\dlm@reg@save\dlm@reg@dot{#2}%
+  \def\selecteddelim{0}#2}
+\dlm@parsedef{]}{}{\dlm@reg@init\dlm@reg@dot\dlm@reg@step\m@ne%
+  \def\selecteddelim{9}\dlm@reg@sel}
 \dlm@parsedef{>}{#3}{\dlm@reg@save{#3}{#2}}
 \dlm@parsedef{<}{#3}{\dlm@reg@init{#3}\dlm@parseflags%
-  {\PackageError{delimset}{must select delimiter}{}}{\dlm@reg@sel{#3}}}
+  {\PackageError{delimset}{must select delimiter}{}}{\dlm@reg@sel}}
 %    \end{macrocode}
 
 % Further flags.
@@ -1903,14 +1953,20 @@ the final size is not available for the enclosed expressions):
 %    \end{macrocode}
 
 % |\usedelim| retrieves a stored delimiter type.
-% The argument `|]|' immediately closes the delimiter set
-% using the default register.
+% The arguments `|]|', `|(|', `\textvert', `|,|', `|?|\emph{n}', `|)|'
+% immediately select the delimiter using the stack register.
 % Otherwise the desired register must be followed
 % by the delimiter selection flag.
 %
 %    \begin{macrocode}
-\newcommand{\usedelim}{\@ifnextchar]{\parsedelimflags{}{}}{\parsedelimflags%
-  {\PackageError{delimset}{must select delimiter}{}}{}<}}
+\newcommand{\usedelim}{%
+  \@ifnextchar]{\parsedelimflags{}{}}{%
+  \@ifnextchar({\parsedelimflags{}{}<.}{%
+  \@ifnextchar|{\parsedelimflags{}{}<.}{%
+  \@ifnextchar,{\parsedelimflags{}{}<.}{%
+  \@ifnextchar){\parsedelimflags{}{}<.}{%
+  \@ifnextchar?{\parsedelimflags{}{}<.}{%
+  \parsedelimflags{}{}<}}}}}}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -6,18 +6,18 @@
 %%
 %% delimset.dtx  (with options: `package')
 %% 
-%% Copyright (C) 2016-2024 Niklas Beisert
+%% Copyright (C) 2016-2025 Niklas Beisert
 %% 
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either version 1.3
 %% of this license or (at your option) any later version.
 %% The latest version of this license is in
-%%   http://www.latex-project.org/lppl.txt
+%%   https://www.latex-project.org/lppl.txt
 %% and version 1.3 or later is part of all distributions of LaTeX
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{delimset}[2024/07/17 v2.0 convenient size control for delimiter sets]
+\ProvidesPackage{delimset}[2025/01/05 v2.1 convenient size control for delimiter sets]
 
 \RequirePackage{amsmath}
 \RequirePackage{keyval}
@@ -126,14 +126,23 @@
 \newcommand{\dlm@var@pl}[1]{\dlm@var@l.\mathopen{#1}}
 \newcommand{\dlm@var@pr}[1]{\mathclose{#1}\dlm@var@r.}
 
+\newcount\dlm@reg@lvl
+\dlm@reg@lvl\z@
+\def\dlm@reg@dot{.}
+\newcommand{\dlm@reg@set}[1]{\edef\dlm@reg@cur{#1}\ifx\dlm@reg@cur\dlm@reg@dot%
+  \edef\dlm@reg@cur{\dlm@reg@dot\the\dlm@reg@lvl}\fi}
+\newcommand{\dlm@reg@step}[1]{\global\advance\dlm@reg@lvl#1%
+  \ifnum\dlm@reg@lvl<\z@\PackageError{delimset}{register stack exhausted}{}%
+  \dlm@reg@lvl\z@\fi}
 \newcommand{\dlm@reg@save@init}[1]{%
   \xdef#1{\delimsize\the\delimsize}\ifx\dlm@inner\mathinner%
   \expandafter\gdef\expandafter#1\expandafter{#1\dlm@enclose@inner}\fi}
-\newcommand{\dlm@reg@save}[2]{%
-  \expandafter\dlm@reg@save@init\csname dlm@reg@init@#1\endcsname%
-  \expandafter\gdef\csname dlm@reg@sel@#1\endcsname{#2}}
-\newcommand{\dlm@reg@init}[1]{\csname dlm@reg@init@#1\endcsname}
-\newcommand{\dlm@reg@sel}[1]{\csname dlm@reg@sel@#1\endcsname}
+\newcommand{\dlm@reg@save}[2]{\dlm@reg@set{#1}%
+  \expandafter\dlm@reg@save@init\csname dlm@reg@init@\dlm@reg@cur\endcsname%
+  \expandafter\gdef\csname dlm@reg@sel@\dlm@reg@cur\endcsname{#2}}
+\newcommand{\dlm@reg@init}[1]{\dlm@reg@set{#1}%
+  \csname dlm@reg@init@\dlm@reg@cur\endcsname}
+\newcommand{\dlm@reg@sel}{\csname dlm@reg@sel@\dlm@reg@cur\endcsname}
 
 \newcommand{\parsedelimflags}{\dlm@setsize{0.6}\let\dlm@phantom\@firstofone%
   \dlm@enclose@openclose\dlm@enclose@inline\dlm@parseflags}
@@ -165,11 +174,13 @@
 \dlm@parsedef{)}{}{\def\selecteddelim{9}#2}
 \dlm@parsedef{?}{#3}{\def\selecteddelim{#3}#2}
 
-\dlm@parsedef{[}{}{\dlm@reg@save{.}{#2}\def\selecteddelim{0}#2}
-\dlm@parsedef{]}{}{\dlm@reg@init{.}\def\selecteddelim{9}\dlm@reg@sel{.}}
+\dlm@parsedef{[}{}{\dlm@reg@step\@ne\dlm@reg@save\dlm@reg@dot{#2}%
+  \def\selecteddelim{0}#2}
+\dlm@parsedef{]}{}{\dlm@reg@init\dlm@reg@dot\dlm@reg@step\m@ne%
+  \def\selecteddelim{9}\dlm@reg@sel}
 \dlm@parsedef{>}{#3}{\dlm@reg@save{#3}{#2}}
 \dlm@parsedef{<}{#3}{\dlm@reg@init{#3}\dlm@parseflags%
-  {\PackageError{delimset}{must select delimiter}{}}{\dlm@reg@sel{#3}}}
+  {\PackageError{delimset}{must select delimiter}{}}{\dlm@reg@sel}}
 
 \dlm@parsedef{.}{}{#1}
 \dlm@parsedef{:}{}{\dlm@enclose@block\dlm@parseflags{#1}{#2}}
@@ -218,8 +229,14 @@
 \newcommand{\dlm@sel@delimtriple}[4]{\ifcase\selecteddelim\selectdeliml#1%
   \or\selectdelim#2\or\selectdelim#3\else\selectdelimr#4\fi}
 
-\newcommand{\usedelim}{\@ifnextchar]{\parsedelimflags{}{}}{\parsedelimflags%
-  {\PackageError{delimset}{must select delimiter}{}}{}<}}
+\newcommand{\usedelim}{%
+  \@ifnextchar]{\parsedelimflags{}{}}{%
+  \@ifnextchar({\parsedelimflags{}{}<.}{%
+  \@ifnextchar|{\parsedelimflags{}{}<.}{%
+  \@ifnextchar,{\parsedelimflags{}{}<.}{%
+  \@ifnextchar){\parsedelimflags{}{}<.}{%
+  \@ifnextchar?{\parsedelimflags{}{}<.}{%
+  \parsedelimflags{}{}<}}}}}}}
 
 \ifdlm@std
 \providecommand{\brk}[1][r]{\begingroup\def\dlm@use{\delim()}%
