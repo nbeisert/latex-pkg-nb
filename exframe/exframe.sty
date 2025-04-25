@@ -6,7 +6,7 @@
 %%
 %% exframe.dtx  (with options: `package')
 %% 
-%% Copyright (C) 2011-2019 Niklas Beisert
+%% Copyright (C) 2011-2020 Niklas Beisert
 %% 
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either version 1.3
@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{exframe}[2019/06/15 v3.3 Framework for Exercise Problems]
+\ProvidesPackage{exframe}[2020/01/11 v3.31 Framework for Exercise Problems]
 
 \RequirePackage{verbatim}
 \RequirePackage{xkeyval}
@@ -90,6 +90,12 @@
 \ProcessOptionsX<exframe.sty,exf@setup>
 
 \newcommand{\exercisesetup}[1]{\exf@expsetkeys{exf@setup}{#1}}
+
+\newenvironment{onlysolutions}%
+ {\ifsolutions\else%
+   \let\endonlysolutions\endcomment%
+   \expandafter\comment\fi}%
+ {}
 
 \newcommand{\exerciseconfig}[1]{%
   \@ifnextchar[{\exf@configopt{#1}}{\exf@confignoopt{#1}}}
@@ -523,21 +529,12 @@
 \defprobleminfo{timepresent}{\{\!\{#1\}\!\}}
 \fi
 
-\newcommand{\exf@writemetadata}[1]{%
+\newcommand{\exf@writemetadata}{%
   \ifdefined\hypersetup%
-   \def\exf@tmp{#1}\ifx\exf@tmp\exf@empty%
-    \ifx\exf@data@author\exf@empty\else%
-     \hypersetup{pdfauthor={\exf@data@author}}\fi%
-    \ifx\exf@data@title\exf@empty\else%
-     \hypersetup{pdftitle={\exf@data@title}}\fi%
-   \else%
-    \ifx\exf@data@sheet@author\exf@empty%
-     \ifx\exf@data@author\exf@empty\else%
-      \hypersetup{pdfauthor={\exf@data@author}}\fi%
-    \else\hypersetup{pdfauthor={\exf@data@sheet@author}}\fi%
-    \hypersetup{pdftitle={\exf@config@composemetasheet%
-     {\csname the\exf@sheetcounter\endcsname}{\exf@data@sheet@rawtitle}}}%
-   \fi%
+   \ifx\exf@data@author\exf@empty\else%
+    \hypersetup{pdfauthor={\exf@data@author}}\fi%
+   \ifx\exf@data@title\exf@empty\else%
+    \hypersetup{pdftitle={\exf@data@title}}\fi%
    \ifx\exf@data@subject\exf@empty\else%
     \hypersetup{pdfsubject={\exf@data@subject}}\fi%
    \ifx\exf@data@keyword\exf@empty\else%
@@ -545,10 +542,10 @@
   \fi%
   \gdef\exf@metadata{off}}
 
-\AtBeginDocument{\exf@ifis\exf@metadata{auto}{\exf@writemetadata{}}}
+\AtBeginDocument{\exf@ifis\exf@metadata{auto}{\exf@writemetadata}}
 
 \newcommand{\writeexercisedata}{%
-  \exf@ifis\exf@metadata{manual}{\exf@writemetadata{}}}
+  \exf@ifis\exf@metadata{manual}{\exf@writemetadata}}
 
 \newcounter{\exf@sheetcounter}
 \newcounter{\exf@problemcounter}
@@ -859,7 +856,12 @@
     \exf@csdotwo\let\exf@tmp{exf@sheetpoints@\sheettag}%
     \exf@exptwo\exf@scanpoints\exf@sheet@points\exf@tmp++&%
   \fi\fi%
-  \exf@ifis\exf@metadata{sheet}{\exf@writemetadata{sheet}}%
+  \exf@ifis\exf@metadata{sheet}{{%
+   \ifx\exf@data@sheet@author\exf@empty\else%
+    \let\exf@data@author\exf@data@sheet@author\fi%
+   \def\exf@data@title{\exf@config@composemetasheet%
+    {\csname the\exf@sheetcounter\endcsname}{\exf@data@sheet@rawtitle}}%
+   \exf@writemetadata}}%
   \exf@config@insertsheetbefore%
   \ifx\exf@config@toclevelsheet\exf@empty\else%
    \ifdefined\phantomsection\phantomsection\fi\fi%

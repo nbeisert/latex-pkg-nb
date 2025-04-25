@@ -1,6 +1,6 @@
 % \iffalse
 %
-% exframe.dtx Copyright (C) 2011-2019 Niklas Beisert
+% exframe.dtx Copyright (C) 2011-2020 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -20,11 +20,11 @@
 % exfserpe.tex, exfserpf.tex, exfsermk.sh, exfsermk.mak.
 %
 %<package|samplesingle|samplemultimain>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{exframe}[2019/06/15 v3.3 Framework for Exercise Problems]
-%<samplesingle>\ProvidesFile{exfsamp.tex}[2019/06/15 v3.3 standalone sample for exframe]
-%<samplemultimain>\ProvidesFile{exfserm.tex}[2019/06/15 v3.3 multipart sample for exframe]
+%<package>\ProvidesPackage{exframe}[2020/01/11 v3.31 Framework for Exercise Problems]
+%<samplesingle>\ProvidesFile{exfsamp.tex}[2020/01/11 v3.31 standalone sample for exframe]
+%<samplemultimain>\ProvidesFile{exfserm.tex}[2020/01/11 v3.31 multipart sample for exframe]
 %<*driver>
-\def\thedate#1{2019/06/15}\def\theversion#1{v3.3}
+\def\thedate#1{2020/01/11}\def\theversion#1{v3.31}
 \ProvidesFile{exframe.dtx}[\thedate{} \theversion{} exframe reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -37,9 +37,10 @@
 \hypersetup{colorlinks=true}
 \hypersetup{pdfstartview=FitH}
 \hypersetup{pdfpagemode=UseNone}
+\hypersetup{keeppdfinfo=true}
 \hypersetup{pdfsource={}}
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfcopyright={Copyright 2010-2019 Niklas Beisert.
+\hypersetup{pdfcopyright={Copyright 2010-2020 Niklas Beisert.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
@@ -157,9 +158,8 @@ categories can be added.
 The package can use alternative counters for equations
 within solutions (and problems). This is to ensure a consistent
 numbering independently of whether solutions are output or not.
+
 \end{itemize}
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -284,6 +284,7 @@ see \secref{sec:options} for further information.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DescribeMacro{\ifsolutions}
+\DescribeMacro{onlysolutions}
 The display of solutions is reflected by the conditional |\ifsolutions|.
 As the hiding of solutions is performed automatically,
 the conditional would typically be used to change some details,
@@ -291,6 +292,30 @@ e.g.\ for adjusting titles:
 %
 \begin{center}
 |\ifsolutions Solutions\||else Exercises\||fi|
+\end{center}
+%
+Alternatively, content to be processed only in solutions mode
+can be enclosed in an |onlysolutions| block:
+%
+\begin{center}
+\begin{tabular}{l}
+|\begin{onlysolutions}|\\
+|...|\\
+|\end{onlysolutions}|
+\end{tabular}
+\end{center}
+%
+This structure can be useful to hide auxiliary text or material
+if all solution content is to be stripped from a source file,
+e.g.\ by an automated \textsf{sed} filter rule
+(doubling of backslashes required for \textsf{sed}
+as well as for shell script strings):
+%
+\begin{center}
+\begin{tabular}{l}
+|sed "/\\\\begin{solution}/,/\\\\end{solution}/d;"\|\\
+|"/\\\\begin{onlysolutions}/,/\\\\end{onlysolutions}/d"|
+\end{tabular}
 \end{center}
 %
 
@@ -1483,7 +1508,6 @@ enable/disable buffering for |problem| environments
 in order to control their display.
 
 \end{itemize}
-%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1492,7 +1516,7 @@ in order to control their display.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-Copyright \copyright{} 2011--2019 Niklas Beisert
+Copyright \copyright{} 2011--2020 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
@@ -1666,6 +1690,45 @@ The package offers most of the functionality of the above packages,
 but (presently) misses out on some more advanced features,
 see \secref{sec:suggestions}.
 
+\iffalse
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Suggested Customisations}
+\label{sec:customisations}
+
+\textbf{philosophy:}
+this is fundamental, relies on few other basic packages.
+can improve by combining with other packages which provide solutions
+for particular applications. some suggestions:
+
+\textbf{Optional Starred}
+
+\textbf{Till's Boxen}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Realize background color for solutions with tcolorbox:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\RequirePackage{tcolorbox}
+%\tcbuselibrary{breakable}
+%\exercisestyle{solutionsep}
+%\exerciseconfig{insertsolutionsbefore}{%
+%  \begin{tcolorbox}[breakable,boxrule=0.2pt,sharp corners=all]}
+%\exerciseconfig{insertsolutionsafter}{%
+%  \end{tcolorbox}}
+%% cannot use marginpar inside tcolorbox (nested floats), use marginnote instead:
+%\exercisestyle{solutionpointsat=margin}
+%\RequirePackage{marginnote}
+%\exerciseconfig{insertpointsmargin}[1]{\marginnote{\footnotesize #1}}
+%% Don't indent solutions:
+%\exerciseconfig{skipsolutionitemsub}{0ex}
+%% remove initial "Solution:" because the colorbox is highlight enough:
+%\exerciseconfig{composetitlesolutionsingle}[2]{}
+
+\textbf{Collections}
+
+\textbf{keep list of tags per sheet. code to loop through list. Manuel Benz}
+
+\fi
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Feature Suggestions}
 \label{sec:suggestions}
@@ -1691,6 +1754,28 @@ Define structures for multiple-choice questions.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+\iffalse
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v3.3+:} 2020/01/12
+
+\begin{itemize}
+\item
+section on extensions
+\item
+\ldots
+\end{itemize}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v3.31:} 2020/01/11
+
+\begin{itemize}
+\item
+|onlysolutions| environment for solution mode content
+\item
+sample multipart setup streamlined
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v3.3:} 2019/06/15
@@ -2533,11 +2618,10 @@ xu:=1cm;
   \getexercisedata{author}. \copyrightmessage{} \licensemessage}}
 \ifdefined\sourceurl\hypersetup{pdflicenseurl={\sourceurl}}\else
 \ifdefined\licenseurl\hypersetup{pdflicenseurl={\licenseurl}}\fi\fi
-\ifdefined\XMPLangAlt
+\hypersetup{keeppdfinfo=true}
 \hypersetup{pdfsource={}}
 \XMPLangAlt{en}{pdfcopyright={Copyright \getexercisedata{date}
   \getexercisedata{author}. \copyrightmessage{} \licensemessage}}
-\fi
 \fi
 %    \end{macrocode}
 
@@ -2908,6 +2992,20 @@ label(btex \figure etex, center(paths[1]));
 #!/bin/bash
 %    \end{macrocode}
 
+% Configure and declare variables with default values.
+% |srcmain| defines the name of the main source file;
+% |srcsec|\textit{nn} defines the name of the sheet source file;
+% |trglist| defines the target file names;
+% |trgsol| defines the target modes;
+% |sheets| is a list of allowable sheet identifiers \textit{nn}:
+%    \begin{macrocode}
+srcmain="exfserm"
+srcsec="exfser"
+trglist=(Problems Solutions)
+trgsol=(n y)
+secnum="01 02 03 aa"
+%    \end{macrocode}
+
 % Display usage:
 %    \begin{macrocode}
 if [ -z $1 ]
@@ -2915,7 +3013,7 @@ then
   echo "Usage:
   $0 number [version]
     number: number of sheet, 0 for combined document
-    version: 1 for problems, 2 for solutions
+    version: 0 for problems, 1 for solutions
   $0 filename
     filename: target file to be compiled"
   exit 1
@@ -2926,28 +3024,18 @@ fi
 % Configure and declare variables with default values.
 % |num| takes the sheet number;
 % |ver| takes the compile mode;
-% |main| defines the name of the main source file;
-% |source|\textit{nn} defines the name of the sheet source file;
-% |target1|[\textit{nn}] defines the target file name in mode 1;
-% |target2|[\textit{nn}] defines the target file name in mode 2;
-% |sheets| is a list of allowable sheet identifiers \textit{nn}:
 %    \begin{macrocode}
 num="$1"
 ver="$2"
-main="exfserm"
-source="exfser"
-target1="Problems"
-target2="Solutions"
-sheets="01 02 03 aa"
 nl=$'\n'
-sheetokay=""
+secokay=""
 make=".pdf"
 %    \end{macrocode}
 %\iffalse$\fi
 
 % Check if the parameter matches any of the acceptable output file names:
 %    \begin{macrocode}
-for v in $target1 $target2
+for v in "${trglist[@]}"
 do
   if [[ $num =~ ^$v ]]
   then
@@ -2958,6 +3046,7 @@ do
   fi
 done
 %    \end{macrocode}
+%\iffalse$\fi
 
 % Ensure that |num| is a two-digit number, prepend `0' otherwise:
 %    \begin{macrocode}
@@ -2967,20 +3056,26 @@ if [[ $num == "00" ]]; then num=""; fi
 
 % Check whether |num| is acceptable:
 %    \begin{macrocode}
-if [[ -z $num ]]; then sheetokay="okay"; fi
-for v in $sheets
+if [[ -z $num ]]; then secokay="okay"; fi
+for v in $secnum
 do
-  if [[ "$num" == "$v" ]]; then sheetokay="okay"; fi
+  if [[ "$num" == "$v" ]]; then secokay="okay"; fi
 done
 %    \end{macrocode}
 
 % Otherwise display error message and exit:
 %    \begin{macrocode}
-if [[ -z $sheetokay ]]
+if [[ -z $secokay ]]
 then
   echo "error: unknown sheet"
   exit 1
 fi
+%    \end{macrocode}
+%\iffalse$\fi
+
+% Disable newline character for command line tex code:
+%    \begin{macrocode}
+if [[ "$make" == ".pdf" ]]; then nl=""; fi
 %    \end{macrocode}
 %\iffalse$\fi
 
@@ -2992,23 +3087,27 @@ fi
 %    \begin{macrocode}
 function docompile
 {
-  if [[ -z $num ]]; then job=$main; else job=$source$num; fi
-  for par in -draftmode ""
+  if [[ -z $num ]]
+  then
+    job="$srcmain"
+    fwd="\\childdocforward{$srcmain}"
+  else
+    job="$srcsec$num"
+    fwd="\\childdocforward[$srcmain]{$srcsec$num}"
+  fi
+  body="\\def\\jobname{$job}$optdef\\input{childdoc.def}$fwd"
+  for pass in first main
   do
-    body="\\def\\jobname{$job}\\def\\draftver{n}\\def\\printsol{$sol}"
-    body="$body\\input{childdoc.def}"
-    if [[ -z $num ]]
-    then
-      body="$body\\childdocforward{$main}"
-    else
-      body="$body\\childdocforward[$main]{$source$num}"
-    fi
+    par="";
+    if [[ "$pass" == "first" ]]; then par="-draftmode"; fi
     drop="This is|entering extended mode|\\write18"
     drop="$drop|Preloading the plain mem file|mpost\.mp|plain\.mp"
     pdflatex -shell-escape -interaction=batchmode $par \
-      -jobname "$target$num" "$body" | grep -vE "$drop"
+      -jobname "$trg" "$body" | grep -vE "$drop"
+    if [[ "$pass" != "main" ]]; then continue; fi
+    if ! (grep -E -q "may have changed|rerunfilecheck Warning" "$trg.log"); then break; fi
   done
-  grep -E "Warning|Error|Undefined|Overfull|Underfull" "$target$num.log"
+  grep -E "^! |Warning|Error|Undefined|Overfull|Underfull" "$trg.log"
 }
 %    \end{macrocode}
 %\iffalse$\fi
@@ -3017,40 +3116,34 @@ function docompile
 %    \begin{macrocode}
 function writesource
 {
-  body="\\def\\draftver{n}$nl\\def\\printsol{$sol}$nl"
-  body="$body\\input{childdoc.def}$nl"
   if [[ -z $num ]]
   then
-    body="$body\\childdocforward{$main}"
+    fwd="\\childdocforward{$srcmain}"
   else
-    body="$body\\childdocforwardprefix[$main]{$target}{$source}"
+    fwd="\\childdocforwardprefix[$srcmain]{$target}{$srcsec}"
   fi
-  echo "$body" > $target$num.tex
-}
-%    \end{macrocode}
-
-% Configure variables and select appropriate function for intended task:
-%    \begin{macrocode}
-function process
-{
-  target=$1
-  sol=$2
-  if [[ "$make" == ".pdf" ]]; then docompile; else writesource; fi
+  body="$optdef\\input{childdoc.def}$nl$fwd"
+  echo "$body" > $trg.tex
 }
 %    \end{macrocode}
 %\iffalse$\fi
 
-% Translate versions to parameter values:
+% Translate versions to parameter values,
+% configure variables and select appropriate function for intended task:
 %    \begin{macrocode}
-if [[ -z $ver || "$ver" == "$target1" || $ver = 1 ]]
-then
-  process $target1 n
-fi
-if [[ -z $ver || "$ver" == "$target2" || $ver = 2 ]]
-then
-  process $target2 y
-fi
+for i in "${!trglist[@]}"
+do
+  if [[ -z $ver || "$ver" == "${trglist[$i]}" || $ver = $i ]]
+  then
+    target="${trglist[$i]}"
+    sol="${trgsol[$i]}"
+    trg="$target$num"
+    optdef="\\def\\draftver{n}$nl\\def\\printsol{$sol}$nl"
+    if [[ "$make" == ".pdf" ]]; then docompile; else writesource; fi
+  fi
+done
 %    \end{macrocode}
+%\iffalse$\fi
 
 % Finish with blank line:
 %    \begin{macrocode}
@@ -3079,19 +3172,20 @@ echo
 %
 % Configuration definitions:
 %    \begin{macrocode}
-MAIN = exfserm
-SOURCE = exfser
-PROBLEM = exfserp
+SRCMAIN = exfserm
+SRCSEC = exfser
+SRCPRB = exfserp
 SCRIPT = exfsermk.sh
 MAKEFILE = exfsermk.mak
-TARGETLIST = Problems Solutions
-SHEETNUM = 01 02 03 aa
-PREREQS = $(MAIN).tex
-SOURCES = $(SHEETNUM:%=$(SOURCE)%.tex)
-SHEETS = $(foreach trg,$(TARGETLIST),$(trg).pdf $(SHEETNUM:%=$(trg)%.pdf))
-TARGETS = $(foreach trg,$(TARGETLIST),$(trg).pdf)
-GENFILES = $(foreach trg,$(TARGETLIST),$(trg).tex $(SHEETNUM:%=$(trg)%.tex))
-BAKFILES = $(SOURCES) $(MAIN).tex $(MAKEFILE) $(SCRIPT) $(PROBLEM)*
+TRGLIST = Problems Solutions
+SECNUM = 01 02 03 aa
+PREREQS = $(SRCMAIN).tex
+
+SRCSECFILES = $(SECNUM:%=$(SRCSEC)%.tex)
+TRGMAINFILES = $(foreach trg,$(TRGLIST),$(trg).pdf)
+TRGSECFILES = $(foreach trg,$(TRGLIST),$(trg).pdf $(SECNUM:%=$(trg)%.pdf))
+GENFILES = $(foreach trg,$(TRGLIST),$(trg).tex $(SECNUM:%=$(trg)%.tex))
+BAKFILES = $(PREREQS) $(SRCSECFILES) $(GENFILES) $(MAKEFILE) $(SCRIPT) $(SRCPRB)*
 %    \end{macrocode}
 %\iffalse$\fi
 
@@ -3099,9 +3193,9 @@ BAKFILES = $(SOURCES) $(MAIN).tex $(MAKEFILE) $(SCRIPT) $(PROBLEM)*
 % |default| is the default target when no parameters are given:
 %    \begin{macrocode}
 default: sheets ;
-sheets: $(SHEETS) ;
-main: $(TARGETS) ;
-sheet%: $(foreach trg,$(TARGETLIST),$(trg)%.pdf) ;
+main: $(TRGMAINFILES) ;
+sheets: $(TRGSECFILES) ;
+sheet%: $(foreach trg,$(TRGLIST),$(trg)%.pdf) ;
 all: main sheets ;
 sources: $(GENFILES) ;
 %    \end{macrocode}
@@ -3111,11 +3205,11 @@ sources: $(GENFILES) ;
 % Note that command lines have to start with a tab character
 % (represented by 8 spaces here):
 %    \begin{macrocode}
-$(TARGETS): $(SOURCES) $(PREREQS)
+$(TRGMAINFILES): $(SRCSECFILES) $(PREREQS)
 	bash ./$(SCRIPT) $@
-$(word 1,$(TARGETLIST))%.pdf: $(SOURCE)%.tex $(PREREQS)
+$(word 1,$(TRGLIST))%.pdf: $(SRCSEC)%.tex $(PREREQS)
 	bash ./$(SCRIPT) $@
-$(word 2,$(TARGETLIST))%.pdf: $(SOURCE)%.tex $(PREREQS)
+$(word 2,$(TRGLIST))%.pdf: $(SRCSEC)%.tex $(PREREQS)
 	bash ./$(SCRIPT) $@
 $(GENFILES):
 	bash ./$(SCRIPT) $@
@@ -3125,20 +3219,19 @@ $(GENFILES):
 % Touch main file for recompile:
 %    \begin{macrocode}
 touch:
-	touch $(MAIN).tex
+	touch $(SRCMAIN).tex
 %    \end{macrocode}
 %\iffalse$\fi
 % Define |clean| target to remove all intermediate compilation files:
 %    \begin{macrocode}
 clean:
-	rm -f $(SHEETNUM:%=$(SOURCE)%.aux)
-	rm -f $(SHEETNUM:%=$(SOURCE)%.log)
-	rm -f $(foreach trg,$(TARGETLIST),$(SHEETNUM:%=$(trg)%.log) $(trg).log)
-	rm -f $(patsubst %,$(MAIN)%,.aux .log .out .toc)
-	rm -f $(patsubst %,$(MAIN)%,.mp .mpx -*.mps -tmp.log -tmp.mp -tmp.mpx)
+	rm -f $(foreach ext,.aux .log,$(SECNUM:%=$(SRCSEC)%$(ext)))
+	rm -f $(foreach trg,$(TRGLIST),$(SECNUM:%=$(trg)%.log) $(trg).log)
+	rm -f $(foreach ext,.aux .log .out .toc,$(SRCMAIN)$(ext))
+	rm -f $(foreach ext,.mp .mpx -*.mps -tmp.log -tmp.mp -tmp.mpx,$(SRCMAIN)$(ext))
 	rm -f mpxerr.tex mpxerr.log mpxerr.dvi texput.log
-	rm -f $(patsubst %,$(PROBLEM)*%,.aux .log .mp .mpx -*.mps)
-	rm -f $(patsubst %,$(PROBLEM)*%,-tmp.log -tmp.mp -tmp.mpx)
+	rm -f $(patsubst %,$(SRCPRB)*%,.aux .log .mp .mpx -*.mps)
+	rm -f $(patsubst %,$(SRCPRB)*%,-tmp.log -tmp.mp -tmp.mpx)
 %    \end{macrocode}
 %\iffalse$\fi
 % Define |clean-bak| target to remove all backup files
@@ -3151,10 +3244,9 @@ clean-bak:
 % for a clean source directory:
 %    \begin{macrocode}
 clean-all:  clean
-	rm -f $(SHEETS) $(TARGETS)
-	rm -f $(SHEETNUM:%=$(SOURCE)%.pdf) $(MAIN).pdf
-	rm -f $(foreach trg,$(TARGETLIST),$(SHEETNUM:%=$(trg)%.tex) $(trg).tex)
-	rm -f $(PROBLEM)*.pdf
+	rm -f $(TRGSECFILES) $(TRGMAINFILES) $(GENFILES)
+	rm -f $(SECNUM:%=$(SRCSEC)%.pdf) $(SRCMAIN).pdf
+	rm -f $(SRCPRB)*.pdf
 %    \end{macrocode}
 %\iffalse$\fi
 % \catcode9=9
@@ -3376,6 +3468,19 @@ clean-all:  clean
 % Configure package when package is already loaded:
 %    \begin{macrocode}
 \newcommand{\exercisesetup}[1]{\exf@expsetkeys{exf@setup}{#1}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Solutions Only Processing.}
+%
+% \macro{onlysolutions}
+% Process block only in solutions mode:
+%    \begin{macrocode}
+\newenvironment{onlysolutions}%
+ {\ifsolutions\else%
+   \let\endonlysolutions\endcomment%
+   \expandafter\comment\fi}%
+ {}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4456,33 +4561,17 @@ clean-all:  clean
 % \paragraph{Write Metadata to PDF Files.}
 %
 % \macro{\exf@writemetadata}
-% Write Metadata to PDF Files in case \textsf{hyperref} is available,
-% choose between global and sheet version, pass through unfilled values:
+% Write Metadata to PDF Files in case \textsf{hyperref} is available:
 %    \begin{macrocode}
-\newcommand{\exf@writemetadata}[1]{%
+\newcommand{\exf@writemetadata}{%
   \ifdefined\hypersetup%
-   \def\exf@tmp{#1}\ifx\exf@tmp\exf@empty%
 %    \end{macrocode}
-% Write global author and title:
+% Write author, title, subject and keywords:
 %    \begin{macrocode}
-    \ifx\exf@data@author\exf@empty\else%
-     \hypersetup{pdfauthor={\exf@data@author}}\fi%
-    \ifx\exf@data@title\exf@empty\else%
-     \hypersetup{pdftitle={\exf@data@title}}\fi%
-   \else%
-%    \end{macrocode}
-% Write sheet author (if available) and compose sheet title:
-%    \begin{macrocode}
-    \ifx\exf@data@sheet@author\exf@empty%
-     \ifx\exf@data@author\exf@empty\else%
-      \hypersetup{pdfauthor={\exf@data@author}}\fi%
-    \else\hypersetup{pdfauthor={\exf@data@sheet@author}}\fi%
-    \hypersetup{pdftitle={\exf@config@composemetasheet%
-     {\csname the\exf@sheetcounter\endcsname}{\exf@data@sheet@rawtitle}}}%
-   \fi%
-%    \end{macrocode}
-% Write subject and keywords:
-%    \begin{macrocode}
+   \ifx\exf@data@author\exf@empty\else%
+    \hypersetup{pdfauthor={\exf@data@author}}\fi%
+   \ifx\exf@data@title\exf@empty\else%
+    \hypersetup{pdftitle={\exf@data@title}}\fi%
    \ifx\exf@data@subject\exf@empty\else%
     \hypersetup{pdfsubject={\exf@data@subject}}\fi%
    \ifx\exf@data@keyword\exf@empty\else%
@@ -4496,14 +4585,14 @@ clean-all:  clean
 
 % Automatic writing at |\begin{document}|:
 %    \begin{macrocode}
-\AtBeginDocument{\exf@ifis\exf@metadata{auto}{\exf@writemetadata{}}}
+\AtBeginDocument{\exf@ifis\exf@metadata{auto}{\exf@writemetadata}}
 %    \end{macrocode}
 
 % \macro{\writeexercisedata}
 % Write metadata manually:
 %    \begin{macrocode}
 \newcommand{\writeexercisedata}{%
-  \exf@ifis\exf@metadata{manual}{\exf@writemetadata{}}}
+  \exf@ifis\exf@metadata{manual}{\exf@writemetadata}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -5131,7 +5220,12 @@ clean-all:  clean
 %    \end{macrocode}
 % Process metadata:
 %    \begin{macrocode}
-  \exf@ifis\exf@metadata{sheet}{\exf@writemetadata{sheet}}%
+  \exf@ifis\exf@metadata{sheet}{{%
+   \ifx\exf@data@sheet@author\exf@empty\else%
+    \let\exf@data@author\exf@data@sheet@author\fi%
+   \def\exf@data@title{\exf@config@composemetasheet%
+    {\csname the\exf@sheetcounter\endcsname}{\exf@data@sheet@rawtitle}}%
+   \exf@writemetadata}}%
 %    \end{macrocode}
 % Insert hook code:
 %    \begin{macrocode}
