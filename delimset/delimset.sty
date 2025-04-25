@@ -17,9 +17,8 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{delimset}[2025/01/05 v2.1 convenient size control for delimiter sets]
+\ProvidesPackage{delimset}[2025/02/27 v2.2 convenient size control for delimiter sets]
 
-\RequirePackage{amsmath}
 \RequirePackage{keyval}
 
 \newif\ifdlm@std\dlm@stdtrue
@@ -36,15 +35,17 @@
 \ProcessOptions
 
 \ifdlm@script
+\ifdefined\bBigg@
 \def\bBigg@choice#1#2#3#4{%
   {\@mathmeasure\z@{\nulldelimiterspace\z@}%
-     {\big@size#2\big@size#1\left#4\vcenter to#3\big@size{}\right.}%
+     {#1\left#4\vcenter to#3\dimexpr#2\big@size\relax{}\right.}%
    \box\z@}}
-\def\bBigg@#1#2{{\mathchoice%
+\def\bBigg@#1#2{\leavevmode@ifvmode{\mathchoice%
   {\bBigg@choice{\displaystyle}{1}{#1}{#2}}%
   {\bBigg@choice{\textstyle}{1}{#1}{#2}}%
   {\bBigg@choice{\scriptstyle}{0.7}{#1}{#2}}%
   {\bBigg@choice{\scriptscriptstyle}{0.5}{#1}{#2}}}}
+\fi
 \fi
 
 \providecommand{\bigp}{\mathpunct\big}
@@ -60,20 +61,40 @@
 \providecommand{\biggi}{\mathinner\bigg}
 \providecommand{\Biggi}{\mathinner\Bigg}
 
+\newlength\dlm@size
+\ifdefined\Umathcharnumdef
+  \def\dlm@size@setchar{\Umathcharnumdef\dlm@size@char\Umathcodenum`\(\relax}
+  \def\dlm@size@scan#1"#2"#3"#4\relax{\dlm@size@get{#3}{#4}}
+\else
+  \def\dlm@size@setchar{\mathchardef\dlm@size@char\mathcode`\(\relax}
+  \def\dlm@size@scan#1"#2#3#4\relax{\dlm@size@get{#3}{#4}}
+\fi
+\def\dlm@size@get#1#2{%
+  \dlm@size\fontcharht\textfont"#1"#2\relax%
+  \advance\dlm@size\fontchardp\textfont"#1"#2\relax%
+  \global\dlm@size1.2\dlm@size}
+\newcommand{\dlm@size@reset}{%
+  \dlm@size@setchar\expandafter\dlm@size@scan\meaning\dlm@size@char\relax}
+\ifdefined\big@size
+\def\dlm@size{\big@size}
+\else
+\addto@hook\every@math@size{\dlm@size@reset}
+\fi
+
 \newlength\delimsize
-\newcommand{\dlm@setvar}{\let\dlm@ifvar\@firstoftwo\delimsize1.5\big@size}
+\newcommand{\dlm@setvar}{\let\dlm@ifvar\@firstoftwo\delimsize1.5\dlm@size}
 \newcommand{\dlm@setsize}[1]{\let\dlm@ifvar\@secondoftwo%
-  \delimsize#1\big@size\advance\delimsize by\big@size\delimsize0.5\delimsize}
+  \delimsize#1\dlm@size\advance\delimsize\dlm@size\delimsize0.5\delimsize}
 \newcommand{\dlm@setabssize}[1]{\let\dlm@ifvar\@secondoftwo\delimsize#1\relax}
 \newcommand{\dlm@big@}[1]{{\mathchoice%
-  {\dlm@big@choice{\displaystyle}{1}{#1}}%
-  {\dlm@big@choice{\textstyle}{1}{#1}}%
-  {\dlm@big@choice{\scriptstyle}{0.7}{#1}}%
-  {\dlm@big@choice{\scriptscriptstyle}{0.5}{#1}}}}
-\newcommand{\dlm@big@choice}[3]{\@mathmeasure\z@{\nulldelimiterspace\z@}%
-  {#1\left#3\vcenter to#2\delimsize{}\right.}\box\z@}
+  {\dlm@big@choice\displaystyle{1}{#1}}%
+  {\dlm@big@choice\textstyle{1}{#1}}%
+  {\dlm@big@choice\scriptstyle{0.7}{#1}}%
+  {\dlm@big@choice\scriptscriptstyle{0.5}{#1}}}}
+\newcommand{\dlm@big@choice}[3]{\hbox{$\m@th\nulldelimiterspace\z@%
+  #1\left#3\vcenter to#2\delimsize{}\right.$}}
 \newcommand{\kerndelim}[1]{{\delimsize#1\delimsize%
-  \mkern\muexpr1.2mu*\delimsize/\big@size\relax}}
+  \mkern\muexpr1.2mu*\delimsize/\dlm@size\relax}}
 
 \newcommand{\dlm@big}[2]{\dlm@plain{#1}{\dlm@big@#2}}
 \newcommand{\dlm@plain}[2]{\dlm@class{#1}{\dlm@phantom{#2}}}
@@ -245,12 +266,27 @@
   \if c#1\def\dlm@use{\delim\{\}}\fi%
   \if a#1\def\dlm@use{\delim<>}\fi%
   \expandafter\endgroup\dlm@use}
+\ifdefined\rvert
 \providecommand{\eval}[1][v]{\begingroup\def\dlm@use{\delim.\rvert}%
   \if v#1\def\dlm@use{\delim.\rvert}\fi%
   \if s#1\def\dlm@use{\delim[]}\fi%
   \expandafter\endgroup\dlm@use}
+\else
+\providecommand{\eval}[1][v]{\begingroup\def\dlm@use{\delim.\vert}%
+  \if v#1\def\dlm@use{\delim.\vert}\fi%
+  \if s#1\def\dlm@use{\delim[]}\fi%
+  \expandafter\endgroup\dlm@use}
+\fi
+\ifdefined\lvert
 \providecommand{\abs}{\delim\lvert\rvert}
+\else
+\providecommand{\abs}{\delim\vert\vert}
+\fi
+\ifdefined\lVert
 \providecommand{\norm}{\delim\lVert\rVert}
+\else
+\providecommand{\norm}{\delim\Vert\Vert}
+\fi
 \fi
 
 \ifdlm@ext

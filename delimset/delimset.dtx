@@ -1,4 +1,5 @@
-% \iffalse
+%
+% \iffalse meta-comment
 %
 % delimset.dtx Copyright (C) 2016-2025 Niklas Beisert
 %
@@ -18,10 +19,10 @@
 % and the derived files delimset.sty and dlmssamp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{delimset}[2025/01/05 v2.1 convenient size control for delimiter sets]
-%<sample>\ProvidesFile{dlmssamp.tex}[2025/01/05 v2.1 sample for delimset]
+%<package>\ProvidesPackage{delimset}[2025/02/27 v2.2 convenient size control for delimiter sets]
+%<sample>\ProvidesFile{dlmssamp.tex}[2025/02/27 v2.2 sample for delimset]
 %<*driver>
-\def\thedate#1{2025/01/05}\def\theversion#1{v2.1}
+\def\thedate#1{2025/02/27}\def\theversion#1{v2.2}
 \ProvidesFile{delimset.dtx}[\thedate{} \theversion{} delimset reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -1254,10 +1255,8 @@ distribution, e.g.\ \textit{texmf-root}|/tex/latex/delimset|.
 The package is related to other packages available at CTAN:
 \begin{itemize}
 \item
-This package relies on some functionality of the package \ctanpkg{amsmath}
-by using and overwriting some native code.
 Compatibility with the \ctanpkg{amsmath} package
-has been tested with v2.15d (2016/06/28).
+has been tested with v2.15d (2016/06/28) and v2.17t (2024/11/05).
 \item
 This package uses the package \ctanpkg{keyval} from the
 \ctanpkg{graphics} bundle to process optional arguments to the package options.
@@ -1286,6 +1285,16 @@ has been tested with v2.0+ (2002/03/10).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v2.2:} 2025/02/27
+
+\begin{itemize}
+\item
+replicate the \ctanpkg{amsmath} mechanism for tracking the
+vertical height of a default delimiter in order to
+be independent of \ctanpkg{amsmath}
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v2.1:} 2025/01/05
@@ -1398,7 +1407,7 @@ standard definitions
 \documentclass[12pt]{article}
 
 \usepackage[margin=2cm]{geometry}
-\usepackage{amsmath,amsfonts}
+\usepackage{amsfonts}
 \usepackage{delimset}
 
 \begin{document}
@@ -1444,11 +1453,11 @@ default absolute value, norm and default evaluations:
 
 outer delimiter spacing:
 %    \begin{macrocode}
-\begin{align*}
-&\square\brk^0{x}\square,&&\square\brk^1{A^k}\square,
+\[\begin{array}{ll}
+\square\brk^0{x}\square,&\square\brk^1{A^k}\square,
 \\
-&\square\brk*{x}\square,&&\square\brk*{A^k}\square
-\end{align*}
+\square\brk*{x}\square,&\square\brk*{A^k}\square
+\end{array}\]
 %    \end{macrocode}
 
 delimiter sizes in exponents:
@@ -1577,13 +1586,10 @@ the final size is not available for the enclosed expressions):
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Required Packages.}
 %
-% The package loads the packages \ctanpkg{amsmath} and \ctanpkg{keyval}
-% if not yet present.
-% \ctanpkg{amsmath} is used for basic delimiter size functionality.
+% The package loads the package \ctanpkg{keyval} if not yet present.
 % \ctanpkg{keyval} is used for extended options processing.
 %
 %    \begin{macrocode}
-\RequirePackage{amsmath}
 \RequirePackage{keyval}
 %    \end{macrocode}
 
@@ -1619,15 +1625,17 @@ the final size is not available for the enclosed expressions):
 %
 %    \begin{macrocode}
 \ifdlm@script
+\ifdefined\bBigg@
 \def\bBigg@choice#1#2#3#4{%
   {\@mathmeasure\z@{\nulldelimiterspace\z@}%
-     {\big@size#2\big@size#1\left#4\vcenter to#3\big@size{}\right.}%
+     {#1\left#4\vcenter to#3\dimexpr#2\big@size\relax{}\right.}%
    \box\z@}}
-\def\bBigg@#1#2{{\mathchoice%
+\def\bBigg@#1#2{\leavevmode@ifvmode{\mathchoice%
   {\bBigg@choice{\displaystyle}{1}{#1}{#2}}%
   {\bBigg@choice{\textstyle}{1}{#1}{#2}}%
   {\bBigg@choice{\scriptstyle}{0.7}{#1}{#2}}%
   {\bBigg@choice{\scriptscriptstyle}{0.5}{#1}{#2}}}}
+\fi
 \fi
 %    \end{macrocode}
 
@@ -1653,6 +1661,46 @@ the final size is not available for the enclosed expressions):
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Size Adjustment Definitions.}
 %
+% Replicate the \ctanpkg{amsmath} implementation for
+% tracking the vertical size of a default delimiter in the current font.
+% Our |\dlm@size| matches with |\big@size| in \ctanpkg{amsmath}
+% which is 1.2 times the vertical size of `(':
+%    \begin{macrocode}
+\newlength\dlm@size
+%    \end{macrocode}
+% The macros |\dlm@size@setchar| and |\dlm@size@scan|
+% scan the font and code point
+% in unicode (xetex/luatex) vs.\ \TeX\ (etex) engines:
+%    \begin{macrocode}
+\ifdefined\Umathcharnumdef
+  \def\dlm@size@setchar{\Umathcharnumdef\dlm@size@char\Umathcodenum`\(\relax}
+  \def\dlm@size@scan#1"#2"#3"#4\relax{\dlm@size@get{#3}{#4}}
+\else
+  \def\dlm@size@setchar{\mathchardef\dlm@size@char\mathcode`\(\relax}
+  \def\dlm@size@scan#1"#2#3#4\relax{\dlm@size@get{#3}{#4}}
+\fi
+%    \end{macrocode}
+% The macro |\dlm@size@get| computes 1.2 times the vertical height of `(':
+%    \begin{macrocode}
+\def\dlm@size@get#1#2{%
+  \dlm@size\fontcharht\textfont"#1"#2\relax%
+  \advance\dlm@size\fontchardp\textfont"#1"#2\relax%
+  \global\dlm@size1.2\dlm@size}
+%    \end{macrocode}
+% The macro |\dlm@size@reset| updates |\dlm@size|:
+%    \begin{macrocode}
+\newcommand{\dlm@size@reset}{%
+  \dlm@size@setchar\expandafter\dlm@size@scan\meaning\dlm@size@char\relax}
+%    \end{macrocode}
+% We can hook onto the \ctanpkg{amsmath} mechanism if already present:
+%    \begin{macrocode}
+\ifdefined\big@size
+\def\dlm@size{\big@size}
+\else
+\addto@hook\every@math@size{\dlm@size@reset}
+\fi
+%    \end{macrocode}
+
 % The macro |\dlm@setvar| enables variable size,
 % the macro |\dlm@setsize| sets a fixed size.
 % Delimiter sizes are implented by |\dlm@big@|.
@@ -1663,19 +1711,19 @@ the final size is not available for the enclosed expressions):
 %
 %    \begin{macrocode}
 \newlength\delimsize
-\newcommand{\dlm@setvar}{\let\dlm@ifvar\@firstoftwo\delimsize1.5\big@size}
+\newcommand{\dlm@setvar}{\let\dlm@ifvar\@firstoftwo\delimsize1.5\dlm@size}
 \newcommand{\dlm@setsize}[1]{\let\dlm@ifvar\@secondoftwo%
-  \delimsize#1\big@size\advance\delimsize by\big@size\delimsize0.5\delimsize}
+  \delimsize#1\dlm@size\advance\delimsize\dlm@size\delimsize0.5\delimsize}
 \newcommand{\dlm@setabssize}[1]{\let\dlm@ifvar\@secondoftwo\delimsize#1\relax}
 \newcommand{\dlm@big@}[1]{{\mathchoice%
-  {\dlm@big@choice{\displaystyle}{1}{#1}}%
-  {\dlm@big@choice{\textstyle}{1}{#1}}%
-  {\dlm@big@choice{\scriptstyle}{0.7}{#1}}%
-  {\dlm@big@choice{\scriptscriptstyle}{0.5}{#1}}}}
-\newcommand{\dlm@big@choice}[3]{\@mathmeasure\z@{\nulldelimiterspace\z@}%
-  {#1\left#3\vcenter to#2\delimsize{}\right.}\box\z@}
+  {\dlm@big@choice\displaystyle{1}{#1}}%
+  {\dlm@big@choice\textstyle{1}{#1}}%
+  {\dlm@big@choice\scriptstyle{0.7}{#1}}%
+  {\dlm@big@choice\scriptscriptstyle{0.5}{#1}}}}
+\newcommand{\dlm@big@choice}[3]{\hbox{$\m@th\nulldelimiterspace\z@%
+  #1\left#3\vcenter to#2\delimsize{}\right.$}}
 \newcommand{\kerndelim}[1]{{\delimsize#1\delimsize%
-  \mkern\muexpr1.2mu*\delimsize/\big@size\relax}}
+  \mkern\muexpr1.2mu*\delimsize/\dlm@size\relax}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1984,12 +2032,27 @@ the final size is not available for the enclosed expressions):
   \if c#1\def\dlm@use{\delim\{\}}\fi%
   \if a#1\def\dlm@use{\delim<>}\fi%
   \expandafter\endgroup\dlm@use}
+\ifdefined\rvert
 \providecommand{\eval}[1][v]{\begingroup\def\dlm@use{\delim.\rvert}%
   \if v#1\def\dlm@use{\delim.\rvert}\fi%
   \if s#1\def\dlm@use{\delim[]}\fi%
   \expandafter\endgroup\dlm@use}
+\else
+\providecommand{\eval}[1][v]{\begingroup\def\dlm@use{\delim.\vert}%
+  \if v#1\def\dlm@use{\delim.\vert}\fi%
+  \if s#1\def\dlm@use{\delim[]}\fi%
+  \expandafter\endgroup\dlm@use}
+\fi
+\ifdefined\lvert
 \providecommand{\abs}{\delim\lvert\rvert}
+\else
+\providecommand{\abs}{\delim\vert\vert}
+\fi
+\ifdefined\lVert
 \providecommand{\norm}{\delim\lVert\rVert}
+\else
+\providecommand{\norm}{\delim\Vert\Vert}
+\fi
 \fi
 %    \end{macrocode}
 
