@@ -1,6 +1,6 @@
 % \iffalse
 %
-% mpostinl.dtx Copyright (C) 2010-2017 Niklas Beisert
+% mpostinl.dtx Copyright (C) 2010-2018 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -18,10 +18,10 @@
 % and the derived files mpostinl.sty and mpinlsmp.tex
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mpostinl}[2017/06/24 v1.12 metapost inline figures]
-%<sample>\ProvidesFile{mpinlsmp.tex}[2017/06/24 v1.12 sample for mpostinl]
+%<package>\ProvidesPackage{mpostinl}[2018/01/05 v1.2 metapost inline figures]
+%<sample>\ProvidesFile{mpinlsmp.tex}[2018/01/05 v1.2 sample for mpostinl]
 %<*driver>
-%\ProvidesFile{mpostinl.drv}[2017/06/24 v1.12 mpostinl reference manual file]
+%\ProvidesFile{mpostinl.drv}[2018/01/05 v1.2 mpostinl reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -48,7 +48,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package mpostinl}}
-\date{24 June 2017, \textsf{v1.12}}
+\date{5 January 2018, \textsf{v1.2}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -685,6 +685,12 @@ In particular, this may be desirable
 if the \LaTeX{} source is uploaded to a repository
 or passed on to a publisher.
 
+By default the package checks whether the generated files
+change with respect to the previous \LaTeX{} pass,
+and only modified files are compiled thereupon.
+This check can be disabled by setting the option
+|checksum| to |false|, in which case all files are compiled.
+
 When the metapost file compiles with errors,
 one can inspect the generated metapost file.
 To this end it may be helpful to know which
@@ -1058,7 +1064,7 @@ does not seem to work with pdf\LaTeX{}.
 \parskip1ex
 \parindent0pt
 
-Copyright \copyright{} 2010--2017 Niklas Beisert
+Copyright \copyright{} 2010--2018 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
@@ -1139,11 +1145,6 @@ Write generated files to a subdirectory
 or remove files not needed after processing.
 However, both appear to be somewhat in contrast
 to the usual \TeX{} philosophy.
-\item
-Compare the generated metapost file to the previous instance
-and compile only in case of changes.
-This could be implemented by a checksum or by some external tool
-such as diff. This feature is probably too difficult to implement.
 %\item
 %an environment to pass tex commands to mpost and also compile them locally
 %probably have to write to file and subsequently input the file
@@ -1153,6 +1154,19 @@ such as diff. This feature is probably too difficult to implement.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.2:} 2018/01/05
+
+\begin{itemize}
+\item
+new option |checksum| to compile only modified files
+(requires the pdf\TeX{} engine, otherwise disabled)
+\item
+warn if some figures may not be up to date
+\item
+bugfix for example if \textsf{graphbox} is not available
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.12:} 2017/06/24
@@ -1279,14 +1293,14 @@ basic functionality
 %    \end{macrocode}
 
 % Include packages \textsf{currfile} and \textsf{graphbox} if available,
-% declare an alignment switch |\align| (if \textsf{graphbox} is available):
+% declare dummy option |align| for |\includegraphics|
+% if \textsf{graphbox} is not available:
 %    \begin{macrocode}
 %% optional: add filename to position labels in metapost code
 \IfFileExists{currfile.sty}{\usepackage{currfile}}{}
 %% optional: tools to align graphics
-\IfFileExists{graphbox.sty}
-  {\def\align{align}\usepackage{graphbox}}
-  {\def\align{}}
+\makeatletter\define@key{Gin}{align}[]{}\makeatother
+\IfFileExists{graphbox.sty}{\usepackage{graphbox}}{}
 %    \end{macrocode}
 
 % Enable immediate mode and line number indicators,
@@ -1353,7 +1367,7 @@ label(btex 1 etex, (0,0));
 %    \begin{macrocode}
 scaled (and aligned to centre if available):\\
 X
-\begin{mpostfig}[opt={scale=1.5,\align}]
+\begin{mpostfig}[opt={scale=1.5,align}]
 draw fullcircle scaled unit;
 label(btex 2 etex, (0,0));
 \end{mpostfig}
@@ -1378,7 +1392,7 @@ display:\\
 % Display the figure with options for |\includegraphics|:
 %    \begin{macrocode}
 display with options:\\
-\mpostuse[scale=1.5,\align]{fig}
+\mpostuse[scale=1.5,align]{fig}
 %    \end{macrocode}
 
 % Display the figure within a box:
@@ -1399,7 +1413,7 @@ centred display:
 %    \begin{macrocode}
 display in equation (align if possible):
 \begin{equation}
-\mpostuse[scale=1.5,\align]{fig}
+\mpostuse[scale=1.5,align]{fig}
 \end{equation}
 %    \end{macrocode}
 
@@ -1752,19 +1766,8 @@ filename: \mpostgetname{sec8}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \paragraph{Internal Definitions.}
+% \paragraph{Package Options.}
 %
-% \begin{macro}{\ifmpi@infile}
-% \begin{macro}{\ifmpi@inbody}
-% |\ifmpi@infile| indicates whether a file is open,
-% |\ifmpi@inbody| indicates whether the content section has started:
-%    \begin{macrocode}
-\newif\ifmpi@infile\mpi@infilefalse
-\newif\ifmpi@inbody\mpi@inbodyfalse
-%    \end{macrocode}
-% \end{macro}
-% \end{macro}
-
 % \begin{macro}{\mpostfilename}
 % \begin{macro}{\mpi@nowname}
 % \begin{macro}{\mpi@extension}
@@ -1792,9 +1795,6 @@ filename: \mpostgetname{sec8}
 %    \end{macrocode}
 % \end{macro}
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \paragraph{Package Options.}
-%
 % The package has some boolean \textsf{keyval} options
 % which can be set to |true| or |false|.
 %    \begin{macrocode}
@@ -1811,6 +1811,7 @@ filename: \mpostgetname{sec8}
 \newif\ifmpi@nowkeep\mpi@nowkeepfalse
 \newif\ifmpi@include\mpi@includefalse
 \newif\ifmpi@defglobal\mpi@defglobalfalse
+\newif\ifmpi@checksum\mpi@checksumtrue
 %    \end{macrocode}
 
 % \begin{macro}{\mpi@mpostmem}
@@ -1853,6 +1854,7 @@ filename: \mpostgetname{sec8}
 \define@key{\mpi@group}{latex}[true]{\csname mpi@latex#1\endcsname}
 \define@key{\mpi@group}{compile}[true]{\csname mpi@compile#1\endcsname}
 \define@key{\mpi@group}{twice}[true]{\csname mpi@twice#1\endcsname}
+\define@key{\mpi@group}{checksum}[true]{\csname mpi@checksum#1\endcsname}
 \define@key{\mpi@group}{fonts}[true]{\csname mpi@fonts#1\endcsname}
 \define@key{\mpi@group}{prologues}[]{\def\mpi@prologues{#1}}
 \define@key{\mpi@group}{lineno}[true]{\csname mpi@lineno#1\endcsname}
@@ -1881,10 +1883,13 @@ filename: \mpostgetname{sec8}
   \expandafter{\CurrentOption}}
 %    \end{macrocode}
 
-% Process package options and warn if |\write18| mechanism is not available:
+% Process package options,
+% warn if |\write18| mechanism is not available,
+% and disable checksum if |\pdfmdfivesum| is not available:
 %    \begin{macrocode}
 \ProcessOptions
 \mpi@warncompile
+\ifdefined\pdfmdfivesum\else\mpi@checksumfalse\fi
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1902,6 +1907,40 @@ filename: \mpostgetname{sec8}
 %    \begin{macrocode}
 \begingroup\catcode`\"=12\relax\gdef\mpi@dblquotchar{"}\endgroup
 %    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\ifmpi@infile}
+% \begin{macro}{\ifmpi@inbody}
+% |\ifmpi@infile| indicates whether a file is open,
+% |\ifmpi@inbody| indicates whether the content section has started:
+%    \begin{macrocode}
+\newif\ifmpi@infile\mpi@infilefalse
+\newif\ifmpi@inbody\mpi@inbodyfalse
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+
+% \begin{macro}{\ifmpi@inclmod}
+% \begin{macro}{\ifmpi@filemod}
+% |\ifmpi@inclmod| indicates whether an include file has been modified,
+% |\ifmpi@filemod| indicates whether the current file is modified:
+%    \begin{macrocode}
+\newif\ifmpi@inclmod\mpi@inclmodfalse
+\newif\ifmpi@filemod
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+
+% \begin{macro}{\ifmpi@warnmod}
+% \begin{macro}{\ifmpi@showinfile}
+% |\ifmpi@warnmod| indicates whether a rerun warning is to be issued,
+% |\ifmpi@showinfile| indicates whether a figure has been displayed
+%   while a file is being composed:
+%    \begin{macrocode}
+\newif\ifmpi@warnmod\mpi@warnmodfalse
+\newif\ifmpi@showinfile
+%    \end{macrocode}
+% \end{macro}
 % \end{macro}
 
 % \begin{macro}{\mpi@out}
@@ -1996,6 +2035,19 @@ filename: \mpostgetname{sec8}
     }%
   }{\def\mpi@tmp{\mpi@stripfor{#1.#2}#3.}}%
   \expandafter\endgroup\mpi@tmp%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\mpi@warnmod}
+% Warn if some figure has been displayed while a file has been written
+% (potentially the displayed figure is old):
+%    \begin{macrocode}
+\newcommand{\mpi@warnmod}{%
+  \ifmpi@checksum\ifmpi@warnmod%
+    \PackageWarning{mpostinl}{figure(s) may have changed. %
+      Rerun to update figures}{}%
+  \fi\fi%
 }
 %    \end{macrocode}
 % \end{macro}
@@ -2198,6 +2250,16 @@ filename: \mpostgetname{sec8}
 %    \end{macrocode}
 % \end{macro}
 
+% \begin{macro}{\mpi@getchecksum}
+% Compute the MD5 checksum for a metapost file and store in macro:
+%    \begin{macrocode}
+\newcommand{\mpi@getchecksum}[2]{%
+  \IfFileExists{#2}{\xdef#1{\pdfmdfivesum file{#2}}}{\global\let#1=\@undefined}%
+}
+%    \end{macrocode}
+% \end{macro}
+
+
 % \begin{macro}{\mpi@startfile}
 % Start a new file if not already open:
 %    \begin{macrocode}
@@ -2210,9 +2272,16 @@ filename: \mpostgetname{sec8}
       \PackageError{mpostinl}{no filename provided to write to}{}%
     \fi%
 %    \end{macrocode}
+% Compute checksum of old file:
+%    \begin{macrocode}
+    \ifmpi@checksum\ifmpi@inclmod\else%
+      \mpi@getchecksum{\mpi@checksum@before}{\mpostfilename.mp}%
+    \fi\fi%
+%    \end{macrocode}
 % Open file for writing, prepare and write header to file:
 %    \begin{macrocode}
     \global\mpi@infiletrue%
+    \global\mpi@showinfilefalse%
     \ifmpi@write\immediate\openout\mpi@out\mpostfilename.mp\fi%
     \mpi@clearbuf%
     \mpi@beginfile%
@@ -2321,9 +2390,24 @@ filename: \mpostgetname{sec8}
     \mpi@writebuf%
     \ifmpi@write\immediate\closeout\mpi@out\fi%
 %    \end{macrocode}
-% Compile if file contains figures:
+% Determine whether file has changed:
 %    \begin{macrocode}
-    \ifmpi@inbody\mpi@compile{\mpostfilename.mp}\fi%
+    \mpi@filemodtrue%
+    \ifmpi@checksum\ifmpi@inclmod\else%
+      \mpi@getchecksum{\mpi@checksum@after}{\mpostfilename.mp}%
+      \ifx\mpi@checksum@before\mpi@checksum@after%
+        \mpi@filemodfalse%
+      \else%
+        \ifmpi@include\mpi@inclmodtrue\fi%
+      \fi%
+    \fi\fi%
+%    \end{macrocode}
+% Compile if file has changed and if it contains figures.
+% Activate warning if file has changed and figures were displayed
+% during composition:
+%    \begin{macrocode}
+    \ifmpi@filemod\ifmpi@inbody\mpi@compile{\mpostfilename.mp}\fi\fi%
+    \ifmpi@filemod\ifmpi@showinfile\global\mpi@warnmodtrue\fi\fi%
 %    \end{macrocode}
 % Reset variables:
 %    \begin{macrocode}
@@ -2369,9 +2453,11 @@ filename: \mpostgetname{sec8}
 %    \end{macrocode}
 % \end{macro}
 
-% Make sure to close and process the file at the end:
+% Make sure to close and process the file at the end.
+% Warn if figures may need another compiler pass:
 %    \begin{macrocode}
 \AtEndDocument{\mpi@closefile}
+\AtEndDocument{\mpi@warnmod}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2386,6 +2472,7 @@ filename: \mpostgetname{sec8}
 \newcommand{\mpostsetup}[1]{%
   \setkeys\mpi@group{#1}%
   \mpi@warncompile%
+  \ifdefined\pdfmdfivesum\else\mpi@checksumfalse\fi%
 }
 %    \end{macrocode}
 % \end{macro}
@@ -2461,7 +2548,7 @@ filename: \mpostgetname{sec8}
 \define@key{mpi@fig}{twice}[true]{\csname mpi@twice#1\endcsname}
 \define@key{mpi@fig}{file}{\def\mpi@figfile{#1}}
 \define@key{mpi@fig}{label}{\def\mpi@figlabel{#1}}
-\define@key{mpi@fig}{opt}{\edef\mpi@figopt{[#1]}}
+\define@key{mpi@fig}{opt}{\def\mpi@figopt{[#1]}}
 \define@key{mpi@fig}{now}[true]{\csname mpi@now#1\endcsname}
 %    \end{macrocode}
 
@@ -2531,10 +2618,12 @@ filename: \mpostgetname{sec8}
     \mpi@processnow%
   \fi%
 %    \end{macrocode}
-% Display figure:
+% Display figure.
+% Remember immediate display of figure unless processed immediately:
 %    \begin{macrocode}
   \ifmpi@figshow%
     \expandafter\mpi@graphics\mpi@figopt{\mpi@figfile}%
+    \ifmpi@now\else\global\mpi@showinfiletrue\fi%
   \fi%
 }
 %    \end{macrocode}
@@ -2543,7 +2632,8 @@ filename: \mpostgetname{sec8}
 % \begin{macro}{\mpostuse}
 % |\mpostuse| includes a metapost figure which was declared earlier
 % via its label. The optional argument is passed as the optional
-% argument for |\includegraphics|
+% argument for |\includegraphics|.
+% Remember if a file is currently open for writing:
 %    \begin{macrocode}
 \newcommand{\mpostuse}[2][]{%
   \expandafter\ifx\csname mpi@l@#2\endcsname\relax%
@@ -2551,6 +2641,7 @@ filename: \mpostgetname{sec8}
     \mpostplaceholder[label]{#2}%
   \else%
     \mpi@graphics[#1]{\csname mpi@l@#2\endcsname}%
+    \ifmpi@infile\global\mpi@showinfiletrue\fi%
   \fi%
 }
 %    \end{macrocode}

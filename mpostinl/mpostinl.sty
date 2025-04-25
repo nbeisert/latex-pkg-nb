@@ -6,7 +6,7 @@
 %%
 %% mpostinl.dtx  (with options: `package')
 %% 
-%% Copyright (C) 2010-2017 Niklas Beisert
+%% Copyright (C) 2010-2018 Niklas Beisert
 %% 
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either version 1.3
@@ -17,14 +17,11 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{mpostinl}[2017/06/24 v1.12 metapost inline figures]
+\ProvidesPackage{mpostinl}[2018/01/05 v1.2 metapost inline figures]
 
 \RequirePackage{verbatim}
 \RequirePackage{graphicx}
 \RequirePackage{keyval}
-
-\newif\ifmpi@infile\mpi@infilefalse
-\newif\ifmpi@inbody\mpi@inbodyfalse
 
 \def\mpostfilename{\jobname}
 \def\mpi@nowname{\jobname-tmp}
@@ -48,6 +45,7 @@
 \newif\ifmpi@nowkeep\mpi@nowkeepfalse
 \newif\ifmpi@include\mpi@includefalse
 \newif\ifmpi@defglobal\mpi@defglobalfalse
+\newif\ifmpi@checksum\mpi@checksumtrue
 
 \def\mpi@mpostmem{}
 \def\mpi@mpostcompiler{}
@@ -68,6 +66,7 @@
 \define@key{\mpi@group}{latex}[true]{\csname mpi@latex#1\endcsname}
 \define@key{\mpi@group}{compile}[true]{\csname mpi@compile#1\endcsname}
 \define@key{\mpi@group}{twice}[true]{\csname mpi@twice#1\endcsname}
+\define@key{\mpi@group}{checksum}[true]{\csname mpi@checksum#1\endcsname}
 \define@key{\mpi@group}{fonts}[true]{\csname mpi@fonts#1\endcsname}
 \define@key{\mpi@group}{prologues}[]{\def\mpi@prologues{#1}}
 \define@key{\mpi@group}{lineno}[true]{\csname mpi@lineno#1\endcsname}
@@ -94,10 +93,20 @@
 
 \ProcessOptions
 \mpi@warncompile
+\ifdefined\pdfmdfivesum\else\mpi@checksumfalse\fi
 
 \def\mpi@empty{}
 
 \begingroup\catcode`\"=12\relax\gdef\mpi@dblquotchar{"}\endgroup
+
+\newif\ifmpi@infile\mpi@infilefalse
+\newif\ifmpi@inbody\mpi@inbodyfalse
+
+\newif\ifmpi@inclmod\mpi@inclmodfalse
+\newif\ifmpi@filemod
+
+\newif\ifmpi@warnmod\mpi@warnmodfalse
+\newif\ifmpi@showinfile
 
 \newwrite\mpi@out
 \newwrite\mpi@outnow
@@ -137,6 +146,13 @@
     }%
   }{\def\mpi@tmp{\mpi@stripfor{#1.#2}#3.}}%
   \expandafter\endgroup\mpi@tmp%
+}
+
+\newcommand{\mpi@warnmod}{%
+  \ifmpi@checksum\ifmpi@warnmod%
+    \PackageWarning{mpostinl}{figure(s) may have changed. %
+      Rerun to update figures}{}%
+  \fi\fi%
 }
 
 \newcommand{\mpostplaceholder}[2][]{\parbox[c]{1in}{%
@@ -251,12 +267,20 @@
   \fi%
 }
 
+\newcommand{\mpi@getchecksum}[2]{%
+  \IfFileExists{#2}{\xdef#1{\pdfmdfivesum file{#2}}}{\global\let#1=\@undefined}%
+}
+
 \newcommand{\mpi@startfile}{%
   \ifmpi@infile\else%
     \ifx\mpostfilename\mpi@empty%
       \PackageError{mpostinl}{no filename provided to write to}{}%
     \fi%
+    \ifmpi@checksum\ifmpi@inclmod\else%
+      \mpi@getchecksum{\mpi@checksum@before}{\mpostfilename.mp}%
+    \fi\fi%
     \global\mpi@infiletrue%
+    \global\mpi@showinfilefalse%
     \ifmpi@write\immediate\openout\mpi@out\mpostfilename.mp\fi%
     \mpi@clearbuf%
     \mpi@beginfile%
@@ -322,7 +346,17 @@
     \mpi@endfile%
     \mpi@writebuf%
     \ifmpi@write\immediate\closeout\mpi@out\fi%
-    \ifmpi@inbody\mpi@compile{\mpostfilename.mp}\fi%
+    \mpi@filemodtrue%
+    \ifmpi@checksum\ifmpi@inclmod\else%
+      \mpi@getchecksum{\mpi@checksum@after}{\mpostfilename.mp}%
+      \ifx\mpi@checksum@before\mpi@checksum@after%
+        \mpi@filemodfalse%
+      \else%
+        \ifmpi@include\mpi@inclmodtrue\fi%
+      \fi%
+    \fi\fi%
+    \ifmpi@filemod\ifmpi@inbody\mpi@compile{\mpostfilename.mp}\fi\fi%
+    \ifmpi@filemod\ifmpi@showinfile\global\mpi@warnmodtrue\fi\fi%
     \global\mpi@infilefalse%
     \global\let\mpostfilename\mpi@empty%
     \global\mpi@inbodyfalse%
@@ -350,10 +384,12 @@
 }
 
 \AtEndDocument{\mpi@closefile}
+\AtEndDocument{\mpi@warnmod}
 
 \newcommand{\mpostsetup}[1]{%
   \setkeys\mpi@group{#1}%
   \mpi@warncompile%
+  \ifdefined\pdfmdfivesum\else\mpi@checksumfalse\fi%
 }
 
 \newif\ifmpi@deftex
@@ -400,7 +436,7 @@
 \define@key{mpi@fig}{twice}[true]{\csname mpi@twice#1\endcsname}
 \define@key{mpi@fig}{file}{\def\mpi@figfile{#1}}
 \define@key{mpi@fig}{label}{\def\mpi@figlabel{#1}}
-\define@key{mpi@fig}{opt}{\edef\mpi@figopt{[#1]}}
+\define@key{mpi@fig}{opt}{\def\mpi@figopt{[#1]}}
 \define@key{mpi@fig}{now}[true]{\csname mpi@now#1\endcsname}
 
 \newenvironment{mpostfig}[1][]{%
@@ -442,6 +478,7 @@
   \fi%
   \ifmpi@figshow%
     \expandafter\mpi@graphics\mpi@figopt{\mpi@figfile}%
+    \ifmpi@now\else\global\mpi@showinfiletrue\fi%
   \fi%
 }
 
@@ -451,6 +488,7 @@
     \mpostplaceholder[label]{#2}%
   \else%
     \mpi@graphics[#1]{\csname mpi@l@#2\endcsname}%
+    \ifmpi@infile\global\mpi@showinfiletrue\fi%
   \fi%
 }
 
