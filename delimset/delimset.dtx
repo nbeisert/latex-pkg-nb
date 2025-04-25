@@ -18,10 +18,10 @@
 % and the derived files delimset.sty and dlmssamp.tex
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{delimset}[2018/01/17 v1.01 convenient size control for delimiter sets]
-%<sample>\ProvidesFile{dlmssamp.tex}[2018/01/17 v1.01 sample for delimset]
+%<package>\ProvidesPackage{delimset}[2018/12/30 v1.1 convenient size control for delimiter sets]
+%<sample>\ProvidesFile{dlmssamp.tex}[2018/12/30 v1.1 sample for delimset]
 %<*driver>
-%\ProvidesFile{delimset.drv}[2018/01/17 v1.01 delimset Reference Manual file]
+%\ProvidesFile{delimset.drv}[2018/12/30 v1.1 delimset Reference Manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -48,6 +48,13 @@
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
 \hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
+\newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
+
+\parskip1ex
+\parindent0pt
+\let\olditemize\itemize
+\def\itemize{\olditemize\parskip0pt}
+
 \begin{document}
 
 \title{The \textsf{delimset} Package}
@@ -60,7 +67,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package delimset}}
-\date{17 January 2018, \textsf{v1.01}}
+\date{30 December 2018, \textsf{v1.1}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -68,7 +75,10 @@
 sets of delimiters in math mode whose size can be adjusted conveniently.
 \end{abstract}
 
+\begingroup
+\parskip0ex
 \tableofcontents
+\endgroup
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -501,6 +511,12 @@ the intended math class of the delimiter \emph{delim}:
 \text{class }|\mathclose|\text{ (similar to }|\bigr|
 \text{, not for use in }|\delim...|)
 \\
+|{[o]|\emph{delim}|}|&\qquad
+\text{class }|\mathopen|\text{ (similar to }|\bigl|)
+\\
+|{[c]|\emph{delim}|}|&\qquad
+\text{class }|\mathclose|\text{ (similar to }|\bigr|)
+\\
 |{[m]|\emph{delim}|}|&\qquad
 \text{class }|\mathrel|\text{ (similar to }|\bigm|)
 \\
@@ -521,7 +537,8 @@ and therefore they must be a plain math delimiter.
 Conversely, the immediate delimiters \emph{m(n)} must not
 have the |[l]| and |[r]| classes
 because the latter must appear precisely once
-and they are already taken by \emph{l} and \emph{r}.
+and they are already taken by \emph{l} and \emph{r};
+use classes |[o]| and |[c]| instead.
 
 The optional size modifier \emph{size} should take one of the following values:
 \[
@@ -567,7 +584,7 @@ However, there is an even more flexible way to declare delimiter sets:
 The syntax of this command is equivalent to the one of |\newcommand|.
 The difference is that the command |\|\emph{name} first looks
 for the optional size modifier \emph{size} as
-described above in section \ref{sec:delimcommands}.
+described above in \secref{sec:delimcommands}.
 It remembers the desired size for evaluating the macro \emph{expr}.
 Then it parses the arguments as if the command
 was declared by |\newcommand|.
@@ -589,7 +606,7 @@ according to the previously specified modifier \emph{size}.
 The math classes must be in proper sequence,
 i.e.\ the first and last ones must be |l| and |r|, respectively,
 while the intermediate ones can be anything by |l| and |r|,
-see section \ref{sec:delimcommands}.
+see \secref{sec:delimcommands}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -629,7 +646,7 @@ the norm $\lVert\emph{expr}\rVert$.
 %
 The above definitions can be suppressed by
 setting the package option |stddef| to |false|,
-see section \ref{sec:packageoptions}.
+see \secref{sec:packageoptions}.
 The package also defines some extended sets of delimiters as follows:
 %
 \begin{itemize}
@@ -679,7 +696,7 @@ a ket-vector $\lvert\emph{expr}\rangle$ in quantum mechanics.
 a bra-ket contraction $\langle\emph{expr1}\vert\emph{expr2}\rangle$.
 \end{itemize}
 The extended definitions need to be activated by
-the package option |extdef|, see section \ref{sec:packageoptions}.
+the package option |extdef|, see \secref{sec:packageoptions}.
 
 If the representations of the above delimiters do not suit the purpose
 or taste of the user, they can be redefined with |\renewcommand|.
@@ -699,7 +716,7 @@ Furthermore, the package overloads the size calculation in the |\big...|
 commands to properly account for the math styles in sub/superscripts
 (|\scriptstyle|) and nested sub/\hspace{0pt}superscripts (|\scriptscriptstyle|).
 The latter behaviour can be controlled by
-the package option |scriptstyle|, see section \ref{sec:packageoptions}.
+the package option |scriptstyle|, see \secref{sec:packageoptions}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Package Options}
@@ -720,17 +737,17 @@ Here \emph{opts} is a comma-separated list of the available options:
 \item
 |stddef|[|=true|$\vert$|false|]
 controls the activation of standard delimiter definitions specified in
-section \ref{sec:defaultcommands}.
+\secref{sec:defaultcommands}.
 If no value is given |true| is assumed; initially set to |true|.
 \item
 |extdef|[|=true|$\vert$|false|]
 controls the activation of extended delimiter definitions specified in
-section \ref{sec:defaultcommands}.
+\secref{sec:defaultcommands}.
 If no value is given |true| is assumed; initially set to |false|.
 \item
 |scriptstyle|[|=true|$\vert$|false|]
 controls the overwriting of size modifiers explained
-in section \ref{sec:auxcommands}.
+in \secref{sec:auxcommands}.
 If no value is given |true| is assumed; initially set to |true|.
 \end{itemize}
 
@@ -740,10 +757,6 @@ If no value is given |true| is assumed; initially set to |true|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
-
-\begingroup
-\parskip1ex
-\parindent0pt
 
 Copyright \copyright{} 2016--2018 Niklas Beisert
 
@@ -761,8 +774,6 @@ The Current Maintainer of this work is Niklas Beisert.
 
 This work consists of the files |README.txt|, |delimset.ins| and |delimset.dtx|
 as well as the derived files |delimset.sty|, |dlmssamp.tex| and |delimset.pdf|.
-
-\endgroup
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Files and Installation}
@@ -818,9 +829,21 @@ has been tested with v1.15 (2014/10/28).
 % specify width of null delimiter?
 % automatic nesting of bracket types?
 % make optional arguments work for DeclareMathDelimiterSet?
+% add pfrac for fraction a/b in text mode
+% handle cramped style properly (perhaps impossible)
+% outer decorations for delimiters e.g. _y<a,b>_x
+% freestyle delimiter with size adjustment replacement \size{\rangle}_x
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1:} 2018/12/30
+
+\begin{itemize}
+\item
+classes added, class and size selection mechanism simplified
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.01:} 2018/01/17
@@ -859,8 +882,6 @@ standard definitions
 \appendix
 
 \settowidth\MacroIndent{\rmfamily\scriptsize 000\ }
-\parskip1ex
-\parindent0pt
 
  \DocInput{delimset.dtx}
 
@@ -924,7 +945,7 @@ default absolute value, norm and default evaluations:
 \abs*{\frac{ax+b}{cx+d}},\qquad
 \norm*{\frac{ax+b}{cx+d}},\qquad
 \eval*{\frac{ax+b}{cx+d}}_{x=0},\qquad
-\eval[s]*{\frac{ax+b}{cx+d}}_{x=0}^{x=\infty},\qquad
+\eval[s]*{\frac{ax+b}{cx+d}}_{x=0}^{x=\infty}
 \]
 %    \end{macrocode}
 
@@ -933,7 +954,7 @@ outer delimiter spacing:
 \begin{align*}
 &\square\brk0{x}\square,&&\square\brk1{A^k}\square,
 \\
-&\square\brk*{x}\square,&&\square\brk*{A^k}\square,
+&\square\brk*{x}\square,&&\square\brk*{A^k}\square
 \end{align*}
 %    \end{macrocode}
 
@@ -950,7 +971,9 @@ delimiter declaration:
 \DeclareMathDelimiterSet{\braket}[2]
   {\selectdelim[l]<#1\selectdelim|#2\selectdelim[r]>}
 \[
-\braket!{\psi}{\psi}
+\braket!{\psi}{\psi},
+\quad
+\braket*{\psi}{\psi\big.}
 \]
 %    \end{macrocode}
 
@@ -972,7 +995,19 @@ conditional set, alternative layouts:
 \qquad
 \delimpair\{|\}!{2n}{n\in\mathbb{Z}},
 \qquad
-\delimpair\{{[.];}\}!{2n}{n\in\mathbb{Z}},
+\delimpair\{{[.];}\}!{2n}{n\in\mathbb{Z}}
+\]
+conditional set, alternative layouts with variable size:
+\[
+\delimpair\{{[m]|}\}*{2n}{n\in\mathbb{Z}\big.},
+\qquad
+\delimpair\{{[b]|}\}*{2n}{n\in\mathbb{Z}\big.},
+\qquad
+\delimpair\{{[p]|}\}*{2n}{n\in\mathbb{Z}\big.},
+\qquad
+\delimpair\{|\}*{2n}{n\in\mathbb{Z}\big.},
+\qquad
+\delimpair\{{[.];}\}*{2n}{n\in\mathbb{Z}\big.}
 \]
 %    \end{macrocode}
 
@@ -1070,23 +1105,10 @@ alternative representation:
 \fi
 %    \end{macrocode}
 
-% Define size selectors for standard size (|dlm@norm|, etc.),
-% variable size (|dlm@var|, etc.) as well as punctuation marks (|\bigp|, etc.)
+% Define punctuation marks (|\bigp|, etc.)
 % and binary operators (|\bigb|, etc.).
 %
 %    \begin{macrocode}
-\newcommand{\dlm@norm}{\bBigg@{0.0}}
-\newcommand{\dlm@norml}{\mathopen\dlm@norm}
-\newcommand{\dlm@normr}{\mathclose\dlm@norm}
-\newcommand{\dlm@normm}{\mathrel\dlm@norm}
-\newcommand{\dlm@normp}{\mathpunct\dlm@norm}
-\newcommand{\dlm@normb}{\mathbin\dlm@norm}
-\newcommand{\dlm@var}[1]{\middle#1}
-\newcommand{\dlm@varl}[1]{\mathopen{}\mathclose\bgroup\left#1}
-\newcommand{\dlm@varr}[1]{\right#1\egroup}
-\newcommand{\dlm@varm}[1]{\mathrel{}\middle#1\mathrel{}}
-\newcommand{\dlm@varp}[1]{\middle#1\mathpunct{}}
-\newcommand{\dlm@varb}[1]{\mathbin{}\middle#1\mathbin{}}
 \newcommand{\bigp}{\mathpunct\big}
 \newcommand{\Bigp}{\mathpunct\Big}
 \newcommand{\biggp}{\mathpunct\bigg}
@@ -1095,6 +1117,36 @@ alternative representation:
 \newcommand{\Bigb}{\mathbin\Big}
 \newcommand{\biggb}{\mathbin\bigg}
 \newcommand{\Biggb}{\mathbin\Bigg}
+%    \end{macrocode}
+
+% Define size selectors for standard size (|dlm@norm|),
+% variable size (|dlm@var|).
+%
+%    \begin{macrocode}
+\newcommand{\dlm@class}[1]{\csname dlm@class@#1\endcsname}
+\newcommand{\dlm@class@}{}
+\newcommand{\dlm@class@l}{\mathopen}
+\newcommand{\dlm@class@r}{\mathclose}
+\newcommand{\dlm@class@o}{\mathopen}
+\newcommand{\dlm@class@c}{\mathclose}
+\newcommand{\dlm@class@m}{\mathrel}
+\newcommand{\dlm@class@p}{\mathpunct}
+\newcommand{\dlm@class@b}{\mathbin}
+\newcommand{\dlm@norm}[1]{\dlm@class{#1}\bBigg@{0.0}}
+\newcommand{\dlm@big}[1]{\dlm@class{#1}\big}
+\newcommand{\dlm@Big}[1]{\dlm@class{#1}\Big}
+\newcommand{\dlm@bigg}[1]{\dlm@class{#1}\bigg}
+\newcommand{\dlm@Bigg}[1]{\dlm@class{#1}\Bigg}
+\newcommand{\dlm@var}[1]{\csname dlm@var@#1\endcsname}
+\newcommand{\dlm@var@}[1]{\middle#1}
+\newcommand{\dlm@var@l}[1]{\mathopen{}\mathclose\bgroup\left#1}
+\newcommand{\dlm@var@r}[1]{\right#1\egroup}
+\newcommand{\dlm@var@o}[1]{\mathopen{}\middle#1\mathopen{}}
+\newcommand{\dlm@var@c}[1]{\mathclose{}\middle#1\mathclose{}}
+\newcommand{\dlm@var@m}[1]{\mathrel{}\middle#1\mathrel{}}
+\newcommand{\dlm@var@p}[1]{\middle#1\mathpunct{}}
+\newcommand{\dlm@var@b}[1]{\mathbin{}{}\mkern-\medmuskip%
+  \middle#1\mkern-\medmuskip{}\mathbin{}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1111,15 +1163,15 @@ alternative representation:
 %    \begin{macrocode}
 \newcommand{\dlm@parsesize}[1]{\@ifnextchar\bgroup%
   {\dlm@parsesize@{#1}{0}}{\dlm@parsesize@{#1}}}
-\newcommand{\dlm@parsesize@}[2]{\def\dlm@arg{dlm@norm}%
-  \if0#2\def\dlm@arg{dlm@norm}\fi%
-  \if1#2\def\dlm@arg{big}\fi%
-  \if+#2\def\dlm@arg{big}\fi%
-  \if!#2\def\dlm@arg{big}\fi%
-  \if2#2\def\dlm@arg{Big}\fi%
-  \if3#2\def\dlm@arg{bigg}\fi%
-  \if4#2\def\dlm@arg{Bigg}\fi%
-  \if*#2\def\dlm@arg{dlm@var}\fi%
+\newcommand{\dlm@parsesize@}[2]{\let\dlm@arg\dlm@norm%
+  \if0#2\let\dlm@arg\dlm@norm\fi%
+  \if1#2\let\dlm@arg\dlm@big\fi%
+  \if+#2\let\dlm@arg\dlm@big\fi%
+  \if!#2\let\dlm@arg\dlm@big\fi%
+  \if2#2\let\dlm@arg\dlm@Big\fi%
+  \if3#2\let\dlm@arg\dlm@bigg\fi%
+  \if4#2\let\dlm@arg\dlm@Bigg\fi%
+  \if*#2\let\dlm@arg\dlm@var\fi%
   #1}
 %    \end{macrocode}
 % Note that the delimited expression should be contained within a group
@@ -1135,7 +1187,7 @@ alternative representation:
 % and calls the latter with the delimiter as the argument.
 % If the class identifier is `|.|', just return the delimiter argument as is.
 %    \begin{macrocode}
-\newcommand{\selectdelim}[2][]{\if.#1#2\else\csname\dlm@arg #1\endcsname#2\fi}
+\newcommand{\selectdelim}[2][]{\if.#1#2\else\dlm@arg{#1}#2\fi}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

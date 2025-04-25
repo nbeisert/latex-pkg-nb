@@ -1,4 +1,4 @@
-delimset v1.01
+delimset v1.1
 Copyright 2016-2018 Niklas Beisert
 
 delimset is a LaTeX2e package to typeset and declare sets of delimiters

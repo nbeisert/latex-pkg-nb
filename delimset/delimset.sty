@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{delimset}[2018/01/17 v1.01 convenient size control for delimiter sets]
+\ProvidesPackage{delimset}[2018/12/30 v1.1 convenient size control for delimiter sets]
 
 \RequirePackage{amsmath}
 \RequirePackage{keyval}
@@ -47,18 +47,6 @@
   {\bBigg@choice{\scriptscriptstyle}{0.5}{#1}{#2}}}}
 \fi
 
-\newcommand{\dlm@norm}{\bBigg@{0.0}}
-\newcommand{\dlm@norml}{\mathopen\dlm@norm}
-\newcommand{\dlm@normr}{\mathclose\dlm@norm}
-\newcommand{\dlm@normm}{\mathrel\dlm@norm}
-\newcommand{\dlm@normp}{\mathpunct\dlm@norm}
-\newcommand{\dlm@normb}{\mathbin\dlm@norm}
-\newcommand{\dlm@var}[1]{\middle#1}
-\newcommand{\dlm@varl}[1]{\mathopen{}\mathclose\bgroup\left#1}
-\newcommand{\dlm@varr}[1]{\right#1\egroup}
-\newcommand{\dlm@varm}[1]{\mathrel{}\middle#1\mathrel{}}
-\newcommand{\dlm@varp}[1]{\middle#1\mathpunct{}}
-\newcommand{\dlm@varb}[1]{\mathbin{}\middle#1\mathbin{}}
 \newcommand{\bigp}{\mathpunct\big}
 \newcommand{\Bigp}{\mathpunct\Big}
 \newcommand{\biggp}{\mathpunct\bigg}
@@ -68,20 +56,45 @@
 \newcommand{\biggb}{\mathbin\bigg}
 \newcommand{\Biggb}{\mathbin\Bigg}
 
+\newcommand{\dlm@class}[1]{\csname dlm@class@#1\endcsname}
+\newcommand{\dlm@class@}{}
+\newcommand{\dlm@class@l}{\mathopen}
+\newcommand{\dlm@class@r}{\mathclose}
+\newcommand{\dlm@class@o}{\mathopen}
+\newcommand{\dlm@class@c}{\mathclose}
+\newcommand{\dlm@class@m}{\mathrel}
+\newcommand{\dlm@class@p}{\mathpunct}
+\newcommand{\dlm@class@b}{\mathbin}
+\newcommand{\dlm@norm}[1]{\dlm@class{#1}\bBigg@{0.0}}
+\newcommand{\dlm@big}[1]{\dlm@class{#1}\big}
+\newcommand{\dlm@Big}[1]{\dlm@class{#1}\Big}
+\newcommand{\dlm@bigg}[1]{\dlm@class{#1}\bigg}
+\newcommand{\dlm@Bigg}[1]{\dlm@class{#1}\Bigg}
+\newcommand{\dlm@var}[1]{\csname dlm@var@#1\endcsname}
+\newcommand{\dlm@var@}[1]{\middle#1}
+\newcommand{\dlm@var@l}[1]{\mathopen{}\mathclose\bgroup\left#1}
+\newcommand{\dlm@var@r}[1]{\right#1\egroup}
+\newcommand{\dlm@var@o}[1]{\mathopen{}\middle#1\mathopen{}}
+\newcommand{\dlm@var@c}[1]{\mathclose{}\middle#1\mathclose{}}
+\newcommand{\dlm@var@m}[1]{\mathrel{}\middle#1\mathrel{}}
+\newcommand{\dlm@var@p}[1]{\middle#1\mathpunct{}}
+\newcommand{\dlm@var@b}[1]{\mathbin{}{}\mkern-\medmuskip%
+  \middle#1\mkern-\medmuskip{}\mathbin{}}
+
 \newcommand{\dlm@parsesize}[1]{\@ifnextchar\bgroup%
   {\dlm@parsesize@{#1}{0}}{\dlm@parsesize@{#1}}}
-\newcommand{\dlm@parsesize@}[2]{\def\dlm@arg{dlm@norm}%
-  \if0#2\def\dlm@arg{dlm@norm}\fi%
-  \if1#2\def\dlm@arg{big}\fi%
-  \if+#2\def\dlm@arg{big}\fi%
-  \if!#2\def\dlm@arg{big}\fi%
-  \if2#2\def\dlm@arg{Big}\fi%
-  \if3#2\def\dlm@arg{bigg}\fi%
-  \if4#2\def\dlm@arg{Bigg}\fi%
-  \if*#2\def\dlm@arg{dlm@var}\fi%
+\newcommand{\dlm@parsesize@}[2]{\let\dlm@arg\dlm@norm%
+  \if0#2\let\dlm@arg\dlm@norm\fi%
+  \if1#2\let\dlm@arg\dlm@big\fi%
+  \if+#2\let\dlm@arg\dlm@big\fi%
+  \if!#2\let\dlm@arg\dlm@big\fi%
+  \if2#2\let\dlm@arg\dlm@Big\fi%
+  \if3#2\let\dlm@arg\dlm@bigg\fi%
+  \if4#2\let\dlm@arg\dlm@Bigg\fi%
+  \if*#2\let\dlm@arg\dlm@var\fi%
   #1}
 
-\newcommand{\selectdelim}[2][]{\if.#1#2\else\csname\dlm@arg #1\endcsname#2\fi}
+\newcommand{\selectdelim}[2][]{\if.#1#2\else\dlm@arg{#1}#2\fi}
 
 \newcommand{\DeclareMathDelimiterSet}[1]{\expandafter\dlm@declare%
   \csname dlm@dcl@\expandafter\@gobble\string#1\endcsname{#1}}
