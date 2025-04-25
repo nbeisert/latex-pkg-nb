@@ -18,10 +18,10 @@
 % and the derived files mpostinl.sty and mpinlsmp.tex
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mpostinl}[2018/02/09 v1.3 metapost inline figures]
-%<sample>\ProvidesFile{mpinlsmp.tex}[2018/02/09 v1.3 sample for mpostinl]
+%<package>\ProvidesPackage{mpostinl}[2018/03/01 v1.4 metapost inline figures]
+%<sample>\ProvidesFile{mpinlsmp.tex}[2018/03/01 v1.4 sample for mpostinl]
 %<*driver>
-%\ProvidesFile{mpostinl.drv}[2018/02/09 v1.3 mpostinl reference manual file]
+%\ProvidesFile{mpostinl.drv}[2018/03/01 v1.4 mpostinl reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -62,7 +62,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package mpostinl}}
-\date{9 February 2018, \textsf{v1.3}}
+\date{1 March 2018, \textsf{v1.4}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -365,7 +365,6 @@ display it via the command |\mpostuse| (see below).
 \medskip
 \noindent
 \DescribeMacro{\mpostuse}
-\DescribeMacro{\mpostgetname}
 Figures which have been previously declared
 with a label \textit{label}
 can be recycled any number of times with the command:
@@ -374,6 +373,17 @@ can be recycled any number of times with the command:
 \end{center}
 The options are passed on to
 |\includegraphics[|\textit{opt}|]{|\textit{filename}|}|.
+Note that |\mpostuse| accepts the overlay specification
+from the \textsf{beamer} package
+\begin{center}
+|\mpostuse<|\textit{overlay}|>[|\textit{opts}|]{|\textit{label}|}|
+\end{center}
+and passes it on to |\includegraphics|.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\medskip
+\noindent
+\DescribeMacro{\mpostgetname}
 Furthermore, the filename of a figure can be obtained by
 calling |\mpostgetname{|\textit{label}|}|.
 The filename is returned in the macro |\mpostfigurename|.
@@ -603,6 +613,16 @@ such as |section| or |chapter|
 stabilises the figure numbering
 by making changes to the sequence have
 effects only within the present section or chapter.
+
+\item |beamer|[|=true|$\vert$|false|]
+(no value implies |true|, initially set to |true|) --
+Enable/disable processing of overlay parameters |<|\ldots|>|
+by |\mpostuse| defined by the \textsf{beamer} package.
+
+\item |warnunused|[|=true|$\vert$|false|]
+(no value implies |true|, initially set to |true|) --
+Enable/disable warnings for unused figure labels.
+
 \end{itemize}
 %
 Admittedly, some of these options are hardly necessary
@@ -1008,6 +1028,7 @@ Therefore, the environments |mpostfig| and |mpostdef|
 must not be used within the |frame| environment.
 Instead, figures should be declared outside the |frame| environment
 and can be displayed by |\mpostuse| within the |frame| environment.
+Note that |\mpostuse| accepts the overlay parameter |<|\ldots|>|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Package \textsf{graphbox}.}
@@ -1122,7 +1143,7 @@ distribution, e.g.\ \textit{texmf-root}|/tex/latex/mpostinl|.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Interaction with Other Packages and Software}
+\subsection{Required Packages and Software}
 
 The package relies on other packages and software:
 \begin{itemize}
@@ -1201,6 +1222,19 @@ to the usual \TeX{} philosophy.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.4:} 2018/03/01
+
+\begin{itemize}
+\item
+|\mpostuse| now accepts overlay options |<|\ldots|>|
+of the \textsf{beamer} package;
+new option |beamer| to control the feature
+\item
+issue warnings for unused labels;
+new option |warnunused| to control the feature
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.3:} 2018/02/09
@@ -1882,6 +1916,8 @@ filename: \mpostgetname{sec8}
 \newif\ifmpi@nowkeep\mpi@nowkeepfalse
 \newif\ifmpi@include\mpi@includefalse
 \newif\ifmpi@defglobal\mpi@defglobalfalse
+\newif\ifmpi@warnunused\mpi@warnunusedtrue
+\newif\ifmpi@beamer\mpi@beamertrue
 %    \end{macrocode}
 
 % \begin{macro}{\mpi@mpostmem}
@@ -1936,6 +1972,8 @@ filename: \mpostgetname{sec8}
 \define@key{\mpi@group}{command}[]{\def\mpi@mpostcompiler{#1}}
 \define@key{\mpi@group}{class}{\def\mpi@latexclass{#1}}
 \define@key{\mpi@group}{classopt}[]{\def\mpi@latexoptions{[#1]}}
+\define@key{\mpi@group}{beamer}[true]{\csname mpi@beamer#1\endcsname}
+\define@key{\mpi@group}{warnunused}[true]{\csname mpi@warnunused#1\endcsname}
 \define@key{\mpi@group}{now}[true]{\csname mpi@nowactive#1\endcsname}
 \define@key{\mpi@group}{nowall}[true]{\csname mpi@now#1\endcsname}
 \define@key{\mpi@group}{nowkeep}[true]{\csname mpi@nowkeep#1\endcsname}
@@ -1972,6 +2010,14 @@ filename: \mpostgetname{sec8}
 \def\mpi@empty{}
 %    \end{macrocode}
 % \end{macro}
+
+% \begin{macro}{\mpi@unusedlist}
+% Initialise a list of unused figure labels:
+%    \begin{macrocode}
+\def\mpi@unusedlist{}
+%    \end{macrocode}
+% \end{macro}
+
 
 % \begin{macro}{\mpi@dblquotchar}
 % Define a bare double quotation character for writing to the file:
@@ -2120,6 +2166,25 @@ filename: \mpostgetname{sec8}
       Rerun to update figures}{}%
   \fi\fi%
 }
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\mpi@warnunused}
+% This macro processes the list of all figure labels
+% and issues a warning for every unused ones:
+%    \begin{macrocode}
+\def\mpi@warnunused#1{%
+  \begingroup\def\mpi@tmp{#1}\ifx\mpi@tmp\mpi@empty\else%
+    \ifcsname mpi@lu@#1\endcsname\else
+      \PackageWarning{mpostinl}{figure label `#1' not used}{}%
+    \fi%
+    \def\mpi@tmp{\mpi@warnunused}%
+  \fi\expandafter\endgroup\mpi@tmp%
+}
+%    \end{macrocode}
+% Run |\mpi@warnunused| at the end of the document:
+%    \begin{macrocode}
+\AtEndDocument{\expandafter\mpi@warnunused\mpi@unusedlist{}}
 %    \end{macrocode}
 % \end{macro}
 
@@ -2694,7 +2759,8 @@ filename: \mpostgetname{sec8}
     \edef\mpi@figfile{\mpi@template{\thempi@count}}%
   \fi%
 %    \end{macrocode}
-% Save filename to label, warn if label has already been defined:
+% Save filename to label, warn if label has already been defined,
+% remember all labels for checking whether unused:
 %    \begin{macrocode}
   \ifx\mpi@figlabel\mpi@empty\else%
     \expandafter\ifx\csname mpi@l@\mpi@figlabel\endcsname\relax\else%
@@ -2702,6 +2768,9 @@ filename: \mpostgetname{sec8}
         overwriting}{}%
     \fi%
     \expandafter\xdef\csname mpi@l@\mpi@figlabel\endcsname{\mpi@figfile}%
+    \ifmpi@warnunused\ifmpi@figshow\else%
+      \xdef\mpi@unusedlist{\mpi@unusedlist{\mpi@figlabel}}%
+    \fi\fi%
   \fi%
 %    \end{macrocode}
 % Prepare for recording; start file and content section (if needed),
@@ -2758,13 +2827,15 @@ filename: \mpostgetname{sec8}
 % |\mpostuse| includes a metapost figure which was declared earlier
 % via its label. The optional argument is passed as the optional
 % argument for |\includegraphics|.
-% Remember if a file is currently open for writing:
+% Remember that the label has been used,
+% remember if a file is currently open for writing:
 %    \begin{macrocode}
 \newcommand{\mpostuse}[2][]{%
   \expandafter\ifx\csname mpi@l@#2\endcsname\relax%
     \PackageWarning{mpostinl}{unknown label `#2'}{}%
     \mpostplaceholder[label]{#2}%
   \else%
+    \ifmpi@warnunused\expandafter\gdef\csname mpi@lu@#2\endcsname{}\fi%
     \mpi@graphics[#1]{\csname mpi@l@#2\endcsname}%
     \ifmpi@infile\global\mpi@showinfiletrue\fi%
   \fi%
@@ -2774,13 +2845,15 @@ filename: \mpostgetname{sec8}
 
 % \begin{macro}{\mpostgetname}
 % |\mpostgetname| gets the filename of a figure declared earlier
-% via its label and returns it in the macro |\mpostfigurename|:
+% via its label and returns it in the macro |\mpostfigurename|.
+% Remember that the label has been used:
 %    \begin{macrocode}
 \newcommand{\mpostgetname}[1]{%
   \expandafter\ifx\csname mpi@l@#1\endcsname\relax%
     \PackageWarning{mpostinl}{unknown label `#1'}{}%
     \let\mpostfigurename\relax%
   \else%
+    \ifmpi@warnunused\expandafter\gdef\csname mpi@lu@#1\endcsname{}\fi%
     \edef\mpostfigurename{\csname mpi@l@#1\endcsname}%
   \fi%
 }
@@ -2795,7 +2868,7 @@ filename: \mpostgetname{sec8}
 
 % |\mpostfile| sets up a new metapost file.
 % If the previous file is still open,
-% it will be closed and processed first.
+% it will be closed and processed first:
 %    \begin{macrocode}
 \newcommand{\mpostfile}[2][]{%
   \mpi@closefile%
@@ -2808,9 +2881,24 @@ filename: \mpostgetname{sec8}
 
 % \begin{macro}{\mpostdone}
 % |\mpostdone| closes the present metapost file
-% and processes it if applicable.
+% and processes it if applicable:
 %    \begin{macrocode}
 \newcommand{\mpostdone}{\mpi@closefile}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\mpostuse<>}
+% This overwrites the definition of |\mpostfile|
+% to accept the overlay option |<|\ldots|>|
+% of the \textsf{beamer} package:
+%    \begin{macrocode}
+\ifmpi@beamer\@ifclassloaded{beamer}{
+  \let\mpi@plain@mpostuse\mpostuse%
+  \newcommand<>{\mpostuse}[2][]{\begingroup%
+    \expandafter\def\expandafter\includegraphics\expandafter%
+      {\includegraphics#3}%
+    \mpi@plain@mpostuse[#1]{#2}\endgroup}%
+}{}\fi
 %    \end{macrocode}
 % \end{macro}
 

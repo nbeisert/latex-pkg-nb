@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{mpostinl}[2018/02/09 v1.3 metapost inline figures]
+\ProvidesPackage{mpostinl}[2018/03/01 v1.4 metapost inline figures]
 
 \RequirePackage{verbatim}
 \RequirePackage{graphicx}
@@ -47,6 +47,8 @@
 \newif\ifmpi@nowkeep\mpi@nowkeepfalse
 \newif\ifmpi@include\mpi@includefalse
 \newif\ifmpi@defglobal\mpi@defglobalfalse
+\newif\ifmpi@warnunused\mpi@warnunusedtrue
+\newif\ifmpi@beamer\mpi@beamertrue
 
 \def\mpi@mpostmem{}
 \def\mpi@mpostcompiler{}
@@ -79,6 +81,8 @@
 \define@key{\mpi@group}{command}[]{\def\mpi@mpostcompiler{#1}}
 \define@key{\mpi@group}{class}{\def\mpi@latexclass{#1}}
 \define@key{\mpi@group}{classopt}[]{\def\mpi@latexoptions{[#1]}}
+\define@key{\mpi@group}{beamer}[true]{\csname mpi@beamer#1\endcsname}
+\define@key{\mpi@group}{warnunused}[true]{\csname mpi@warnunused#1\endcsname}
 \define@key{\mpi@group}{now}[true]{\csname mpi@nowactive#1\endcsname}
 \define@key{\mpi@group}{nowall}[true]{\csname mpi@now#1\endcsname}
 \define@key{\mpi@group}{nowkeep}[true]{\csname mpi@nowkeep#1\endcsname}
@@ -98,6 +102,8 @@
 \ifdefined\pdfmdfivesum\else\mpi@checksumfalse\fi
 
 \def\mpi@empty{}
+
+\def\mpi@unusedlist{}
 
 \begingroup\catcode`\"=12\relax\gdef\mpi@dblquotchar{"}\endgroup
 
@@ -156,6 +162,16 @@
       Rerun to update figures}{}%
   \fi\fi%
 }
+
+\def\mpi@warnunused#1{%
+  \begingroup\def\mpi@tmp{#1}\ifx\mpi@tmp\mpi@empty\else%
+    \ifcsname mpi@lu@#1\endcsname\else
+      \PackageWarning{mpostinl}{figure label `#1' not used}{}%
+    \fi%
+    \def\mpi@tmp{\mpi@warnunused}%
+  \fi\expandafter\endgroup\mpi@tmp%
+}
+\AtEndDocument{\expandafter\mpi@warnunused\mpi@unusedlist{}}
 
 \newcommand{\mpostplaceholder}[2][]{\parbox[c]{1in}{%
   \hrule\vrule\hfill%
@@ -491,6 +507,9 @@
         overwriting}{}%
     \fi%
     \expandafter\xdef\csname mpi@l@\mpi@figlabel\endcsname{\mpi@figfile}%
+    \ifmpi@warnunused\ifmpi@figshow\else%
+      \xdef\mpi@unusedlist{\mpi@unusedlist{\mpi@figlabel}}%
+    \fi\fi%
   \fi%
   \mpi@startcontent%
   \mpi@clearbuf%
@@ -531,6 +550,7 @@
     \PackageWarning{mpostinl}{unknown label `#2'}{}%
     \mpostplaceholder[label]{#2}%
   \else%
+    \ifmpi@warnunused\expandafter\gdef\csname mpi@lu@#2\endcsname{}\fi%
     \mpi@graphics[#1]{\csname mpi@l@#2\endcsname}%
     \ifmpi@infile\global\mpi@showinfiletrue\fi%
   \fi%
@@ -541,6 +561,7 @@
     \PackageWarning{mpostinl}{unknown label `#1'}{}%
     \let\mpostfigurename\relax%
   \else%
+    \ifmpi@warnunused\expandafter\gdef\csname mpi@lu@#1\endcsname{}\fi%
     \edef\mpostfigurename{\csname mpi@l@#1\endcsname}%
   \fi%
 }
@@ -555,6 +576,14 @@
 }
 
 \newcommand{\mpostdone}{\mpi@closefile}
+
+\ifmpi@beamer\@ifclassloaded{beamer}{
+  \let\mpi@plain@mpostuse\mpostuse%
+  \newcommand<>{\mpostuse}[2][]{\begingroup%
+    \expandafter\def\expandafter\includegraphics\expandafter%
+      {\includegraphics#3}%
+    \mpi@plain@mpostuse[#1]{#2}\endgroup}%
+}{}\fi
 
 \endinput
 %%
