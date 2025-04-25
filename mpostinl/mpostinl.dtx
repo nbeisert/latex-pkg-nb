@@ -18,10 +18,10 @@
 % and the derived files mpostinl.sty and mpinlsmp.tex
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mpostinl}[2017/02/27 v1.1 metapost inline figures]
-%<sample>\ProvidesFile{mpinlsmp.tex}[2017/02/27 v1.1 sample for mpostinl]
+%<package>\ProvidesPackage{mpostinl}[2017/04/01 v1.11 metapost inline figures]
+%<sample>\ProvidesFile{mpinlsmp.tex}[2017/04/01 v1.11 sample for mpostinl]
 %<*driver>
-%\ProvidesFile{mpostinl.drv}[2017/02/27 v1.1 mpostinl reference manual file]
+%\ProvidesFile{mpostinl.drv}[2017/04/01 v1.11 mpostinl reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -48,7 +48,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package mpostinl}}
-\date{27 February 2017, \textsf{v1.1}}
+\date{1 April 2017, \textsf{v1.11}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -1150,6 +1150,14 @@ such as diff. This feature is probably too difficult to implement.
 \subsection{Revision History}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.11:} 2017/04/01
+
+\begin{itemize}
+\item
+implementation of |fonts| option repaired
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.1:} 2017/02/27
 
 \begin{itemize}
@@ -2122,7 +2130,7 @@ filename: \mpostgetname{sec8}
 \newcommand{\mpi@composehead}{%
   \mpi@putlineno%
   \let\mpi@tmp\mpi@prologues%
-  \ifx\mpi@tmp\@undefined\def\mpi@tmp{\ifmpi@latex 3\else 2\fi}\fi%
+  \ifx\mpi@tmp\@undefined\def\mpi@tmp{\ifmpi@fonts 3\else 2\fi}\fi%
   \ifx\mpi@tmp\mpi@empty\else%
     \mpi@addbuf{prologues:=\mpi@tmp;}%
   \fi%
