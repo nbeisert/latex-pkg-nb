@@ -1,5 +1,5 @@
-sesstime v1.11
-Copyright 2016-2018 Niklas Beisert
+sesstime v1.12
+Copyright 2016-2019 Niklas Beisert
 
 sesstime is a LaTeX2e package to add timing marks to lecture notes
 in order to help managing the time available for presenting a given 

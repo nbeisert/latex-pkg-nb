@@ -1,6 +1,6 @@
 % \iffalse
 %
-% sesstime.dtx Copyright (C) 2016-2018 Niklas Beisert
+% sesstime.dtx Copyright (C) 2016-2019 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -19,10 +19,11 @@
 % with |stimsmp3.tex| and |stimsmp4.tex|.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{sesstime}[2018/01/17 v1.11 session timing marks]
-%<sample>\ProvidesFile{stimsamp.tex}[2018/01/17 v1.11 sample for sesstime]
+%<package>\ProvidesPackage{sesstime}[2019/01/17 v1.12 session timing marks]
+%<sample>\ProvidesFile{stimsamp.tex}[2019/01/17 v1.12 sample for sesstime]
 %<*driver>
-%\ProvidesFile{sesstime.drv}[2018/01/17 v1.11 sesstime reference manual file]
+\def\thedate#1{2019/01/17}\def\theversion#1{v1.12}
+\ProvidesFile{sesstime.drv}[\thedate{} \theversion{} sesstime reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -36,17 +37,25 @@
 \hypersetup{pdfpagemode=UseNone}
 \hypersetup{pdfsource={}}
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfcopyright={Copyright 2016-2018 Niklas Beisert.
+\hypersetup{pdfcopyright={Copyright 2016-2019 Niklas Beisert.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
 \hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
-\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K, Wolfgang-Pauli-Strasse 27}}
+\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K,
+  Wolfgang-Pauli-Strasse 27}}
 \hypersetup{pdfcontactpostcode={8093}}
 \hypersetup{pdfcontactcity={Zurich}}
 \hypersetup{pdfcontactcountry={Switzerland}}
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
 \hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
+
+\newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
+
+\parskip1ex
+\parindent0pt
+\let\olditemize\itemize
+\def\itemize{\olditemize\parskip0pt}
 
 \begin{document}
 
@@ -60,7 +69,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package sesstime}}
-\date{17 January 2018, \textsf{v1.11}}
+\date{\thedate{}, \theversion{}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -72,7 +81,10 @@ It also provides tools to record and
 estimate the progress throughout the course.
 \end{abstract}
 
+\begingroup
+\parskip0ex
 \tableofcontents
+\endgroup
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,11 +97,11 @@ estimate the progress throughout the course.
     \dimen@\prevdepth%
     \nointerlineskip%
     \if r#1%
-      \smash{\rlap{\hspace{\textwidth}\parbox[t]{1cm}%
-        {\raggedright\renewcommand{\bfdefault}{b}#2}}}%
+      \hbox{\smash{\rlap{\hspace{\textwidth}\parbox[t]{1cm}%
+        {\raggedright\renewcommand{\bfdefault}{b}#2}}}}%
     \else%
-      \smash{\llap{\parbox[t]{1cm}%
-        {\raggedleft\renewcommand{\bfdefault}{b}#2}}}%
+      \hbox{\smash{\llap{\parbox[t]{1cm}%
+        {\raggedleft\renewcommand{\bfdefault}{b}#2}}}}%
     \fi%
     \prevdepth\dimen@%
     \@esphack%
@@ -856,11 +868,7 @@ conditionally turn on automatic determination of sessions.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-\begingroup
-\parskip1ex
-\parindent0pt
-
-Copyright \copyright{} 2016--2018 Niklas Beisert
+Copyright \copyright{} 2016--2019 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
@@ -877,8 +885,6 @@ The Current Maintainer of this work is Niklas Beisert.
 This work consists of the files |README.txt|, |sesstime.ins| and |sesstime.dtx|
 as well as the derived files |sesstime.sty|, |stimsamp.tex|
 with |stimsmp3.tex|, |stimsmp4.tex| and |sesstime.pdf|.
-
-\endgroup
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Files and Installation}
@@ -957,6 +963,15 @@ Ignore leading and trailing spaces in the list of flags.
 \subsection{Revision History}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.12:} 2019/01/17
+
+\begin{itemize}
+\item
+bugfix for changed behaviour of |\smash| in \LaTeXe{} 2018/12/01
+%https://github.com/latex3/latex2e/issues/108
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.11:} 2018/01/17
 
 \begin{itemize}
@@ -1031,15 +1046,12 @@ block start/split/stop/next uniformised; lapse added
 basic functionality
 \end{itemize}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
 
 \settowidth\MacroIndent{\rmfamily\scriptsize 000\ }
-\parskip1ex
-\parindent0pt
 
  \DocInput{sesstime.dtx}
 
@@ -1554,11 +1566,11 @@ the list of sessions
       \dimen@\prevdepth%
       \nointerlineskip%
       \if r#1%
-        \smash{\rlap{\hspace{\textwidth}\parbox[t]{\sti@widthr}%
-          {\raggedright\renewcommand{\bfdefault}{b}#2}}}%
+        \hbox{\smash{\rlap{\hspace{\textwidth}\parbox[t]{\sti@widthr}%
+          {\raggedright\renewcommand{\bfdefault}{b}#2}}}}%
       \else%
-        \smash{\llap{\parbox[t]{\sti@widthl}%
-          {\raggedleft\renewcommand{\bfdefault}{b}#2}}}%
+        \hbox{\smash{\llap{\parbox[t]{\sti@widthl}%
+          {\raggedleft\renewcommand{\bfdefault}{b}#2}}}}%
       \fi%
       \prevdepth\dimen@%
       \@esphack%

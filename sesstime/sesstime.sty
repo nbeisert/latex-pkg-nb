@@ -6,7 +6,7 @@
 %%
 %% sesstime.dtx  (with options: `package')
 %% 
-%% Copyright (C) 2016-2018 Niklas Beisert
+%% Copyright (C) 2016-2019 Niklas Beisert
 %% 
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either version 1.3
@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{sesstime}[2018/01/17 v1.11 session timing marks]
+\ProvidesPackage{sesstime}[2019/01/17 v1.12 session timing marks]
 \RequirePackage{keyval}
 
 \def\sti@flags{}
@@ -92,11 +92,11 @@
       \dimen@\prevdepth%
       \nointerlineskip%
       \if r#1%
-        \smash{\rlap{\hspace{\textwidth}\parbox[t]{\sti@widthr}%
-          {\raggedright\renewcommand{\bfdefault}{b}#2}}}%
+        \hbox{\smash{\rlap{\hspace{\textwidth}\parbox[t]{\sti@widthr}%
+          {\raggedright\renewcommand{\bfdefault}{b}#2}}}}%
       \else%
-        \smash{\llap{\parbox[t]{\sti@widthl}%
-          {\raggedleft\renewcommand{\bfdefault}{b}#2}}}%
+        \hbox{\smash{\llap{\parbox[t]{\sti@widthl}%
+          {\raggedleft\renewcommand{\bfdefault}{b}#2}}}}%
       \fi%
       \prevdepth\dimen@%
       \@esphack%
