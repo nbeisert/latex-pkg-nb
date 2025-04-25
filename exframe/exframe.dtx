@@ -20,11 +20,11 @@
 % exfserpe.tex, exfserpf.tex, exfsermk.sh, exfsermk.mak.
 %
 %<package|samplesingle|samplemultimain>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{exframe}[2019/05/01 v3.2 Framework for Exercise Problems]
-%<samplesingle>\ProvidesFile{exfsamp.tex}[2019/05/01 v3.2 standalone sample for exframe]
-%<samplemultimain>\ProvidesFile{exfserm.tex}[2019/05/01 v3.2 multipart sample for exframe]
+%<package>\ProvidesPackage{exframe}[2019/06/15 v3.3 Framework for Exercise Problems]
+%<samplesingle>\ProvidesFile{exfsamp.tex}[2019/06/15 v3.3 standalone sample for exframe]
+%<samplemultimain>\ProvidesFile{exfserm.tex}[2019/06/15 v3.3 multipart sample for exframe]
 %<*driver>
-\def\thedate#1{2019/05/01}\def\theversion#1{v3.2}
+\def\thedate#1{2019/06/15}\def\theversion#1{v3.3}
 \ProvidesFile{exframe.dtx}[\thedate{} \theversion{} exframe reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -218,7 +218,7 @@ a subproblem, part or an individual question of an exercise problem:
 \end{tabular}
 \end{center}
 %
-A |subproblem| block must be contained within a |problem| block
+A |subproblem| environment must be contained within a |problem| environment
 (however, a |problem| block need not contain |subproblem| blocks).
 
 \DescribeEnv{solution}
@@ -232,13 +232,14 @@ the solution to a problem or a subproblem:
 \end{tabular}
 \end{center}
 %
-A |solution| block should be at the end of a |subproblem| or |problem| block
+A |solution| environment should be
+at the end of a |subproblem| or |problem| environment
 (it is not mandatory to provide a |solution|).
-It can be contained within the corresponding block or it can follow it.
+It can be contained within the corresponding environment or it can follow it.
 Depending on the choice of solution display, see \secref{sec:solutions},
 the output may have a slightly different layout.
 In terms of logic, it is preferred
-to define a solution \emph{within} the corresponding block;
+to define a solution \emph{within} the corresponding environment;
 this may also have some technical advantages and produce
 a slightly better result in terms of layout.
 
@@ -259,10 +260,11 @@ There may or may not be additional auxiliary text introducing the problems.
 A header will be added to the sheet according to the specified layout.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Solution Display}
+\subsection{Solution and Problem Display}
 \label{sec:solutions}
 
-There are several options to control the output of solutions.
+There are several options to control the output of solutions
+and of problems.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DescribeMacro{solutions}
@@ -327,15 +329,11 @@ or display them at a manually chosen location (|manual|).
 Note that typically solutions are defined at the end of a (sub)problem
 and therefore the choice |here| is similar to (|sub|)|problem|.
 The latter form, however, makes sure that a solution
-does not inherit the margin of the parent block.
-The alternate mode |here*| does not intermediately store
-the solution block content in a token buffer;
-this might resolve some tokenisation issues
-in special circumstances.
+does not inherit the margin of the parent environment.
 The alternate modes |problem*| and |subproblem*|
-positions the solution \emph{after} the (sub)problem block
+positions the solution \emph{after} the (sub)problem environment
 such that it does not inherit any layout,
-but also no definitions made in the parent block.
+but also no definitions made in the parent environment.
 In |manual| mode, all solutions are collected (with appropriate headers)
 until they are output by the directive |\insertsolutions|.
 If no solutions are stored in the buffer
@@ -352,7 +350,8 @@ Writing to a file is initiated by:
 \end{center}
 %
 The optional argument describes the filename as \textit{filename}|.sol|;
-no argument defaults to the main tex filename as |\jobname.sol|.
+no argument defaults to the main tex filename as |\jobname.sol|;
+the extension |.sol| can be customised by the configuration |extsolutions|.
 This mode overrides the |solutionbelow| behaviour described above;
 all subsequent solutions are written to the file.
 The file is closed by |\closesolutions| and the display of solutions
@@ -371,6 +370,94 @@ Solutions are read from a file by:
 %
 This command outputs a sectional title
 and reads the file via |\input{|\textit{filename}|.sol}|.
+
+\medskip
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{solutionbuf}
+\DescribeMacro{problembuf}
+The package offers similar functionality to control the display of problems.
+In order to have any control over the content of |problem| environments,
+the latter needs to be read into an internal buffer.
+Reading of solutions and problems to internal buffers is activated
+or deactivated by:
+%
+\begin{center}
+\begin{tabular}{l}
+|\exercisesetup{solutionbuf|[|=true|\textbar|false|]|}|\\
+|\exercisesetup{problembuf|[|=true|\textbar|false|]|}|
+\end{tabular}
+\end{center}
+%
+By default, |solution| environments are read to an internal buffer,
+while the content of |problem| environments is processed directly
+by the \TeX\ engine.
+Therefore, the following options to control the display
+of |problem| environments require the statement |\exercisesetup{problembuf}|.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{problemmanual}
+\DescribeMacro{\insertproblems}
+The immediate display of |problem| environments is controlled by:
+%
+\begin{center}
+|\exercisestyle{problemmanual|[|=true|\textbar|false|]|}|
+\end{center}
+%
+In the default automatic mode, problems are displayed directly
+where they are declared.
+In manual mode, problems are collected to an internal buffer,
+and only displayed by issuing |\insertproblems|.
+
+Note that |solution| environments should be
+declared within the corresponding |problem| environment in order to
+preserve their appropriate association.
+The |solution| environment is then processed at the place
+where the |problem| environment is displayed,
+and it may (or may not) be deferred further.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{\writeproblems}
+\DescribeMacro{\readproblems}
+Problems can be written out to an external file for later usage.
+The functionality is analogous to solutions
+and uses the macros:
+%
+\begin{center}
+\begin{tabular}{l}
+|\writeproblems[|\textit{filename}|]|\\
+|\readproblems[|\textit{filename}|]|
+\end{tabular}
+\end{center}
+%
+The optional argument describes the filename as \textit{filename}|.prb|;
+no argument defaults to the main tex filename as |\jobname.prb|;
+the extension |.prb| can be customised by the configuration |extproblems|.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DescribeMacro{disable}
+\DescribeMacro{insertproblemselect}
+The display of a particular |problem|
+can be suppressed altogether by an optional argument:
+%
+\begin{center}
+|\begin{problem}[disable]|
+\end{center}
+%
+
+This option can be exploited to automatically
+suppress certain classes of problems as follows:
+A hook function |insertproblemselect| declared by:
+%
+\begin{center}
+|\exerciseconfig{insertproblemselect}[1]{|\textit{code}|}|
+\end{center}
+%
+can call
+|\setproblemdata{disable}| whenever a problem is to be suppressed.
+In order to decide, the optional argument of the |problem| environment
+is passed on to the hook function as the single argument.
+Note that the argument needs to be processed manually.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Metadata}
@@ -477,8 +564,10 @@ The package offers a similar mechanism to describe and use metadata
 for sheets and problems:
 %
 \begin{center}
-|\begin{sheet}[|\textit{opts}|]|
+\begin{tabular}{l}
+|\begin{sheet}[|\textit{opts}|]|\\
 |\begin{problem}[|\textit{opts}|]|
+\end{tabular}
 \end{center}
 %
 The argument \textit{opt}
@@ -523,22 +612,26 @@ contains the raw title as specified by |title|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DescribeMacro{\defsheetdata}
+\DescribeMacro{\setsheetdata}
 \DescribeMacro{\getsheetdata}
 \DescribeMacro{\sheetdataempty}
 \DescribeMacro{\defproblemdata}
+\DescribeMacro{\setproblemdata}
 \DescribeMacro{\getproblemdata}
 \DescribeMacro{\problemdataempty}
 Metadata for sheets can be used in the same way as the global metadata.
-The following directives are analogous to |\defexecisesdata|,
-|\getproblemdata| and |\problemdataempty|:
+The following directives are analogous to |\defexercisedata|,
+|\exercisedata|, |\getexercisedata| and |\exercisedataempty|:
 %
 \begin{center}
 \begin{tabular}{l}
 |\defsheetdata{|\textit{key}|}|\\
+|\setsheetdata{|\textit{data}|}|\\
 |\getsheetdata{|\textit{key}|}|\\
 |\sheetdataempty{|\textit{key}|}|%
   |{|\textit{empty code}|}{|\textit{filled code}|}|\\[1ex]
 |\defproblemdata{|\textit{key}|}|\\
+|\setproblemdata{|\textit{data}|}|\\
 |\getproblemdata{|\textit{key}|}|\\
 |\problemdataempty{|\textit{key}|}|%
   |{|\textit{empty code}|}{|\textit{filled code}|}|
@@ -631,12 +724,15 @@ keyword(s) for the problem;
 \item |comment|:
 some comment on the problem.
 \item |optional|
-(enabled by default):
+(display enabled by default):
 whether addressing the problem is mandatory or optional;
 by default the text will be displayed after the title
 in italic shape.
 \end{itemize}
 %
+By default, only the |optional| items are displayed,
+all other types of items are hidden;
+controlling the display for each type of item is described below.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DescribeMacro{extdata}
@@ -740,16 +836,19 @@ By default, such points will be printed as
 [\textit{regular}][|+|\textit{bonus}] where 0 components are omitted.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\DescribeMacro{pointsat}
-\DescribeMacro{subpointsat}
+\DescribeMacro{problempointsat}
+\DescribeMacro{subproblempointsat}
+\DescribeMacro{solutionpointsat}
 The location where points of problems and subproblems
 shall be displayed can be adjusted individually by:
 %
 \begin{center}
 \begin{tabular}{l}
-|\problemstyle{points=start|\textbar|start*|\textbar|margin|%
+|\exercisestyle{problempointsat=start|\textbar|start*|\textbar|margin|%
   \textbar|end|\textbar|manual|\textbar|off}|\\
-|\problemstyle{subpoints=start|\textbar|start*|\textbar|margin|%
+|\exercisestyle{subproblempointsat=start|\textbar|start*|\textbar|margin|%
+  \textbar|end|\textbar|manual|\textbar|off}|\\
+|\exercisestyle{solutionpointsat=start|\textbar|start*|\textbar|margin|%
   \textbar|end|\textbar|manual|\textbar|off}|
 \end{tabular}
 \end{center}
@@ -785,24 +884,46 @@ the points can be accessed by:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DescribeMacro{\getsheetpoints}
 \DescribeMacro{\getproblempoints}
+\DescribeMacro{\getsubproblempoints}
+\DescribeMacro{\getsolutionpoints}
 \DescribeMacro{\extractpoints}
+\DescribeMacro{\switchpoints}
 The package allows to read the point totals
 for other sheets and problems:
 %
 \begin{center}
 \begin{tabular}{l}
 |\getsheetpoints{|\textit{tag}|}|\\
-|\getproblempoints{|\textit{tag}|}|
+|\getproblempoints{|\textit{tag}|}|\\
+|\getsubproblempoints{}|\\
+|\getsolutionpoints{}|
 \end{tabular}
 \end{center}
 %
 Here \textit{tag} is the tag assigned to the corresponding sheet or problem,
 see \secref{sec:labels}.
+An empty argument \textit{tag} refers to the current
+sheet, (sub)problem or solution.
 If bonus points are used, the points will be returned
 in the format [\textit{regular}][|+|\textit{bonus}];
 the components \textit{regular} and \textit{bonus}
 can be extracted from the returned expression
 by |\extractpoints| and |\extractpoints*|, respectively.
+A convenient case switch of the returned value can be performed by:
+%
+\begin{center}
+|\switchpoints{|\textit{reg}|}{|\textit{bonus}|}{|\textit{both}|}{|%
+\textit{none}|}{|\textit{val}|}|
+\end{center}
+%
+Here \textit{val} is the value returned from the points register,
+\textit{reg} is displayed for purely regular points,
+\textit{bonus} is displayed for purely bonus points,
+\textit{both} is displayed for mixed points,
+\textit{none} is displayed for no points.
+In each of the four expressions,
+|#1| will be replaced by the regular points
+and |#2| by the bonus points.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \DescribeMacro{\awardpoints}
@@ -1103,22 +1224,28 @@ The package defines a couple of standard styles:
 %
 \begin{itemize}
 \item |solutionbelow=|\textit{pos}
-(can take values |here|, |here*|, |subproblem|, |subproblem*|,
+(can take values |here|, |subproblem|, |subproblem*|,
 |problem|, |problem*|, |sheet| and |manual|;
 initially set to |subproblem|) --
-positions the solutions below the indicated blocks;
+positions the solutions below the indicated environments;
 see \secref{sec:solutions} for details.
 
-\item |pointsat=|\textit{pos}
+\item |problempointsat=|\textit{pos}
 (can take values |start|, |start*|, |margin|, |end| and |manual|;
 initially set to |start|) --
 displays points in problems at the indicated location;
 see \secref{sec:points} for details.
 
-\item |subpointsat=|\textit{pos}
+\item |subproblempointsat=|\textit{pos}
 (can take values |start|, |start*|, |margin|, |end| and |manual|;
 initially set to |end|) --
 displays points in subproblems at the indicated location;
+see \secref{sec:points} for details.
+
+\item |solutionpointsat=|\textit{pos}
+(can take values |start|, |start*|, |margin|, |end| and |manual|;
+initially set to |end|) --
+displays points in solutions at the indicated location;
 see \secref{sec:points} for details.
 
 \item |problemby={|\textit{counter}|}| --
@@ -1340,6 +1467,21 @@ enable/disable automatically assigning labels
 (|prob:\problemtag|; can be adjusted)
 to problems according to their tag |\problemtag|.
 
+\item |solutionbuf|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |true|) --
+enable/disable buffering for |solution| environments
+in order to control their display;
+disabling buffering can be helpful
+in debugging faulty |solution| environments;
+it might also resolve some tokenisation issues in special circumstances;
+note that the display of solutions cannot be suppressed
+with |\exercisesetup{solutions=false}| when buffering if disabled.
+
+\item |problembuf|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+enable/disable buffering for |problem| environments
+in order to control their display.
+
 \end{itemize}
 %
 
@@ -1533,18 +1675,53 @@ versions of this package:
 %
 \begin{itemize}
 \item
+Add a section on useful combinations of customisation settings
+to achieve specific goals. Please send suggestions.
+\item
 Option to hide problem text while maintaining access to embedded solutions
-(for a version containing only solutions)
-or to postpone problems (for collecting them in an exercises section):
-this is difficult to implement because the problem block
-cannot simply be discarded, but must be scanned very carefully
-for the embedded solution.
+(for a version containing only solutions):
+this is difficult to implement because the problem environment
+cannot simply be discarded, but would have to be scanned very carefully
+for the embedded solution;
+instead process problems to some document and save solutions to file,
+then read solutions from different document.
 \item
 Define structures for multiple-choice questions.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v3.3:} 2019/06/15
+
+\begin{itemize}
+\item
+control display of |problem| environments via
+package option |problembuf|:
+manual display, write to file, disable individual problems
+\item
+|solutionbelow| mode |here*| superseded by
+package option |solutionbuf|
+\item
+display total points within solution: |solutionpointsat|
+(thanks to Till Bargheer for suggestion)
+\item
+read points for current sheet, (sub)problem and solution
+(thanks to Johannes Hahn for suggestion)
+\item
+case switch for bonus points
+(thanks to Johannes Hahn for suggestion)
+\item
+option to |disable| particular problems,
+control by hook function
+(thanks to Manuel Benz for suggestion)
+\item
+provided interface |\showfracpoints| and |\exerciseconfig{frac}|
+for fractional points display
+\item
+filename extensions configurable
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v3.2:} 2019/05/01
@@ -1555,7 +1732,7 @@ bonus points can be specified as
 |points=|[\textit{regular}][|+|\textit{bonus}]
 \item
 |solutionbelow| mode |here*| added
-for direct processing of the solution block
+for direct processing of the solution environment
 \item
 multipart sample added
 \end{itemize}
@@ -1569,10 +1746,11 @@ fix interaction with
 package \href{http://ctan.org/pkg/calc}{\textsf{calc}}
 (thanks to Johannes Hahn for bug report)
 \item
-fix style |fracpoints| in combination with some [|sub|]|pointsat| choices
+fix style |fracpoints| in combination
+with some [|sub|]|problempointsat| choices
 (thanks to Johannes Hahn for bug report)
 \item
-fix spacing for [|sub|]|pointsat=margin|
+fix spacing for [|sub|]|problempointsat=margin|
 (thanks to Johannes Hahn for bug report)
 \end{itemize}
 
@@ -1750,6 +1928,16 @@ dedicated layout and macros for author's exercise sheets
 \exerciseconfig{countersubproblemmax}{vii)}
 %    \end{macrocode}
 
+% Automatically display an asterisk for all
+% subproblems with bonus points only;
+% remove space to separate items:
+%    \begin{macrocode}
+\exerciseconfig{insertsubprobleminfo}{%
+ \switchpoints{}{\addprobleminfo*{%
+   \hspace{-\getexerciseconfig{skipsubprobleminfo}}*}}%
+  {}{}{\getsubproblempoints{}}}
+%    \end{macrocode}
+
 % Redefine the terms to be used for sheet(s);
 % here, a German version:
 %    \begin{macrocode}
@@ -1761,7 +1949,7 @@ dedicated layout and macros for author's exercise sheets
 % change margin display to use the left margin;
 % use the abbreviated form `$n$p.':
 %    \begin{macrocode}
-\exercisestyle{pointsat=margin}
+\exercisestyle{problempointsat=margin}
 \reversemarginpar
 \exerciseconfig{composepointsmargin}[1]{#1p.}
 \exerciseconfig{composepointspairmargin}[2]{
@@ -1854,7 +2042,7 @@ Compute the sum
 \end{equation}
 %    \end{macrocode}
 
-% Provide a solution for the subproblem (within the subproblem block):
+% Provide a solution for the subproblem (within the subproblem environment):
 %    \begin{macrocode}
 \begin{solution}
 The result is
@@ -2220,7 +2408,7 @@ This is beyond the scope of this example.
 % Number figures within sheet to provide a stable numbering
 % upon insertion/deletion of new figures or partial compilation.
 % Do not warn about unused figures when preparing without solutions
-% (figures for solutions should be declared outside |solution| blocks):
+% (figures for solutions should be declared outside |solution| environments):
 %    \begin{macrocode}
 \mpostsetup{checksum}
 \if\draftver y\mpostsetup{now,nowall}\fi
@@ -2620,7 +2808,7 @@ label(btex \figure etex, center(paths[1]));
 
 % Problem body without a figure;
 % this time the |solution| environments are
-% included in the |subproblem| blocks:
+% included in the |subproblem| environments:
 %    \begin{macrocode}
 \lorem
 
@@ -2674,7 +2862,7 @@ label(btex \figure etex, center(paths[1]));
 % allows to compile each problem individually.
 %
 % To that end, prepare a file |exfserp|\textit{nn}|.tex|
-% containing the problem block |\begin{problem}| \ldots |\end{problem}|.
+% containing the |problem| environment.
 % This file should start with:
 %    \begin{macrocode}
 %%\providecommand{\printsol}{n}
@@ -2995,7 +3183,7 @@ clean-all:  clean
 % The package loads the package
 % \textsf{verbatim} and \textsf{xkeyval}
 % if not yet present.
-% \textsf{verbatim} is used for solution block reading
+% \textsf{verbatim} is used for solution environment reading
 % and \textsf{xkeyval} is used for extended options processing:
 %    \begin{macrocode}
 \RequirePackage{verbatim}
@@ -3060,7 +3248,6 @@ clean-all:  clean
 \newcommand{\exf@ifis}[3]%
   {\def\exf@tmp{#2}\ifx#1\exf@tmp#3\fi}
 %    \end{macrocode}
-
 
 % \macro{\exf@href}
 % Display text with hyperreference passed by macro |#1|
@@ -3166,6 +3353,15 @@ clean-all:  clean
 % Write warning message to document for better detection of inconsistencies:
 %    \begin{macrocode}
 \define@boolkey{exf@setup}[exf@]{warntext}[true]{}
+%    \end{macrocode}
+% Activate buffering of solutions:
+%    \begin{macrocode}
+\define@boolkey{exf@setup}[exf@]{solutionbuf}[true]{}
+\exf@solutionbuftrue
+%    \end{macrocode}
+% Activate buffering of problems:
+%    \begin{macrocode}
+\define@boolkey{exf@setup}[exf@]{problembuf}[true]{}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3298,6 +3494,10 @@ clean-all:  clean
 %    \begin{macrocode}
 \exerciseconfig{styletitlesolutions}{\normalsize}
 %    \end{macrocode}
+% Style for problem block title:
+%    \begin{macrocode}
+\exerciseconfig{styletitleproblems}{\Large}
+%    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Spacing.}
@@ -3364,19 +3564,36 @@ clean-all:  clean
 \exerciseconfig{skipsolutionitemsub}{0pt}
 %    \end{macrocode}
 
-% Spaces related to blocks of solutions;
+% Spaces related to solution blocks;
 % space above and below a solution block:
 %    \begin{macrocode}
 \exerciseconfig{skipsolutionsabove}{1.5ex plus 0.5ex minus 1ex}
 \exerciseconfig{skipsolutionsbelow}{1.5ex plus 0.5ex minus 1ex}
 %    \end{macrocode}
-% Space following problem titles in a solution block:
+% Space above problem titles in a solution block:
 %    \begin{macrocode}
-\exerciseconfig{skipsolutionsproblem}{1.0ex plus 0ex minus 0.5ex}
+\exerciseconfig{skipsolutionsproblemabove}{1.0ex plus 0ex minus 0.5ex}
+%    \end{macrocode}
+% Space following problem titles in a solution block
+% (with legacy definition):
+%    \begin{macrocode}
+\exerciseconfig{skipsolutionsproblemtitle}{1.0ex plus 0ex minus 0.5ex}
+\exerciseconfig{skipsolutionsproblem}{\exf@config@skipsolutionsproblemtitle}
 %    \end{macrocode}
 % Space following title of a solution block:
 %    \begin{macrocode}
 \exerciseconfig{skipsolutionstitle}{1.0ex plus 0ex minus 0.5ex}
+%    \end{macrocode}
+
+% Spaces related to problem blocks;
+% space above and below a problem block:
+%    \begin{macrocode}
+\exerciseconfig{skipproblemsabove}{1.5ex plus 0.5ex minus 1ex}
+\exerciseconfig{skipproblemsbelow}{1.5ex plus 0.5ex minus 1ex}
+%    \end{macrocode}
+% Space following title of a problem block:
+%    \begin{macrocode}
+\exerciseconfig{skipproblemstitle}{1.0ex plus 0ex minus 0.5ex}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3410,6 +3627,14 @@ clean-all:  clean
 %    \begin{macrocode}
 \exerciseconfig{insertsolutionsafter}{}
 %    \end{macrocode}
+% Code to insert before a problem block is displayed:
+%    \begin{macrocode}
+\exerciseconfig{insertproblemsbefore}{}
+%    \end{macrocode}
+% Code to insert after a problem block is displayed:
+%    \begin{macrocode}
+\exerciseconfig{insertproblemsafter}{}
+%    \end{macrocode}
 % Code to insert before a problem is displayed:
 %    \begin{macrocode}
 \exerciseconfig{insertproblembefore}{}
@@ -3427,6 +3652,10 @@ clean-all:  clean
 % by means of |\addprobleminfo|:
 %    \begin{macrocode}
 \exerciseconfig{insertprobleminfo}{}
+%    \end{macrocode}
+% Code to determine the display of problems:
+%    \begin{macrocode}
+\exerciseconfig{insertproblemselect}[1]{}
 %    \end{macrocode}
 % Analogous definitions for subproblems:
 %    \begin{macrocode}
@@ -3546,10 +3775,20 @@ clean-all:  clean
 \exerciseconfig{composetitlesolutions}%
   {\getexerciseconfig{termsolutions}}
 %    \end{macrocode}
+% Compose title for problem block:
+%    \begin{macrocode}
+\exerciseconfig{composetitleproblems}%
+  {\getexerciseconfig{termproblems}}
+%    \end{macrocode}
 % Compose table of contents line for solution block:
 %    \begin{macrocode}
 \exerciseconfig{composetocsolutions}%
   {\getexerciseconfig{composetitlesolutions}}
+%    \end{macrocode}
+% Compose table of contents line for problem block:
+%    \begin{macrocode}
+\exerciseconfig{composetocproblems}%
+  {\getexerciseconfig{composetitleproblems}}
 %    \end{macrocode}
 % Compose sectional title for solution following a single problem;
 % arguments are problem number and raw title:
@@ -3557,7 +3796,7 @@ clean-all:  clean
 \exerciseconfig{composetitlesolutionsproblemsingle}[2]%
   {\getexerciseconfig{termsolution}}
 %    \end{macrocode}
-% Compose sectional title for solution of one problem within a block;
+% Compose sectional title for solution of one problem within a solution block;
 % arguments are problem number and raw title:
 %    \begin{macrocode}
 \exerciseconfig{composetitlesolutionsproblemmulti}[2]%
@@ -3647,6 +3886,21 @@ clean-all:  clean
   (\getexerciseconfig{composepointspair}{#1}{#2}*%
    \exerciseifnotempty{#3}{; #3})\fi}
 %    \end{macrocode}
+% Compose pairs of points for designated situations:
+%    \begin{macrocode}
+\exerciseconfig{composepointspairbodyproblem}[2]{%
+  \getexerciseconfig{composepointspairbody}{#1}{#2}}
+\exerciseconfig{composepointspairbodysubproblem}[2]{%
+  \getexerciseconfig{composepointspairbody}{#1}{#2}}
+\exerciseconfig{composepointspairbodysolution}[2]{%
+  \getexerciseconfig{composepointspairbody}{#1}{#2}}
+\exerciseconfig{composepointspairstartproblem}[2]{%
+  \getexerciseconfig{composepointspairstart}{#1}{#2}}
+\exerciseconfig{composepointspairstartsubproblem}[2]{%
+  \getexerciseconfig{composepointspairstart}{#1}{#2}}
+\exerciseconfig{composepointspairstartsolution}[2]{%
+  \getexerciseconfig{composepointspairstart}{#1}{#2}}
+%    \end{macrocode}
 
 % Display points in the margin:
 %    \begin{macrocode}
@@ -3682,7 +3936,8 @@ clean-all:  clean
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Further Definitions.}
 %
-% \macro{label...}
+% \macro{labelsheet}
+% \macro{labelproblem}
 % Templates for automatic generation of labels from tags:
 %    \begin{macrocode}
 \exerciseconfig{labelsheet}[1]{sheet:#1}
@@ -3696,8 +3951,17 @@ clean-all:  clean
 %    \begin{macrocode}
 \exerciseconfig{toclevelsheet}{}
 \exerciseconfig{toclevelproblem}{}
+\exerciseconfig{toclevelproblems}{}
 \exerciseconfig{toclevelsolution}{}
 \exerciseconfig{toclevelsolutions}{}
+%    \end{macrocode}
+
+% \macro{extsolutions}
+% \macro{extproblems}
+% Filename extension for solution and problem blocks:
+%    \begin{macrocode}
+\exerciseconfig{extsolutions}{.sol}
+\exerciseconfig{extproblems}{.prb}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3741,13 +4005,20 @@ clean-all:  clean
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Default Exercise Styles.}
 %
+% \macro{problemmanual}
+% Delay display of problems:
+%    \begin{macrocode}
+\define@boolkey{exf@style}[exf@]{problemmanual}[true]{}
+\exf@problemmanualfalse
+%    \end{macrocode}
+%
 % \macro{solutionbelow}
 % Choose location for solutions:
 %    \begin{macrocode}
 \def\exf@solutionbelow{subproblem}
 \define@choicekey{exf@style}{solutionbelow}%
-  {here,here*,subproblem,subproblem*,problem,problem*,sheet,manual}%
-  {\ifexf@infile\else\def\exf@solutionbelow{#1}\fi}
+  {here,subproblem,subproblem*,problem,problem*,sheet,manual}%
+  {\ifexf@solfile@open\else\gdef\exf@solutionbelow{#1}\fi}
 %    \end{macrocode}
 %
 % \macro{sheetequation}
@@ -3761,16 +4032,26 @@ clean-all:  clean
 \exf@style@solutionequationtrue
 %    \end{macrocode}
 %
-% \macro{pointsat}
-% \macro{subpointsat}
-% Choose where points of problems and subproblems are displayed:
+% \macro{problempointsat}
+% \macro{subproblempointsat}
+% \macro{solutionpointsat}
+% Choose where points of (sub)problems and solutions are displayed:
 %    \begin{macrocode}
 \def\exf@pointsat{start}
+\define@choicekey{exf@style}{problempointsat}%
+  {start,start*,margin,end,manual,off}{\def\exf@pointsat{#1}}
 \define@choicekey{exf@style}{pointsat}%
   {start,start*,margin,end,manual,off}{\def\exf@pointsat{#1}}
 \def\exf@subpointsat{end}
+\define@choicekey{exf@style}{subproblempointsat}%
+  {start,start*,margin,end,manual,off}{\def\exf@subpointsat{#1}}
 \define@choicekey{exf@style}{subpointsat}%
   {start,start*,margin,end,manual,off}{\def\exf@subpointsat{#1}}
+\def\exf@solpointsat{off}
+\define@choicekey{exf@style}{solutionpointsat}%
+  {start,start*,margin,end,manual,off}{\def\exf@solpointsat{#1}}
+\define@choicekey{exf@style}{solpointsat}%
+  {start,start*,margin,end,manual,off}{\def\exf@solpointsat{#1}}
 %    \end{macrocode}
 %
 % \macro{problemby}
@@ -3800,7 +4081,7 @@ clean-all:  clean
 % Use vulgar fractions to display binary fractional points:
 %    \begin{macrocode}
 \defexercisestyle{fracpoints}%
-  {\exerciseconfig{composepointsnum}[1]{\protect\exf@nicefrac{##1}}}
+  {\exerciseconfig{composepointsnum}[1]{\protect\showfracpoints{##1}}}
 %    \end{macrocode}
 %
 % \macro{twoside}
@@ -3843,7 +4124,8 @@ clean-all:  clean
 %    \begin{macrocode}
 \defexercisestyle{solutionsep}{%
   \exerciseconfig{insertsolutionsbefore}{\hrule\nopagebreak[3]\vspace{0.5ex}}%
-  \exerciseconfig{insertsolutionsafter}{\nopagebreak[3]\vspace{1.0ex}\hrule}}
+  \exerciseconfig{insertsolutionsafter}%
+   {\removelastskip\nopagebreak[3]\vspace{1.0ex}\hrule}}
 %    \end{macrocode}
 % \macro{plainheader}
 % Declare a simple sheet header with some configurable options;
@@ -3967,8 +4249,13 @@ clean-all:  clean
   \define@key{exf@sheet}{#1}%
    {\exf@csdo\def{exf@data@sheet@#1}{##1}}}
 %    \end{macrocode}
+% \macro{\setsheetdata}
+% Set sheet metadata:
+%    \begin{macrocode}
+\newcommand{\setsheetdata}[1]{\setkeys{exf@sheet}{#1}}
+%    \end{macrocode}
 % \macro{\getsheetdata}
-% Read global metadata:
+% Read sheet metadata:
 %    \begin{macrocode}
 \newcommand{\getsheetdata}[1]{\csname exf@data@sheet@#1\endcsname}
 %    \end{macrocode}
@@ -4005,7 +4292,7 @@ clean-all:  clean
 % \paragraph{Problem Metadata.}
 %
 % \macro{\defproblemdata}
-% Declare sheet metadata field
+% Declare problem metadata field
 % by defining a key \textit{key} in category |exf@problem|
 % that stores the chosen value in |\exf@data@problem@|\textit{key}:
 %    \begin{macrocode}
@@ -4014,8 +4301,13 @@ clean-all:  clean
   \define@key{exf@problem}{#1}%
    {\exf@csdo\def{exf@data@problem@#1}{##1}}}
 %    \end{macrocode}
+% \macro{\setproblemdata}
+% Set problem metadata:
+%    \begin{macrocode}
+\newcommand{\setproblemdata}[1]{\setkeys{exf@problem,exf@scanproblem}{#1}}
+%    \end{macrocode}
 % \macro{\getproblemdata}
-% Read global metadata:
+% Read problem metadata:
 %    \begin{macrocode}
 \newcommand{\getproblemdata}[1]{\csname exf@data@problem@#1\endcsname}
 %    \end{macrocode}
@@ -4035,10 +4327,10 @@ clean-all:  clean
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \paragraph{Problem Block Code.}
+% \paragraph{Problem Environment Code.}
 %
 % \macro{\exf@addmargin}
-% Define a length for block margin:
+% Define a length for environment margin:
 %    \begin{macrocode}
 \newlength\exf@addmargin
 %    \end{macrocode}
@@ -4080,7 +4372,7 @@ clean-all:  clean
   {\exf@prepend@def\exf@intro{#1\hspace{\exf@intro@skip}}}
 %    \end{macrocode}
 % \macro{\exf@open@block}
-% Open block, set margin, compose opening line:
+% Open environment, set margin, compose opening line:
 %    \begin{macrocode}
 \newcommand{\exf@open@block}[1]{%
   \advance\leftskip\exf@addmargin%
@@ -4093,7 +4385,7 @@ clean-all:  clean
   \fi}%
 %    \end{macrocode}
 % \macro{\exf@close@block}
-% Close block, undo margin:
+% Close environment, undo margin:
 %    \begin{macrocode}
 \newcommand{\exf@close@block}{%
   \advance\leftskip-\exf@addmargin%
@@ -4287,21 +4579,23 @@ clean-all:  clean
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{File Output.}
 %
-% \macro{\ifexf@infile}
-% Conditional whether an output file is presently in use:
+% \macro{\ifexf@solfile@open}
+% Conditional whether output files are presently in use:
 %    \begin{macrocode}
-\newif\ifexf@infile\exf@infilefalse
+\newif\ifexf@solfile@open\exf@solfile@openfalse
+\newif\ifexf@probfile@open\exf@probfile@openfalse
 %    \end{macrocode}
-% \macro{\exf@out}
-% Reserve file handle:
+% \macro{\exf@solfile}
+% Reserve file handles:
 %    \begin{macrocode}
-\newwrite\exf@out
+\newwrite\exf@solfile
+\newwrite\exf@probfile
 %    \end{macrocode}
 
 % \macro{\exf@writeline}
 % Write a line to the file:
 %    \begin{macrocode}
-\newcommand{\exf@writeline}[1]{\immediate\write\exf@out{#1}}
+\newcommand{\exf@writeline}[2]{\immediate\write#1{#2}}
 %    \end{macrocode}
 
 % \macro{\exf@linesep}
@@ -4320,82 +4614,120 @@ clean-all:  clean
   l.\the\inputlineno}
 %    \end{macrocode}
 
-% \macro{\exf@startfile}
-% Open a new file |#1.sol| (do nothing if already open);
+% \macro{\exf@start@solfile}
+% Open a new solution file |#1.sol| (do nothing if already open);
 % indicate source, switch to manual solution display mode:
 %    \begin{macrocode}
-\newcommand{\exf@startfile}[1]{%
-  \ifexf@infile\else%
-   \global\exf@infiletrue%
-   \gdef\exf@solutionbelow{manual}%
+\newcommand{\exf@start@solfile}[1]{%
+  \ifexf@solfile@open\else%
+   \exercisestyle{solutionbelow=manual}%
+   \global\exf@solfile@opentrue%
    \edef\exf@tmp{#1}%
-   \immediate\openout\exf@out\exf@tmp.sol%
-   \exf@writeline{\@percentchar%
+   \immediate\openout\exf@solfile\exf@tmp\exf@config@extsolutions\relax%
+   \exf@writeline\exf@solfile{\@percentchar%
     generated from file `\jobname' by exframe.sty}%
-   \ifexf@lineno\exf@writeline{\exf@lineno}\fi%
-   \exf@writeline{}%
+   \ifexf@lineno\exf@writeline\exf@solfile{\exf@lineno}\fi%
+   \exf@writeline\exf@solfile{}%
   \fi}
 %    \end{macrocode}
 
-% \macro{\exf@closefile}
-% Close file (if open);
+% \macro{\exf@close@solfile}
+% Close solution file (if open);
 % indicate position, close and reset variables:
 %    \begin{macrocode}
-\newcommand{\exf@closefile}{%
-  \ifexf@infile%
-   \ifexf@lineno%
-    \exf@writeline{\exf@linesep}\exf@writeline{\exf@lineno}\fi%
-   \exf@writeline{\@backslashchar endinput}%
-   \immediate\closeout\exf@out%
-   \global\exf@infilefalse%
+\newcommand{\exf@close@solfile}{%
+  \ifexf@solfile@open%
+   \ifexf@lineno\exf@writeline\exf@solfile{\exf@linesep}%
+    \exf@writeline\exf@solfile{\exf@lineno}\fi%
+   \exf@writeline\exf@solfile{\@backslashchar endinput}%
+   \immediate\closeout\exf@solfile%
+   \global\exf@solfile@openfalse%
   \fi}
 %    \end{macrocode}
 
-% Make sure to properly close file at the end:
+% \macro{\exf@start@probfile}
+% Open a new problem file |#1.prb| (do nothing if already open);
+% indicate source, switch to manual problem display mode:
 %    \begin{macrocode}
-\AtEndDocument{\exf@closefile}
+\newcommand{\exf@start@probfile}[1]{%
+  \ifexf@probfile@open\else%
+   \global\exf@probfile@opentrue%
+   \edef\exf@tmp{#1}%
+   \immediate\openout\exf@probfile\exf@tmp\exf@config@extproblems\relax%
+   \exf@writeline\exf@probfile{\@percentchar%
+    generated from file `\jobname' by exframe.sty}%
+   \ifexf@lineno\exf@writeline\exf@probfile{\exf@lineno}\fi%
+   \exf@writeline\exf@probfile{}%
+  \fi}
+%    \end{macrocode}
+
+% \macro{\exf@close@probfile}
+% Close problem file (if open);
+% indicate position, close and reset variables:
+%    \begin{macrocode}
+\newcommand{\exf@close@probfile}{%
+  \ifexf@probfile@open%
+   \ifexf@lineno\exf@writeline\exf@probfile{\exf@linesep}%
+    \exf@writeline\exf@probfile{\exf@lineno}\fi%
+   \exf@writeline\exf@probfile{\@backslashchar endinput}%
+   \immediate\closeout\exf@probfile%
+   \global\exf@probfile@openfalse%
+  \fi}
+%    \end{macrocode}
+
+% Make sure to properly close files at the end:
+%    \begin{macrocode}
+\AtEndDocument{\exf@close@solfile\exf@close@probfile}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \paragraph{Solution Buffer.}
+% \paragraph{Buffers.}
 %
-% \macro{\exf@buf}
-% \macro{\ifexf@bufclean}
-% Declare a token buffer for storing the solutions
-% and a conditional indicating whether the buffer has been used:
+% \macro{\exf@solbuf}
+% \macro{\exf@probbuf}
+% \macro{\ifexf@solbuf@clean}
+% \macro{\ifexf@probbuf@clean}
+% Declare token buffers for storing problems and solutions
+% and conditionals indicating whether the buffers have been used:
 %    \begin{macrocode}
-\newtoks\exf@buf
-\newif\ifexf@bufclean\exf@bufcleantrue
+\newtoks\exf@solbuf
+\newtoks\exf@probbuf
+\newif\ifexf@solbuf@clean\exf@solbuf@cleantrue
+\newif\ifexf@probbuf@clean\exf@probbuf@cleantrue
+%    \end{macrocode}
+% \macro{\exf@clear@solbuf}
+% \macro{\exf@clear@probbuf}
+% Clear a buffer and mark clean:
+%    \begin{macrocode}
+\def\exf@clear@solbuf{\global\exf@solbuf@cleantrue\global\exf@solbuf={}}
+\def\exf@clear@probbuf{\global\exf@probbuf@cleantrue\global\exf@probbuf={}}
 %    \end{macrocode}
 
-% \macro{\exf@clearbuf}
-% Clear solution buffer and mark clean:
-%    \begin{macrocode}
-\def\exf@clearbuf{\global\exf@bufcleantrue\global\exf@buf={}}
-%    \end{macrocode}
 % \macro{\exf@append@buf}
 % Append tokens to buffer:
 %    \begin{macrocode}
-\def\exf@append@buf#1{\global\exf@buf=\expandafter{\the\exf@buf#1}}
+\def\exf@append@buf#1#2{\global#1=\expandafter{\the#1#2}}
 %    \end{macrocode}
-% \macro{\exf@addbufline}
+% \macro{\exf@addline}
 % Add a protected expanded line to the buffer:
 %    \begin{macrocode}
-\def\exf@addbufline#1{{\protected@edef\exf@tmp{#1}%
-  \exf@exptwo\exf@append@buf{\exf@tmp^^J}}}
+\def\exf@addline#1#2{{\protected@edef\exf@tmp{#2}%
+  \exf@exparg{\exf@append@buf#1}{\exf@tmp^^J}}}
 %    \end{macrocode}
-
-% \macro{\exf@sourcebuf}
-% Source the solution buffer into the document:
+% \macro{\exf@source@buf}
+% Source a buffer into the document:
 %    \begin{macrocode}
-\def\exf@sourcebuf{\exf@exptwo\scantokens{\the\exf@buf}}
+\def\exf@source@buf#1{\exf@exptwo\scantokens{\the#1}}
 %    \end{macrocode}
-% \macro{\exf@writebuf}
+% \macro{\exf@write@buf}
 % Write the buffer into the solution file:
 %    \begin{macrocode}
-\def\exf@writebuf{\exf@writeline{\the\exf@buf}}
+\def\exf@write@buf#1#2{\exf@writeline#1{\the#2}}
 %    \end{macrocode}
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Verbatim Processing.}
+%
 % \macro{\exf@verbatim}
 % Start reading the buffer from the environment body:
 %    \begin{macrocode}
@@ -4404,7 +4736,8 @@ clean-all:  clean
   \@bsphack%
   \let\do\@makeother\dospecials%
   \catcode`\^^M\active%
-  \def\verbatim@processline{\exf@exptwo\exf@append@buf{\the\verbatim@line^^J}}%
+  \def\verbatim@processline{\exf@exptwo\exf@verbatim@process%
+   {\the\verbatim@line^^J}}%
   \verbatim@start}
 %    \end{macrocode}
 
@@ -4415,8 +4748,8 @@ clean-all:  clean
 %    \end{macrocode}
 
 % \macro{\exf@scanblock}
-% Scan an optional argument from a verbatim block;
-% allow for an empty block and an empty first line;
+% Scan an optional argument from a verbatim environment;
+% allow for an empty environment and an empty first line;
 % argument |#1| is macro to be called eventually:
 %    \begin{macrocode}
 \def\exf@scanblock#1{%
@@ -4429,12 +4762,12 @@ clean-all:  clean
 %    \begin{macrocode}
 \long\def\exf@scanblock@par#1\par{\exf@scanblock@sel{#1}[]}
 %    \end{macrocode}
-% Check for optional argument (|[|) and for block ending (|\end|):
+% Check for optional argument (|[|) and for environment ending (|\end|):
 %    \begin{macrocode}
 \def\exf@scanblock@sel#1{\@ifnextchar[{\exf@scanblock@opt{#1}}%
   {\@ifnextchar\end{\exf@scanblock@end{#1}}{\exf@scanblock@noopt{#1}}}}
 %    \end{macrocode}
-% Handle empty block, hopefully environment matches (otherwise?!):
+% Handle empty environment, hopefully environment matches (otherwise?!):
 %    \begin{macrocode}
 \def\exf@scanblock@end#1\end#2{%
   \def\exf@tmp{#2}\ifx\exf@tmp\@currenvir%
@@ -4520,6 +4853,20 @@ clean-all:  clean
   \expandafter#1\exf@tmp}
 %    \end{macrocode}
 
+% \macro{\switchpoints}
+% Extract main (plain) and bonus (starred) part from points,
+% and execute one of three:
+%    \begin{macrocode}
+\newcommand{\switchpoints}[5]{\edef\exf@tmp{#5}%
+  \exf@exptwo\exf@scanpoints\exf@tmp\exf@tmp++&%
+  \expandafter\exf@switchpoints\exf@tmp{#1}{#2}{#3}{#4}}
+\newcommand{\exf@switchpoints}[6]{%
+  \ifdim#2pt=0pt\ifdim#1pt=0pt\def\exf@tmp##1##2{#6}%
+   \else\def\exf@tmp##1##2{#3}\fi%
+  \else\ifdim#1pt=0pt\def\exf@tmp##1##2{#4}%
+   \else\def\exf@tmp##1##2{#5}\fi\fi\exf@tmp{#1}{#2}}
+%    \end{macrocode}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Tools.}
 %
@@ -4571,12 +4918,12 @@ clean-all:  clean
 \def\exf@splitdecimal#1.#2.#3&{\def\exf@splitint{#1}\def\exf@splitdec{#2}}
 %    \end{macrocode}
 
-% \macro{\exf@nicefrac}
+% \macro{\showfracpoints}
 % Display a float number as a fraction
 % with denominators 2, 4 or 8 when possible;
 % first split number, complete missing zeros and handle cases:
 %    \begin{macrocode}
-\newcommand{\exf@nicefrac}[1]{%
+\newcommand{\showfracpoints}[1]{%
   \edef\exf@tmp{#1}%
   \expandafter\exf@splitsign\exf@tmp--&%
   \expandafter\exf@splitdecimal\exf@splitnum..&%
@@ -4584,22 +4931,22 @@ clean-all:  clean
   \if&\exf@splitdec&\def\exf@splitdec{0}\fi%
   \def\exf@tmp{\exf@splitint.\exf@splitdec}%
   \ifnum\exf@splitdec=0\def\exf@tmp{\exf@splitint}\fi%
-  \ifnum\exf@splitdec=5\def\exf@tmp{\exf@intfrac{\exf@splitint}{1}{2}}\fi%
-  \ifnum\exf@splitdec=25\def\exf@tmp{\exf@intfrac{\exf@splitint}{1}{4}}\fi%
-  \ifnum\exf@splitdec=75\def\exf@tmp{\exf@intfrac{\exf@splitint}{3}{4}}\fi%
-  \ifnum\exf@splitdec=125\def\exf@tmp{\exf@intfrac{\exf@splitint}{1}{8}}\fi%
-  \ifnum\exf@splitdec=375\def\exf@tmp{\exf@intfrac{\exf@splitint}{3}{8}}\fi%
-  \ifnum\exf@splitdec=625\def\exf@tmp{\exf@intfrac{\exf@splitint}{5}{8}}\fi%
-  \ifnum\exf@splitdec=875\def\exf@tmp{\exf@intfrac{\exf@splitint}{7}{8}}\fi%
+  \ifnum\exf@splitdec=5\def\exf@tmp{\exf@config@frac{\exf@splitint}{1}{2}}\fi%
+  \ifnum\exf@splitdec=25\def\exf@tmp{\exf@config@frac{\exf@splitint}{1}{4}}\fi%
+  \ifnum\exf@splitdec=75\def\exf@tmp{\exf@config@frac{\exf@splitint}{3}{4}}\fi%
+  \ifnum\exf@splitdec=125\def\exf@tmp{\exf@config@frac{\exf@splitint}{1}{8}}\fi%
+  \ifnum\exf@splitdec=375\def\exf@tmp{\exf@config@frac{\exf@splitint}{3}{8}}\fi%
+  \ifnum\exf@splitdec=625\def\exf@tmp{\exf@config@frac{\exf@splitint}{5}{8}}\fi%
+  \ifnum\exf@splitdec=875\def\exf@tmp{\exf@config@frac{\exf@splitint}{7}{8}}\fi%
   \ifx\exf@splitminus\exf@empty\else$\exf@splitminus$\fi\exf@tmp%
 }
 %    \end{macrocode}
 
-% \macro{\exf@intfrac}
+% \macro{\exf@config@frac}
 % Display a vulgar fraction
 % such as 12$^3\mskip-4mu/\mskip-2mu_4$:
 %    \begin{macrocode}
-\newcommand{\exf@intfrac}[3]{%
+\newcommand{\exf@config@frac}[3]{%
   \ifnum#1=0\else#1\fi%
   \ifnum#2=0\else$%
    ^{\exf@text{#2}}%
@@ -4629,10 +4976,13 @@ clean-all:  clean
    {\exf@formatpoints{#1}{#2}}}}
 %    \end{macrocode}
 % \macro{\getsheetpoints}
-% Read sheet points stored in |.aux| file:
+% Read points for current sheet or from |.aux| file:
 %    \begin{macrocode}
-\newcommand{\getsheetpoints}[1]{\ifcsname exf@sheetpoints@#1\endcsname%
-  \csname exf@sheetpoints@#1\endcsname\else 0\fi}
+\newcommand{\getsheetpoints}[1]{\if&#1&%
+   \ifdefined\exf@sheet@points%
+    \expandafter\exf@formatpoints\exf@sheet@points\else 0\fi%
+  \else\ifcsname exf@sheetpoints@#1\endcsname%
+   \csname exf@sheetpoints@#1\endcsname\else 0\fi\fi}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4657,21 +5007,34 @@ clean-all:  clean
    {\exf@formatpoints{#1}{#2}}}}
 %    \end{macrocode}
 % \macro{\getproblempoints}
-% Read problem points stored in |.aux| file:
+% Read points for current problem or from |.aux| file:
 %    \begin{macrocode}
-\newcommand{\getproblempoints}[1]{\ifcsname exf@problempoints@#1\endcsname%
-  \csname exf@problempoints@#1\endcsname\else 0\fi}
+\newcommand{\getproblempoints}[1]{\if&#1&%
+   \ifdefined\exf@problem@points%
+    \expandafter\exf@formatpoints\exf@problem@points\else 0\fi%
+  \else\ifcsname exf@problempoints@#1\endcsname%
+   \csname exf@problempoints@#1\endcsname\else 0\fi\fi}
+%    \end{macrocode}
+% \macro{\getsubproblempoints}
+% Read points for current subproblem:
+%    \begin{macrocode}
+\newcommand{\getsubproblempoints}[1]{\if&#1&%
+   \ifdefined\exf@subproblem@points%
+    \expandafter\exf@formatpoints\exf@subproblem@points\else 0\fi%
+  \else 0\fi}
 %    \end{macrocode}
 
 % \macro{\showpoints}
 % Show points within a problem or subproblem:
 %    \begin{macrocode}
 \newcommand{\showpoints}{%
-  \ifdefined\exf@in@subproblem\exf@outpoints{\exf@ensuretext}%
-   {\exf@config@composepointspairbody}{\exf@subproblem@points}%
+  \ifdefined\exf@in@solution\exf@outpoints{\exf@ensuretext}%
+   {\exf@config@composepointspairbodysolution}{\exf@solution@points@show}%
+  \else\ifdefined\exf@in@subproblem\exf@outpoints{\exf@ensuretext}%
+   {\exf@config@composepointspairbodysubproblem}{\exf@subproblem@points@show}%
   \else\ifdefined\exf@in@problem\exf@outpoints{\exf@ensuretext}%
-   {\exf@config@composepointspairbody}{\exf@problem@points@show}%
-  \fi\fi}
+   {\exf@config@composepointspairbodyproblem}{\exf@problem@points@show}%
+  \fi\fi\fi}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4701,17 +5064,23 @@ clean-all:  clean
 \newcommand{\awardpoints}{\@ifstar\exf@awardpointsalt\exf@awardpointsreg}
 %    \end{macrocode}
 
+% \macro{\getsolutionpoints}
+% Read points for current solution:
+%    \begin{macrocode}
+\newcommand{\getsolutionpoints}[1]{\if&#1&%
+   \ifdefined\exf@solution@points%
+    \expandafter\exf@formatpoints\exf@solution@points\else 0\fi%
+  \else 0\fi}
+%    \end{macrocode}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \subsection{Environments}
-% \label{sec:imp-env}
-%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \paragraph{Sheets.}
+% \subsection{Sheet Environment}
+% \label{sec:imp-sheet}
 %
 % \macro{exf@sheet}
 % Define options for |sheet| environment:
 %    \begin{macrocode}
-\define@key{exf@sheet}{points}{\exf@scanpoints\exf@points@given#1++&}
+\define@key{exf@sheet}{points}{\exf@scanpoints\exf@sheet@points#1++&}
 \define@key{exf@sheet}{number}{\setcounter{\exf@sheetcounter}{#1}}
 \define@key{exf@sheet}{label}{\def\exf@label{#1}}
 \define@key{exf@sheet}{tag}{\def\sheettag{#1}}
@@ -4738,7 +5107,7 @@ clean-all:  clean
 %    \end{macrocode}
 % Reset optional arguments, process arguments:
 %    \begin{macrocode}
-  \let\exf@points@given\@undefined%
+  \let\exf@sheet@points\@undefined%
   \def\sheettag{\csname the\exf@sheetcounter\endcsname}%
   \let\exf@sheet@points@total\@undefined%
   \let\exf@label\@undefined%
@@ -4751,12 +5120,13 @@ clean-all:  clean
 %    \end{macrocode}
 % Set points from explicit input or from |.aux| storage:
 %    \begin{macrocode}
-  \let\exf@sheet@points\@undefined%
-  \ifdefined\exf@points@given%
-   \let\exf@sheet@points\exf@points@given%
-  \else\ifcsname exf@sheetpoints@\sheettag\endcsname%
-   \exf@csdotwo\let\exf@tmp{exf@sheetpoints@\sheettag}%
-   \exf@exptwo\exf@scanpoints\exf@sheet@points\exf@tmp++&%
+  \ifdefined\exf@sheet@points%
+   \let\exf@sheet@points@given\exf@empty%
+  \else%
+   \let\exf@sheet@points@given\@undefined%
+   \ifcsname exf@sheetpoints@\sheettag\endcsname%
+    \exf@csdotwo\let\exf@tmp{exf@sheetpoints@\sheettag}%
+    \exf@exptwo\exf@scanpoints\exf@sheet@points\exf@tmp++&%
   \fi\fi%
 %    \end{macrocode}
 % Process metadata:
@@ -4782,7 +5152,7 @@ clean-all:  clean
 % End of environment;
 % perform sanity check on total points if given explicitly:
 %    \begin{macrocode}
- {\ifdefined\exf@points@given%
+ {\ifdefined\exf@sheet@points@given%
    \exf@warnmismatch{\exf@sheetname}{\exf@sheetcounter}%
     {\exf@sheet@points@total}{\exf@sheet@points}%
 %    \end{macrocode}
@@ -4832,22 +5202,26 @@ clean-all:  clean
   \thispagestyle{empty}\hbox{}\newpage\fi\fi}
 %    \end{macrocode}
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Problem Environment}
+% \label{sec:imp-problem}
+%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \paragraph{Problems.}
+% \paragraph{Print Problems.}
 %
 % \macro{exf@problem}
 % Define options for |problem| environment:
 %    \begin{macrocode}
-\define@key{exf@problem}{points}{\exf@scanpoints\exf@points@given#1++&}
+\define@key{exf@problem}{points}{\exf@scanpoints\exf@problem@points#1++&}
 \define@key{exf@problem}{label}{\def\exf@label{#1}}
 \define@key{exf@problem}{tag}{\def\problemtag{#1}}
 \define@key{exf@problem}{sollabel}{\xdef\exf@sollabel{#1}}
 %    \end{macrocode}
 
-% \macro{problem}
-% Define |problem| environment (potentially using custom name):
+% \macro{printproblem}
+% Define |printproblem| environment:
 %    \begin{macrocode}
-\newenvironment{\exf@problemname}[1][]{%
+\newenvironment{printproblem}[1]{%
 %    \end{macrocode}
 % Start with new paragraph, set text style, add vspace:
 %    \begin{macrocode}
@@ -4879,11 +5253,11 @@ clean-all:  clean
 %    \begin{macrocode}
   \exf@init@block{\exf@config@skipprobleminfo}%
   \def\problemtag{\csname the\exf@problemcounter\endcsname}%
-  \let\exf@points@given\@undefined%
+  \let\exf@problem@points\@undefined%
   \let\exf@label\@undefined%
   \global\let\exf@sollabel\@undefined%
   \let\exf@problem@points@total\@undefined%
-  \setkeys{exf@problem,exf@probleminfo}{#1}%
+  \setkeys{exf@problem,exf@probleminfo,exf@scanproblem}{#1}%
 %    \end{macrocode}
 % Process automatic and manual labels:
 %    \begin{macrocode}
@@ -4908,12 +5282,13 @@ clean-all:  clean
 %    \end{macrocode}
 % Set points from explicit input or from |.aux| storage:
 %    \begin{macrocode}
-  \let\exf@problem@points\@undefined%
-  \ifdefined\exf@points@given%
-   \let\exf@problem@points\exf@points@given%
-  \else\ifcsname exf@problempoints@\problemtag\endcsname%
-   \exf@csdotwo\let\exf@tmp{exf@problempoints@\problemtag}%
-   \exf@exptwo\exf@scanpoints\exf@problem@points\exf@tmp++&%
+  \ifdefined\exf@problem@points%
+   \let\exf@problem@points@given\exf@empty%
+  \else%
+   \let\exf@problem@points@given\@undefined%
+   \ifcsname exf@problempoints@\problemtag\endcsname%
+    \exf@csdotwo\let\exf@tmp{exf@problempoints@\problemtag}%
+    \exf@exptwo\exf@scanpoints\exf@problem@points\exf@tmp++&%
   \fi\fi%
   \global\let\exf@prevpoints\exf@problem@points%
   \let\exf@problem@points@show\@undefined%
@@ -4929,9 +5304,9 @@ clean-all:  clean
 % expand points into argument and remove points:
 %    \begin{macrocode}
   \exf@ifis\exf@pointsat{start}{\exf@outpoints{\exf@append@intro}%
-   {\exf@config@composepointspairstart}{\exf@problem@points@show}}%
+   {\exf@config@composepointspairstartproblem}{\exf@problem@points@show}}%
   \exf@ifis\exf@pointsat{start*}{\exf@outpoints{\exf@prepend@intro}%
-   {\exf@config@composepointspairstart}{\exf@problem@points@show}}%
+   {\exf@config@composepointspairstartproblem}{\exf@problem@points@show}}%
 %    \end{macrocode}
 % Insert hook code, set problem body style:
 %    \begin{macrocode}
@@ -5001,7 +5376,7 @@ clean-all:  clean
 %    \end{macrocode}
 % Perform sanity checks on total points if given explicitly:
 %    \begin{macrocode}
-  \ifdefined\exf@points@given%
+  \ifdefined\exf@problem@points@given%
    \exf@warnmismatch{\exf@problemname}{\exf@problemcounter}%
     {\exf@problem@points@total}{\exf@problem@points}%
 %    \end{macrocode}
@@ -5026,12 +5401,12 @@ clean-all:  clean
    \PackageWarning{exframe}{no points defined for \exf@problemname}%
   \fi\fi%
 %    \end{macrocode}
-% Solutions to subproblems must be declared within problem block:
+% Solutions to subproblems must be declared within problem environment:
 %    \begin{macrocode}
   \global\let\exf@prevsubprob\@undefined%
   \global\let\exf@prevsubprobhref\@undefined%
 %    \end{macrocode}
-% End paragraph and block:
+% End paragraph and environment:
 %    \begin{macrocode}
   \par\exf@close@block%
 %    \end{macrocode}
@@ -5068,7 +5443,208 @@ clean-all:  clean
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \paragraph{Subproblems.}
+% \paragraph{Read Problem Environment.}
+%
+% \macro{exf@scanproblem}
+% Define options for |problem| environment:
+%    \begin{macrocode}
+\define@boolkey{exf@scanproblem}[exf@scanproblem@]{disable}[true]{}
+%    \end{macrocode}
+
+% \macro{exf@problem@direct}
+% Define direct output version of |problem| environment;
+% pass on to |printproblem| environment:
+%    \begin{macrocode}
+\newenvironment{exf@problem@direct}[1][]%
+ {\printproblem{#1}}{\endprintproblem\ignorespacesafterend}
+%    \end{macrocode}
+
+% \macro{exf@problem@scan}
+% \macro{exf@scanproblem}
+% Define scan version of |problem| environment;
+% use |\exf@scanblock| to properly parse optional argument
+% and pass on to |exf@scanproblem|:
+%    \begin{macrocode}
+\newenvironment{exf@problem@scan}%
+ {\exf@scanblock{\exf@scanproblem}}{\endexf@scanproblem}%
+\newenvironment{exf@scanproblem}[2]{%
+%    \end{macrocode}
+% Determine problem display:
+%    \begin{macrocode}
+  \exf@scanproblem@disablefalse%
+  \setkeys*{exf@scanproblem}{#1}%
+  \exf@config@insertproblemselect{#1}%
+%    \end{macrocode}
+% Write separator and |printproblem| environment to buffer:
+%    \begin{macrocode}
+  \ifexf@scanproblem@disable%
+   \def\exf@verbatim@process{\@gobble}%
+  \else%
+   \ifexf@lineno\exf@addline\exf@probbuf{\exf@linesep}%
+    \exf@addline\exf@probbuf{\exf@lineno}\fi%
+   \exf@addline\exf@probbuf%
+    {\@backslashchar begin{printproblem}{#1}}%
+   \def\exf@verbatim@process{\exf@append@buf\exf@probbuf}%
+  \fi%
+%    \end{macrocode}
+% Start verbatim processing:
+%    \begin{macrocode}
+  \exf@verbatim#2}%
+%    \end{macrocode}
+% End verbatim processing; close |printproblem| environment:
+%    \begin{macrocode}
+ {\exf@endverbatim%
+  \ifexf@scanproblem@disable\else%
+   \exf@addline\exf@probbuf{\@backslashchar end{printproblem}}%
+   \global\exf@probbuf@cleanfalse%
+  \fi%
+%    \end{macrocode}
+% Write buffer to file if output file open:
+%    \begin{macrocode}
+  \ifexf@probfile@open%
+   \exf@write@buf\exf@probfile\exf@probbuf%
+   \exf@clear@probbuf%
+  \fi%
+%    \end{macrocode}
+% Output buffer immediately:
+%    \begin{macrocode}
+  \ifexf@problemmanual\else%
+   \exf@source@buf\exf@probbuf%
+   \exf@clear@probbuf%
+  \fi%
+%    \end{macrocode}
+% Done:
+%    \begin{macrocode}
+  \ignorespacesafterend}
+%    \end{macrocode}
+
+% \macro{problem}
+% Define |problem| environment
+% (potentially using custom name)
+% to choose between direct and buffered version:
+%    \begin{macrocode}
+\newenvironment{\exf@problemname}%
+ {\ifexf@problembuf\let\exf@tmp\exf@problem@scan%
+  \else\let\exf@tmp\exf@problem@direct\fi%
+  \exf@tmp}%
+ {\ifexf@problembuf\let\exf@tmp\endexf@problem@scan%
+  \else\let\exf@tmp\endexf@problem@direct\fi%
+  \exf@tmp}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Problem Blocks}
+% \label{sec:imp-problems}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Problem Block Handling.}
+%
+% \macro{\exf@problemstitle}
+% Compose the title for a problem block section:
+%    \begin{macrocode}
+\newcommand{\exf@problemstitle}{%
+%    \end{macrocode}
+% Check whether title is empty:
+%    \begin{macrocode}
+  \protected@edef\exf@problemstitleexp{\exf@config@composetitleproblems}%
+  \ifx\exf@problemstitleexp\exf@empty\else%
+%    \end{macrocode}
+% Output section line:
+%    \begin{macrocode}
+   \exf@section{\exf@config@skipproblemstitle}%
+    {\exf@config@styletitle\exf@config@styletitleproblems%
+     \exf@problemstitleexp}%
+   \exf@addcontentsline{\exf@config@toclevelproblems}%
+    {\exf@config@composetocproblems}%
+  \fi}
+%    \end{macrocode}
+
+% \macro{\exf@showproblemsin}
+% Output problem block intro:
+%    \begin{macrocode}
+\newcommand{\exf@showproblemsin}{%
+%    \end{macrocode}
+% Set problem body style; add vertical space; insert hook code:
+%    \begin{macrocode}
+  \par\exf@config@styletext\addvspace{\exf@config@skipproblemsabove}%
+  \exf@config@insertproblemsbefore}
+%    \end{macrocode}
+
+% \macro{\exf@showproblemsout}
+% Output problem block outro:
+%    \begin{macrocode}
+\newcommand{\exf@showproblemsout}{%
+%    \end{macrocode}
+% Insert hook code; close paragraph; add vertical space:
+%    \begin{macrocode}
+  \exf@config@insertproblemsafter%
+  \par\exf@config@styletext\addvspace{\exf@config@skipproblemsbelow}}
+%    \end{macrocode}
+
+% \macro{\exf@showproblems}
+% Output problem block in buffer:
+%    \begin{macrocode}
+\newcommand{\exf@showproblems}{%
+%    \end{macrocode}
+% Do nothing if buffer is empty (avoid titles):
+%    \begin{macrocode}
+  \ifexf@probbuf@clean\else\begingroup%
+%    \end{macrocode}
+% Execute output problem block intro:
+%    \begin{macrocode}
+   \exf@showproblemsin%
+   \exf@problemstitle%
+%    \end{macrocode}
+% Source and clear buffer:
+%    \begin{macrocode}
+   \exf@source@buf\exf@probbuf%
+   \exf@clear@probbuf%
+%    \end{macrocode}
+% Execute output problem block outro:
+%    \begin{macrocode}
+   \exf@showproblemsout%
+  \endgroup\fi}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Problems Buffer Interface.}
+%
+% \macro{\writeproblems}
+% Open a file |#1.prb| for writing problems;
+% default is present main file name:
+%    \begin{macrocode}
+\newcommand{\writeproblems}[1][\jobname]{%
+  \exf@close@probfile\exf@start@probfile{#1}}
+%    \end{macrocode}
+
+% \macro{\closeproblems}
+% Close problems output file (if open):
+%    \begin{macrocode}
+\newcommand{\closeproblems}{\exf@close@probfile}
+%    \end{macrocode}
+
+% \macro{\readproblems}
+% Read problems from file |#1.prb|;
+% default is present main file name;
+% switch layout and add heading:
+%    \begin{macrocode}
+\newcommand{\readproblems}[1][\jobname]{\exf@close@probfile%
+  \begingroup%
+   \exf@config@styletext\exf@config@styletextproblem%
+   \exf@problemstitle%
+   \input{#1\exf@config@extproblems}%
+  \endgroup}
+%    \end{macrocode}
+
+% \macro{\insertproblems}
+% Show problems buffer:
+%    \begin{macrocode}
+\newcommand{\insertproblems}{\exf@showproblems}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Subproblem Environment}
+% \label{sec:imp-subproblem}
 %
 % \macro{exf@subproblem}
 % Define options for |subproblem| environment:
@@ -5115,6 +5691,14 @@ clean-all:  clean
     \csname theH\exf@subproblemcounter\endcsname}%
   \fi%
 %    \end{macrocode}
+% Remeber points for display;
+% disable points display if desired:
+%    \begin{macrocode}
+  \let\exf@subproblem@points@show\@undefined%
+  \ifdefined\exf@subproblem@points%
+   \let\exf@subproblem@points@show\exf@subproblem@points\fi%
+  \exf@ifis\exf@subpointsat{off}{\let\exf@subproblem@points@show\@undefined}%
+%    \end{macrocode}
 % Add given points to problem total:
 %    \begin{macrocode}
   \ifdefined\exf@subproblem@points%
@@ -5129,17 +5713,13 @@ clean-all:  clean
    \fi%
   \fi%
 %    \end{macrocode}
-% Disable points display if desired:
-%    \begin{macrocode}
-  \exf@ifis\exf@subpointsat{off}{\let\exf@subproblem@points\@undefined}%
-%    \end{macrocode}
 % Display points in opening line if desired;
 % expand points into argument and remove points:
 %    \begin{macrocode}
   \exf@ifis\exf@subpointsat{start}{\exf@outpoints{\exf@append@intro}%
-   {\exf@config@composepointspairstart}{\exf@subproblem@points}}%
+   {\exf@config@composepointspairstartsubproblem}{\exf@subproblem@points@show}}%
   \exf@ifis\exf@subpointsat{start*}{\exf@outpoints{\exf@prepend@intro}%
-   {\exf@config@composepointspairstart}{\exf@subproblem@points}}%
+   {\exf@config@composepointspairstartsubproblem}{\exf@subproblem@points@show}}%
 %    \end{macrocode}
 % Insert hook code:
 %    \begin{macrocode}
@@ -5179,7 +5759,7 @@ clean-all:  clean
 %    \begin{macrocode}
   \exf@ifis\exf@subpointsat{margin}{%
    \exf@outpoints{\exf@prepend@def\exf@introitem}%
-   {\exf@makepointsmargin}{\exf@subproblem@points}}%
+   {\exf@makepointsmargin}{\exf@subproblem@points@show}}%
 %    \end{macrocode}
 % Write out opening line:
 %    \begin{macrocode}
@@ -5193,7 +5773,7 @@ clean-all:  clean
 %    \begin{macrocode}
  {\exf@ifis\exf@subpointsat{end}{\showpoints}%
 %    \end{macrocode}
-% End paragraph and block:
+% End paragraph and environment:
 %    \begin{macrocode}
   \par\exf@close@block%
 %    \end{macrocode}
@@ -5222,6 +5802,10 @@ clean-all:  clean
   \ignorespacesafterend}
 %    \end{macrocode}
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Solution Environment}
+% \label{sec:imp-solution}
+%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Print Solutions.}
 %
@@ -5240,7 +5824,7 @@ clean-all:  clean
 
 % \macro{printsolution}
 % Define |printsolution| environment
-% to display a previously read |solution| block;
+% to display a previously read |solution| environment;
 % this works analogously to |problem| and |subproblem|:
 %    \begin{macrocode}
 \newenvironment{printsolution}[1]{%
@@ -5262,12 +5846,14 @@ clean-all:  clean
    \let\theHequation\theHexf@solutionequation%
   \fi%
 %    \end{macrocode}
-% Start a block, initialise variables, process arguments:
+% Start a group, initialise variables, process arguments:
 %    \begin{macrocode}
   \begingroup%
+  \def\exf@in@solution{}%
   \def\exf@solprob{}%
   \def\exf@solsubprob{}%
   \let\exf@label\@undefined%
+  \let\exf@solution@points\@undefined%
   \let\exf@solution@points@total\@undefined%
   \def\exf@solhref{}%
   \exf@init@block{\exf@config@skipsolutioninfo}%
@@ -5282,6 +5868,22 @@ clean-all:  clean
 % Set label:
 %    \begin{macrocode}
   \ifdefined\exf@label\label{\exf@label}\fi%
+%    \end{macrocode}
+% Remeber points for display;
+% disable points display if desired:
+%    \begin{macrocode}
+  \let\exf@solution@points@show\@undefined%
+  \ifdefined\exf@solution@points%
+   \let\exf@solution@points@show\exf@solution@points\fi%
+  \exf@ifis\exf@solpointsat{off}{\let\exf@solution@points@show\@undefined}%
+%    \end{macrocode}
+% Display points in opening line if desired;
+% expand points into argument and remove points:
+%    \begin{macrocode}
+  \exf@ifis\exf@solpointsat{start}{\exf@outpoints{\exf@append@intro}%
+   {\exf@config@composepointspairstartsolution}{\exf@solution@points@show}}%
+  \exf@ifis\exf@solpointsat{start*}{\exf@outpoints{\exf@prepend@intro}%
+   {\exf@config@composepointspairstartsolution}{\exf@solution@points@show}}%
 %    \end{macrocode}
 % Insert hook code, set solution body style:
 %    \begin{macrocode}
@@ -5325,7 +5927,7 @@ clean-all:  clean
      \fi\exf@config@composeitemsolutionsep}%
    \fi%
 %    \end{macrocode}
-% Set item label up depending on problem or subproblem:
+% Set item label depending on problem or subproblem:
 %    \begin{macrocode}
    \ifx\exf@solsubprob\exf@empty%
     \protected@edef\exf@solution@item%
@@ -5344,6 +5946,13 @@ clean-all:  clean
     \exf@config@composeitemproblemsep}}%
   \fi%
 %    \end{macrocode}
+% Write points into margin if desired;
+% expand points into argument and remove points:
+%    \begin{macrocode}
+  \exf@ifis\exf@solpointsat{margin}{%
+   \exf@outpoints{\exf@prepend@def\exf@introitem}%
+   {\exf@makepointsmargin}{\exf@solution@points@show}}%
+%    \end{macrocode}
 % Write out opening line:
 %    \begin{macrocode}
   \exf@open@block{\exf@config@skipsolutiontitle}%
@@ -5354,10 +5963,11 @@ clean-all:  clean
 %    \end{macrocode}
 % End environment, show points if desired, perform sanity check:
 %    \begin{macrocode}
- {\exf@warnmismatch{\exf@solutionname}{\exf@solutioncounter}%
+ {\exf@ifis\exf@solpointsat{end}{\showpoints}%
+  \exf@warnmismatch{\exf@solutionname}{\exf@solutioncounter}%
    {\exf@solution@points@total}{\exf@solution@points}%
 %    \end{macrocode}
-% End paragraph and block:
+% End paragraph and envionment:
 %    \begin{macrocode}
   \par\exf@close@block%
 %    \end{macrocode}
@@ -5383,7 +5993,7 @@ clean-all:  clean
 %    \end{macrocode}
 
 % \macro{\solutionssection}
-% Define a section for a problem within a block with multiple solutions:
+% Define a section for a problem within a solution block:
 %    \begin{macrocode}
 \newcommand{\solutionssection}[1]{\begingroup%
 %    \end{macrocode}
@@ -5397,81 +6007,58 @@ clean-all:  clean
   \setkeys{exf@solution}{#1}%
 %    \end{macrocode}
 % Select title (and table of contents entry)
-% corresponding to multiple problems vs. single problem:
+% corresponding to multiple problems vs.\ single problem:
 %    \begin{macrocode}
   \let\exf@composetitle\exf@config@composetitlesolutionsproblemmulti%
-  \def\exf@solutionstoc{\exf@addcontentsline{\exf@config@toclevelsolution}%
-    {\exf@config@composetocsolution{\exf@solprob}{\exf@solprobtitle}}}%
   \exf@ifis\exf@solutionbelow{problem}{\let\exf@composetitle%
     \exf@config@composetitlesolutionsproblemsingle}%
   \exf@ifis\exf@solutionbelow{problem*}{\let\exf@composetitle%
     \exf@config@composetitlesolutionsproblemsingle}%
+  \def\exf@solutionstoc{\exf@addcontentsline{\exf@config@toclevelsolution}%
+    {\exf@config@composetocsolution{\exf@solprob}{\exf@solprobtitle}}}%
 %    \end{macrocode}
 % Write section line:
 %    \begin{macrocode}
+  \addvspace{\exf@config@skipsolutionsproblemabove}%
   \exf@solutionssection{\exf@config@styletitlesolutionsproblem}%
    {\exf@composetitle{\exf@solprob}{\exf@solprobtitle}}%
-   {\exf@config@skipsolutionsproblem}%
+   {\exf@config@skipsolutionsproblemtitle}%
    {\exf@solutionstoc}{\exf@label}{\exf@solhref}%
   \endgroup}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \paragraph{Read Solution Block to Buffer.}
+% \paragraph{Read Solution Environment.}
 %
-% \macro{solution}
-% Define |solution| environment (potentially using custom name);
-% pass to |exf@scansolution| environment via
-% |\exf@scanblock| mechanism;
-% redefine |\exf@scanblock| in |solutionbelow=here*| mode:
-%    \begin{macrocode}
-\newenvironment{\exf@solutionname}%
-  {\exf@ifis\exf@solutionbelow{here*}{%
-    \newcommand{\exf@scanblockplain}[1][]{\exf@scansolution{##1}{}}%
-    \def\exf@scanblock##1{\exf@scanblockplain}}%
-   \exf@scanblock{\exf@scansolution}}{\endexf@scansolution}%
-%    \end{macrocode}
-
-% \macro{exf@scansolution}
-% Define |exf@scansolution| to read solution to buffer and process:
-%    \begin{macrocode}
-\newenvironment{exf@scansolution}[2]{%
-%    \end{macrocode}
-% If solution is to be displayed immediately,
-% make sure to display points first:
-%    \begin{macrocode}
-  \exf@ifis\exf@solutionbelow{here}{\showpoints}%
-  \exf@ifis\exf@solutionbelow{here*}{\showpoints}%
-  \global\exf@bufcleanfalse%
-%    \end{macrocode}
+% \macro{\exf@process@solnewsec}
 % If this is the first solution within a new section,
-% display section heading:
+% write section heading to buffer:
 %    \begin{macrocode}
+\newcommand{\exf@process@solnewsec}{%
   \ifdefined\exf@problem@solnewsec%
    \def\exf@probarg{\ifdefined\exf@prevprob prob={\exf@prevprob}\fi%
     \ifdefined\exf@prevprobtitle,probtitle={\exf@prevprobtitle}\fi%
     \ifdefined\exf@prevprobhref,href={\exf@prevprobhref}\fi%
     \ifdefined\exf@sollabel,label={\exf@sollabel}\fi}%
    \exf@ifis\exf@solutionbelow{here}{\let\exf@probarg\@undefined}%
-   \exf@ifis\exf@solutionbelow{here*}{\let\exf@probarg\@undefined}%
    \exf@ifis\exf@solutionbelow{subproblem}{\let\exf@probarg\@undefined}%
    \exf@ifis\exf@solutionbelow{subproblem*}{\let\exf@probarg\@undefined}%
    \ifdefined\exf@probarg%
-    \ifexf@lineno\exf@addbufline{\exf@linesep}\exf@addbufline{\exf@lineno}\fi%
-    \exf@addbufline{\@backslashchar solutionssection{\exf@probarg}}%
-    \exf@addbufline{}%
+    \ifexf@lineno\exf@addline\exf@solbuf{\exf@linesep}%
+     \exf@addline\exf@solbuf{\exf@lineno}\fi%
+    \exf@addline\exf@solbuf{\@backslashchar solutionssection{\exf@probarg}}%
+    \exf@addline\exf@solbuf{}%
    \fi%
    \global\let\exf@problem@solnewsec\@undefined%
-  \fi%
+  \fi}%
 %    \end{macrocode}
-% Write separator to buffer:
-%    \begin{macrocode}
-  \ifexf@lineno\exf@addbufline{\exf@linesep}\exf@addbufline{\exf@lineno}\fi%
-%    \end{macrocode}
+
+% \macro{\exf@process@solnewsec}
 % Declare additional arguments to |printsolution|
 % to describe corresponding problem and tags:
 %    \begin{macrocode}
-  \def\exf@subprobarg{%
+\newcommand{\exf@generate@solprobarg}{%
+  \edef\exf@solprobarg{%
     \ifdefined\exf@prevprob prob={\exf@prevprob},\fi%
     \ifdefined\exf@prevsubprob subprob={\exf@prevsubprob},%
      \ifdefined\exf@prevsubprobhref href={\exf@prevsubprobhref},\fi%
@@ -5483,48 +6070,76 @@ clean-all:  clean
     \ifdefined\sheettag sheettag={\sheettag},\fi%
     \ifdefined\problemtag problemtag={\problemtag},\fi}%
 %    \end{macrocode}
-% Write |printsolution| opening to buffer:
-%    \begin{macrocode}
-  \exf@addbufline{\@backslashchar begin{printsolution}{\exf@subprobarg#1}}%
-%    \end{macrocode}
 % Clean up:
 %    \begin{macrocode}
   \global\let\exf@prevsubprob\@undefined%
   \global\let\exf@prevsubprobhref\@undefined%
-  \global\let\exf@prevpoints\@undefined%
+  \global\let\exf@prevpoints\@undefined}%
 %    \end{macrocode}
-% In |here*| mode, output solution immediately;
-% overwrite verbatim macros to display solution:
+
+% \macro{exf@solution@direct}
+% Define direct output version of |solution| environment;
+% pass on to |printsolution| environment:
 %    \begin{macrocode}
-  \exf@ifis\exf@solutionbelow{here*}{%
-   \def\exf@verbatim{\exf@clearbuf\begingroup%
-    \edef\exf@subprobarg{\exf@subprobarg}%
-    \exf@showsolutionsin{\exf@config@composetitlesolutionsingle}%
-    \exf@exptwo\printsolution{\exf@subprobarg#1}}%
-   \def\exf@endverbatim{\endprintsolution\exf@showsolutionsout\endgroup}}%
+\newenvironment{exf@solution@direct}[1][]%
+ {\showpoints%
+  \global\let\exf@problem@solnewsec\@undefined%
+  \exf@generate@solprobarg%
+  \exf@showsolutionsin%
+  \let\exf@composetitle\exf@config@composetitlesolutionsingle%
+  \exf@exptwo\printsolution{\exf@solprobarg#1}}%
+ {\endprintsolution%
+  \exf@showsolutionsout%
+  \ignorespacesafterend}%
 %    \end{macrocode}
-% Verbatim read block to buffer:
+
+% \macro{exf@solution@scan}
+% \macro{exf@scansolution}
+% Define scan version of |solution| environment;
+% use |\exf@scanblock| to properly parse optional argument
+% and pass on to |exf@scansolution|:
 %    \begin{macrocode}
+\newenvironment{exf@solution@scan}%
+ {\exf@scanblock{\exf@scansolution}}{\endexf@scansolution}%
+\newenvironment{exf@scansolution}[2]{%
+%    \end{macrocode}
+% If solution is to be displayed immediately,
+% make sure to display points first;
+% insert solution section heading in buffer;
+% compose additional arguments to |printsolution|:
+%    \begin{macrocode}
+  \exf@ifis\exf@solutionbelow{here}{\showpoints}%
+  \exf@process@solnewsec%
+  \exf@generate@solprobarg%
+%    \end{macrocode}
+% Write separator and |printsolution| environment to buffer:
+%    \begin{macrocode}
+  \ifexf@lineno\exf@addline\exf@solbuf{\exf@linesep}%
+   \exf@addline\exf@solbuf{\exf@lineno}\fi%
+  \exf@addline\exf@solbuf%
+   {\@backslashchar begin{printsolution}{\exf@solprobarg#1}}%
+%    \end{macrocode}
+% Start verbatim processing:
+%    \begin{macrocode}
+  \def\exf@verbatim@process{\exf@append@buf\exf@solbuf}%
   \exf@verbatim#2}%
 %    \end{macrocode}
-% End environment; stop reading buffer:
+% End verbatim processing; close |printsolution| environment:
 %    \begin{macrocode}
  {\exf@endverbatim%
-%    \end{macrocode}
-% Write |printsolution| closing to buffer:
-%    \begin{macrocode}
-  \exf@addbufline{\@backslashchar end{printsolution}}%
+  \exf@addline\exf@solbuf{\@backslashchar end{printsolution}}%
+  \global\exf@solbuf@cleanfalse%
 %    \end{macrocode}
 % Write buffer to file if output file open:
 %    \begin{macrocode}
-  \ifexf@infile%
-   \exf@writebuf%
-   \exf@clearbuf%
+  \ifexf@solfile@open%
+   \exf@write@buf\exf@solfile\exf@solbuf%
+   \exf@clear@solbuf%
   \fi%
 %    \end{macrocode}
 % Drop buffer if solutions not to be displayed:
 %    \begin{macrocode}
-  \ifsolutions\else\exf@clearbuf\fi%
+  \ifsolutions\else\exf@clear@solbuf\fi%
 %    \end{macrocode}
 % Display solution immediately in various cases:
 %    \begin{macrocode}
@@ -5546,11 +6161,29 @@ clean-all:  clean
   \ignorespacesafterend}
 %    \end{macrocode}
 
+% \macro{solution}
+% Define |solution| environment
+% (potentially using custom name)
+% to choose between direct and buffered version:
+%    \begin{macrocode}
+\newenvironment{\exf@solutionname}%
+ {\ifexf@solutionbuf\let\exf@tmp\exf@solution@scan%
+  \else\let\exf@tmp\exf@solution@direct\fi%
+  \exf@tmp}%
+ {\ifexf@solutionbuf\let\exf@tmp\endexf@solution@scan%
+  \else\let\exf@tmp\endexf@solution@direct\fi%
+  \exf@tmp}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Solution Blocks}
+% \label{sec:imp-solutions}
+%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Solution Block Handling.}
 %
 % \macro{\exf@solutionssection}
-% Output solutions section:
+% Output solution block section:
 %    \begin{macrocode}
 \newcommand{\exf@solutionssection}[6]{%
 %    \end{macrocode}
@@ -5576,7 +6209,7 @@ clean-all:  clean
 %    \end{macrocode}
 
 % \macro{\exf@solutionstitle}
-% Compose the title for a solution section:
+% Compose the title for a solution block:
 %    \begin{macrocode}
 \newcommand{\exf@solutionstitle}{\exf@solutionssection%
   {\exf@config@styletitlesolutions}{%
@@ -5586,51 +6219,49 @@ clean-all:  clean
 %    \end{macrocode}
 
 % \macro{\exf@showsolutionsin}
-% Output solutions intro:
+% Output solution block intro:
 %    \begin{macrocode}
-\newcommand{\exf@showsolutionsin}[1]{%
+\newcommand{\exf@showsolutionsin}{%
 %    \end{macrocode}
 % Set solution body style; add vertical space; insert hook code:
 %    \begin{macrocode}
   \par\exf@config@styletext\addvspace{\exf@config@skipsolutionsabove}%
   \exf@config@styletextsolution%
-  \exf@config@insertsolutionsbefore%
-  \let\exf@composetitle#1}
+  \exf@config@insertsolutionsbefore}
 %    \end{macrocode}
 
 % \macro{\exf@showsolutionsout}
-% Output solutions outro:
+% Output solution block outro:
 %    \begin{macrocode}
 \newcommand{\exf@showsolutionsout}{%
 %    \end{macrocode}
-% Ignore most recent skip; insert hook code;
-% close paragraph; add vertical space:
+% Insert hook code; close paragraph; add vertical space:
 %    \begin{macrocode}
-  \removelastskip%
   \exf@config@insertsolutionsafter%
-  \par\exf@config@styletext\addvspace{\exf@config@skipsolutionbelow}}
+  \par\exf@config@styletext\addvspace{\exf@config@skipsolutionsbelow}}
 %    \end{macrocode}
 
 % \macro{\exf@showsolutions}
-% Output solutions in buffer:
+% Output solution block in buffer:
 %    \begin{macrocode}
 \newcommand{\exf@showsolutions}[2]{%
 %    \end{macrocode}
 % Do nothing if buffer is empty (avoid titles):
 %    \begin{macrocode}
-  \ifexf@bufclean\else\begingroup%
+  \ifexf@solbuf@clean\else\begingroup%
 %    \end{macrocode}
-% Execute output solutions intro:
+% Execute output solution block intro:
 %    \begin{macrocode}
-   \exf@showsolutionsin{#1}%
+   \exf@showsolutionsin%
+   \let\exf@composetitle#1%
    #2%
 %    \end{macrocode}
 % Source and clear buffer:
 %    \begin{macrocode}
-   \exf@sourcebuf%
-   \exf@clearbuf%
+   \exf@source@buf\exf@solbuf%
+   \exf@clear@solbuf%
 %    \end{macrocode}
-% Execute output solutions outro:
+% Execute output solution block outro:
 %    \begin{macrocode}
    \exf@showsolutionsout%
   \endgroup\fi}
@@ -5643,13 +6274,14 @@ clean-all:  clean
 % Open a file |#1.sol| for writing solutions;
 % default is present main file name:
 %    \begin{macrocode}
-\newcommand{\writesolutions}[1][\jobname]{\exf@closefile\exf@startfile{#1}}
+\newcommand{\writesolutions}[1][\jobname]{%
+  \exf@close@solfile\exf@start@solfile{#1}}
 %    \end{macrocode}
 
 % \macro{\closesolutions}
-% Close output file (if open):
+% Close solutions output file (if open):
 %    \begin{macrocode}
-\newcommand{\closesolutions}{\exf@closefile}
+\newcommand{\closesolutions}{\exf@close@solfile}
 %    \end{macrocode}
 
 % \macro{\readsolutions}
@@ -5657,17 +6289,17 @@ clean-all:  clean
 % default is present main file name;
 % switch layout and add heading:
 %    \begin{macrocode}
-\newcommand{\readsolutions}[1][\jobname]{\exf@closefile%
+\newcommand{\readsolutions}[1][\jobname]{\exf@close@solfile%
   \ifsolutions\begingroup%
    \exf@config@styletext\exf@config@styletextsolution%
-   \let\exf@config@composetitlesolution\exf@config@composetitlesolutionmulti%
+   \let\exf@composetitle\exf@config@composetitlesolutionmulti%
    \exf@solutionstitle%
-   \input{#1.sol}%
+   \input{#1\exf@config@extsolutions}%
   \endgroup\fi}
 %    \end{macrocode}
 
 % \macro{\insertsolutions}
-% Show solution buffer:
+% Show solutions buffer:
 %    \begin{macrocode}
 \newcommand{\insertsolutions}{\exf@showsolutions%
   {\exf@config@composetitlesolutionmulti}{\exf@solutionstitle}}
