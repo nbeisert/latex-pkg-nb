@@ -1,14 +1,15 @@
-% \iffalse
 %
-% metastr.dtx Copyright (C) 2020 Niklas Beisert
+% \iffalse meta-comment
+%
+% metastr.dtx Copyright (C) 2020-2025 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
 % of this license or (at your option) any later version.
 % The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
-% and version 1.3 or later is part of all distributions of LaTeX
-% version 2005/12/01 or later.
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008 or later.
 %
 % This work has the LPPL maintenance status `maintained'.
 %
@@ -18,16 +19,16 @@
 % and the derived files metastr.sty and metasamp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{metastr}[2020/09/02 v1.1.2 Metadata Strings Storage]
-%<sample>\ProvidesFile{metasamp.tex}[2020/09/02 v1.1.2 sample for metastr]
+%<package>\ProvidesPackage{metastr}[2025/03/25 v1.1.3 Metadata Strings Storage]
+%<sample>\ProvidesFile{metasamp.tex}[2025/03/25 v1.1.3 sample for metastr]
 %<*driver>
-\def\thedate#1{2020/09/02}\def\theversion#1{v1.1.2}
+\def\thedate#1{2025/03/25}\def\theversion#1{v1.1.3}
 \ProvidesFile{metastr.dtx}[\thedate{} \theversion{} metastr reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
 \usepackage[margin=35mm]{geometry}
-\usepackage{hyperref}
+\usepackage[hyperindex=false]{hyperref}
 \usepackage{hyperxmp}
 \usepackage[usenames]{color}
 \usepackage[utf8]{inputenc}
@@ -39,26 +40,33 @@
 \IfFileExists{doclicense.sty}{}{%
   \GenericWarning{please install package `doclicense'}}
 
-\hypersetup{colorlinks=true}
-\hypersetup{pdfstartview=FitH}
-\hypersetup{pdfpagemode=UseNone}
-\hypersetup{keeppdfinfo}
+\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
+\hypersetup{urlbordercolor={.5 1 1}}
+\hypersetup{linkbordercolor={1 .7 .7}}
+\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
+\hypersetup{keeppdfinfo=true}
 \hypersetup{pdfsource={}}
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfcopyright={Copyright 2020 Niklas Beisert.
+\hypersetup{pdfurl={https://ctan.org/pkg/metastr}}
+\hypersetup{pdfcopyright={Copyright 2020-2025 Niklas Beisert.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
-\hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
+\hypersetup{pdflicenseurl={https://www.latex-project.org/lppl.txt}}
 \hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K,
   Wolfgang-Pauli-Strasse 27}}
 \hypersetup{pdfcontactpostcode={8093}}
 \hypersetup{pdfcontactcity={Zurich}}
 \hypersetup{pdfcontactcountry={Switzerland}}
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
-\hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
+\hypersetup{pdfcontacturl={https://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
+\newcommand{\markpkg}[1]{\textsf{#1}}
 \newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
+\newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
+\newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\markpkg{#1}}}
+
+\def\textvert{\texttt{\char"7C}}
 
 \parskip1ex
 \parindent0pt
@@ -67,7 +75,7 @@
 
 \begin{document}
 
-\title{The \textsf{metastr} Package}
+\title{The \markpkg{metastr} Package}
 \hypersetup{pdftitle={The metastr Package}}
 \author{Niklas Beisert\\[2ex]
   Institut f\"ur Theoretische Physik\\
@@ -77,11 +85,12 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package metastr}}
-\date{\thedate{}, \theversion{}}
+\date{\thedate{}, \theversion{}\\[1ex]
+\url{https://ctan.org/pkg/metastr}}
 \maketitle
 
 \begin{abstract}\noindent
-\textsf{metastr} is a \LaTeXe{} package
+\markpkg{metastr} is a \LaTeXe{} package
 to store and compose strings in a structured way.
 This can serve several purposes such as:
 manage and write document metadata;
@@ -94,7 +103,6 @@ facilitate basic internationalisation and localisation.
 \parskip0ex
 \tableofcontents
 \endgroup
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,7 +141,7 @@ of similar documents for which you can define suitable templates.
 \section{Usage}
 \label{sec:usage}
 
-To use the package \textsf{metastr}, add the command
+To use the package \ctanpkg{metastr}, add the command
 %
 \begin{center}
 |\usepackage{metastr}|
@@ -572,14 +580,14 @@ and serves a similar purpose as the \LaTeX{} command |\maketitle|:
 \label{sec:meta}
 
 The contents of certain registers can be written out to
-PDF files as metadata using the package \textsf{hyperref}
-and the extension \textsf{hyperxmp}.
+PDF files as metadata using the package \ctanpkg{hyperref}
+and the extension \ctanpkg{hyperxmp}.
 
 \DescribeMacro{\metawritepdfinfo}
 The basic metadata registers are written out by |\metawritepdfinfo|
-using \textsf{hyperref}.
-The mapping between \textsf{metastr} registers
-and \textsf{hyperref} |\hypersetup| options is given by:
+using \ctanpkg{hyperref}.
+The mapping between \ctanpkg{metastr} registers
+and \ctanpkg{hyperref} |\hypersetup| options is given by:
 %
 \begin{center}
 \begin{tabular}{l@{\quad$\to$\quad}l}
@@ -601,7 +609,7 @@ Note that |\metawritepdfinfo| will be effective
 only when invoked before the contents of the first page are written out.
 
 \DescribeMacro{\metawritepdfaux}
-Auxiliary metadata is written out using \textsf{hyperxmp}
+Auxiliary metadata is written out using \ctanpkg{hyperxmp}
 by the command |\metawritepdfaux| with the mapping:
 %
 \begin{center}
@@ -629,14 +637,14 @@ with the mapping:
 \end{tabular}
 \end{center}
 %
-Note that |pdfmetalang| is a setting of \textsf{hyperxmp}
+Note that |pdfmetalang| is a setting of \ctanpkg{hyperxmp}
 and will be ignored if the package is not loaded.
-Furthermore, the \textsf{hyperxmp} option |keeppdfinfo|
+Furthermore, the \ctanpkg{hyperxmp} option |keeppdfinfo|
 will be set unless the package option |xmppdfinfo=false| is set.
 
 \DescribeMacro{\metawritepdfcontact}
 A contact can be specified within PDF files
-in a standardised format using \textsf{hyperxmp}.
+in a standardised format using \ctanpkg{hyperxmp}.
 The command |\metawritepdfcontact| passes on the following
 registers with the mapping:
 %
@@ -661,7 +669,7 @@ registers with the mapping:
 \DescribeMacro{\metawritepdfrights}
 A document copyright statement, see \secref{sec:rights},
 is recorded within the PDF file by |\metawritepdfrights|
-using \textsf{hyperxmp} with the mapping:
+using \ctanpkg{hyperxmp} with the mapping:
 %
 \begin{center}
 \begin{tabular}{l@{\quad$\to$\quad}l}
@@ -716,7 +724,7 @@ by invoking |\metawritepdfinfo|.
 Specifying a copyright statement and a license is very useful because it
 makes the allowed (re)use of the provided material evident to the reader.
 However, it also takes some efforts to set things up properly.
-The package \textsf{metastr} provides some default texts to
+The package \ctanpkg{metastr} provides some default texts to
 state the license for a couple of well-established licenses.
 For instance, the set of Creative Commons licenses has become a standard
 to mark the intended (re)use of a document involving creative content.
@@ -847,7 +855,7 @@ provide the associated license statements:
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version \textit{1.3}
   of this license or (at your option) any later version.\\
-  \url{http://www.latex-project.org/lppl.txt}
+  \url{https://www.latex-project.org/lppl.txt}
 }
 \end{tabular}
 \end{center}
@@ -901,8 +909,8 @@ For the CC0 license |zero|, the only available version is |1.0| (universal)
 which is the default.
 
 Displaying the logo requires (manual) loading
-of the package \textsf{graphicx};
-furthermore the package \textsf{doclicense} containing the logo files
+of the package \ctanpkg{graphicx};
+furthermore the package \ctanpkg{doclicense} containing the logo files
 must be present.
 The display of the logo can be disabled by the package option |cclogo=false|.
 The logo display is coded by the following definitions
@@ -935,7 +943,7 @@ The variants specific to CC licenses are:
 \begin{tabular}{ll}
 \textit{ln} & representation in language \textit{ln}
 \\
-|icon| & CC icon (package \textsf{ccicons} required),
+|icon| & CC icon (package \ctanpkg{ccicons} required),
 e.g. \ccLogo\ccAttribution\ccShareAlike
 \\
 |url| & license URL
@@ -944,7 +952,7 @@ e.g. \ccLogo\ccAttribution\ccShareAlike
 \\
 |short| & short form, e.g.\ `CC BY-SA'
 \\
-|logo| & logo filename (package \textsf{doclicense})
+|logo| & logo filename (package \ctanpkg{doclicense})
 \end{tabular}
 \end{center}
 %
@@ -953,13 +961,13 @@ For example, a full license descriptor is displayed by
 Creative Commons License ``Attribution-ShareAlike 4.0 International''.
 The license icon can be displayed by
 |\metaget[icon]{licensecc}|: \ccLogo\ccAttribution\ccShareAlike{}
-(this requires the package \textsf{ccicons} to be loaded).
+(this requires the package \ctanpkg{ccicons} to be loaded).
 Note that displaying the full license message |licensemessage|
 in variant |print| in some languages
 may produce quotation marks not declared in default fonts
 causing an error; this can be avoided to some extent by
 loading an appropriate packages for internationalisation
-such as \textsf{babel}.
+such as \ctanpkg{babel}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Languages}
@@ -1015,7 +1023,7 @@ selected where available.
 
 \macro{\metaterm}
 \macro{\metatranslate}
-\macro{\metasettest}
+\macro{\metasetterm}
 The package reserves registers of the form |term-|\textit{term}
 for storing terms in various (language) representations.
 A couple of such term registers describing common entities in typesetting
@@ -1051,7 +1059,7 @@ are defined by the package:
 These are provided in different languages for convenient
 internationalisation
 (this can be viewed as a low-key implementation of some of the features
-of the \href{https://ctan.org/pkg/babel}{\textsf{babel}} package).
+of the \ctanpkg{babel} package).
 Additional term registers can be defined by the user.
 Term registers are accessed by the macros:
 %
@@ -1078,7 +1086,7 @@ otherwise in the default document language
 specified by |\metasetlang| is used.
 Some registers can even be written out
 in several alternative language versions
-using the package \textsf{hyperxmp},
+using the package \ctanpkg{hyperxmp},
 namely |title|, |subject| and |rightstext|.
 The set of alternative languages is specified by
 (before invoking the respective command |\metawritepdf...|):
@@ -1117,10 +1125,10 @@ The following options are available:
 \begin{itemize}
 \item |hyperref|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
-use the package \textsf{hyperref} to write metadata to PDF.
+use the package \ctanpkg{hyperref} to write metadata to PDF.
 \item |hyperxmp|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
-use the auxiliary package \textsf{hyperxmp}
+use the auxiliary package \ctanpkg{hyperxmp}
 to write additional metadata to PDF.
 \item |checkdef|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
@@ -1128,7 +1136,7 @@ check whether registers have been previously declared
 when filling them.
 \item |cclogo|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
-display CC logo from \textsf{doclicense} package.
+display CC logo from \ctanpkg{doclicense} package.
 \item |cclogocurr=dollar|\textbar|euro|\textbar|yen|
 (initially set to |dollar|) --
 select currency symbol for Creative Commons NonCommercial logos.
@@ -1138,9 +1146,9 @@ select shape of Creative Commons NonCommercial logos.
 \item |xmppdfinfo|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
 write the basic PDF info block
-when using the auxiliary package \textsf{hyperxmp};
+when using the auxiliary package \ctanpkg{hyperxmp};
 if this option is set,
-\textsf{hyperxmp} is loaded with the option |keeppdfinfo|.
+\ctanpkg{hyperxmp} is loaded with the option |keeppdfinfo|.
 \item |draft|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 fill |draft| register with ``DRAFT''.
@@ -1238,9 +1246,9 @@ This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
 of this license or (at your option) any later version.
 The latest version of this license is in
-  \url{http://www.latex-project.org/lppl.txt}
-and version 1.3 or later is part of all distributions of \LaTeX{}
-version 2005/12/01 or later.
+  \url{https://www.latex-project.org/lppl.txt}
+and version 1.3c or later is part of all distributions of \LaTeX{}
+version 2008 or later.
 
 This work has the LPPL maintenance status `maintained'.
 
@@ -1286,39 +1294,35 @@ The package makes use of other packages available at CTAN:
 \begin{itemize}
 \item
 This package uses the package
-\href{http://ctan.org/pkg/hyperref}{\textsf{hyperref}}
+\ctanpkg{hyperref}
 to write basic metadata to a PDF file.
-Compatibility with the \textsf{hyperref} package
+Compatibility with the \ctanpkg{hyperref} package
 has been tested with v7.00c (2019/11/10).
 \item
-This package uses the package \textsf{keyval}
-from the \textsf{graphics} bundle
+This package uses the package \ctanpkg{keyval}
+from the \ctanpkg{graphics} bundle
 to process the options for the package, environments and macros.
-Compatibility with the \textsf{keyval} package
+Compatibility with the \ctanpkg{keyval} package
 has been tested with v1.15 (2014/10/28).
 \item
-This package can use the package
-\href{http://ctan.org/pkg/hyperxmp}{\textsf{hyperxmp}}
+This package can use the package \ctanpkg{hyperxmp}
 to write extended metadata to a PDF file.
-Compatibility with the \textsf{hyperxmp} package
+Compatibility with the \ctanpkg{hyperxmp} package
 has been tested with v5.4 (2020/06/19).
 \item
 This package can use the Creative Commons license icon files
-included in the package
-\href{http://ctan.org/pkg/doclicense}{\textsf{doclicense}}.
-Compatibility with the \textsf{doclicense} package
+included in the package \ctanpkg{doclicense}.
+Compatibility with the \ctanpkg{doclicense} package
 has been tested with v2.0.1 (2020/06/26).
 \item
 This package can use the Creative Commons license icon fonts
-included in the package
-\href{http://ctan.org/pkg/ccicons}{\textsf{ccicons}}.
-Compatibility with the \textsf{ccicons} package
+included in the package \ctanpkg{ccicons}.
+Compatibility with the \ctanpkg{ccicons} package
 has been tested with v1.6 (2017/10/30).
 \item
-Icon files are displayed by means of the
-\href{http://ctan.org/pkg/graphicx}{\textsf{graphicx}} package.
+Icon files are displayed by means of the \ctanpkg{graphicx} package.
 The package needs to be loaded explicitly.
-Compatibility with the \textsf{graphicx} package
+Compatibility with the \ctanpkg{graphicx} package
 has been tested with v1.1a (2017/06/01).
 \end{itemize}
 
@@ -1328,39 +1332,39 @@ for some specific purposes:
 %
 \begin{itemize}
 \item
-The package \href{http://ctan.org/pkg/hyperref}{\textsf{hyperref}}
+The package \ctanpkg{hyperref}
 writes the arguments of |\author| and |\title|
 unless the package option |pdfusetitle=false| is declared (at load time).
 \item
-The package \href{http://ctan.org/pkg/hyperxmp}{\textsf{hyperxmp}}
+The package \ctanpkg{hyperxmp}
 writes the arguments of |\author| and |\title|.
 \item
-The package \href{http://ctan.org/pkg/exframe}{\textsf{exframe}}
+The package \ctanpkg{exframe}
 writes the |\exercisedata| registers
 |author|, |title|, |subject| and |keyword|
 unless the package option |pdfdata=off| is specified.
 \item
-The package \href{http://ctan.org/pkg/beamer}{\textsf{beamer}}
+The package \ctanpkg{beamer}
 writes the arguments of |\author|, |\title|, |\subject| and |\keywords|.
 \item
-The package \href{http://ctan.org/pkg/gitver}{\textsf{gitver}}
+The package \ctanpkg{gitver}
 writes |pdfsubject| unless the package option |nopdfinfo| is specified.
 \item
 Various packages to prepare articles for publication in journals.
 \end{itemize}
 %
 Their mechanisms may be in competition
-with the ones of the present package \textsf{metastr}.
+with the ones of the present package \ctanpkg{metastr}.
 In order to make the packages work together on the same set of data,
 the most promising option which should work in many cases is the following:
-Fill the registers of \textsf{metastr}
+Fill the registers of \ctanpkg{metastr}
 with the desired values.
 Then pass them on to the structures
 of the other package(s) using |\metaget| or |\metapick|.
 Since the latter commands are robust,
 the other structures ought to be able to handle them without further ado.
 To avoid potential conflicts, multiple writing of (basic) metadata
-should be disabled. For the \textsf{metastr} package this is achived by:
+should be disabled. For the \ctanpkg{metastr} package this is achived by:
 %
 \begin{center}
 \begin{tabular}{rl}
@@ -1387,28 +1391,34 @@ Further translations of copyright and license statements.
 \item
 Export translations to files
 \item
-Make use of the \textsf{babel} package for translations of basic terms.
+Make use of the \ctanpkg{babel} package for translations of basic terms.
 % load babel when not only en?
 %\item
 %title translations via titletext?
 %\item
-%perhaps use \textsf{xparse} to generate robust commands for optional variants
+%perhaps use \ctanpkg{xparse} to generate robust commands for optional variants
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
 
-\iffalse
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{vXXX+:} YYYY/MM/DD+
+\iffalse
+\paragraph{vN.N.N+:} 20YY/MM/NN
 
 \begin{itemize}
 \item
 \ldots
 \end{itemize}
-
 \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1.3:} 2025/03/25
+
+\begin{itemize}
+\item
+maintenance and manual update
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.1.2:} 2020/09/02
@@ -1441,11 +1451,11 @@ can be changed by package option |titlematter|
 \item
 |linebreak| register added
 \item
-fix saving of PDF info (|keeppdfinfo|) with updated \textsf{hyperxmp} package
+fix saving of PDF info (|keeppdfinfo|) with updated \ctanpkg{hyperxmp} package
 \item
 fix package options |hyperref|, |hyperxmp|, |checkdef|, |xmppdfinfo|
 \item
-fix compatibility with updated \textsf{doclicense} package (v2)
+fix compatibility with updated \ctanpkg{doclicense} package (v2)
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1479,7 +1489,7 @@ first version, published on CTAN
 %\fi
 %
 % This section provides an example of how to apply
-% some of the \textsf{metastr} mechanisms and licenses.
+% some of the \ctanpkg{metastr} mechanisms and licenses.
 %
 % Some lines in the example are commented by |%%| for easy experimenting.
 %
@@ -1491,7 +1501,7 @@ first version, published on CTAN
 \documentclass[12pt]{article}
 %    \end{macrocode}
 
-% Use package \textsf{geometry} to set the page layout;
+% Use package \ctanpkg{geometry} to set the page layout;
 % adjust the paragraph shape:
 %    \begin{macrocode}
 \usepackage{geometry}
@@ -1502,15 +1512,15 @@ first version, published on CTAN
 \parskip1ex
 %    \end{macrocode}
 
-% Declare some options for the package \textsf{hyperref};
+% Declare some options for the package \ctanpkg{hyperref};
 % it does not hurt to load it explicitly
-% although \textsf{metastr} will invoke it by default if not loaded:
+% although \ctanpkg{metastr} will invoke it by default if not loaded:
 %    \begin{macrocode}
 \PassOptionsToPackage{bookmarks=true}{hyperref}
 \usepackage{hyperref}
 %    \end{macrocode}
 
-% Set some options for the \textsf{metastr} package:
+% Set some options for the \ctanpkg{metastr} package:
 %    \begin{macrocode}
 \PassOptionsToPackage{loadlang=en|de|fr|es}{metastr}
 %%\PassOptionsToPackage{loadlang=en|fr|es}{metastr}
@@ -1519,9 +1529,9 @@ first version, published on CTAN
 %%\PassOptionsToPackage{cclogoshape=slim}{metastr}
 %    \end{macrocode}
 
-% Include the \textsf{metastr} package along with
-% \textsf{graphicx}, \textsf{babel}
-% and \textsf{ccicons} (where available):
+% Include the \ctanpkg{metastr} package along with
+% \ctanpkg{graphicx}, \ctanpkg{babel}
+% and \ctanpkg{ccicons} (where available):
 %    \begin{macrocode}
 \usepackage[titlematter]{metastr}
 \usepackage{graphicx}
@@ -1733,7 +1743,7 @@ some representations of the selected license:
 %
 % The package declares a couple of setup options.
 %
-% It loads the package \textsf{keyval}
+% It loads the package \ctanpkg{keyval}
 % for extended options processing.
 %    \begin{macrocode}
 \RequirePackage{keyval}
@@ -1778,7 +1788,7 @@ some representations of the selected license:
   \csname mstr@opt@titlematter#1\endcsname}
 %    \end{macrocode}
 
-% Pass undeclared options on to \textsf{keyval} processing:
+% Pass undeclared options on to \ctanpkg{keyval} processing:
 %    \begin{macrocode}
 \DeclareOption*{\expandafter\setkeys\expandafter\mstr@group%
   \expandafter{\CurrentOption}}
@@ -1808,7 +1818,7 @@ some representations of the selected license:
 % \paragraph{Required Packages.}
 %
 % The package loads the packages
-% \textsf{hyperref} and \textsf{hyperxmp}
+% \ctanpkg{hyperref} and \ctanpkg{hyperxmp}
 % (unless excluded):
 %    \begin{macrocode}
 \ifmstr@opt@hyperref\RequirePackage{hyperref}\fi
@@ -1862,7 +1872,7 @@ some representations of the selected license:
 % \macro{\metatilde}
 % \macro{\metacomma}
 % Define a macro for the tilde character (mostly for use within URLs);
-% recycle the definitions from \textsf{hyperxmp} if available:
+% recycle the definitions from \ctanpkg{hyperxmp} if available:
 %    \begin{macrocode}
 \ifdefined\xmptilde
 \let\metatilde\xmptilde
@@ -2122,9 +2132,9 @@ some representations of the selected license:
 % \macro{\mstr@begindocpreamble}
 % Hook for writing data to PDF file;
 % this is the last chance to write the preamble set of data to the PDF
-% (|pdflang| must be declared before \textsf{hyperxmp}
+% (|pdflang| must be declared before \ctanpkg{hyperxmp}
 % detects languages at the end of the preamble
-% and before \textsf{hyperref} sets it at the beginning of the document):
+% and before \ctanpkg{hyperref} sets it at the beginning of the document):
 %    \begin{macrocode}
 \newcommand{\mstr@begindoc}{%
   \mstr@ifwritepdf[auto]{\metawritepdf}}
@@ -2133,10 +2143,10 @@ some representations of the selected license:
 %    \end{macrocode}
 
 % Hook |\mstr@begindoc| to begining of |document| block
-% (before hooks by \textsf{hyperref} and \textsf{hyperxmp} are called,
+% (before hooks by \ctanpkg{hyperref} and \ctanpkg{hyperxmp} are called,
 % just in case);
 % hook |\mstr@begindocpreamble| to begining of |document| block
-% before hooks by \textsf{hyperxmp} are called;
+% before hooks by \ctanpkg{hyperxmp} are called;
 % legacy code for latex releases earlier than 2020-10
 % to add hook before all other hooks are called:
 %    \begin{macrocode}
@@ -2532,7 +2542,7 @@ some representations of the selected license:
 % \macro{\metawritepdfrights}
 % Write rights information
 % (rights text, alternative language representations, license url)
-% to PDF via \textsf{hyperxmp}:
+% to PDF via \ctanpkg{hyperxmp}:
 %    \begin{macrocode}
 \newcommand{\metawritepdfrights}{\ifdefined\hypersetup\ifdefined\xmptilde
     \metaifpick[\mstr@lang@meta]{rightstext}
@@ -2630,7 +2640,7 @@ some representations of the selected license:
 % \LaTeX{} project public license (translated):
 % \translate{license@lppl}
 %    \begin{macrocode}
-\metaset[url]{license@lppl}{http://www.latex-project.org/lppl.txt}
+\metaset[url]{license@lppl}{https://www.latex-project.org/lppl.txt}
 % \metaset{license@lppl}{%
 %   This work may be distributed and/or modified under the
 %   conditions of the LaTeX Project Public License, either version
@@ -2867,7 +2877,7 @@ some representations of the selected license:
 %
 % \macro{logo}
 % |logo| variants used for the license logo
-% provided by the \textsf{doclicense} package:
+% provided by the \ctanpkg{doclicense} package:
 %    \begin{macrocode}
 \metaset[logo]{cc@pd}{doclicense-CC-pd}
 \metaset[logo]{cc@zero}{doclicense-CC-zero}
@@ -2892,7 +2902,7 @@ some representations of the selected license:
 
 % \macro{\mstr@setcclogo}
 % Use the Creative Commons logos
-% included in the \textsf{doclicense} package:
+% included in the \ctanpkg{doclicense} package:
 %    \begin{macrocode}
 \newcommand{\mstr@setcclogo}{%
   \ifmstr@opt@cclogo
@@ -2911,7 +2921,7 @@ some representations of the selected license:
 
 % \macro{icon}
 % |icon| variants used for the license icons
-% provided by the \textsf{ccicons} package:
+% provided by the \ctanpkg{ccicons} package:
 %    \begin{macrocode}
 \metaset[icon]{licensecc}{%
   \metaget[icon]{cc@license\metaget[]{cc@class}}%
@@ -3031,7 +3041,7 @@ some representations of the selected license:
 % \paragraph{Write to PDF.}
 %
 % \macro{\metawritepdfcontact}
-% Write contact information to PDF via \textsf{hyperxmp}:
+% Write contact information to PDF via \ctanpkg{hyperxmp}:
 %    \begin{macrocode}
 \newcommand{\metawritepdfcontact}{\ifdefined\hypersetup\ifdefined\xmptilde
   \metaifpick[\mstr@lang@meta]{contactaddress}{%
