@@ -1,4 +1,4 @@
-childdoc v1.0
+childdoc v1.5
 Copyright 2017 Niklas Beisert
 
 childdoc is a LaTeX2e package that enables the direct compilation
@@ -13,9 +13,9 @@ The package consists of the files
     cdocsamp.tex  sample main file
     cdocsch1.tex  sample include file
     cdocsch2.tex  sample include file
-    cdocsdrf.tex  sample redirection file
-    cdocsch1.tex  sample redirection file
-    cdocsch2.tex  sample redirection file
+    cdocsdrf.tex  sample forwarding file
+    cdocsch1.tex  sample forwarding file
+    cdocsch2.tex  sample forwarding file
     chilcdoc.pdf  manual
 
 The distribution consists of the files README, childdoc.ins and childdoc.dtx.
