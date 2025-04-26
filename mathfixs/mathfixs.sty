@@ -6,7 +6,7 @@
 %%
 %% mathfixs.dtx  (with options: `package')
 %% 
-%% Copyright (C) 2018-2024 Niklas Beisert
+%% Copyright (C) 2018-2025 Niklas Beisert
 %% 
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either version 1.3
@@ -17,15 +17,15 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{mathfixs}[2024/11/18 v1.12 various fixes for math mode]
+\ProvidesPackage{mathfixs}[2025/03/25 v1.1.3 various fixes for math mode]
 
 \RequirePackage{keyval}
 
-\expandafter\def\expandafter\mafx@bfseries\expandafter
+\expandafter\DeclareRobustCommand\expandafter\mafx@bfseries\expandafter
   {\bfseries\ifmmode\else\boldmath\fi}
-\expandafter\def\expandafter\mafx@mdseries\expandafter
+\expandafter\DeclareRobustCommand\expandafter\mafx@mdseries\expandafter
   {\mdseries\ifmmode\else\unboldmath\fi}
-\expandafter\def\expandafter\mafx@normalfont\expandafter
+\expandafter\DeclareRobustCommand\expandafter\mafx@normalfont\expandafter
   {\normalfont\ifmmode\else\unboldmath\fi}
 
 \define@key{mafx@}{autobold}[]{%
@@ -44,9 +44,9 @@
 \def\mafx@frac@delimclass{\mathopen{}\mathclose}
 
 \DeclareRobustCommand{\mafx@frac}[2]{%
-    \mafx@frac@class{\begingroup#1\endgroup\@@over#2}}
+  \mafx@frac@class{\begingroup#1\endgroup\@@over#2}}
 
-\def\mafx@@genfrac#1#2#3#4#5{\begingroup
+\DeclareRobustCommand{\mafx@@genfrac}[5]{\begingroup
   \ifx#2\@@overwithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi
   \ifx#2\@@abovewithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi
   \ifx#2\@@atopwithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi
@@ -151,8 +151,8 @@
 \let\mafx@old@dot=\.
 \def\mafx@dot@skip{\thinmuskip}
 \def\mafx@dot{\mskip\mafx@dot@skip}
-\def\mafx@per@dot{\begingroup\ifmmode\def\mafx@tmp{\mafx@dot}\else
-  \def\mafx@tmp{\mafx@old@dot}\fi\expandafter\endgroup\mafx@tmp}
+\DeclareRobustCommand{\mafx@per@dot}{%
+  \ifmmode\expandafter\mafx@dot\else\expandafter\mafx@old@dot\fi}
 
 \define@key{mafx@}{multskip}[\thinmuskip]{%
   \let\.=\mafx@per@dot
