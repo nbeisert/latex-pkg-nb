@@ -28,6 +28,6 @@ clean-all: clean
 
 clean-bak: clean-all
 	rm -f mpostinl.dtx.bak mpostinl.sty.bak mpostinl.ins.bak
-	rm -f mpostinl.dtx~ mpostinl.sty~ mpostinl.ins~ 
+	rm -f mpostinl.dtx~ mpostinl.sty~ mpostinl.ins~
 	rm -f README.txt.bak Makefile.bak
 	rm -f README.txt~ Makefile~

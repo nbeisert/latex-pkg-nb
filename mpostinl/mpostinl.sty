@@ -17,11 +17,12 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{mpostinl}[2025/03/25 v1.5.1 metapost inline figures]
+\ProvidesPackage{mpostinl}[2025/04/26 v1.5.2 metapost inline figures]
 
 \RequirePackage{verbatim}
 \RequirePackage{graphicx}
 \RequirePackage{keyval}
+\RequirePackage{shellesc}
 
 \def\mpostfilename{\jobname}
 \def\mpi@nowname{\jobname-tmp}
@@ -58,8 +59,8 @@
 \def\mpi@documentclass{\@backslashchar documentclass%
   \mpi@latexoptions{\mpi@latexclass}}
 
-\def\mpi@warncompile{\ifmpi@compile\ifeof18%
-  \PackageWarningNoLine{mpostinl}{write18 disabled, %
+\def\mpi@warncompile{\ifmpi@compile\ifnum\ShellEscapeStatus=0\relax%
+  \PackageWarningNoLine{mpostinl}{shell escape (write18) disabled, %
     manual metapost compiling required}{}%
   \global\mpi@compilefalse\fi\fi}
 
@@ -372,9 +373,9 @@
     \else%
       \def\mpi@execute{\mpi@mpostcompiler\space#1}%
     \fi%
-    \immediate\write18{\mpi@execute}%
+    \ShellEscape{\mpi@execute}%
     \ifmpi@twice%
-      \immediate\write18{\mpi@execute}%
+      \ShellEscape{\mpi@execute}%
     \fi%
   \fi\fi%
 }

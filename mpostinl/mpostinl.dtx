@@ -19,10 +19,10 @@
 % and the derived files mpostinl.sty and mpinlsmp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mpostinl}[2025/03/25 v1.5.1 metapost inline figures]
-%<sample>\ProvidesFile{mpinlsmp.tex}[2025/03/25 v1.5.1 sample for mpostinl]
+%<package>\ProvidesPackage{mpostinl}[2025/04/26 v1.5.2 metapost inline figures]
+%<sample>\ProvidesFile{mpinlsmp.tex}[2025/04/26 v1.5.2 sample for mpostinl]
 %<*driver>
-\def\thedate#1{2025/03/25}\def\theversion#1{v1.5.1}
+\def\thedate#1{2025/04/26}\def\theversion#1{v1.5.2}
 \ProvidesFile{mpostinl.dtx}[\thedate{} \theversion{} mpostinl reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -80,7 +80,8 @@
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package mpostinl}}
 \date{\thedate{}, \theversion{}\\[1ex]
-\url{https://ctan.org/pkg/mpostinl}}
+\url{https://ctan.org/pkg/mpostinl}\\[0.5ex]
+\url{https://github.com/nbeisert/latex-pkg-nb}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -99,6 +100,7 @@ to manage the generation of files and compilation.
 \parskip0ex
 \tableofcontents
 \endgroup
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,7 +144,7 @@ to compile labels via \LaTeX{}.
 Distribute source and figures as separate files.
 \end{itemize}
 %
-The current \LaTeX{} package \ctanpkg{mpostinl}
+The present \LaTeX{} package \ctanpkg{mpostinl}
 helps in the management of metapost figures
 by embedding them into the \LaTeX{} source:
 %
@@ -377,7 +379,11 @@ or leading spaces preserve comments in the metapost file.
 
 \item
 The environment |mpostfig|
-cannot be used within macro arguments or particular other environments.
+cannot be used within macro arguments or particular other environments
+such as |align|, |gather|, |multline|, |equations| and |\<...\>|
+of \ctanpkg{amsmath} and \ctanpkg{eqnlines}
+(in certain situations |equation| and |\[...\]|
+may be problematic as well).
 If you want to display a figure in these situations,
 you should declare the figure with a label and
 display it via the command |\mpostuse| (see below).
@@ -1048,7 +1054,8 @@ The following lists some potential issues in
 the interaction with other \LaTeX{} packages:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Package \ctanpkg{inputenc}.}
+\paragraph{Package \markpkg{inputenc}.}
+
 This package should not interfere with the input encoding
 selected via the package \ctanpkg{inputenc}, e.g.\ |utf8| encoding.
 Extended characters are passed on
@@ -1133,6 +1140,22 @@ and that |mplatex| is in the path (or specify its location explicitly).
 Note that the file naming convention (\textit{filename}|.|\textit{nn})
 does not seem to work with pdf\LaTeX{}.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Packages \markpkg{amsmath}, \markpkg{eqnlines}.}
+
+The packages \ctanpkg{amsmath} and \ctanpkg{eqnlines}
+declare several math display environments
+(|align|, |gather|, |multline|, |equations|, |\<...\>|;
+potentially also |equation| and |\[...\]|)
+which scan the contents before typesetting them as mathematical expressions.
+The scanning process eliminates line breaks in the source code
+and thus breaks the scanning for the end of the metapost code block
+which has to be on a separate line.
+Furthermore, other aspects of the metapost code may get distorted,
+so no attempts are made to recover.
+Please declare the metapost figures outside of math display environments
+and print then via |\mpostuse|.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1210,6 +1233,11 @@ to process the options for the package, environments and macros.
 Compatibility with the \ctanpkg{keyval} package
 has been tested with v1.15 (2014/10/28).
 \item
+This package uses the package \ctanpkg{shellesc}
+to invoke |mpost|.
+Compatibility with the \ctanpkg{shellesc} package
+has been tested with v1.0d (2023/07/08).
+\item
 This package uses the command |\currfilename|
 provided by the package \ctanpkg{currfile} (if available and loaded)
 to indicate the \LaTeX{} source file in the generated metapost file.
@@ -1260,6 +1288,7 @@ to the usual \TeX{} philosophy.
 %\item
 %improve detection of changed figure files?
 %allow to declare extra include files for update detection
+%clean default to false?
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1274,6 +1303,15 @@ to the usual \TeX{} philosophy.
 \ldots
 \end{itemize}
 \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.5.2:} 2025/04/26
+
+\begin{itemize}
+\item
+use package \ctanpkg{shellesc} to invoke |mpost|
+for compatibility with Lua\TeX{}
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.5.1:} 2025/03/25
@@ -1969,6 +2007,7 @@ filename: \mpostgetname{sec8}
 \RequirePackage{verbatim}
 \RequirePackage{graphicx}
 \RequirePackage{keyval}
+\RequirePackage{shellesc}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2036,10 +2075,10 @@ filename: \mpostgetname{sec8}
 %    \end{macrocode}
 
 % \macro{\mpi@warncompile}
-% Warn and disable compiling if |\write18| is unavailable:
+% Warn and disable compiling if shell escape is unavailable:
 %    \begin{macrocode}
-\def\mpi@warncompile{\ifmpi@compile\ifeof18%
-  \PackageWarningNoLine{mpostinl}{write18 disabled, %
+\def\mpi@warncompile{\ifmpi@compile\ifnum\ShellEscapeStatus=0\relax%
+  \PackageWarningNoLine{mpostinl}{shell escape (write18) disabled, %
     manual metapost compiling required}{}%
   \global\mpi@compilefalse\fi\fi}
 %    \end{macrocode}
@@ -2086,7 +2125,7 @@ filename: \mpostgetname{sec8}
 %    \end{macrocode}
 
 % Process package options,
-% warn if |\write18| mechanism is not available,
+% warn if shell escape mechanism is not available,
 % and disable checksum if |\pdfmdfivesum| is not available:
 %    \begin{macrocode}
 \ProcessOptions
@@ -2586,11 +2625,11 @@ filename: \mpostgetname{sec8}
       \def\mpi@execute{\mpi@mpostcompiler\space#1}%
     \fi%
 %    \end{macrocode}
-% Execute \MP{} by |\write18| command; do it again if needed:
+% Execute \MP{} by |\ShellEscape|; do it again if needed:
 %    \begin{macrocode}
-    \immediate\write18{\mpi@execute}%
+    \ShellEscape{\mpi@execute}%
     \ifmpi@twice%
-      \immediate\write18{\mpi@execute}%
+      \ShellEscape{\mpi@execute}%
     \fi%
   \fi\fi%
 }
