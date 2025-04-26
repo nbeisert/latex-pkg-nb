@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{metastr}[2020/08/27 v1.1.1 Metadata Strings Storage]
+\ProvidesPackage{metastr}[2020/09/02 v1.1.2 Metadata Strings Storage]
 
 \RequirePackage{keyval}
 
@@ -186,17 +186,21 @@
 }
 
 \newcommand{\mstr@begindoc}{%
-  \mstr@ifwritepdf[preamble]{\metawritepdfpreamble}%
-  \mstr@ifwritepdf[auto]{\metawritepdf}%
-}
+  \mstr@ifwritepdf[auto]{\metawritepdf}}
+\newcommand{\mstr@begindocpreamble}{%
+  \mstr@ifwritepdf[preamble]{\metawritepdfpreamble}}
 
 \ifdefined\AddToHook
 \DeclareHookRule{begindocument}{metastr}{before}{hyperref}
+\DeclareHookRule{begindocument}{metastr}{before}{hyperxmp}
 \AddToHook{begindocument}{\mstr@begindoc}
+\DeclareHookRule{begindocument/before}{metastr}{before}{hyperxmp}
+\AddToHook{begindocument/before}{\mstr@begindocpreamble}
 \else
+\AtBeginDocument{\mstr@begindoc}
 \begingroup
-\toks@\expandafter{\expandafter\mstr@begindoc\@begindocumenthook}%
-\xdef\@begindocumenthook{\the\toks@}%
+\toks@\expandafter{\expandafter\mstr@begindocpreamble\@begindocumenthook}
+\xdef\@begindocumenthook{\the\toks@}
 \endgroup
 \fi
 

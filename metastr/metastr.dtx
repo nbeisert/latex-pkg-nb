@@ -18,10 +18,10 @@
 % and the derived files metastr.sty and metasamp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{metastr}[2020/08/27 v1.1.1 Metadata Strings Storage]
-%<sample>\ProvidesFile{metasamp.tex}[2020/08/27 v1.1.1 sample for metastr]
+%<package>\ProvidesPackage{metastr}[2020/09/02 v1.1.2 Metadata Strings Storage]
+%<sample>\ProvidesFile{metasamp.tex}[2020/09/02 v1.1.2 sample for metastr]
 %<*driver>
-\def\thedate#1{2020/08/27}\def\theversion#1{v1.1.1}
+\def\thedate#1{2020/09/02}\def\theversion#1{v1.1.2}
 \ProvidesFile{metastr.dtx}[\thedate{} \theversion{} metastr reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -1398,6 +1398,26 @@ Make use of the \textsf{babel} package for translations of basic terms.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
 
+\iffalse
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{vXXX+:} YYYY/MM/DD+
+
+\begin{itemize}
+\item
+\ldots
+\end{itemize}
+
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1.2:} 2020/09/02
+
+\begin{itemize}
+\item
+improve hook processing to set |pdflang| at the right moment
+\end{itemize}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.1.1:} 2020/08/27
 
@@ -2099,27 +2119,38 @@ some representations of the selected license:
 %    \end{macrocode}
 
 % \macro{\mstr@begindoc}
+% \macro{\mstr@begindocpreamble}
 % Hook for writing data to PDF file;
-% this is the last chance to write the preamble set of data to the PDF:
+% this is the last chance to write the preamble set of data to the PDF
+% (|pdflang| must be declared before \textsf{hyperxmp}
+% detects languages at the end of the preamble
+% and before \textsf{hyperref} sets it at the beginning of the document):
 %    \begin{macrocode}
 \newcommand{\mstr@begindoc}{%
-  \mstr@ifwritepdf[preamble]{\metawritepdfpreamble}%
-  \mstr@ifwritepdf[auto]{\metawritepdf}%
-}
+  \mstr@ifwritepdf[auto]{\metawritepdf}}
+\newcommand{\mstr@begindocpreamble}{%
+  \mstr@ifwritepdf[preamble]{\metawritepdfpreamble}}
 %    \end{macrocode}
 
 % Hook |\mstr@begindoc| to begining of |document| block
-% before hooks by \textsf{hyperref} are called;
+% (before hooks by \textsf{hyperref} and \textsf{hyperxmp} are called,
+% just in case);
+% hook |\mstr@begindocpreamble| to begining of |document| block
+% before hooks by \textsf{hyperxmp} are called;
 % legacy code for latex releases earlier than 2020-10
 % to add hook before all other hooks are called:
 %    \begin{macrocode}
 \ifdefined\AddToHook
 \DeclareHookRule{begindocument}{metastr}{before}{hyperref}
+\DeclareHookRule{begindocument}{metastr}{before}{hyperxmp}
 \AddToHook{begindocument}{\mstr@begindoc}
+\DeclareHookRule{begindocument/before}{metastr}{before}{hyperxmp}
+\AddToHook{begindocument/before}{\mstr@begindocpreamble}
 \else
+\AtBeginDocument{\mstr@begindoc}
 \begingroup
-\toks@\expandafter{\expandafter\mstr@begindoc\@begindocumenthook}%
-\xdef\@begindocumenthook{\the\toks@}%
+\toks@\expandafter{\expandafter\mstr@begindocpreamble\@begindocumenthook}
+\xdef\@begindocumenthook{\the\toks@}
 \endgroup
 \fi
 %    \end{macrocode}
