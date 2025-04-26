@@ -1,6 +1,6 @@
 % \iffalse
 %
-% childdoc.dtx Copyright (C) 2017 Niklas Beisert
+% childdoc.dtx Copyright (C) 2017-2018 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -19,20 +19,34 @@
 % cdocsch1.tex, cdocsch2.tex, cdocsdrf.tex, cdocsfn1.tex, cdocsfn2.tex.
 %
 %<package>\ifdefined\childdocmain\endinput\fi
-%<package>\ProvidesFile{childdoc.def}[2017/05/21 v1.5 child document driver]
-%<samplemain>\ProvidesFile{cdocsamp.tex}[2017/05/21 v1.5 sample for childdoc]
+%<package>\ProvidesFile{childdoc.def}[2018/01/17 v1.6 child document driver]
+%<samplemain>\ProvidesFile{cdocsamp.tex}[2018/01/17 v1.6 sample for childdoc]
 %<*driver>
-%\ProvidesFile{childdoc.drv}[2017/05/21 v1.5 childdoc reference manual file]
+%\ProvidesFile{childdoc.drv}[2018/01/17 v1.6 childdoc reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
 \usepackage[margin=35mm]{geometry}
 \usepackage{hyperref}
+\usepackage{hyperxmp}
 \usepackage[usenames]{color}
 
 \hypersetup{colorlinks=true}
 \hypersetup{pdfstartview=FitH}
 \hypersetup{pdfpagemode=UseNone}
+\hypersetup{pdfsource={}}
+\hypersetup{pdflang={en-UK}}
+\hypersetup{pdfcopyright={Copyright 2017-2018 Niklas Beisert.
+  This work may be distributed and/or modified under the
+  conditions of the LaTeX Project Public License, either version 1.3
+  of this license or (at your option) any later version.}}
+\hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
+\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K, Wolfgang-Pauli-Strasse 27}}
+\hypersetup{pdfcontactpostcode={8093}}
+\hypersetup{pdfcontactcity={Zurich}}
+\hypersetup{pdfcontactcountry={Switzerland}}
+\hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
+\hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
 \begin{document}
 
@@ -46,7 +60,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package childdoc}}
-\date{21 May 2017, \textsf{v1.5}}
+\date{17 January 2018, \textsf{v1.6}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -114,7 +128,10 @@ which are typically distributed individually.
 It then assists the author in generating the individual documents
 (potentially in different versions)
 as well as a document containing the collected series.
-
+Another application is in developing style files
+or other kinds of included material
+where compilation of the style file could redirect
+to a sample or test file.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,7 +195,7 @@ or by a comment mark `|%|'.
 This is because the \TeX{} parser reads the token immediately following
 the argument of |\childdocmain| and puts it
 at the beginning of every child section;
-however, a whitespace is ignored.
+however, a white\-space is ignored.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -221,6 +238,25 @@ where \textit{child} can be |chapter| or |section|
 depending on the chosen structuring.
 Alternatively, one can modify the macro |\thepage| appropriately
 and reset the counter |page| at the start of each child file.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Include Files.}
+
+The \textsf{childdoc} mechanism can also be use for the development
+of include files such as \LaTeX{} styles or classes,
+but also other material included by |\input|.
+This case differs from the above setup with multiple parts
+included by |\include| in that no |\includeonly| should be invoked.
+This can be achieved by starting the include file by:
+%
+\begin{center}
+\begin{tabular}{l}
+|\input{childdoc.def}|\\
+|\childdocforward{|\textit{main}|}|\\
+\end{tabular}
+\end{center}
+%
+The main file is prepared as described above.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Conditional Processing}
@@ -359,7 +395,7 @@ to pass on compilation to a different file:
 \noindent
 \DescribeMacro{\childdocforward}
 \DescribeMacro{\childdocforwardprefix}
-The command |\childdocredirect| redirects processing to
+The commands |\childdocforward|[|prefix|] redirect processing to
 the another source file:
 %
 \begin{center}
@@ -398,7 +434,7 @@ compiles the main document as a draft:
 \begin{tabular}{l}
 |\def\version{draft}|\\
 |\input{childdoc.def}|\\
-|\childdocredirect{|\textit{main}|}|
+|\childdocforward{|\textit{main}|}|
 \end{tabular}
 \end{center}
 %
@@ -410,7 +446,7 @@ compile the final version of the child document
 \begin{tabular}{l}
 |\def\version{final}|\\
 |\input{childdoc.def}|\\
-|\childdocredirect{final}{child}|
+|\childdocforwardprefix{final}{child}|
 \end{tabular}
 \end{center}
 %
@@ -523,7 +559,7 @@ and the conditional |\ifchilddoc| is not defined.
 \parskip1ex
 \parindent0pt
 
-Copyright \copyright{} 2017 Niklas Beisert
+Copyright \copyright{} 2017--2018 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
@@ -537,10 +573,11 @@ This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainer of this work is Niklas Beisert.
 
-This work consists of the files |childdoc.dtx| and |childdoc.ins|
-and the derived files |childdoc.def| and |cdocsamp.tex|
+This work consists of the files |README.txt|, |childdoc.ins| and |childdoc.dtx|
+as well as the derived files |childdoc.def|, |cdocsamp.tex|
 with |cdocsch1.tex|, |cdocsch2.tex|,
-|cdocsdrf.tex|, |cdocsfn1.tex|, |cdocsfn2.tex|.
+|cdocsdrf.tex|, |cdocsfn1.tex|, |cdocsfn2.tex|
+and |childdoc.pdf|.
 
 \endgroup
 
@@ -551,7 +588,7 @@ The package consists of the files:
 %
 \begin{center}
 \begin{tabular}{ll}
-    |README|       & readme file \\
+    |README.txt|   & readme file \\
     |childdoc.ins| & installation file \\
     |childdoc.dtx| & source file \\
     |childdoc.def| & definition file \\
@@ -566,7 +603,7 @@ The package consists of the files:
 \end{center}
 %
 The distribution consists of the files
-|README|, |childdoc.ins| and |childdoc.dtx|.
+|README.txt|, |childdoc.ins| and |childdoc.dtx|.
 %
 \begin{itemize}
 \item
@@ -619,11 +656,21 @@ such that all constituent files can be compiled individually.
 %%
 %\begin{itemize}
 %\item
-%...
+% explain how to use for style files
 %\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.6:} 2018/01/17
+
+\begin{itemize}
+\item
+application for development of include files
+\item
+corrections to manual
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.5:} 2017/05/21
@@ -776,7 +823,7 @@ version: \version\par
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Chapter Include Files.}
 %
-% The chapter include files are called |cdocsch1.tex| and |cdocsch2.tex|.
+% The include files are called |cdocsch1.tex| and |cdocsch2.tex|.
 %
 %\iffalse
 %<*samplechap1|samplechap2>
@@ -888,11 +935,9 @@ more text in chapter two
 
 % \begin{macro}{\childdocname}
 % The macro |\childdocname| stores the name of the document
-% to be compiled. In modern \TeX{} engines the content of |\jobname|
-% appears to be protected to account for special characters
-% or subdirectories in filenames.
-% This prevents a successful comparison to the name of the main file.
-% The following code stores an expanded version of |\jobname|
+% to be compiled. The content of |\jobname| cannot be compared
+% to filenames specified in the source due to different catcodes.
+% The following code rescans |\jobname| and stores the result in 
 % in |\childdocname|:
 %    \begin{macrocode}
 \edef\childdocname{\scantokens\expandafter{\jobname\noexpand}}
@@ -904,7 +949,7 @@ more text in chapter two
 % main file with the main filename (without extension) as argument.
 % First, it overwrites its own definition to end processing of the
 % present file (|\endinput|) on subsequent calls.
-% It also overwrites the definition of |\childdocof|
+% It also overwrites the definition of |\childdocof| and |\childdocforward|
 % to prevent further inclusions of the main document.
 % This prevents the main file from being processed more than once.
 % Then the current filename is compared to the main filename
@@ -915,8 +960,9 @@ more text in chapter two
 %    \begin{macrocode}
 \newcommand{\childdocmain}[1]
 {
-  \def\childdocmain##1{\endinput}
-  \def\childdocof##1{}
+  \renewcommand{\childdocmain}[1]{\endinput}
+  \renewcommand{\childdocof}[1]{}
+  \renewcommand{\childdocforward}[2][]{}
   \begingroup
     \def\childdoctmp{#1}
     \ifx\childdocname\childdoctmp
@@ -1001,7 +1047,7 @@ more text in chapter two
 % \end{macro}
 
 % \begin{macro}{\childdocredirect}
-% The deprecated command |\childdocredirect| is a legacy version
+% The deprecated macro |\childdocredirect| is a legacy version
 % of |\childdocforward| and |\childdocforwardprefix|:
 %    \begin{macrocode}
 \newcommand{\childdocredirect}[2][]
@@ -1026,5 +1072,3 @@ more text in chapter two
 %\fi
 %
 \endinput
-%
-%% \CheckSum{3381}

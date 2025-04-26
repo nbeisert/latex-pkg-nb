@@ -63,5 +63,5 @@ clean-all: clean
 clean-bak: clean-all
 	rm -f childdoc.dtx.bak childdoc.ins.bak
 	rm -f childdoc.dtx~ childdoc.ins~
-	rm -f README.bak Makefile.bak
-	rm -f README~ Makefile~
+	rm -f README.txt.bak Makefile.bak
+	rm -f README.txt~ Makefile~

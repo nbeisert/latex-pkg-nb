@@ -5,6 +5,6 @@
 !/.gitignore
 !/childdoc.dtx
 !/childdoc.ins
-!/README
+!/README.txt
 !/Makefile
 !/childdoc.def

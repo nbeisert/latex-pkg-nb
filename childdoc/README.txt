@@ -1,12 +1,12 @@
-childdoc v1.5
-Copyright 2017 Niklas Beisert
+childdoc v1.6
+Copyright 2017-2018 Niklas Beisert
 
 childdoc is a LaTeX2e package that enables the direct compilation
 of document sections included by \include to individual files.
 
 The package consists of the files
 
-    README        readme file
+    README.txt    readme file
     childdoc.ins  installation file
     childdoc.dtx  source file
     childdoc.def  package file
@@ -18,7 +18,8 @@ The package consists of the files
     cdocsch2.tex  sample forwarding file
     chilcdoc.pdf  manual
 
-The distribution consists of the files README, childdoc.ins and childdoc.dtx.
+The distribution consists of the files
+README.txt, childdoc.ins and childdoc.dtx.
 
 Run "(pdf)latex childdoc.dtx" to compile the manual childdoc.pdf.
 
