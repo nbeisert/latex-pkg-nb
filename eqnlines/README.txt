@@ -1,11 +1,9 @@
-eqnlines v0.6.1
+eqnlines v0.7
 Copyright 2024-2025 Niklas Beisert
 
 Based on the latex package amsmath:
 Copyright (C) 1995, 2000, 2013 American Mathematical Society.
 Copyright (C) 2016-2024 LaTeX Project and American Mathematical Society.
-
--- preview version --
 
 eqnlines is a LaTeX2e package providing a framework for typesetting
 single- and multi-line equations which extends the established

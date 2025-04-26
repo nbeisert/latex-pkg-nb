@@ -23,10 +23,10 @@
 % and the derived files eqnlines.sty.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[2020/10/01]
-%<package&!dev>\ProvidesPackage{eqnlines}[2025/03/27 v0.6.1 Single- and multi-line equations]
-%<package&dev>\ProvidesPackage{eqnlines-dev}[2025/03/27 v0.6.1 Single- and multi-line equations (development)]
+%<package&!dev>\ProvidesPackage{eqnlines}[2025/04/03 v0.7 Single- and multi-line equations]
+%<package&dev>\ProvidesPackage{eqnlines-dev}[2025/04/03 v0.7 Single- and multi-line equations (development)]
 %<*driver>
-\def\thedate#1{2025/03/27}\def\theversion#1{v0.6.1}
+\def\thedate#1{2025/04/03}\def\theversion#1{v0.7}
 \ProvidesFile{eqnlines.dtx}[\thedate{} \theversion{} eqnlines reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -56,6 +56,48 @@
 \hypersetup{pdfcontactcountry={Switzerland}}
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
 \hypersetup{pdfcontacturl={https://people.phys.ethz.ch/\xmptilde nbeisert/}}
+
+\usepackage{eqnlines}
+\eqnlinesset{belowtopmode=top,belowtopskip=0pt}
+\def\pstrut{\vphantom{(}}
+\def\bstrut{\vphantom{b}}
+
+\usepackage{verbatim}
+\makeatletter
+\def\example@addline#1{%
+  \g@addto@macro\example@dbuf{#1 }%
+  \g@addto@macro\example@pbuf{\item|#1|}}
+\def\scanexample{%
+  \gdef\example@dbuf{}%
+  \gdef\example@pbuf{}%
+  \begingroup
+  \@bsphack
+  \let\do\@makeother\dospecials
+  \catcode`\^^M\active
+  \def\verbatim@processline{\expandafter\example@addline\expandafter%
+    {\the\verbatim@line}}%
+  \verbatim@start}
+\def\endscanexample{\@esphack\endgroup\ignorespacesafterend}
+\def\printexample{\begingroup
+  \topsep\z@skip\parsep\z@skip\itemsep\z@skip\partopsep\z@skip\parskip\z@skip
+  \trivlist
+  \expandafter\scantokens\expandafter{\example@pbuf}%
+  \endtrivlist
+  \endgroup}
+\def\doexample{\expandafter\scantokens\expandafter{\example@dbuf}}
+\newcommand{\showexampleh}[1][0.5]{\par%
+  \parbox{\dimexpr#1\textwidth\relax}{\printexample}%
+  \parbox{\dimexpr\textwidth-#1\textwidth\relax}{\doexample}%
+  \par\medskip\ignorespaces}
+\newcommand{\showexamplev}{%
+  \printexample
+  \par\medskip
+  \parbox{\textwidth}{\doexample}%
+  \par\medskip\ignorespaces}
+\newenvironment{example}
+  {\parskip\z@skip\par\medskip\hrule\medskip}
+  {\par\hrule\par\medskip}
+\makeatother
 
 \newcommand{\TODO}{\textbf{\textcolor{red}{TODO:}} }
 
@@ -158,10 +200,6 @@
 \url{https://ctan.org/pkg/eqnlines}}
 \maketitle
 
-\begin{center}
--- preview version --
-\end{center}
-
 \begin{abstract}\noindent
 \markpkg{eqnlines} is a \LaTeXe{} package providing
 a framework for typesetting single- and multi-line equations
@@ -190,7 +228,7 @@ equation environments as well as global settings.
 Typesetting mathematical equations is an undisputed strength of \TeX{}.
 \LaTeX{} improved the overall management of display equations,
 for instance by providing optional numbering.
-It also added elementary functionality for multi-lined equations
+It also added elementary functionality for multi-line equations
 with alignment. Some of its deficiencies were addressed by
 the multi-line equation environments of the package \ctanpkg{amsmath}
 which have become an established standard for these purposes.
@@ -321,7 +359,55 @@ it makes sense to load these packages \emph{before} \ctanpkg{eqnlines}.
 
 \DescribeEnv{equations}
 The package supplies a main maths environment called |equations|
-which accepts a comma-separated list of optional parameters
+which has three principal modes of operation.
+It can display a single-line equation
+just as the \LaTeX{} environment |equation| or
+the symbolic shortcut |\[...\]|:
+%
+\[
+\framebox[8cm]{\pstrut single line}
+\]
+%
+It can display a stack of equations
+analogous to the \ctanpkg{amsmath} environments |gather| and |multline|:
+\unskip\footnote{Arguably, a single-line equation is
+just a stack of equations of height 1.
+Nevertheless, there is a single-line mode
+which prohibits line breaks and which works slightly more efficiently:
+For example, the multi-line modes will process the input
+twice which is not needed for the single-line mode.
+Apart from that, the package takes care that the layout and spacing
+of single-line equations and multi-line equations consisting of a single line
+is the same.}
+%
+\<~[pad]
+\framebox[4cm]{\pstrut stacked line 1}
+\\
+\framebox[7cm]{\pstrut stacked line 2}
+\\
+\framebox[5cm]{\pstrut stacked line 3}
+\\
+\shoveright\framebox[5cm]{\pstrut aligned line 4}
+\>
+%
+It can also display several columns of aligned equations
+analogous to the \ctanpkg{amsmath} environment family |align|:
+%
+\<
+\framebox[1.0cm]{\pstrut 1a-L}\hskip-0.5pt&\framebox[3.0cm]{\pstrut 1a-R}
+&
+\framebox[1.5cm]{\pstrut 1b-L}\hskip-0.5pt&\framebox[3.5cm]{\pstrut 1b-R}
+\\
+\framebox[2.5cm]{\pstrut 2a-L}\hskip-0.5pt&\framebox[4.5cm]{\pstrut 2a-R}
+&
+&\framebox[2cm]{\pstrut 2b-R}
+\\
+&\framebox[4cm]{\pstrut 3a-R}
+\>
+%
+
+The environment |equations|
+accepts a comma-separated list of optional parameters
 `|[|\textit{opts}|]|':
 %
 \begin{center}
@@ -351,8 +437,8 @@ without whitespaces.
 \DescribeKey{single}
 \DescribeKey{lines}
 \DescribeKey{columns}
-The environment has three principal modes of operation
-which are selected by setting an optional argument as follows:
+The three modes of operation
+are selected by setting an optional argument as follows:
 %
 \begin{center}
 \begin{tabular}{llll}
@@ -389,6 +475,28 @@ in aligned mode, and therefore the aligned form can automatically reduce
 to the stacked form (with right alignment) if only a single column is provided
 (no `|&|'s).
 
+\begin{example}
+\begin{scanexample}
+\begin{equations}[single]
+x=\cos\phi
+\end{equations}
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\begin{equations}[lines]
+x=\cos\phi \\ \phi=\arccos x
+\end{equations}
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\begin{equations}[columns]
+x&=\cos\phi & \phi&=\arccos x \\
+ &=(z+z^{-1})/2 & &=-i\log z
+\end{equations}
+\end{scanexample}
+\showexampleh
+\end{example}
+
 \DescribeInterfaceMacro{\[...\string\]}
 \DescribeInterfaceMacro{\<...\string\>}
 \DescribeKey{\string~}
@@ -407,6 +515,33 @@ by setting default arguments via the global options
 Both default arguments are preset to |nonumber|
 which disables equation numbering, see \secref{sec:numbering}.
 
+\begin{example}
+\begin{scanexample}
+\[
+x=\cos\phi
+\]
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\<~
+x=\cos\phi \\ \phi=\arccos x
+\>
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\<
+x&=\cos\phi & \phi&=\arccos x \\
+ &=(z+z^{-1})/2 & &=-i\log z
+\>
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\eqnlinesset{sqropt={donumber}}
+\[ x=\cos\phi \]
+\end{scanexample}
+\showexampleh
+\end{example}
+
 \DescribeEnv{equation}
 \DescribeEnv{multline}
 \DescribeEnv{gather}
@@ -414,7 +549,7 @@ which disables equation numbering, see \secref{sec:numbering}.
 The package also supplies or overwrites the \ctanpkg{amsmath}
 environments |equation|, |multline|, |gather|, |align| and |flalign|
 including their starred variants
-but neither the |alignat| alternative forms nor |split|.
+(but neither the |alignat| alternative forms nor the |split| construction).
 It is possible to define further equation environments \textit{env}
 with a predefined set of options \textit{opts} using:
 %
@@ -423,11 +558,43 @@ with a predefined set of options \textit{opts} using:
 |{\eqnaddopt{|\textit{opts}|}\equations}{\endequations}|
 \end{center}
 
+\begin{example}
+\begin{scanexample}
+\begin{equation}
+x=\cos\phi
+\end{equation}
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\begin{gather}
+x=\cos\phi \\ \phi=\arccos x
+\end{gather}
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\begin{align}
+x&=\cos\phi & \phi&=\arccos x \\
+ &=(z+z^{-1})/2 & &=-i\log z
+\end{align}
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\newenvironment{eqnlist}
+  {\eqnaddopt{lines,shape=left}\equations}
+  {\endequations}
+\begin{eqnlist}[nonumber]
+x=\cos\phi \\ \phi=\arccos x
+\end{eqnlist}
+\end{scanexample}
+\showexampleh[0.65]
+\end{example}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Numbering}
 \label{sec:numbering}
 
 \DescribeKey{numberline}
+\DescribeKey{nline,n}
 The package extends the established interface of \LaTeX{}
 and the \ctanpkg{amsmath} package for labelling equations
 with numbers or with manually assigned tags.
@@ -435,14 +602,15 @@ For multi-line equations, there are two distinct modes of operations:
 individual labelling of the equation lines or
 one overall number/tag for the whole block of equations.
 The modes are selected by an optional argument
-|numberline=|\textit{mode} as follows:
+|numberline=|\textit{mode} (alternatively |nline| or just |n|)
+as follows:
 %
 \begin{center}
 \begin{tabular}{llll}
 name     & alt. & description & preset \\
 \hline
-|none|   & |n| & & preset off\\
-|all|    & |a| & individual lines & preset on\\
+|none|   & |n| & & all lines, preset off \\
+|all|    & |a| & individual lines & all lines \\
 |sub|    & |s| & & subequations (a,\,b,\,c,\,\ldots) \\
 \hline
 |first|  & |f| & & first line\\
@@ -453,7 +621,61 @@ name     & alt. & description & preset \\
 |here|   & |h| & & line indicated by |\numberhere| \\
 \end{tabular}
 \end{center}
-%
+
+\begin{example}
+\begin{scanexample}
+\begin{equations}[!,numberline=...]
+  x  &= \cos\phi  \\ &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\ &= -i\log z
+\end{equations}
+\end{scanexample}
+\qquad\parbox{0.8\textwidth}{\printexample}
+\par\medskip
+\makebox[0.33\textwidth]{|none|:}\hfil
+\makebox[0.33\textwidth]{|all|:}\hfil
+\makebox[0.33\textwidth]{|sub|:}\par\smallskip
+\begin{minipage}{0.33\textwidth}
+\begin{equations}[!,numberline=none]
+  x  &= \cos\phi  \\ &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\ &= -i\log z
+\end{equations}
+\end{minipage}\vrule\hfill
+\begin{minipage}{0.33\textwidth}
+\begin{equations}[!,numberline=all]
+  x  &= \cos\phi  \\ &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\ &= -i\log z
+\end{equations}
+\end{minipage}\vrule\hfill
+\begin{minipage}{0.33\textwidth}
+\begin{equations}[!,numberline=sub]
+  x  &= \cos\phi  \\ &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\ &= -i\log z
+\end{equations}
+\end{minipage}
+\par\medskip
+\makebox[0.33\textwidth]{|first|:}\hfil
+\makebox[0.33\textwidth]{|middle|:}\hfil
+\makebox[0.33\textwidth]{|last|:}\par\smallskip
+\begin{minipage}{0.33\textwidth}
+\begin{equations}[!,numberline=first]
+  x  &= \cos\phi  \\ &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\ &= -i\log z
+\end{equations}
+\end{minipage}\vrule
+\begin{minipage}{0.33\textwidth}
+\begin{equations}[!,numberline=middle]
+  x  &= \cos\phi  \\ &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\ &= -i\log z
+\end{equations}
+\end{minipage}\vrule
+\begin{minipage}{0.33\textwidth}
+\begin{equations}[!,numberline=last]
+  x  &= \cos\phi  \\ &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\ &= -i\log z
+\end{equations}
+\end{minipage}
+\end{example}
+
 \DescribeInterfaceMacro{\nonumber}
 \DescribeInterfaceMacro{\donumber}
 Numbering can be turned on and off
@@ -466,10 +688,17 @@ by means of:
 |\donumber|
 \end{center}
 %
-\DescribeKey{*}
-\DescribeKey{!}
-Alternatively, the numbering can be disabled or enabled for the block using
-modifiers (which must be placed \emph{before} further optional arguments):
+\DescribeKey{nonumber}
+\DescribeKey{donumber}
+\DescribeKey{number}
+\DescribeKey{nn,*}
+\DescribeKey{dn,!}
+The numbering can be disabled or enabled for the block
+by the keys |nonumber| or |donumber| (|nn|=`|*|' or |dn|=`|!|' for short)
+or by |number=|\textit{bool} with \textit{bool}
+either |on| or |off| (among several alternative forms).
+Alternatively the number can be switched by using modifiers
+(which cannot be used in conjunction with optional arguments |[|\ldots|]|):
 %
 \begin{center}
 |\[*|\textvisiblespace\,\ldots|\]|
@@ -480,7 +709,8 @@ modifiers (which must be placed \emph{before} further optional arguments):
 This allows to define a default behaviour and specify exceptions
 where they may occur.
 The star modifier following directly the environment declaration
-replaces the starred form of environments (|equation*|, etc.).
+replaces the starred form of environments (|equation*|, etc.)
+and there is no need to adjust the closing statement.
 
 \DescribeInterfaceMacro{\numberhere}
 \DescribeInterfaceMacro{\numbernext}
@@ -492,10 +722,73 @@ The placement of a single number for an equation block can be adjusted by:
 |\numbernext|
 \end{center}
 %
-The former macro overrides the position to the present line.
-The latter macro defers the number to the next line,
-e.g.\ if an equation is broken into several lines
-and the last one should receive the number tag.
+The former macro overrides the position to the present line,
+the latter macro defers the number to the next line.
+For example, if an equation is broken into several lines
+one may use the combination |\numbernext \\|
+to assign the number to the last line.
+
+\begin{example}
+\begin{scanexample}
+\begin{equations}
+   x &= \cos\phi \nonumber \\
+     &= (z+z^{-1})/2 \\
+\phi &= \arccos x \nonumber \\
+     &= -i\log z
+\end{equations}
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\begin{equations}*
+   x &= \cos\phi \donumber \\
+     &= (z+z^{-1})/2 \\
+\phi &= \arccos x \donumber \\
+     &= -i\log z
+\end{equations}
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\eqnlinesset{numberline=last}
+\<! x &= \cos\phi \\
+ \phi &= \arccos x \>
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\eqnlinesset{angopt=donumber}
+\<* x &= \cos\phi \\
+ \phi &= \arccos x \>
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\begin{equations}
+   x &= \cos\phi \numbernext \\
+     &= (z+z^{-1})/2 \\
+\phi &= \arccos x \numbernext \\
+     &= -i\log z
+\end{equations}
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\eqnlinesset{numberline=here}
+\<!
+   x &= \cos\phi \\
+     &= (z+z^{-1})/2 \\
+\phi &= \arccos x \numberhere \\
+     &= -i\log z
+\>
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\eqnlinesset{numberline=first}
+\<!
+   x &= \cos\phi \numbernext \\
+     &= (z+z^{-1})/2 \\
+\phi &= \arccos x \numbernext \\
+     &= -i\log z
+\>
+\end{scanexample}
+\showexampleh
+\end{example}
 
 \DescribeInterfaceMacro{\label}
 \DescribeInterfaceMacro{\tag}
@@ -509,16 +802,18 @@ using the established macros:
 |\tag|[|*|]|{|\textit{tag}|}|
 \end{center}
 %
+A |tag| replaces the equation number,
+|tag*| will drop the decoration by parentheses.
 Note that a label and a tag will always apply to the
 next number that will be printed, and only a single label
 and/or tag may be specified for it. For example, if the present line
 has no numbering, but the following line does,
 |\label| or |\tag| will apply to the following line.
 The macros |\label| and |\tag|
-can also be instructed to automatically enable numbering
-for the present line or block (|\donumber|).
-By default, numbers are triggered for |\tag|, but not for |\label|
-reflecting the behaviour set forth by \ctanpkg{amsmath}.
+can also be instructed to automatically enable numbering/tagging
+for the present line or block via |\donumber|, see below.
+By default, numbering/tagging is triggered for |\tag|,
+but not for |\label| reflecting the behaviour set forth by \ctanpkg{amsmath}.
 By enabling triggering for |\label|, numbers will be produced
 only if they have a chance of being referenced.
 
@@ -542,17 +837,32 @@ In particular, in subequations mode (|sub|),
 the optional argument |label| can be used to assign
 a label to the parent number addressing the whole equation block.
 
-\DescribeInterfaceMacro{\raisetag}
+\DescribeInterfaceMacro{\eqref}
+The macro |\eqref| is the standard method for referring
+to equation numbers via their label.
+This method also uses the layout defined below.
+%
+\begin{center}
+|\eqref{|\textit{label}|}|.
+\end{center}
+%
+\DescribeInterfaceMacro{\tagform}
+\DescribeInterfaceMacro{\tagbox}
+\DescribeInterfaceMacro{\tagboxed}
+For custom typesetting,
+|\tagform| encloses a number/tag with decoration,
+|\tagbox| puts the decorated number in a box
+and |\tagboxed| combines the two.
 
-\DescribeKey{taglayout}
+\DescribeKey{tagbox}
 \DescribeKey{tagform}
 The typesetting of equation numbers and tags passes through two macros,
 one which defines the layout
-and another one which adds a decoration (brackets).
+and another one which adds a decoration by parentheses.
 These two methods can be adjusted via the options:
 %
 \begin{center}
-|taglayout|[|*|]|={|\textit{code}|}|
+|tagbox|[|*|]|={|\textit{code}|}|
 \quad and\quad
 |tagform={|\textit{l}|{|\textit{code}|}|\textit{r}|}|
 \quad or\quad
@@ -562,18 +872,154 @@ These two methods can be adjusted via the options:
 Here, \textit{code} is some macro code
 that references the argument `|#1|' containing the
 number or tag, and \textit{l} and \textit{r}
-can be opening and closing brackets for the tag presentation.
+can be opening and closing parentheses for the tag presentation.
 
-\DescribeInterfaceMacro{\eqref}
-The macro |\eqref| is the standard method for referring
-to equation numbers via their label.
-This method also uses the layout defined above.
+\begin{example}
+\eqnlinesset{tagform=[{#1}]}
+\eqnlinesset{tagbox={\textcolor{blue}{#1}}}
+\begin{scanexample}
+\<[!,numberline=last]
+   x &= \cos\phi \\
+     &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\
+     &= -i\log z
+\>
+\end{scanexample}
+\showexampleh
+\end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Horizontal Adjustment}
 \label{sec:adjustment}
 
-\DescribeKey{margin}
+\DescribeKey{layout}
+\DescribeKey{center}
+\DescribeKey{left}
+First of all, the overall layout can be adjusted
+between central and left alignment
+via |layout=center|, |layout=left| or |center|, |left| for short.
+
+\begin{example}
+\begin{scanexample}
+\<[layout=center]
+   x &= \cos\phi \\
+     &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\
+     &= -i\log z
+\>
+\end{scanexample}
+\showexampleh[0.35]
+\begin{scanexample}
+\<[layout=left]
+   x &= \cos\phi \\
+     &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\
+     &= -i\log z
+\>
+\end{scanexample}
+\showexampleh[0.35]
+\end{example}
+
+\DescribeKey{tags}
+\DescribeKey{tagsright}
+\DescribeKey{tagsleft}
+Furthermore, numbers and/or tags may be placed
+on the right or left margin
+via |tags=right|, |tags=left| or |tagsright|, |tagsleft| for short.
+
+\begin{example}
+\begin{scanexample}
+\<[tags=right,!]
+   x &= \cos\phi \\
+     &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\
+     &= -i\log z
+\>
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\<[tags=left,!]
+   x &= \cos\phi \\
+     &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\
+     &= -i\log z
+\>
+\end{scanexample}
+\showexampleh
+\end{example}
+
+\DescribeKey{tagmargin}
+\DescribeKey{tagmargin*}
+\DescribeKey{tagmarginratio}
+In central alignment layout, one can impose a tag margin
+|tagmargin={|\textit{dimen}|}|
+which allocates some space to the tag
+such that equation content is centred in the remaining horizontal space.
+The margin can also be set to the width of some text by
+|tagmargin*={|\textit{text}|}| or it can be calculated
+as the maximum width of tags by |tagmargin| without parameter (default).
+The option |tagmarginratio={|\textit{ratio}|}|
+uses the tag margin only for equation blocks
+with a ratio of tags to rows above the given (decimal) ratio
+(a value above 1 uses the tag margin only for single equations with tags;
+default is |0.334|).
+The option |tagmarginthreshold={|\textit{threshold}|}|
+uses the tag margin only if the ratio of spacings would be below
+the given (decimal) threshold (very much off balance;
+default is |0.5|).
+The latter two options together with some tag margin
+can produce a more appealing layout for equation blocks of mixed filling.
+In the following example, the former two equations are centred
+on all horizontal space
+while the latter two equations are centred on the space left of the tag
+(the ratio of spacings without tag margin would be very small here):
+
+\begin{example}
+\begin{scanexample}
+\eqnlinesset{tagmarginthreshold=0.7}
+\[! \framebox[4em]{} \]
+\[! \framebox[8em]{} \]
+\[! \framebox[12em]{} \]
+\[! \framebox[16em]{} \]
+\end{scanexample}
+\showexampleh
+\end{example}
+
+\DescribeKey{leftmargin}
+\DescribeKey{leftmargin*}
+\DescribeKey{minleftmargin}
+\DescribeKey{maxleftmargin}
+In left alignment layout, all equations are left aligned to a left margin
+(|leftmargin| is initialised
+to the first level of enumerations and itemisations).
+It can be set to the width of some text by |leftmargin*={|\textit{text}|}|.
+Depending on the situation, the left margin may be
+reduced or extended to |minleftmargin| or |maxleftmargin|, respectively.
+
+\begin{example}
+\eqnlinesset{layout=left}
+\begin{scanexample}
+\eqnlinesset{layout=left}
+\<
+   x &= \cos\phi \\
+     &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\
+     &= -i\log z
+\>
+\end{scanexample}
+\showexampleh[0.35]
+\begin{scanexample}
+\<[tags=left,!]
+   x &= \cos\phi \\
+     &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\
+     &= -i\log z
+\>
+\end{scanexample}
+\showexampleh[0.35]
+\end{example}
+
+\DescribeKey{margins}
 \DescribeKey{mincolsep}
 \DescribeKey{maxcolsep}
 The horizontal alignment of columns is fixed for aligned multi-line equations:
@@ -585,13 +1031,32 @@ is treated on equal footing to the space between the columns
 (option |margins=on|),
 but it can be eliminated so that the outer columns
 are pushed right to the margin (option |margins=off|).
-In addition, a minimum and maximum width can be specified
-for the column separation (|mincolsep=|\textit{dimen}
-and |maxcolsep=|\textit{dimen}).
-By default, no maximum column separation is set (|maxcolsep*|),
-and all horizontal space is used, otherwise a value
-of |2em| ($\equiv$|\qquad|) is suggested with the minimum separation
-set to |1em| ($\equiv$|\quad|) by default.
+A minimum and maximum column separation can be specified
+via |mincolsep=|\textit{dimen} and |maxcolsep=|\textit{dimen}
+(defaults are |2em| and |1em|)
+or the maximum column separation can be disabled by |maxcolsep*|
+(which is required for |margins=off| to take effect).
+
+\begin{example}
+\begin{scanexample}
+\<[maxcolsep=2em]
+ x &= \cos\phi     & \phi &= \arccos x \\
+   &= (z+z^{-1})/2 &      &= -i\log z \>
+\end{scanexample}
+\showexamplev
+\begin{scanexample}
+\<[maxcolsep*]
+ x &= \cos\phi     & \phi &= \arccos x \\
+   &= (z+z^{-1})/2 &      &= -i\log z \>
+\end{scanexample}
+\showexamplev
+\begin{scanexample}
+\<[maxcolsep*,margins=off]
+ x &= \cos\phi     & \phi &= \arccos x \\
+   &= (z+z^{-1})/2 &      &= -i\log z \>
+\end{scanexample}
+\showexamplev
+\end{example}
 
 For stacks of equations including single equations,
 there is just a single alignment column
@@ -618,8 +1083,55 @@ name & alt. & shape & alignment \\
 \end{center}
 %
 Note that the steps shape comes to use in the \ctanpkg{amsmath}
-environment |multline|. The alignment preset
-can be adjusted for individual lines by the macros:
+environment |multline|.
+
+\begin{example}
+\eqnlinesset{pad=2em}
+\begin{scanexample}
+\eqnlinesset{pad=2em}
+\<~[shape=...] x = \cos\phi \\ x = (z+z^{-1})/2 \\
+  \phi = \arccos x \\ \phi = -i\log z \>
+\end{scanexample}
+\qquad\parbox{0.8\textwidth}{\printexample}
+\par\medskip
+\makebox[0.33\textwidth]{|left|:}\hfil
+\makebox[0.33\textwidth]{|center|:}\hfil
+\makebox[0.33\textwidth]{|right|:}\par\smallskip
+\begin{minipage}{0.33\textwidth}
+\<~[shape=left] x = \cos\phi \\ x = (z+z^{-1})/2 \\
+  \phi = \arccos x \\ \phi = -i\log z \>
+\end{minipage}\vrule\hfill
+\begin{minipage}{0.33\textwidth}
+\<~[shape=center] x = \cos\phi \\ x = (z+z^{-1})/2 \\
+  \phi = \arccos x \\ \phi = -i\log z \>
+\end{minipage}\vrule\hfill
+\begin{minipage}{0.33\textwidth}
+\<~[shape=right] x = \cos\phi \\ x = (z+z^{-1})/2 \\
+  \phi = \arccos x \\ \phi = -i\log z \>
+\end{minipage}
+\par\medskip
+\makebox[0.33\textwidth]{|first|:}\hfil
+\makebox[0.33\textwidth]{|hanging|:}\hfil
+\makebox[0.33\textwidth]{|steps|:}\par\smallskip
+\begin{minipage}{0.33\textwidth}
+\<~[shape=first] x = \cos\phi \\ x = (z+z^{-1})/2 \\
+  \phi = \arccos x \\ \phi = -i\log z \>
+\end{minipage}\vrule
+\begin{minipage}{0.33\textwidth}
+\<~[shape=hanging] x = \cos\phi \\ x = (z+z^{-1})/2 \\
+  \phi = \arccos x \\ \phi = -i\log z \>
+\end{minipage}\vrule
+\begin{minipage}{0.33\textwidth}
+\<~[shape=steps] x = \cos\phi \\ x = (z+z^{-1})/2 \\
+  \phi = \arccos x \\ \phi = -i\log z \>
+\end{minipage}
+\end{example}
+
+\DescribeInterfaceMacro{\shoveleft}
+\DescribeInterfaceMacro{\shovecenter}
+\DescribeInterfaceMacro{\shoveright}
+\DescribeKey{indent}
+The alignment preset can be adjusted for individual lines by the macros:
 %
 \begin{center}
 |\shoveleft|[|*|$\vert$|!|$\vert$|[|\textit{dimen}|]|],
@@ -632,7 +1144,6 @@ can be adjusted for individual lines by the macros:
 In contradistinction to \ctanpkg{amsmath},
 these macros do not require to specify the cell contents as their argument
 (but there is no harm in doing so).
-\DescribeKey{indent}
 The macro |\shoveleft| also accepts the modifiers
 `|*|' or `|!|' for indentation or hanging indentation by
 the standard indentation amount (|indent|=|2em|)
@@ -650,43 +1161,30 @@ or |padmax| to extend padding to the whole line.
 Note that |indent*={|\textit{dimen}|}| sets the default indentation amount
 and the left padding at the same time.
 
-\DescribeKey{layout}
-\DescribeKey{center}
-\DescribeKey{left}
-Finally, the overall layout can be adjusted between central and left alignment
-via |layout=center|, |layout=left| or |center|, |left| for short.
-
-\DescribeKey{tagmargin}
-\DescribeKey{tagmargin*}
-\DescribeKey{tagmargincalc}
-\DescribeKey{tagmarginratio}
-In central alignment layout, there is the option of imposing a tag margin
-|tagmargin={|\textit{dimen}|}|
-which allocates some space to the tag
-such that equation content is centred in the remaining horizontal space.
-The margin can also be set to the width of some text by
-|tagmargin*={|\textit{text}|}| or it can be calculated
-as the maximum width of tags by |tagmargincalc|.
-The option |tagmarginratio={|\textit{ratio}|}|
-uses the tag margin only for equation blocks
-with a ratio of tags to rows above the given (decimal) ratio
-(a value above 1 uses the tag margin only for single equations with tags).
-The option |tagmarginthreshold={|\textit{threshold}|}|
-uses the tag margin only if the ratio of spacings is below
-the given (decimal) threshold.
-The latter two options together with some tag margin
-can produce a more appealing layout for equation blocks of mixed filling.
-
-\DescribeKey{leftmargin}
-\DescribeKey{leftmargin*}
-\DescribeKey{minleftmargin}
-\DescribeKey{maxleftmargin}
-In left alignment layout, all equations are left aligned to a left margin
-(|leftmargin| is initialised
-to the first level of enumerations and itemisations).
-It can be set to the width of some text by |leftmargin*={|\textit{text}|}|.
-Depending on the situation, the left margin may be
-reduced or extended to |minleftmargin| or |maxleftmargin|, respectively.
+\begin{example}
+\begin{scanexample}
+\eqnlinesset{indent=2em,pad=5em}
+\<~
+\shoveleft \framebox[5em]{left} \\
+\shoveleft* \framebox[5em]{indent} \\
+\shovecenter \framebox[5em]{center} \\
+\shoveright \framebox[5em]{right}
+\>
+\end{scanexample}
+\showexampleh[0.55]
+\begin{scanexample}
+\eqnlinesset{layout=left}
+\eqnlinesset{leftmargin=2em}
+\eqnlinesset{indent=2em}
+\<~
+\shoveleft! \framebox[5em]{outdent} \\
+\shoveleft \framebox[5em]{left} \\
+\shoveleft* \framebox[5em]{indent} \\
+\shoveright \framebox[5em]{right}
+\>
+\end{scanexample}
+\showexampleh[0.55]
+\end{example}
 
 \DescribeKey{marginbadness}
 \DescribeKey{maxbadness}
@@ -701,6 +1199,42 @@ which are otherwise reserved for tags;
 the latter is used for using the maximal horizontal space which also
 raises or lowers the equation tag if needed.
 Small values prevent shrinking and higher values allow for more compression.
+
+\begin{example}
+\begin{scanexample}
+\<~!
+x+x \\
+x+x+x+x \\
+x+x+x+x+x+x \\
+x+x+x+x+x+x+x+x \\
+x+x+x+x+x+x+x+x+x+x \\
+x+x+x+x+x+x+x+x+x+x+x+x \\
+\>
+\end{scanexample}
+\showexampleh[0.6]
+\end{example}
+
+\DescribeKey{mintagsep}
+\DescribeInterfaceMacro{\raisetag}
+If the available space on a line does not suffice to place
+both the equation and its tag
+(with a minimum separation of |mintagsep|; default is |0.5em|),
+a tag will automatically be lowered or raised
+(depending on whether it is placed on the right or left).
+The macro |\raisetag| may be used to fine-tune the vertical placement
+(applies only if the tag is already shifted due to lack of space).
+
+\begin{example}
+\begin{scanexample}
+\[! \phi = -\int \frac{\mathrm{d}x}{\sqrt{1+x^2}} \]
+\end{scanexample}
+\showexampleh[0.8]
+\begin{scanexample}
+\[! x = \frac{\partial}{\partial \phi}\sin\phi
+    \raisetag{0.45\baselineskip} \]
+\end{scanexample}
+\showexampleh[0.85]
+\end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Punctuation}
@@ -718,6 +1252,11 @@ to spot alongside equation context and somewhat out of place anyway.
 \DescribeKey{punct}
 The package supplies a semi-automatic scheme by which
 equations are terminated by a specific punctuation mark.
+\footnote{Clearly, the implementation of the scheme
+will takes higher efforts than direct coding.
+Hence, the scheme can be useful in situations
+where equations typically terminate phrases or
+where punctuation is otherwise expected in regular patterns.}
 Punctuation marks are set by:
 %
 \begin{center}
@@ -741,13 +1280,34 @@ all equations with a period `|.|'.
 The default behaviour can be adjusted to a comma `|,|'
 for an individual equation
 by declaring `|\eqnpunct,|' before the equation
-(i.e.\ at the end of the textual phrase to which the punctuation mark belongs)
+(i.e.\ at the end of the textual phrase to which the punctuation mark belongs),
+at the end of the equation
 or by using the optional argument |[punct={,}]|.
-Likewise, |\eqnpunct{}| and |[punct={}]| eliminate a preset punctuation.
+Likewise, |\eqnpunct{}| and |[punct{}]| eliminate a preset punctuation.
+
+\begin{example}
+\eqnlinesset{skip=6pt}
+\begin{scanexample}
+\eqnpunctmain.
+The equation
+\[ x = \cos\phi \eqnpunct{} \]
+can also be written as
+\eqnpunct,
+\[ x = (z+z^{-1})/2 \]
+where we assume
+\[ z = \exp(i\phi) \]
+\end{scanexample}
+\showexampleh
+\end{example}
+
+\DescribeInterfaceMacro{\eqnpunctapply}
+In situations, where the punctuation must appear before the end
+of the block, e.g.\ before a ``q.e.d.'',
+it can be invoked manually by |\eqnpunctapply|.
 
 \DescribeKey{punctsep}
 For convenience, one may also specify a desired space
-(or any other sequence) preceding the punctuation
+(or any other code sequence) preceding the punctuation
 by |[punctsep={|\textit{sep}|}]|,
 e.g.\ \textit{sep}=|\,| or \textit{sep}=|\|\texttt{\textvisiblespace}.
 
@@ -761,6 +1321,19 @@ which are specified via the macros |\eqnpunctcol| and |\eqnpunctline|
 or the optional arguments |punctcol| and |punctline|.
 A punctuation item may also be handed on to the next lower level
 of punctuation via the starred forms |punct*| and |punctline*|.
+
+\begin{example}
+\begin{scanexample}
+\eqnpunctcol, \eqnpunctline;
+\eqnpunctmain.
+\< x &= \cos\phi &
+\phi &= \arccos x \\
+   x &= (z+z^{-1})/2 &
+\phi &= -i\log z \>
+\end{scanexample}
+\showexampleh[0.4]
+\end{example}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Math Classes at Alignment}
@@ -802,6 +1375,26 @@ Concretely, it inserts |\mathrel{}| classes just before and after
 the alignment marker. Furthermore, in case of an empty left alignment cell,
 the leading math class is changed to |\mathord{}|
 so that a following binary operator is not interpreted as a unary one.
+For example, the following two expressions produce (almost) identical output:
+
+\begin{example}
+\begin{scanexample}
+\<[class=ampeq]
+a &= b+c \\
+  &= d-e \\
+  &\mathrel{}\phantom{=} +f
+\>
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\<[class=eqamp]
+a =& b+c \\
+  =& d-e \\
+   & +f
+\>
+\end{scanexample}
+\showexampleh
+\end{example}
 
 \DescribeKey{classout}
 \DescribeKey{classin}
@@ -817,18 +1410,23 @@ by the optional arguments:
 |classlead={|\textit{class}|}|.
 \end{center}
 %
-The parameter |classlead| determines the math class just after the alignment
+The parameter |classlead| alternatively |classin*|
+determines the math class just after the alignment
 if the cell before alignment is empty.
-
-For example, the following two expressions produce identical output:
+The spacing at the alignment is determined by the pairing
+of the last/first character and the selected math class at the alignment:
 %
-\begin{center}
-\begin{tabular}{l}
-|\<[ampeq] a &= b+c \\ &= d-e \\ &\mathrel{}\phantom{=} +f \>|
+\<[classin={},classout={},classlead={}]
+\framebox[1em]{\bstrut}\ \framebox[1em]{\bstrut}\
+\framebox[1em]{\bstrut a}\ \underline{\makebox[3em]{\itshape a-out}}
+\ \vrule&
+\ \underline{\makebox[3em]{\itshape in-b}}\ \framebox[1em]{\bstrut b}
+\ \framebox[1em]{\bstrut}\ \framebox[1em]{\bstrut}
 \\
-|\<[eqamp] a =& b+c \\ =& d-e \\ & +f \>|
-\end{tabular}{l}
-\end{center}
+\vrule&
+\ \underline{\makebox[3em]{\itshape lead-c}}\ \framebox[1em]{\bstrut c}
+\ \framebox[1em]{\bstrut}\ \framebox[1em]{\bstrut}
+\>
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Vertical Spacing}
@@ -838,7 +1436,7 @@ Display equations in \TeX{} are considered to be part
 of the surrounding text.
 Hence, the vertical spacing depends on the surrounding text,
 in particular on the width and depth of the last line of text.
-Due to this influence it can be difficult to control
+Due to this influence it can be difficult to manually adjust
 the spacing accurately.
 The package adds several options to control the vertical spacing,
 and it also implements a uniform behaviour for all types of equations.
@@ -872,21 +1470,33 @@ the display equation is called short
 and less glue is needed above the equation.
 The package implements this basic \TeX{} feature
 for all single- and multi-line equation environments.
+
+\begin{example}
+\begin{scanexample}
+example of a long text line:
+\[ \mbox{long mode} \]
+vs.\ short:
+\[ \mbox{short mode} \]
+following line
+\end{scanexample}
+\showexampleh
+\end{example}
+
 \TeX{} also reduces the amount of glue below short equations
 (potentially to make their spacing appear more uniform).
 \DescribeKey{shortmode}
 The package allows to adjust the spacing for short equations
-via the global option |shortmode={|\textit{mode}|}|
+via the global option |shortmode=|\textit{mode}
 where \textit{mode} takes the values:
 %
 \begin{center}
 \begin{tabular}{lll}
-name & reduced glue \\
+\textit{mode} & reduced glue \\
 \hline
 |off| & disabled \\
-|above| & above short equations \\
+|above| & above short equations (package default) \\
 |belowone| & also below short single-line equations \\
-|belowall| & also below all short single-line equations \\
+|belowall| & also below all short multi-line equations \\
 \end{tabular}
 \end{center}
 %
@@ -896,6 +1506,45 @@ Short and long amounts of glue can also be enforced for
 individual equation environments
 via the optional arguments |short| and |long|
 taking the values |above|, |below| or |both|.
+
+\begin{example}
+\begin{scanexample}
+example of a long text line:
+\[[short] \mbox{forced short} \]
+and short:
+\[[long] \mbox{forced long} \]
+following line
+\end{scanexample}
+\showexampleh
+\end{example}
+
+There are three special situations |cont|, |par| and |top|
+which trigger different spacings:
+|cont| describes the situation
+at the start of an empty horizontal list
+(invoked by |\noindent|)
+or when an equation block directly follows another one;
+here, the space above the equation should be minimal
+(or even negative to remove the space below the previous equation block).
+|par| describes the situation at the beginning of a paragraph
+(invoked by |\par|);
+here, the space above the equation adds to the space between paragraphs.
+|top| describes the situation at the top of a vertical list
+(invoked by |\nointerlineskip|);
+here, one would typically want no space.
+
+\begin{example}
+\eqnlinesset{belowtopmode=long}
+\begin{scanexample}
+\hrule\begin{minipage}{\linewidth}
+\[ \mbox{top} \]
+some text\par
+\[ \mbox{par} \]
+\[ \mbox{cont} \]
+\end{minipage}\hrule
+\end{scanexample}
+\showexampleh
+\end{example}
 
 Third, the package provides several means to adjust the
 glue around equations:
@@ -907,6 +1556,19 @@ equation environments can be reduced
 to some other fixed smaller amount via |medskip|
 or removed altogether via |noskip|.
 These keys also take the values |above|, |below| or |both|.
+
+\begin{example}
+\begin{scanexample}
+\hrule
+\[[long] \mbox{long default} \]
+\hrule
+\[[medskip] \mbox{medium space} \]
+\hrule
+\[[noskip] \mbox{no space} \]
+\hrule
+\end{scanexample}
+\showexampleh
+\end{example}
 
 \DescribeKey{par}
 The key |par| controls whether
@@ -937,34 +1599,37 @@ The package also maintains several global vertical space settings
 \begin{tabular}{lll}
 \ldots\textit{pos}|skip| & both & description \\
 \hline
-|...long...|   & |skip| & standard amount of glue \\
+|...long...|   & |longskip| & regular amount of glue \\
 |...short...|  & -- & reduced glue for short equations \\
 |...cont...|   & -- & glue when issued from an empty |\noindent| paragraph \\
 |...par...|    & -- & glue when starting a paragraph (in vertical mode)\\
 |...top...|    & -- & glue when issued at the top of vertical list \\
 |...med...|    & |medskip| & medium amount of glue \\\hline
 |...tag...|    & |tagskip| & glue for outer raised/lowered tags \\
-|...medtag...| & |medtagskip| & glue for outer raised/lowered tags with med \\
-|...partag...| & -- & glue for outer raised/lowered tags with par \\
+|...medtag...| & |medtagskip| & glue for outer raised/lowered tags with medium glue \\
+|...partag...| & -- & glue for outer raised/lowered tags with par skip \\
 \end{tabular}
 \end{center}
 %
 \DescribeKey{...mode}
-The situations |cont|, |par| and |top| use the respective glue |above...skip|
-above the equations.
-By default they use |belowlongskip| below the equations, but this setting
-may be adjusted by the global option \textit{pos}|mode|
+The situations \textit{pos}=|cont|, |par| and |top|
+use the respective amount of glue |above|\textit{pos}|skip|
+above the equations and the regular amount of glue |belowlongskip| below.
+These behaviours may be adjusted by the global options
+|above|\textit{pos}|mode| and |below|\textit{pos}|mode|
 with the values:
 %
 \begin{center}
 \begin{tabular}{lll}
-name & reduced glue \\
+value & reduced glue \\
 \hline
-|long| & regular amount below equations \\
-|short| & short amount below equations \\
-|cont| & |cont| amount below equations \\
-|par| & end the paragraph (only |parmode| and |topmode|) \\
-|top| & end the paragraph without interline skip (|topmode| only) \\
+|long| & regular amount of glue \\
+|short| & reduced glue for short equations \\
+|cont| & amount for empty paragraph \\
+|par| & amount for paragraph (and end the paragraph) \\
+|top| & amount for top (and end the paragraph without interline skip) \\
+|noskip| & no glue \\
+|medskip| & medium amount of glue \\
 \end{tabular}
 \end{center}
 
@@ -1008,11 +1673,36 @@ The package provides a boxed equation environment |equationsbox|
 which can be used within arbitrary math content.
 It works analogously to |equations| including optional arguments
 and modifiers, but it offers a reduced range of functionality
-such as (evidently) no numbering.
+such as (evidently) no numbering
+(yet, the |lines| mode accepts multiple columns here).
 Additional arguments are given by
 |margin|, |marginleft|, |marginright|
 which specify additional margin space
 around the equations box.
+
+\begin{example}
+\begin{scanexample}
+\[\left\{
+\begin{equationsbox}[margin=2em]
+   x &= \cos\phi \\
+\phi &= \arccos x
+\end{equationsbox}
+\right\}\]
+\end{scanexample}
+\showexampleh
+
+\begin{scanexample}
+\[\left[
+\begin{equationsbox}~[shape=l]
+   x = \cos\phi &
+\phi = \arccos x \\
+   x = (z+z^{-1})/2 &
+\phi = -i\log z
+\end{equationsbox}
+\right]\]
+\end{scanexample}
+\showexampleh
+\end{example}
 
 \DescribeEnv{subequations}
 \DescribeKey{subeqtemplate}
@@ -1021,13 +1711,25 @@ with a common primary equation number and an extra level
 of numbering (typically: a,\,b,\,c,\,\ldots).
 The numbering layout can be controlled via |subeqtemplate|.
 For instance, the default behaviour of adding lowercase latin letters
-to the parent equation number (|\theparentequation|)
+to the parent equation number (|#1|)
 is achieved by:
 %
 \begin{center}
-|subeqtemplate={\theparentequation\alph{equation}}|
+|subeqtemplate={#1\alph{#2}}|
 \end{center}
 
+\begin{example}
+\begin{scanexample}
+\eqnlinesset
+  {subeqtemplate={#1-\roman{#2}}}
+\begin{subequations}
+\[! x = \cos\phi \]
+and
+\[! \phi = \arccos x \]
+\end{subequations}
+\end{scanexample}
+\showexampleh[0.55]
+\end{example}
 
 \DescribeEnv{intertext}
 \DescribeInterfaceMacro{\intertext}
@@ -1040,6 +1742,15 @@ end of line marker `|\\|' between two lines of the equation
 (to avoid blank lines).
 The environment accepts several of the vertical spacing adjustments
 as an optional argument.
+
+\begin{example}
+\begin{scanexample}
+\< x &= \cos\phi
+\intertext[medskip]{and}
+\phi &= \arccos x \>
+\end{scanexample}
+\showexampleh
+\end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{General Options}
@@ -1071,7 +1782,7 @@ option & description \\
   & mimic classic \LaTeX/\ctanpkg{amsmath} (layout and dimensions) \\
 |defaults=eqnlines|
   & \ctanpkg{eqnlines} layout with fontsize-relative dimensions \\
-|rescan| & rescan environment body to allow special commands (e.g.\ |\verb|) \\
+|rescan| & rescan environment body for special commands (e.g.\ |\verb|) \\
 |linesfallback| & single column in align mode reverts to lines mode \\
 |ampproof| & equip optional argument parsing with protection for |&| \\
 |crerror| & invoke an error when `|\\|' is used in a single equation \\
@@ -1092,13 +1803,16 @@ option & type & description \\
 |equation| & bool & provide/overwrite |equation| and |\[|\ldots|\]| \\
 |amsmath| & bool & provide/overwrite \ctanpkg{amsmath}
                    environments and macros \\
+|amsmathends| & bool & patch \ctanpkg{amsmath} environments
+                   with individual endings \\
 |ang| & bool & provide |\<|\ldots|\>| \\
+|eqref| & bool & provide |\eqref| \\
 \end{tabular}
 \end{center}
-%
 
 If the above settings are explicitly disabled, the package will only supply
-the general purpose environment |equations| and its boxed cousin |equationsbox|.
+the general purpose environment |equations|
+and its boxed cousin |equationsbox|.
 In that case, the specific equation environments and other features
 can be activated by the command:
 %
@@ -1119,8 +1833,7 @@ feature & description \\
    provide environment \textit{env} as \textit{name} \\
 |sqr| & provide |\[|\ldots|\]| \\
 |ang| & provide |\<|\ldots|\>| \\
-\textit{cmd} & provide/overwrite macro |\|\textit{cmd}:\\
-& |eqref|, |notag|, |thetag|, |allowdisplaybreaks|, |numberwithin| \\
+|eqref| & provide/overwrite macro |eqref| \\
 |tagform| & provide/overwrite macro |\tagform@|\\
 |maketag| & provide/overwrite macro |\maketag@@@|\\
 \end{tabular}
@@ -1304,19 +2017,10 @@ and their difficulty between easy and impossible:
 %
 \begin{itemize}
 \item
-a proper manual
+documentation for all features
 %
 \item
 complete code documentation
-%
-\item
-sample document
-%
-\item
-version of |\eqref| that can handle multiple references and ranges
-enclosed by the default formatting for equation tags
-% syntax such as a - b, c, d (spaces to separate?, labels enclosed by {}?)
-% or completely manual such as \eqref*{\ref{...}--\ref{...},~\ref{...}}
 %
 \item
 switch to allow scanning of |\par| within body
@@ -1363,6 +2067,22 @@ simplify |\advance| using |\dimexpr|, |\glueexpr|, |\numexpr|
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v0.7:} 2025/04/03
+
+\begin{itemize}
+\item
+manual expanded, examples added
+\item
+fixes for numbering, tagging, options, |linesfallback|, zero lines
+\item
+expansions for vertical spacing modes, tag display, |subeqtemplate|
+\item
+some consolidations
+\item
+internal rearrangements
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v0.6.1:} 2025/03/27
 
 \begin{itemize}
@@ -1372,7 +2092,7 @@ simplify |\advance| using |\dimexpr|, |\glueexpr|, |\numexpr|
 |numberline=none| now acts as |numberline=all| and |nonumber|
 \item
 fixed and extended |tagmargin|
-with |tagmargincalc|, |tagmarginratio| and |tagmarginthreshold|
+with |tagmarginratio| and |tagmarginthreshold|
 \item
 padding now applies to single-line equations as well
 \end{itemize}
@@ -1737,7 +2457,7 @@ preview version published on CTAN
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \subsection{Tagging Support}
+% \subsection{PDF Tagging Support}
 %
 %   \macro{\eql@tagging@...}
 % Proper PDF tagging
@@ -1849,28 +2569,28 @@ preview version published on CTAN
 \let\eql@tagsleft\eql@false
 %    \end{macrocode}
 %
-%   \ebool{\eql@flushleft}
-% The boolean parameter |\eql@flushleft|
+%   \ebool{\eql@layoutleft}
+% The boolean parameter |\eql@layoutleft|
 % specifies whether to use left or central alignment layout:
 %    \begin{macrocode}
-\let\eql@flushleft\eql@false
+\let\eql@layoutleft\eql@false
 %    \end{macrocode}
 %
-%   \ldimen{\eql@flushleftmargin@}
-%   \macro{\eql@flushleftmargin@val}
-%   \ldimen{\eql@flushleftmarginmin@}
-%   \ldimen{\eql@flushleftmarginmax@}
+%   \ldimen{\eql@layoutleftmargin@}
+%   \macro{\eql@layoutleftmargin@val}
+%   \ldimen{\eql@layoutleftmarginmin@}
+%   \ldimen{\eql@layoutleftmarginmax@}
 % The default width of the left margin in left alignment layout
-% is specified by |\eql@flushleftmargin@|.
-% It may be pushed down to |\eql@flushleftmarginmin@|
-% and up to |\eql@flushleftmarginmax@|:
+% is specified by |\eql@layoutleftmargin@|.
+% It may be pushed down to |\eql@layoutleftmarginmin@|
+% and up to |\eql@layoutleftmarginmax@|:
 %    \begin{macrocode}
-\newdimen\eql@flushleftmargin@
-\newdimen\eql@flushleftmarginmin@
-\newdimen\eql@flushleftmarginmax@
-\def\eql@flushleftmargin@val{\leftmargini}
-\eql@flushleftmarginmin@\z@
-\eql@flushleftmarginmax@.5\maxdimen
+\newdimen\eql@layoutleftmargin@
+\newdimen\eql@layoutleftmarginmin@
+\newdimen\eql@layoutleftmarginmax@
+\def\eql@layoutleftmargin@val{\leftmargini}
+\eql@layoutleftmarginmin@\z@
+\eql@layoutleftmarginmax@.5\maxdimen
 %    \end{macrocode}
 %
 %   \ldimen{\eql@tagmargin@}
@@ -1939,11 +2659,11 @@ preview version published on CTAN
 \def\eql@box@colsep{2em}
 %    \end{macrocode}
 %
-%   \macro{\eql@spread}
-% The extra spread of equation lines is specified by |\eql@spread|:
+%   \macro{\eql@spread@val}
+% The extra spread of equation lines is specified by |\eql@spread@val|:
 %    \begin{macrocode}
-\def\eql@spread{\jot}
-\newdimen\eql@spread@amount@
+\def\eql@spread@val{\jot}
+\newdimen\eql@spread@
 %    \end{macrocode}
 %
 %   \ldimen{\eql@tagfuzz@}
@@ -1968,8 +2688,8 @@ preview version published on CTAN
 \def\eql@display@depth{\dp\eql@strutbox@}
 %    \end{macrocode}
 %
-%   \tcounter{\eql@skip@mode@short@}
-% The setting |\eql@skip@mode@short@| specifies
+%   \macro{\eql@skip@mode@short}
+% The setting |\eql@skip@mode@short| specifies
 % when a reduced amount of glue should be used around equations
 % in case the text line above the equation fits in the space
 % that is left available in the first equation line.
@@ -1978,23 +2698,22 @@ preview version published on CTAN
 % value |2| furthermore reduces the glue below a single equation line and
 % value |3| also reduces the glue below multi-line equations:
 %    \begin{macrocode}
-\newcount\eql@skip@mode@short@
-\eql@skip@mode@short@\tw@
+\def\eql@skip@mode@short{2}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\newcount\eql@skip@mode@cont@
-\eql@skip@mode@cont@\z@
+\def\eql@skip@mode@cont@above{2}
+\def\eql@skip@mode@cont@below{0}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\newcount\eql@skip@mode@par@
-\eql@skip@mode@par@\z@
+\def\eql@skip@mode@par@above{3}
+\def\eql@skip@mode@par@below{0}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\newcount\eql@skip@mode@top@
-\eql@skip@mode@top@\z@
+\def\eql@skip@mode@top@above{4}
+\def\eql@skip@mode@top@below{0}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -2101,7 +2820,7 @@ preview version published on CTAN
 % \paragraph{Multi-Line Align Mode.}
 %
 %    \begin{macrocode}
-\let\eql@align@margins\eql@true
+\let\eql@columns@margins\eql@true
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2180,9 +2899,9 @@ preview version published on CTAN
 \newdimen\eql@colsep@
 %    \end{macrocode}
 %
-%   \tcounter{\eql@align@inter@}
+%   \tcounter{\eql@columns@inter@}
 %    \begin{macrocode}
-\newcount\eql@align@inter@
+\newcount\eql@columns@inter@
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2375,6 +3094,7 @@ preview version published on CTAN
 %    \end{macrocode}
 %
 %   \macro{\eql@punct@apply@block}
+%   \imacro{\eqnpunctapply}
 % Outputs the punctuation for the current equation block unless disabled
 % in analogy to |\eql@punct@apply@line|:
 %    \begin{macrocode}
@@ -2391,6 +3111,7 @@ preview version published on CTAN
     \let\eql@punct@col\@empty
   \fi
 }
+\let\eqnpunctapply\eql@punct@apply@block
 %    \end{macrocode}
 %
 %
@@ -2455,258 +3176,6 @@ preview version published on CTAN
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Equations Box Environment}
-%
-% \TODO describe
-%
-% \TODO fixed width version (works only towards intercolumn stretch)?
-%
-%   \macro{\eql@box@cr}
-%    \begin{macrocode}
-\protected\def\eql@box@cr{%
-  \eql@ampprotect\eql@testopt@tight\eql@box@cr@\z@
-}
-\def\eql@box@cr@[#1]{%
-  \eql@punct@apply@line
-  \eql@hook@lineout
-  \eql@box@lastfield
-  \cr
-  \noalign{%
-    \vskip\glueexpr#1\relax
-  }%
-}
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\let\eql@box@box\vcenter
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\def\eql@box@lastfield@odd{%
-  &\omit
-  \kern-\wd\eql@fieldbox@
-  \box\eql@fieldbox@
-  \hfil
-  &\omit\kern-\eql@colsep@
-}%
-\def\eql@box@lastfield@even{&\omit\kern-\eql@colsep@}
-\def\eql@box@lastfield@lines{&\omit\kern-2\eql@colsep@}
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\def\eql@box@open@align{%
-% \TODO templates
-  \let\eql@box@lastfield\@empty
-  \eql@halign@init{%
-%<dev>\eql@dev{starting new line}%
-  }%
-  \tabskip\z@skip
-  \halign\bgroup
-    &%
-      \let\eql@box@lastfield\eql@box@lastfield@odd
-      \global\setbox\eql@fieldbox@\hbox{%
-        \eql@strut@field
-        \@lign
-        $\m@th\displaystyle
-          \eql@hook@colin
-          ##%
-          \eql@class@innerleft
-          \eql@hook@innerleft
-          \eql@tagging@mathsave
-        $%
-        \eql@tagging@mathaddlast
-      }%
-      \hfil
-      \kern\wd\eql@fieldbox@
-      \tabskip\z@skip
-    &%
-      \eql@fieldwidth@\wd\eql@fieldbox@
-      \kern-\eql@fieldwidth@
-      \box\eql@fieldbox@
-      \let\eql@box@lastfield\eql@box@lastfield@even
-      \llap{\unhbox\eql@fieldbox@}%
-      \hbox{%
-        \eql@strut@field
-        \@lign
-        $\m@th\displaystyle
-          \eql@hook@innerright
-          \eql@class@innerright@sel
-          ##%
-          \eql@punct@apply@col
-          \eql@hook@colout
-          \eql@tagging@mathsave
-        $%
-        \eql@tagging@mathaddlast
-      }%
-      \hfil
-      \tabskip\eql@colsep@\relax
-    \crcr
-    \noalign{%
-      \eql@hook@blockbefore
-    }%
-    \eql@hook@blockin
-}
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\def\eql@box@open@lines{%
-% \TODO templates
-  \let\shoveleft\eql@adjust@shoveleft
-  \let\shovecenter\eql@adjust@shovecenter
-  \let\shoveright\eql@adjust@shoveright
-  \let\eql@box@lastfield\eql@box@lastfield@lines
-  \eql@halign@init{%
-%<dev>\eql@dev{starting line \the\eql@row@}%
-    \global\advance\eql@row@\@ne
-  }%
-  \tabskip\z@skip
-  \halign\bgroup
-    &%
-      \eql@shape@pos@\m@ne
-      \setbox\eql@fieldbox@\hbox{%
-        \eql@strut@field
-        \@lign
-        $\m@th\displaystyle
-          \eql@hook@colin
-          ##%
-          \eql@punct@apply@col
-          \eql@hook@colout
-          \eql@tagging@mathsave
-        $%
-        \eql@tagging@mathaddlast
-      }%
-      \ifnum\eql@shape@pos@=\m@ne
-        \eql@shape@eval
-      \fi
-      \ifcase\eql@shape@pos@
-        \kern\eql@shape@amount@
-        \box\eql@fieldbox@
-        \skip@\@flushglue
-        \advance\skip@\eql@paddingleft@\relax
-        \advance\skip@\eql@paddingright@\relax
-        \advance\skip@-\eql@shape@amount@\relax
-        \hskip\skip@
-        \eql@tagging@alignleft
-      \or
-        \skip@\@flushglue
-        \advance\skip@\eql@paddingleft@\relax
-        \hskip\skip@
-        \box\eql@fieldbox@
-        \skip@\@flushglue
-        \advance\skip@\eql@paddingright@\relax
-        \hskip\skip@
-        \eql@tagging@aligncenter
-      \or
-        \skip@\@flushglue
-        \advance\skip@\eql@paddingleft@\relax
-        \advance\skip@\eql@paddingright@\relax
-        \hskip\skip@
-        \box\eql@fieldbox@
-        \eql@tagging@alignright
-      \fi
-      \tabskip\eql@colsep@\relax
-    \crcr
-    \noalign{%
-      \eql@hook@blockbefore
-    }%
-    \eql@hook@blockin
-}
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\def\eql@box@close{%
-    \ifvmode\else
-      \global\eql@totalrows@\eql@row@
-      \eql@punct@apply@block
-      \eql@box@cr@[\z@skip]%
-    \fi
-    \crcr
-    \noalign{%
-      \eql@hook@blockafter
-    }%
-    \eql@tagging@tablesaveinner
-  \egroup
-}
-%    \end{macrocode}
-%
-%   \macro{\eql@box@start}
-%    \begin{macrocode}
-\def\eql@box@start{%
-  \relax
-  \ifmmode
-    \let\eql@box@endmath\@empty
-  \else
-    $\let\eql@box@endmath=$%
-  \fi
-  \eql@nextopt@process{equationsbox}%
-  \let\eql@punct@block\eql@punct@main
-  \let\eql@punct@main\relax
-  \eql@colsep@\glueexpr\eql@box@colsep\relax
-  \eql@paddingleft@\glueexpr\eql@paddingleft@val\relax
-  \eql@paddingright@\glueexpr\eql@paddingright@val\relax
-  \eql@indent@\glueexpr\eql@indent@val\relax
-  \eql@stack@save@boxed
-  \let\eql@flushleft\eql@false
-  \eql@row@\z@
-  \eql@totalrows@\@M
-  \eql@shape@sel
-  \hskip\glueexpr\eql@box@marginleft\relax
-  \eql@box@box\bgroup
-    \eql@display@leave
-    \let\\\eql@box@cr
-    \ifdefined\eql@box@mode@lines
-      \expandafter\eql@box@open@lines
-    \else
-      \expandafter\eql@box@open@align
-    \fi
-}
-%    \end{macrocode}
-%
-%   \macro{\eql@box@end}
-%    \begin{macrocode}
-\newcommand{\eql@box@end}{%
-    \eql@box@close
-  \egroup
-  \eql@tagging@tableaddinner
-  \hskip\glueexpr\eql@box@marginright\relax
-  \eql@stack@restore
-  \eql@box@endmath
-}
-%    \end{macrocode}
-%
-% \environment{equationsbox}
-%    \begin{macrocode}
-\newenvironment{equationsbox}{%
-%<dev>\eql@dev@enterenv
-  \eql@ampprotect\eql@box@testall\eql@box@start
-}{%
-  \eql@box@end
-%<dev>\eql@dev@leaveenv
-}
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\def\eql@box@testall{\eql@box@testtilde}
-\def\eql@box@testtilde#1{%
-  \eql@ifnextgobble@tight~%
-    {\eqnaddopt{lines}\eql@box@testopt{#1}}%
-    {\eql@box@testopt{#1}}}
-\def\eql@box@testopt#1{%
-  \eql@ifnextchar@tight[%]
-    {\eql@box@addopt{#1}}%
-    {#1}}
-\def\eql@box@addopt#1[#2]{\eqnaddopt{#2}#1}
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\def\eql@mode@aligned{\let\eql@box@mode@lines\eql@false}
-\def\eql@mode@lined{\let\eql@box@mode@lines\eql@true}
-\eql@mode@aligned
-%    \end{macrocode}
-%
-%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Equation Numbering}
 %
 % \TODO describe
@@ -2741,6 +3210,20 @@ preview version published on CTAN
 \def\eql@tag@boxedform#1{\eql@tag@box{\eql@tag@form{#1}}}
 %    \end{macrocode}
 %
+%    \begin{macrocode}
+\DeclareRobustCommand{\tagform}{\eql@tag@form}
+\DeclareRobustCommand{\tagbox}{\eql@tag@box}
+\DeclareRobustCommand{\tagboxed}{\eql@tag@boxedform}
+%    \end{macrocode}
+%
+%   \macro{\eqref}
+% \ctanpkg{amsmath} defines the macro |\eqref|
+% to refer to equation labels in a proper format.
+% We provide it for completeness:
+%    \begin{macrocode}
+\DeclareRobustCommand{\eql@eqref}[1]{\textup{\eql@tag@boxedform{\ref{#1}}}}
+%    \end{macrocode}
+%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Raise Tags.}
 %
@@ -2762,9 +3245,13 @@ preview version published on CTAN
 \eql@amsmath@let\raisetag\eql@raisetag@default
 %    \end{macrocode}
 %
-%    \TODO maybe introduce a star form to enforce raise?
+% \TODO maybe introduce a star form to enforce raise?
 %    \begin{macrocode}
-\def\eql@raisetag#1{\global\eql@raisetag@amount@\glueexpr#1\relax}%
+\def\eql@raisetag#1{\global\eql@raisetag@amount@\glueexpr#1\relax}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\let\eql@raisetag@gobble\@gobble
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3060,7 +3547,7 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@tagbox@print@right{%
+\def\eql@tagbox@print@tagsright{%
   \kern-\wd\eql@tagbox@
   \box\eql@tagbox@
 }
@@ -3068,7 +3555,7 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@tagbox@print@left{%
+\def\eql@tagbox@print@tagsleft{%
   \wd\eql@tagbox@\z@
   \box\eql@tagbox@
 }
@@ -3076,7 +3563,7 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@tagbox@print@right@raise{%
+\def\eql@tagbox@print@tagsright@raise{%
   \ifnum\eql@row@=\eql@totalrows@
     \global\advance\eql@raisetag@firstlast@\tw@
   \fi
@@ -3089,7 +3576,7 @@ preview version published on CTAN
     \box\eql@tagbox@
   }}%
 }
-\def\eql@tagbox@print@left@raise{%
+\def\eql@tagbox@print@tagsleft@raise{%
   \ifnum\eql@row@=\@ne
     \global\advance\eql@raisetag@firstlast@\@ne
   \fi
@@ -3256,8 +3743,10 @@ preview version published on CTAN
 %   \imacro{\numberhere}
 %    \begin{macrocode}
 \def\numberhere{%
-  \ifmeasuring@
-    \ifnum\eql@numbering@target@<\z@\else
+  \ifnum\eql@numbering@target@<\z@
+    \donumber
+  \else
+    \ifmeasuring@
       \global\eql@numbering@target@\eql@row@
     \fi
   \fi
@@ -3268,8 +3757,10 @@ preview version published on CTAN
 %   \imacro{\numbernext}
 %    \begin{macrocode}
 \def\numbernext{%
-  \ifmeasuring@
-    \ifnum\eql@numbering@target@<\z@\else
+  \ifnum\eql@numbering@target@<\z@
+    \nonumber
+  \else
+    \ifmeasuring@
       \ifnum\eql@numbering@target@=\eql@row@
         \global\advance\eql@numbering@target@\@ne
       \fi
@@ -3288,6 +3779,18 @@ preview version published on CTAN
 \let\eql@numbering@autotag\eql@true
 \let\eql@numbering@blocklabel\@undefined
 \let\eql@numbering@blocktag\@undefined
+\let\eql@numbering@warn\eql@true
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\eql@numbering@autoenable{%
+  \global\@eqnswtrue
+  \ifx\eql@numbering@mode\eql@numbering@tab@here
+    \ifnum\eql@numbering@target@=\z@
+      \numberhere
+    \fi
+  \fi
+}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -3314,12 +3817,14 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@label@warn{%
+\def\eql@label{%
   \ifdefined\eql@numbering@autolabel
-    \global\@eqnswtrue
+    \eql@numbering@autoenable
   \fi
-  \ifdefined\eql@nextlabel
-    \eql@warn@label@multiple\eql@nextlabel
+  \ifdefined\eql@numbering@warn
+    \ifdefined\eql@nextlabel
+      \eql@warn@label@multiple\eql@nextlabel
+    \fi
   \fi
   \global\edef\eql@nextlabel
 }
@@ -3327,32 +3832,19 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@tag@warn{%
-  \ifdefined\eql@numbering@autotag
-    \global\@eqnswtrue
-  \fi
-  \ifdefined\eql@nexttag
-    \eql@warn@tag@multiple
-  \fi
-  \eql@tag@makenext
-}
+\let\eql@label@gobble\@gobble
 %    \end{macrocode}
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@label@nowarn{%
-  \ifdefined\eql@numbering@autolabel
-    \global\@eqnswtrue
-  \fi
-  \global\edef\eql@nextlabel
-}
-%    \end{macrocode}
-%
-% \TODO describe
-%    \begin{macrocode}
-\def\eql@tag@nowarn{%
+\def\eql@tag{%
   \ifdefined\eql@numbering@autotag
-    \global\@eqnswtrue
+    \eql@numbering@autoenable
+  \fi
+  \ifdefined\eql@numbering@warn
+    \ifdefined\eql@nexttag
+      \eql@warn@tag@multiple
+    \fi
   \fi
   \eql@tag@makenext
 }
@@ -3395,8 +3887,9 @@ preview version published on CTAN
 %
 %    \begin{macrocode}
 \def\eql@numbering@single@init{%
-  \let\label\eql@label@warn
-  \let\tag\eql@tag@warn
+  \let\eql@numbering@warn\eql@true
+  \let\label\eql@label
+  \let\tag\eql@tag
   \let\raisetag\eql@raisetag
   \eql@numbering@target@\m@ne
   \let\eql@nextlabel\eql@blocklabel
@@ -3427,8 +3920,9 @@ preview version published on CTAN
 %
 %    \begin{macrocode}
 \def\eql@numbering@measure@init{%
-  \let\label\eql@label@warn
-  \let\tag\eql@tag@warn
+  \let\eql@numbering@warn\eql@true
+  \let\label\eql@label
+  \let\tag\eql@tag
   \let\raisetag\eql@raisetag
   \global\let\eql@nextlabel\eql@blocklabel
   \ifdefined\eql@blocktag
@@ -3491,8 +3985,9 @@ preview version published on CTAN
 %    \begin{macrocode}
 \def\eql@numbering@print@init{%
   \ifnum\eql@numbering@target@<\z@
-    \let\label\eql@label@nowarn
-    \let\tag\eql@tag@nowarn
+    \let\eql@numbering@warn\eql@false
+    \let\label\eql@label
+    \let\tag\eql@tag
     \let\raisetag\eql@raisetag
     \let\eql@nextlabel\eql@blocklabel
     \ifdefined\eql@blocktag
@@ -3501,9 +3996,9 @@ preview version published on CTAN
       \let\eql@nexttag\@undefined
     \fi
   \else
-    \let\label\@gobble
+    \let\label\eql@label@gobble
     \let\tag\eql@tag@gobble
-    \let\raisetag\eql@gobble
+    \let\raisetag\eql@raisetag@gobble
   \fi
 }
 %    \end{macrocode}
@@ -3878,26 +4373,32 @@ preview version published on CTAN
 % \TODO must not use setlength or setcounter when calc is loaded
 %    \begin{macrocode}
 \def\eql@display@close{%
+% \TODO temporary fix
+  \ifdefined\eql@tagging@on
+    \ifdefined\dollardollar@begin\else
+      \belowdisplayskip-\belowdisplayskip
+      \belowdisplayshortskip-\belowdisplayshortskip
+    \fi
+  \fi
   \ifdim\eql@display@firstavail@<\z@
     \eql@display@firstavail@\z@
   \fi
   \eql@skip@mode@leave@\z@
   \ifdim\eql@halign@prevdepth@=\maxdimen
     \ifdim\predisplaysize=-\maxdimen
-      \eql@skip@mode@above@\tw@
-      \eql@skip@mode@below@\eql@skip@mode@cont@
+      \eql@skip@mode@above@\eql@skip@mode@cont@above\relax
+      \eql@skip@mode@below@\eql@skip@mode@cont@below\relax
     \else
       \eql@skip@mode@above@\z@
       \eql@skip@mode@below@\z@
       \advance\eql@display@firstavail@\displayindent
       \ifdim\eql@display@firstavail@>\predisplaysize
-% \TODO: process this here or in below ifcase for short?
-        \ifcase\eql@skip@mode@short@
+        \ifcase\eql@skip@mode@short\relax
         \or
           \eql@skip@mode@above@\@ne
         \or
           \eql@skip@mode@above@\@ne
-          \ifnum\eql@row@=\tw@
+          \ifnum\eql@totalrows@=\@ne
             \eql@skip@mode@below@\@ne
           \fi
         \or
@@ -3908,28 +4409,24 @@ preview version published on CTAN
     \fi
   \else
     \ifdim\eql@halign@prevdepth@=-\@m\p@
-      \eql@skip@mode@above@4\relax
-      \eql@skip@mode@below@\eql@skip@mode@top@
-      \eql@skip@mode@leave@\z@
-      \predisplaypenalty\z@
-      \ifcase\eql@skip@mode@top@
-      \or
-      \or
-      \or
-        \eql@skip@mode@leave@\@ne
-      \or
-        \postdisplaypenalty\z@
-        \eql@skip@mode@leave@\tw@
-      \fi
+      \eql@skip@mode@above@\eql@skip@mode@top@above\relax
+      \eql@skip@mode@below@\eql@skip@mode@top@below\relax
     \else
-      \eql@skip@mode@above@\thr@@
-      \eql@skip@mode@below@\eql@skip@mode@par@
-      \eql@skip@mode@leave@\z@
-      \predisplaypenalty\z@
-      \ifnum\eql@skip@mode@par@=\thr@@
-        \eql@skip@mode@leave@\@ne
-      \fi
+      \eql@skip@mode@above@\eql@skip@mode@par@above\relax
+      \eql@skip@mode@below@\eql@skip@mode@par@below\relax
     \fi
+  \fi
+  \ifcase\eql@skip@mode@above@
+  \or\or\or
+    \predisplaypenalty\z@
+  \or
+    \predisplaypenalty\z@
+  \fi
+  \ifcase\eql@skip@mode@below@
+  \or\or\or
+    \eql@skip@mode@leave@\@ne
+  \or
+    \eql@skip@mode@leave@\tw@
   \fi
   \ifdefined\eql@skip@force@above
     \eql@skip@mode@above@\eql@skip@force@above\relax
@@ -3939,6 +4436,9 @@ preview version published on CTAN
   \fi
   \ifdefined\eql@skip@force@leave
     \eql@skip@mode@leave@\eql@skip@force@leave\relax
+  \fi
+  \ifnum\eql@skip@mode@leave@>\z@
+    \postdisplaypenalty\z@
   \fi
   \ifodd\eql@raisetag@firstlast@
     \ifcase\eql@skip@mode@above@
@@ -3972,7 +4472,7 @@ preview version published on CTAN
     \or
       \abovedisplayskip\z@skip
     \or
-      \abovedisplayskip\glueexpr\eql@skip@medtag@above\relax
+      \abovedisplayskip\glueexpr\eql@skip@med@above\relax
     \or
       \abovedisplayskip\glueexpr\eql@skip@custom@above\relax
     \fi
@@ -4009,7 +4509,7 @@ preview version published on CTAN
     \or
       \belowdisplayskip\z@skip
     \or
-      \belowdisplayskip\glueexpr\eql@skip@medtag@below\relax
+      \belowdisplayskip\glueexpr\eql@skip@med@below\relax
     \or
       \belowdisplayskip\glueexpr\eql@skip@custom@below\relax
     \fi
@@ -4024,8 +4524,10 @@ preview version published on CTAN
   \advance\belowdisplayskip\eql@belowspace@
   \advance\belowdisplayskip\eql@vspaceskip@
   \count@\prevgraf
-  \advance\count@\eql@row@
-  \advance\count@-\tw@
+  \advance\count@\eql@totalrows@
+  \ifnum\count@>\z@
+    \advance\count@\m@ne
+  \fi
   \prevgraf\count@
   \global\eql@skip@mode@leave@\eql@skip@mode@leave@
 % \TODO temporary fix
@@ -4088,11 +4590,11 @@ preview version published on CTAN
 % \TODO note on \string\spread@equation
 %    \begin{macrocode}
 \def\eql@halign@spread{%
-  \eql@spread@amount@\glueexpr\eql@spread\relax
-  \advance\eql@spread@amount@\normalbaselineskip
-  \advance\eql@spread@amount@-\baselineskip
-  \ifdim\eql@spread@amount@>\z@
-    \openup\eql@spread@amount@
+  \eql@spread@\glueexpr\eql@spread@val\relax
+  \advance\eql@spread@\normalbaselineskip
+  \advance\eql@spread@-\baselineskip
+  \ifdim\eql@spread@>\z@
+    \openup\eql@spread@
     \ifdefined\spread@equation
       \let\spread@equation\@empty
     \fi
@@ -4140,11 +4642,11 @@ preview version published on CTAN
       \ifdim\skip@<\lineskiplimit
         \skip@\lineskip
       \fi
-      \advance\skip@-\eql@spread@amount@\relax
+      \advance\skip@-\eql@spread@\relax
       \vskip\skip@
       \nointerlineskip
     \else
-      \vskip-\eql@spread@amount@\relax
+      \vskip-\eql@spread@\relax
     \fi
   \fi
 }
@@ -4383,27 +4885,27 @@ preview version published on CTAN
 }
 %    \end{macrocode}
 %
-%   \macro{\eql@shape@center@...}
-%   \macro{\eql@shape@left@...}
+%   \macro{\eql@shape@layoutcenter@...}
+%   \macro{\eql@shape@layoutleft@...}
 % Define the uniform shape schemes |left|, |center|, |right| and |default|
 % for the central and left alignment layout.
 % The scheme functions determine the desired alignment and indentation
 % for the current row:
 %    \begin{macrocode}
-\def\eql@shape@center@left{\eql@shape@pos@\z@\eql@shape@amount@\z@}
-\def\eql@shape@center@center{\eql@shape@pos@\@ne\eql@shape@amount@\z@}
-\def\eql@shape@center@right{\eql@shape@pos@\tw@\eql@shape@amount@\z@}
-\let\eql@shape@center@default\eql@shape@center@center
-\def\eql@shape@left@left{\eql@shape@pos@\z@\eql@shape@amount@\z@}
-\def\eql@shape@left@center{\eql@shape@pos@\@ne\eql@shape@amount@\z@}
-\def\eql@shape@left@right{\eql@shape@pos@\tw@\eql@shape@amount@\z@}
-\let\eql@shape@left@default\eql@shape@left@left
+\def\eql@shape@layoutcenter@left{\eql@shape@pos@\z@\eql@shape@amount@\z@}
+\def\eql@shape@layoutcenter@center{\eql@shape@pos@\@ne\eql@shape@amount@\z@}
+\def\eql@shape@layoutcenter@right{\eql@shape@pos@\tw@\eql@shape@amount@\z@}
+\let\eql@shape@layoutcenter@default\eql@shape@layoutcenter@center
+\def\eql@shape@layoutleft@left{\eql@shape@pos@\z@\eql@shape@amount@\z@}
+\def\eql@shape@layoutleft@center{\eql@shape@pos@\@ne\eql@shape@amount@\z@}
+\def\eql@shape@layoutleft@right{\eql@shape@pos@\tw@\eql@shape@amount@\z@}
+\let\eql@shape@layoutleft@default\eql@shape@layoutleft@left
 %    \end{macrocode}
 %
 % The |first| scheme implements left alignment with
 % indentation for the first line (unless there is only one line):
 %    \begin{macrocode}
-\def\eql@shape@center@first{%
+\def\eql@shape@layoutcenter@first{%
   \eql@shape@pos@\z@
   \eql@shape@amount@\z@
   \ifnum\eql@totalrows@>\@ne
@@ -4412,7 +4914,7 @@ preview version published on CTAN
     \fi
   \fi
 }
-\def\eql@shape@left@first{%
+\def\eql@shape@layoutleft@first{%
   \eql@shape@pos@\z@
   \eql@shape@amount@\z@
   \ifnum\eql@totalrows@>\@ne
@@ -4428,7 +4930,7 @@ preview version published on CTAN
 % In centeral alignment layout all but the first line are indented
 % while in left aligned layout the first line has negative indentation:
 %    \begin{macrocode}
-\def\eql@shape@center@hanging{%
+\def\eql@shape@layoutcenter@hanging{%
   \eql@shape@pos@\z@
   \eql@shape@amount@\eql@indent@
   \ifnum\eql@totalrows@>\@ne
@@ -4437,7 +4939,7 @@ preview version published on CTAN
     \fi
   \fi
 }
-\def\eql@shape@left@hanging{%
+\def\eql@shape@layoutleft@hanging{%
   \eql@shape@pos@\z@
   \eql@shape@amount@\z@
   \ifnum\eql@totalrows@>\@ne
@@ -4453,7 +4955,7 @@ preview version published on CTAN
 % In centeral alignment layout the shift operates on the alignment
 % whereas in left alignment layout the shift uses indentation:
 %    \begin{macrocode}
-\def\eql@shape@center@steps{%
+\def\eql@shape@layoutcenter@steps{%
   \eql@shape@amount@\z@
   \eql@shape@pos@\@ne
   \ifnum\eql@totalrows@>\@ne
@@ -4465,7 +4967,7 @@ preview version published on CTAN
     \fi
   \fi
 }
-\def\eql@shape@left@steps{%
+\def\eql@shape@layoutleft@steps{%
   \eql@shape@pos@\z@
   \eql@shape@amount@\z@
   \ifnum\eql@totalrows@>\@ne
@@ -4489,31 +4991,31 @@ preview version published on CTAN
 \def\eql@shape@sel{%
   \expandafter\let\expandafter\eql@shape@eval
     \csname eql@shape%
-    @\ifdefined\eql@flushleft left\else center\fi
+    @\ifdefined\eql@layoutleft layoutleft\else layoutcenter\fi
     @\eql@shape@mode\endcsname
 }
 %    \end{macrocode}
 %
-%   \macro{\eql@adjust@shoveleft}
-%   \macro{\eql@adjust@shoveright}
-%   \macro{\eql@adjust@shovecenter}
+%   \macro{\eql@adjust@alignleft}
+%   \macro{\eql@adjust@alignright}
+%   \macro{\eql@adjust@aligncenter}
 % Adjust the alignment of the current equation line.
 % For left alignment an optional argument specifies the amount of indentation:
 %    \begin{macrocode}
-\def\eql@adjust@shoveleft{%
+\def\eql@adjust@alignleft{%
   \global\eql@shape@pos@\z@
   \eql@srbgroup\eql@ifstar@tight
-    {\eql@adjust@shoveleft@[\eql@indent@]}%
+    {\eql@adjust@alignleft@[\eql@indent@]}%
     {\eql@ifnextgobble@tight{!}%
-      {\eql@adjust@shoveleft@[-\eql@indent@]}%
-      {\eql@testopt@tight\eql@adjust@shoveleft@\z@}%
+      {\eql@adjust@alignleft@[-\eql@indent@]}%
+      {\eql@testopt@tight\eql@adjust@alignleft@\z@}%
     }%
 }
-\def\eql@adjust@shoveleft@[#1]{%
+\def\eql@adjust@alignleft@[#1]{%
   \eql@sregroup\global\eql@shape@amount@\glueexpr#1\relax}
-\def\eql@adjust@shovecenter{%
+\def\eql@adjust@aligncenter{%
   \global\eql@shape@pos@\@ne\global\eql@shape@amount@\z@}
-\def\eql@adjust@shoveright{%
+\def\eql@adjust@alignright{%
   \global\eql@shape@pos@\tw@\global\eql@shape@amount@\z@}
 %    \end{macrocode}
 %
@@ -4612,9 +5114,9 @@ preview version published on CTAN
     \eql@tagging@alignright
   \fi
   \csname eql@adjust%
-    @\ifdefined\eql@flushleft flushleft\else center\fi
+    @\ifdefined\eql@layoutleft layoutleft\else layoutcenter\fi
     @\ifdefined\eql@tagsleft tagsleft\else tagsright\fi
-    @\ifcase\eql@shape@pos@ shoveleft\or shovecenter\or shoveright\fi
+    @\ifcase\eql@shape@pos@ alignleft\or aligncenter\or alignright\fi
     @tag\endcsname
 }
 \def\eql@adjust@sel@notag{%
@@ -4627,9 +5129,9 @@ preview version published on CTAN
     \eql@tagging@alignright
   \fi
   \csname eql@adjust%
-    @\ifdefined\eql@flushleft flushleft\else center\fi
+    @\ifdefined\eql@layoutleft layoutleft\else layoutcenter\fi
     @\ifdefined\eql@tagsleft tagsleft\else tagsright\fi
-    @\ifcase\eql@shape@pos@ shoveleft\or shovecenter\or shoveright\fi
+    @\ifcase\eql@shape@pos@ alignleft\or aligncenter\or alignright\fi
     @notag\endcsname
 }
 %    \end{macrocode}
@@ -4638,10 +5140,10 @@ preview version published on CTAN
 % \TODO any init needed for left alignment layout? marginleft is used per line!
 %    \begin{macrocode}
 \def\eql@adjust@calc{%
-  \ifdefined\eql@flushleft
-    \eql@flushleftmargin@\glueexpr\eql@flushleftmargin@val\relax
+  \ifdefined\eql@layoutleft
+    \eql@layoutleftmargin@\glueexpr\eql@layoutleftmargin@val\relax
   \else
-    \eql@align@inter@\z@
+    \eql@columns@inter@\z@
     \eql@adjust@tagmargin
     \ifdefined\eql@paddingmax
       \eql@marginleft@\z@
@@ -4673,7 +5175,7 @@ preview version published on CTAN
 %
 % \TODO check all these!!
 %    \begin{macrocode}
-\def\eql@adjust@center@tagsright@shovecenter@notag{%
+\def\eql@adjust@layoutcenter@tagsright@aligncenter@notag{%
   \dimen@\displaywidth
   \advance\dimen@-\eql@fieldwidth@
   \ifdim\dimen@>\eql@tagmargin@
@@ -4686,7 +5188,7 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@center@tagsright@shovecenter@tag{%
+\def\eql@adjust@layoutcenter@tagsright@aligncenter@tag{%
   \dimen@\displaywidth
   \ifdim\eql@tagwidth@<\eql@tagmargin@
     \advance\dimen@-\eql@tagmargin@
@@ -4696,7 +5198,7 @@ preview version published on CTAN
   \fi
   \ifdim\eql@fieldwidth@<\dimen@
     \eql@adjust@print@aligncenter\z@\eql@tagmargin@
-    \eql@tagbox@print@right
+    \eql@tagbox@print@tagsright
   \else
     \eql@adjust@try\eql@tagwidth@
     \ifnum\badness<\eql@maxbadness@
@@ -4705,10 +5207,10 @@ preview version published on CTAN
       \else
         \eql@adjust@print@alignright\z@\eql@tagwidth@
       \fi
-      \eql@tagbox@print@right
+      \eql@tagbox@print@tagsright
     \else
-      \eql@adjust@center@tagsright@shovecenter@notag
-      \eql@tagbox@print@right@raise
+      \eql@adjust@layoutcenter@tagsright@aligncenter@notag
+      \eql@tagbox@print@tagsright@raise
     \fi
   \fi
 }
@@ -4716,7 +5218,7 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@center@tagsleft@shovecenter@notag{%
+\def\eql@adjust@layoutcenter@tagsleft@aligncenter@notag{%
   \dimen@\displaywidth
   \advance\dimen@-\eql@tagmargin@
   \ifdim\eql@fieldwidth@<\dimen@
@@ -4729,7 +5231,7 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@center@tagsleft@shovecenter@tag{%
+\def\eql@adjust@layoutcenter@tagsleft@aligncenter@tag{%
   \dimen@\displaywidth
   \ifdim\eql@tagwidth@<\eql@tagmargin@
     \advance\dimen@-\eql@tagmargin@
@@ -4738,20 +5240,20 @@ preview version published on CTAN
     \advance\dimen@\eql@tagmargin@
   \fi
   \ifdim\eql@fieldwidth@<\dimen@
-    \eql@tagbox@print@left
+    \eql@tagbox@print@tagsleft
     \eql@adjust@print@aligncenter\eql@tagmargin@\z@
   \else
     \eql@adjust@try\eql@tagwidth@
     \ifnum\badness<\eql@maxbadness@
-      \eql@tagbox@print@left
+      \eql@tagbox@print@tagsleft
       \ifdim\eql@tagwidth@<\eql@tagmargin@
         \eql@adjust@print@alignright\eql@tagwidth@\z@
       \else
         \eql@adjust@print@alignleft\eql@tagwidth@\z@
       \fi
     \else
-      \eql@tagbox@print@left@raise
-      \eql@adjust@center@tagsleft@shovecenter@notag
+      \eql@tagbox@print@tagsleft@raise
+      \eql@adjust@layoutcenter@tagsleft@aligncenter@notag
     \fi
   \fi
   \eql@display@firstavail@set\z@
@@ -4760,7 +5262,7 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@center@tagsright@shoveleft@notag{%
+\def\eql@adjust@layoutcenter@tagsright@alignleft@notag{%
   \dimen@\displaywidth
   \advance\dimen@-\eql@marginleft@
   \advance\dimen@-\eql@shape@amount@
@@ -4776,7 +5278,7 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@center@tagsright@shoveleft@tag{%
+\def\eql@adjust@layoutcenter@tagsright@alignleft@tag{%
   \dimen@\eql@marginleft@
   \advance\dimen@\eql@shape@amount@
   \advance\dimen@\eql@tagwidth@
@@ -4785,17 +5287,17 @@ preview version published on CTAN
     \dimen@\eql@marginleft@
     \advance\dimen@\eql@shape@amount@
     \eql@adjust@print@alignleft\dimen@\eql@tagwidth@
-    \eql@tagbox@print@right
+    \eql@tagbox@print@tagsright
   \else
     \ifdim\eql@marginleft@>-\eql@shape@amount@
       \eql@adjust@try\eql@tagwidth@
     \fi
     \ifnum\badness<\eql@maxbadness@
       \eql@adjust@print@alignright\z@\eql@tagwidth@
-      \eql@tagbox@print@right
+      \eql@tagbox@print@tagsright
     \else
-      \eql@adjust@center@tagsright@shoveleft@notag
-      \eql@tagbox@print@right@raise
+      \eql@adjust@layoutcenter@tagsright@alignleft@notag
+      \eql@tagbox@print@tagsright@raise
     \fi
   \fi
 }
@@ -4803,7 +5305,7 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@center@tagsleft@shoveright@notag{%
+\def\eql@adjust@layoutcenter@tagsleft@alignright@notag{%
   \dimen@\displaywidth
   \advance\dimen@-\eql@tagmargin@
   \advance\dimen@-\eql@marginright@
@@ -4817,23 +5319,23 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@center@tagsleft@shoveright@tag{%
+\def\eql@adjust@layoutcenter@tagsleft@alignright@tag{%
   \dimen@\eql@marginright@
   \advance\dimen@\eql@tagwidth@
   \eql@adjust@try\dimen@
   \ifnum\badness<\eql@marginbadness@
-    \eql@tagbox@print@left
+    \eql@tagbox@print@tagsleft
     \eql@adjust@print@alignright\eql@tagwidth@\eql@marginright@
   \else
     \ifdim\eql@marginright@>\z@
       \eql@adjust@try\eql@tagwidth@
     \fi
     \ifnum\badness<\eql@maxbadness@
-      \eql@tagbox@print@left
+      \eql@tagbox@print@tagsleft
       \eql@adjust@print@alignleft\eql@tagwidth@\z@
     \else
-      \eql@tagbox@print@left@raise
-      \eql@adjust@center@tagsleft@shoveright@notag
+      \eql@tagbox@print@tagsleft@raise
+      \eql@adjust@layoutcenter@tagsleft@alignright@notag
     \fi
   \fi
   \eql@display@firstavail@set\z@
@@ -4842,7 +5344,7 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@center@tagsright@shoveright@notag{%
+\def\eql@adjust@layoutcenter@tagsright@alignright@notag{%
   \dimen@\displaywidth
   \advance\dimen@-\eql@tagmargin@
   \advance\dimen@-\eql@marginright@
@@ -4858,32 +5360,32 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@center@tagsright@shoveright@tag{%
+\def\eql@adjust@layoutcenter@tagsright@alignright@tag{%
   \dimen@\eql@tagmargin@
   \advance\dimen@\eql@marginright@
   \ifdim\eql@tagwidth@<\dimen@
     \eql@adjust@try\dimen@%
     \ifnum\badness<\eql@marginbadness@
       \eql@adjust@print@alignright\z@\dimen@
-      \eql@tagbox@print@right
+      \eql@tagbox@print@tagsright
     \else
       \eql@adjust@try\eql@tagwidth@
       \ifnum\badness<\eql@maxbadness@
         \eql@adjust@print@alignleft\z@\eql@tagwidth@
-        \eql@tagbox@print@right
+        \eql@tagbox@print@tagsright
       \else
         \eql@adjust@print@alignleft\z@\z@
-        \eql@tagbox@print@left@raise
+        \eql@tagbox@print@tagsleft@raise
       \fi
     \fi
   \else
     \eql@adjust@try\eql@tagwidth@
     \ifnum\badness<\eql@maxbadness@
       \eql@adjust@print@alignright\z@\eql@tagwidth@
-      \eql@tagbox@print@right
+      \eql@tagbox@print@tagsright
     \else
-      \eql@adjust@center@tagsright@shoveright@notag
-      \eql@tagbox@print@right@raise
+      \eql@adjust@layoutcenter@tagsright@alignright@notag
+      \eql@tagbox@print@tagsright@raise
     \fi
   \fi
 }
@@ -4891,7 +5393,7 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@center@tagsleft@shoveleft@notag{%
+\def\eql@adjust@layoutcenter@tagsleft@alignleft@notag{%
   \dimen@\displaywidth
   \advance\dimen@-\eql@tagmargin@
   \advance\dimen@-\eql@marginleft@
@@ -4909,33 +5411,33 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@center@tagsleft@shoveleft@tag{%
+\def\eql@adjust@layoutcenter@tagsleft@alignleft@tag{%
   \dimen@\eql@tagmargin@
   \advance\dimen@\eql@marginleft@
   \advance\dimen@\eql@shape@amount@
   \ifdim\eql@tagwidth@<\dimen@
     \eql@adjust@try\dimen@%
     \ifnum\badness<\eql@marginbadness@
-      \eql@tagbox@print@left
+      \eql@tagbox@print@tagsleft
       \eql@adjust@print@alignleft\dimen@\z@
     \else
       \eql@adjust@try\eql@tagwidth@
       \ifnum\badness<\eql@maxbadness@
-        \eql@tagbox@print@left
+        \eql@tagbox@print@tagsleft
         \eql@adjust@print@alignright\eql@tagwidth@\z@
       \else
-        \eql@tagbox@print@left@raise
+        \eql@tagbox@print@tagsleft@raise
         \eql@adjust@print@alignright\z@\z@
       \fi
     \fi
   \else
     \eql@adjust@try\eql@tagwidth@
     \ifnum\badness<\eql@maxbadness@
-      \eql@tagbox@print@left
+      \eql@tagbox@print@tagsleft
       \eql@adjust@print@alignleft\eql@tagwidth@\z@
     \else
-      \eql@tagbox@print@left@raise
-      \eql@adjust@center@tagsleft@shoveleft@notag
+      \eql@tagbox@print@tagsleft@raise
+      \eql@adjust@layoutcenter@tagsleft@alignleft@notag
     \fi
   \fi
   \eql@display@firstavail@set\z@
@@ -4970,7 +5472,7 @@ preview version published on CTAN
 %    \begin{macrocode}
   \@tempdima\displaywidth
   \advance\@tempdima-\eql@totalwidth@
-  \advance\@tempdima-\eql@align@inter@\eql@colsepmin@
+  \advance\@tempdima-\eql@columns@inter@\eql@colsepmin@
   \@tempdimb\@tempdima
   \advance\@tempdimb-\tw@\eql@tagmargin@
   \ifdim\@tempdimb>\z@
@@ -4987,14 +5489,14 @@ preview version published on CTAN
 % \TODO describe
 %
 %    \begin{macrocode}
-\def\eql@adjust@flushleft@shoveleft{%
-  \eql@marginleft@\eql@flushleftmargin@
+\def\eql@adjust@layoutleft@alignleft{%
+  \eql@marginleft@\eql@layoutleftmargin@
   \advance\eql@marginleft@\eql@shape@amount@
-  \ifdim\eql@marginleft@<\eql@flushleftmarginmin@
-    \eql@marginleft@\eql@flushleftmarginmin@
+  \ifdim\eql@marginleft@<\eql@layoutleftmarginmin@
+    \eql@marginleft@\eql@layoutleftmarginmin@
   \fi
-  \ifdim\eql@marginleft@>\eql@flushleftmarginmax@
-    \eql@marginleft@\eql@flushleftmarginmax@
+  \ifdim\eql@marginleft@>\eql@layoutleftmarginmax@
+    \eql@marginleft@\eql@layoutleftmarginmax@
   \fi
 }
 %    \end{macrocode}
@@ -5004,13 +5506,13 @@ preview version published on CTAN
 %       good left margin with ragged right
 %          (allow space between tag and equation in close case)
 %    \begin{macrocode}
-\def\eql@adjust@flushleft@shoveleft@notag{%
-  \ifdim\eql@flushleftmarginmin@<\eql@marginleft@
+\def\eql@adjust@layoutleft@alignleft@notag{%
+  \ifdim\eql@layoutleftmarginmin@<\eql@marginleft@
     \eql@adjust@try\eql@marginleft@
     \ifnum\badness<\eql@marginbadness@
       \eql@adjust@print@alignleft\eql@marginleft@\z@
     \else
-      \eql@adjust@print@alignleft\eql@flushleftmarginmin@\z@
+      \eql@adjust@print@alignleft\eql@layoutleftmarginmin@\z@
     \fi
   \else
     \eql@adjust@print@alignleft\eql@marginleft@\z@
@@ -5020,12 +5522,12 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@flushleft@tagsright@shoveleft@notag{%
-  \eql@adjust@flushleft@shoveleft
-  \eql@adjust@flushleft@shoveleft@notag
+\def\eql@adjust@layoutleft@tagsright@alignleft@notag{%
+  \eql@adjust@layoutleft@alignleft
+  \eql@adjust@layoutleft@alignleft@notag
 }
-\let\eql@adjust@flushleft@tagsleft@shoveleft@notag
-  \eql@adjust@flushleft@tagsright@shoveleft@notag
+\let\eql@adjust@layoutleft@tagsleft@alignleft@notag
+  \eql@adjust@layoutleft@tagsright@alignleft@notag
 %    \end{macrocode}
 %
 %   \TODO what is worse, extend into margin or raise tag?
@@ -5034,65 +5536,65 @@ preview version published on CTAN
 %      margin with ragged right
 %          (allow space between tag and equation in close case)
 %    \begin{macrocode}
-\def\eql@adjust@flushleft@tagsright@shoveleft@tag{%
-  \eql@adjust@flushleft@shoveleft
+\def\eql@adjust@layoutleft@tagsright@alignleft@tag{%
+  \eql@adjust@layoutleft@alignleft
   \dimen@\eql@marginleft@
   \advance\dimen@\eql@tagwidth@
   \eql@adjust@try\dimen@
   \ifnum\badness<\eql@marginbadness@
     \eql@adjust@print@alignleft\eql@marginleft@\eql@tagwidth@
-    \eql@tagbox@print@right
+    \eql@tagbox@print@tagsright
   \else
-    \ifdim\eql@flushleftmarginmin@<\eql@marginleft@
-      \dimen@\eql@flushleftmarginmin@
+    \ifdim\eql@layoutleftmarginmin@<\eql@marginleft@
+      \dimen@\eql@layoutleftmarginmin@
       \advance\dimen@\eql@tagwidth@
       \eql@adjust@try\dimen@
     \fi
     \ifnum\badness<\eql@maxbadness@
-      \eql@adjust@print@alignleft\eql@flushleftmarginmin@\eql@tagwidth@
-      \eql@tagbox@print@right
+      \eql@adjust@print@alignleft\eql@layoutleftmarginmin@\eql@tagwidth@
+      \eql@tagbox@print@tagsright
     \else
-      \eql@adjust@flushleft@shoveleft@notag
-      \eql@tagbox@print@right@raise
+      \eql@adjust@layoutleft@alignleft@notag
+      \eql@tagbox@print@tagsright@raise
     \fi
   \fi
 }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\def\eql@adjust@flushleft@tagsleft@shoveleft@tag{%
-  \eql@adjust@flushleft@shoveleft
-  \ifdim\eql@tagwidth@<\eql@flushleftmarginmin@
-    \eql@tagbox@print@left
-    \eql@adjust@flushleft@notag
+\def\eql@adjust@layoutleft@tagsleft@alignleft@tag{%
+  \eql@adjust@layoutleft@alignleft
+  \ifdim\eql@tagwidth@<\eql@layoutleftmarginmin@
+    \eql@tagbox@print@tagsleft
+    \eql@adjust@layoutleft@notag
   \else
     \ifdim\eql@tagwidth@<\eql@marginleft@
       \eql@adjust@try\eql@marginleft@
       \ifnum\badness<\eql@marginbadness@
-        \eql@tagbox@print@left
+        \eql@tagbox@print@tagsleft
         \eql@adjust@print@alignleft\eql@marginleft@\z@
       \else
         \eql@adjust@try\eql@tagwidth@
         \ifnum\badness<\eql@maxbadness@
-          \eql@tagbox@print@left
+          \eql@tagbox@print@tagsleft
           \eql@adjust@print@alignleft\eql@tagwidth@\z@
         \else
-          \eql@tagbox@print@left@raise
-          \eql@adjust@print@alignleft\eql@flushleftmarginmin@\z@
+          \eql@tagbox@print@tagsleft@raise
+          \eql@adjust@print@alignleft\eql@layoutleftmarginmin@\z@
         \fi
       \fi
     \else
-      \ifdim\eql@tagwidth@>\eql@flushleftmarginmax@
-        \eql@tagbox@print@left@raise
-        \eql@adjust@flushleft@shoveleft@notag
+      \ifdim\eql@tagwidth@>\eql@layoutleftmarginmax@
+        \eql@tagbox@print@tagsleft@raise
+        \eql@adjust@layoutleft@alignleft@notag
       \else
         \eql@adjust@try\eql@tagwidth@
         \ifnum\badness<\eql@maxbadness@
-          \eql@tagbox@print@left
+          \eql@tagbox@print@tagsleft
           \eql@adjust@print@alignleft\eql@tagwidth@\z@
         \else
-          \eql@tagbox@print@left@raise
-          \eql@adjust@flushleft@shoveleft@notag
+          \eql@tagbox@print@tagsleft@raise
+          \eql@adjust@layoutleft@alignleft@notag
         \fi
       \fi
     \fi
@@ -5103,46 +5605,46 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@flushleft@shoveright@notag{%
-  \eql@marginleft@\eql@flushleftmargin@
-  \ifdim\eql@flushleftmarginmin@<\eql@marginleft@
+\def\eql@adjust@layoutleft@alignright@notag{%
+  \eql@marginleft@\eql@layoutleftmargin@
+  \ifdim\eql@layoutleftmarginmin@<\eql@marginleft@
     \eql@adjust@try\eql@marginleft@
     \ifnum\badness<\eql@marginbadness@
       \eql@adjust@print@alignright\eql@marginleft@\z@
     \else
-      \eql@adjust@print@alignright\eql@flushleftmarginmin@\z@
+      \eql@adjust@print@alignright\eql@layoutleftmarginmin@\z@
     \fi
   \else
     \eql@adjust@print@alignright\eql@marginleft@\z@
   \fi
 }
-\let\eql@adjust@flushleft@tagsright@shoveright@notag
-  \eql@adjust@flushleft@shoveright@notag
-\let\eql@adjust@flushleft@tagsleft@shoveright@notag
-  \eql@adjust@flushleft@shoveright@notag
+\let\eql@adjust@layoutleft@tagsright@alignright@notag
+  \eql@adjust@layoutleft@alignright@notag
+\let\eql@adjust@layoutleft@tagsleft@alignright@notag
+  \eql@adjust@layoutleft@alignright@notag
 %    \end{macrocode}
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@flushleft@tagsright@shoveright@tag{%
+\def\eql@adjust@layoutleft@tagsright@alignright@tag{%
   \dimen@\eql@marginleft@
   \advance\dimen@\eql@tagwidth@
   \eql@adjust@try\dimen@
   \ifnum\badness<\eql@marginbadness@
     \eql@adjust@print@alignright\eql@marginleft@\eql@tagwidth@
-    \eql@tagbox@print@right
+    \eql@tagbox@print@tagsright
   \else
-    \ifdim\eql@flushleftmarginmin@<\eql@marginleft@
-      \dimen@\eql@flushleftmarginmin@
+    \ifdim\eql@layoutleftmarginmin@<\eql@marginleft@
+      \dimen@\eql@layoutleftmarginmin@
       \advance\dimen@\eql@tagwidth@
       \eql@adjust@try\dimen@
     \fi
     \ifnum\badness<\eql@maxbadness@
-      \eql@adjust@print@alignright\eql@flushleftmarginmin@\eql@tagwidth@
-      \eql@tagbox@print@right
+      \eql@adjust@print@alignright\eql@layoutleftmarginmin@\eql@tagwidth@
+      \eql@tagbox@print@tagsright
     \else
-      \eql@adjust@flushleft@shoveright@notag
-      \eql@tagbox@print@right@raise
+      \eql@adjust@layoutleft@alignright@notag
+      \eql@tagbox@print@tagsright@raise
     \fi
   \fi
 }
@@ -5150,38 +5652,38 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@adjust@flushleft@tagsleft@shoveright@tag{%
-  \ifdim\eql@tagwidth@<\eql@flushleftmarginmin@
-    \eql@tagbox@print@left
-    \eql@adjust@flushleft@shoveright@notag
+\def\eql@adjust@layoutleft@tagsleft@alignright@tag{%
+  \ifdim\eql@tagwidth@<\eql@layoutleftmarginmin@
+    \eql@tagbox@print@tagsleft
+    \eql@adjust@layoutleft@alignright@notag
   \else
     \ifdim\eql@tagwidth@<\eql@marginleft@
       \eql@adjust@try\eql@marginleft@
       \ifnum\badness<\eql@marginbadness@
-        \eql@tagbox@print@left
+        \eql@tagbox@print@tagsleft
         \eql@adjust@print@alignright\eql@marginleft@\z@
       \else
         \eql@adjust@try\eql@tagwidth@
         \ifnum\badness<\eql@maxbadness@
-          \eql@tagbox@print@left
+          \eql@tagbox@print@tagsleft
           \eql@adjust@print@alignright\eql@tagwidth@\z@
         \else
-          \eql@tagbox@print@left@raise
-          \eql@adjust@print@alignright\eql@flushleftmarginmin@\z@
+          \eql@tagbox@print@tagsleft@raise
+          \eql@adjust@print@alignright\eql@layoutleftmarginmin@\z@
         \fi
       \fi
     \else
-      \ifdim\eql@tagwidth@>\eql@flushleftmarginmax@
-        \eql@tagbox@print@left@raise
-        \eql@adjust@flushleft@shoveright@notag
+      \ifdim\eql@tagwidth@>\eql@layoutleftmarginmax@
+        \eql@tagbox@print@tagsleft@raise
+        \eql@adjust@layoutleft@alignright@notag
       \else
         \eql@adjust@try\eql@tagwidth@
         \ifnum\badness<\eql@maxbadness@
-          \eql@tagbox@print@left
+          \eql@tagbox@print@tagsleft
           \eql@adjust@print@alignright\eql@tagwidth@\z@
         \else
-          \eql@tagbox@print@left@raise
-          \eql@adjust@flushleft@shoveright@notag
+          \eql@tagbox@print@tagsleft@raise
+          \eql@adjust@layoutleft@alignright@notag
         \fi
       \fi
     \fi
@@ -5191,190 +5693,17 @@ preview version published on CTAN
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\def\eql@adjust@flushleft@shovecenter{%
+\def\eql@adjust@layoutleft@aligncenter{%
   \eql@error{shove center not implemented for left alignment}%
 }
-\let\eql@adjust@flushleft@tagsright@shovecenter@notag
-  \eql@adjust@flushleft@shovecenter
-\let\eql@adjust@flushleft@tagsright@shovecenter@tag
-  \eql@adjust@flushleft@shovecenter
-\let\eql@adjust@flushleft@tagsleft@shovecenter@notag
-  \eql@adjust@flushleft@shovecenter
-\let\eql@adjust@flushleft@tagsleft@shovecenter@tag
-  \eql@adjust@flushleft@shovecenter
-%    \end{macrocode}
-%
-%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Single-Line Equation}
-%
-% \TODO describe
-%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \subsection{Environment}
-%
-%    \begin{macrocode}
-\def\eql@single@cr{%
-  \eql@error{Cannot use `\string\\' within display equation.
-    Please switch to equations environment}%
-}
-%    \end{macrocode}
-%
-% \TODO describe
-%    \begin{macrocode}
-\def\eql@single@start{%
-  \eql@halign@catchprevdepth
-  \eql@tagging@start
-  \eql@dollardollar@begin
-  \eql@numbering@eval@mode
-  \let\eql@numbering@subeq@use\eql@false
-  \eql@stack@save@single
-%    \end{macrocode}
-%
-%    \TODO make other display environments push these!?
-%    \begin{macrocode}
-  \eql@numbering@single@init
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-  \ifdefined\eql@single@native
-    \let\eql@single@start@sel\eql@single@start@native
-    \let\eql@single@end@sel\eql@single@end@native
-    \let\raisetag\eql@raisetag@default
-  \else
-    \let\eql@single@start@sel\eql@single@start@adjust
-    \let\eql@single@end@sel\eql@single@end@adjust
-  \fi
-  \ifdefined\eql@single@crerror\else
-    \let\\\eql@single@cr
-  \fi
-  \eql@single@start@sel
-}
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\def\eql@single@end{%
-  \eql@punct@apply@block
-  \eql@hook@eqout
-  \eql@single@end@sel
-  \eql@stack@restore
-  \eql@dollardollar@end
-  \eql@tagging@end
-  \eql@halign@leave
-}
-%    \end{macrocode}
-%
-% \TODO: try to feed in tagging after catchprevdepth
-%    \begin{macrocode}
-\def\eql@single@main{%
-  \expandafter\eql@single@start
-  \eql@scan@body
-  \eql@single@end
-}
-%    \end{macrocode}
-%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \subsection{Native}
-%
-%    \begin{macrocode}
-\def\eql@single@start@native{%
-%  \mathopen{}%
-  \eql@hook@eqin
-}%
-%    \end{macrocode}
-%
-% \TODO describe
-%    \begin{macrocode}
-\def\eql@single@end@native{%
-%  \mathclose{}%
-  \if@eqnsw
-    \ifdefined\eql@tagsleft
-      \leqno
-    \else
-      \eqno
-    \fi
-    \eql@compose@print
-  \fi
-  \ifnum\eql@displaybreak@pen@=\@MM\else
-    \postdisplaypenalty\eql@displaybreak@pen@
-  \fi
-}%
-%    \end{macrocode}
-%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \subsection{Adjustment}
-%
-%    \begin{macrocode}
-\def\eql@single@start@adjust{%
-  \eql@totalrows@\@ne
-  \eql@row@\z@
-  \eql@display@init
-  \let\shoveleft\eql@adjust@shoveleft
-  \let\shovecenter\eql@adjust@shovecenter
-  \let\shoveright\eql@adjust@shoveright
-  \eql@adjust@init
-  \eql@shape@eval
-  \eql@halign@init{}%
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-  \eql@row@\@ne
-  \setbox\eql@fieldbox@\hbox\bgroup
-    \eql@restore@hfuzz
-    \eql@strut@field
-    $\m@th\displaystyle%$
-      \eql@hook@eqin
-}
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\def\eql@single@end@adjust{%
-    \eql@tagging@mathsave
-    $%$
-    \hfil
-    \kern\z@
-  \egroup
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-  \eql@fieldwidth@\wd\eql@fieldbox@
-  \eql@line@height@\ht\eql@fieldbox@
-  \eql@line@depth@\dp\eql@fieldbox@
-  \eql@totalwidth@\eql@fieldwidth@
-  \eql@totalrows@\@ne
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-  \if@eqnsw
-    \eql@tagbox@make\eql@compose@print
-    \eql@tagrows@\@ne
-  \else
-    \eql@tagwidth@\z@
-    \eql@tagrows@\z@
-  \fi
-  \eql@tagwidth@max@\eql@tagwidth@
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-  \eql@adjust@calc
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-  \halign{##\cr
-    \noalign{\eql@halign@before}%
-    \if@eqnsw
-      \eql@adjust@sel@tag
-    \else
-      \eql@adjust@sel@notag
-    \fi
-    \cr
-    \noalign{\eql@halign@after}%
-    \eql@tagging@tablesavelines
-  }%
-  \eql@row@\tw@
-  \eql@display@close
-}
+\let\eql@adjust@layoutleft@tagsright@aligncenter@notag
+  \eql@adjust@layoutleft@aligncenter
+\let\eql@adjust@layoutleft@tagsright@aligncenter@tag
+  \eql@adjust@layoutleft@aligncenter
+\let\eql@adjust@layoutleft@tagsleft@aligncenter@notag
+  \eql@adjust@layoutleft@aligncenter
+\let\eql@adjust@layoutleft@tagsleft@aligncenter@tag
+  \eql@adjust@layoutleft@aligncenter
 %    \end{macrocode}
 %
 %
@@ -5385,7 +5714,7 @@ preview version published on CTAN
 % \TODO describe
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \subsection{Registers}
+% \subsection{Table Registers}
 %
 % \TODO can we unite |\eql@fieldlength@tab| and |\eql@tagwidth@tab|
 % \TODO then process sequentially not using ifcase?
@@ -5439,12 +5768,12 @@ preview version published on CTAN
 \let\eql@colwidth@tab\@empty
 %    \end{macrocode}
 %
-%   \macro{\eql@align@colwidth@get}
+%   \macro{\eql@columns@colwidth@get}
 %    \begin{macrocode}
-\def\eql@align@colwidth@get#1{%
+\def\eql@columns@colwidth@get#1{%
   \ifcase\expandafter#1\eql@colwidth@tab\else\z@\fi
 }
-\def\eql@align@colwidth@save{%
+\def\eql@columns@colwidth@save{%
   \begingroup
     \let\or\relax
     \global\edef\eql@colwidth@tab{\or\the\wd\thr@@\eql@colwidth@tab}%
@@ -5527,18 +5856,18 @@ preview version published on CTAN
   \ifdefined\eql@tagsleft
     \eql@display@firstavail@set\z@
     \ifdim\eql@tagwidth@>\eql@line@avail@
-      \eql@tagbox@print@left@raise
+      \eql@tagbox@print@tagsleft@raise
     \else
-      \eql@tagbox@print@left
+      \eql@tagbox@print@tagsleft
     \fi
     \kern\displaywidth
   \else
     \kern\displaywidth
     \advance\eql@tagwidth@\eql@line@width@
     \ifdim\eql@tagwidth@>\displaywidth
-      \eql@tagbox@print@right@raise
+      \eql@tagbox@print@tagsright@raise
     \else
-      \eql@tagbox@print@right
+      \eql@tagbox@print@tagsright
     \fi
   \fi
 }
@@ -5626,7 +5955,7 @@ preview version published on CTAN
     \let\eql@skip@force@below\z@
     \let\eql@skip@force@above\z@
     \eql@setkeys{intertext}\eql@intertext@opt
-    \openup-\eql@spread@amount@
+    \openup-\eql@spread@
     \penalty\postdisplaypenalty
     \ifcase\eql@skip@force@below\relax
       \advance\eql@vspaceskip@\glueexpr\eql@skip@long@below\relax
@@ -5723,92 +6052,383 @@ preview version published on CTAN
 }
 %    \end{macrocode}
 %
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Equations Box Environment}
+%
+% \TODO describe
+%
+% \TODO fixed width version (works only towards intercolumn stretch)?
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Line Breaks}
+%
+%   \macro{\eql@box@cr}
+%    \begin{macrocode}
+\protected\def\eql@box@cr{%
+  \eql@ampprotect\eql@testopt@tight\eql@box@cr@\z@
+}
+\def\eql@box@cr@[#1]{%
+  \eql@punct@apply@line
+  \eql@hook@lineout
+  \eql@box@lastfield
+  \cr
+  \noalign{%
+    \vskip\glueexpr#1\relax
+  }%
+}
+%    \end{macrocode}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Stacked Mode}
+%
+%    \begin{macrocode}
+\def\eql@box@lastfield@lines{&\omit\kern-2\eql@colsep@}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\eql@box@open@stacked{%
+% \TODO templates
+  \let\shoveleft\eql@adjust@alignleft
+  \let\shovecenter\eql@adjust@aligncenter
+  \let\shoveright\eql@adjust@alignright
+  \let\eql@box@lastfield\eql@box@lastfield@lines
+  \eql@halign@init{%
+%<dev>\eql@dev{starting line \the\eql@row@}%
+    \global\advance\eql@row@\@ne
+  }%
+  \tabskip\z@skip
+  \halign\bgroup
+    &%
+      \eql@shape@pos@\m@ne
+      \setbox\eql@fieldbox@\hbox{%
+        \eql@strut@field
+        \@lign
+        $\m@th\displaystyle
+          \eql@hook@colin
+          ##%
+          \eql@punct@apply@col
+          \eql@hook@colout
+          \eql@tagging@mathsave
+        $%
+        \eql@tagging@mathaddlast
+      }%
+      \ifnum\eql@shape@pos@=\m@ne
+        \eql@shape@eval
+      \fi
+      \ifcase\eql@shape@pos@
+        \kern\eql@shape@amount@
+        \box\eql@fieldbox@
+        \skip@\@flushglue
+        \advance\skip@\eql@paddingleft@\relax
+        \advance\skip@\eql@paddingright@\relax
+        \advance\skip@-\eql@shape@amount@\relax
+        \hskip\skip@
+        \eql@tagging@alignleft
+      \or
+        \skip@\@flushglue
+        \advance\skip@\eql@paddingleft@\relax
+        \hskip\skip@
+        \box\eql@fieldbox@
+        \skip@\@flushglue
+        \advance\skip@\eql@paddingright@\relax
+        \hskip\skip@
+        \eql@tagging@aligncenter
+      \or
+        \skip@\@flushglue
+        \advance\skip@\eql@paddingleft@\relax
+        \advance\skip@\eql@paddingright@\relax
+        \hskip\skip@
+        \box\eql@fieldbox@
+        \eql@tagging@alignright
+      \fi
+      \tabskip\eql@colsep@\relax
+    \crcr
+    \noalign{%
+      \eql@hook@blockbefore
+    }%
+    \eql@hook@blockin
+}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\eql@mode@stacked{\let\eql@box@open\eql@box@open@stacked}
+%    \end{macrocode}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Aligned Mode}
+%
+%    \begin{macrocode}
+\def\eql@box@lastfield@odd{%
+  &\omit
+  \kern-\wd\eql@fieldbox@
+  \box\eql@fieldbox@
+  \hfil
+  &\omit\kern-\eql@colsep@
+}%
+\def\eql@box@lastfield@even{&\omit\kern-\eql@colsep@}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\eql@box@open@aligned{%
+% \TODO templates
+  \let\eql@box@lastfield\@empty
+  \eql@halign@init{%
+%<dev>\eql@dev{starting new line}%
+  }%
+  \tabskip\z@skip
+  \halign\bgroup
+    &%
+      \let\eql@box@lastfield\eql@box@lastfield@odd
+      \global\setbox\eql@fieldbox@\hbox{%
+        \eql@strut@field
+        \@lign
+        $\m@th\displaystyle
+          \eql@hook@colin
+          ##%
+          \eql@class@innerleft
+          \eql@hook@innerleft
+          \eql@tagging@mathsave
+        $%
+        \eql@tagging@mathaddlast
+      }%
+      \hfil
+      \kern\wd\eql@fieldbox@
+      \tabskip\z@skip
+    &%
+      \eql@fieldwidth@\wd\eql@fieldbox@
+      \kern-\eql@fieldwidth@
+      \box\eql@fieldbox@
+      \let\eql@box@lastfield\eql@box@lastfield@even
+      \llap{\unhbox\eql@fieldbox@}%
+      \hbox{%
+        \eql@strut@field
+        \@lign
+        $\m@th\displaystyle
+          \eql@hook@innerright
+          \eql@class@innerright@sel
+          ##%
+          \eql@punct@apply@col
+          \eql@hook@colout
+          \eql@tagging@mathsave
+        $%
+        \eql@tagging@mathaddlast
+      }%
+      \hfil
+      \tabskip\eql@colsep@\relax
+    \crcr
+    \noalign{%
+      \eql@hook@blockbefore
+    }%
+    \eql@hook@blockin
+}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\eql@mode@aligned{\let\eql@box@open\eql@box@open@aligned}
+%    \end{macrocode}
+%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Main}
 %
-% \TODO note that switching from align to lines mode,
-% the width can be incorrect due to different formatting (punctuation only?!).
-% only minor discrpancies expected and lines can adjust
-%   \macro{\eql@multi@main}
 %    \begin{macrocode}
-\let\eql@multi@mode@lines\eql@false
-\def\eql@multi@main{%
-  \eql@halign@catchprevdepth
-  \eql@tagging@start
-  \eql@dollardollar@begin
-  \eql@numbering@eval@mode
-  \eql@stack@save@multi
-  \ifdefined\eql@subequations@active
-    \let\eql@numbering@subeq@use\eql@false
-  \fi
-  \ifdefined\eql@numbering@subeq@use
-    \eql@numbering@subeq@init
-  \fi
-  \let\intertext\eql@intertext
-  \let\endintertext\endeql@intertext
-  \let\shoveleft\eql@adjust@shoveleft
-  \let\shovecenter\eql@adjust@shovecenter
-  \let\shoveright\eql@adjust@shoveright
-  \ifdefined\eql@multi@mode@lines
-    \expandafter\eql@lines@measure
-  \else
-    \ifdefined\eql@ampproof@active
-      \eql@ampproof
+\let\eql@box@box\vcenter
+\let\eql@box@open\@undefined
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\eql@box@close{%
+    \ifvmode\else
+      \global\eql@totalrows@\eql@row@
+      \eql@punct@apply@block
+      \eql@box@cr@[\z@skip]%
     \fi
-    \expandafter\eql@align@measure
-  \fi
-  \ifx\eql@numbering@subeq@use\@ne
-    \eql@numbering@subeq@revert
-  \fi
-  \ifdefined\eql@multi@mode@lines\else
-    \ifdefined\eql@multi@linesfallback
-      \ifnum\eql@totalcolumns@=\@ne
-        \let\eql@multi@mode@lines\eql@true
-        \eql@shape@set{r}%
-%        \eql@lines@measure
-      \fi
-    \fi
-  \fi
-  \ifdefined\eql@multi@mode@lines
-    \expandafter\eql@lines@print
-  \else
-    \expandafter\eql@align@print
-  \fi
-  \ifdefined\eql@numbering@subeq@use
-    \eql@numbering@subeq@close
-  \fi
-  \eql@stack@restore
-  \eql@dollardollar@end
-  \eql@tagging@end
-  \eql@halign@leave
+    \crcr
+    \noalign{%
+      \eql@hook@blockafter
+    }%
+    \eql@tagging@tablesaveinner
+  \egroup
 }
+%    \end{macrocode}
+%
+%   \macro{\eql@box@start}
+%    \begin{macrocode}
+\def\eql@box@start{%
+  \relax
+  \ifmmode
+    \let\eql@box@endmath\@empty
+  \else
+    $\let\eql@box@endmath=$%
+  \fi
+  \eql@nextopt@process{equationsbox}%
+  \let\eql@punct@block\eql@punct@main
+  \let\eql@punct@main\relax
+  \eql@colsep@\glueexpr\eql@box@colsep\relax
+  \eql@paddingleft@\glueexpr\eql@paddingleft@val\relax
+  \eql@paddingright@\glueexpr\eql@paddingright@val\relax
+  \eql@indent@\glueexpr\eql@indent@val\relax
+  \eql@stack@save@boxed
+  \let\eql@layoutleft\eql@false
+  \eql@row@\z@
+  \eql@totalrows@\@M
+  \eql@shape@sel
+  \hskip\glueexpr\eql@box@marginleft\relax
+  \eql@box@box\bgroup
+    \eql@display@leave
+    \let\\\eql@box@cr
+    \eql@box@open
+}
+%    \end{macrocode}
+%
+%   \macro{\eql@box@end}
+%    \begin{macrocode}
+\newcommand{\eql@box@end}{%
+    \eql@box@close
+  \egroup
+  \eql@tagging@tableaddinner
+  \hskip\glueexpr\eql@box@marginright\relax
+  \eql@stack@restore
+  \eql@box@endmath
+}
+%    \end{macrocode}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Environment}
+%
+% \environment{equationsbox}
+%    \begin{macrocode}
+\newenvironment{equationsbox}{%
+%<dev>\eql@dev@enterenv
+  \eql@ampprotect\eql@box@testall\eql@box@start
+}{%
+  \eql@box@end
+%<dev>\eql@dev@leaveenv
+}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\eql@box@testall{\eql@box@testtilde}
+\def\eql@box@testtilde#1{%
+  \eql@ifnextgobble@tight~%
+    {\eqnaddopt{lines}\eql@box@testopt{#1}}%
+    {\eql@box@testopt{#1}}}
+\def\eql@box@testopt#1{%
+  \eql@ifnextchar@tight[%]
+    {\eql@box@addopt{#1}}%
+    {#1}}
+\def\eql@box@addopt#1[#2]{\eqnaddopt{#2}#1}
+%    \end{macrocode}
+%
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Single-Line Equation}
+%
+% \TODO describe
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Native Mode}
+%
+%    \begin{macrocode}
+\def\eql@single@start@native{%
+%  \mathopen{}%
+  \eql@hook@eqin
+}%
 %    \end{macrocode}
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@mode@equation{%
-  \let\eql@equations@mode@single\eql@true
-  \ifdefined\eql@single@doscan
-    \let\eql@equations@main\eql@single@main
-    \let\eql@equations@end\@empty
-  \else
-    \let\eql@equations@main\@undefined
-    \let\eql@equations@end\eql@single@end
+\def\eql@single@end@native{%
+%  \mathclose{}%
+  \if@eqnsw
+    \ifdefined\eql@tagsleft
+      \leqno
+    \else
+      \eqno
+    \fi
+    \eql@compose@print
   \fi
+  \ifnum\eql@displaybreak@pen@=\@MM\else
+    \postdisplaypenalty\eql@displaybreak@pen@
+  \fi
+}%
+%    \end{macrocode}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Print}
+%
+%    \begin{macrocode}
+\def\eql@single@start@print{%
+  \eql@totalrows@\@ne
+  \eql@row@\z@
+  \eql@display@init
+  \let\shoveleft\eql@adjust@alignleft
+  \let\shovecenter\eql@adjust@aligncenter
+  \let\shoveright\eql@adjust@alignright
+  \eql@adjust@init
+  \eql@shape@eval
+  \eql@halign@init{}%
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+  \eql@row@\@ne
+  \setbox\eql@fieldbox@\hbox\bgroup
+    \eql@restore@hfuzz
+    \eql@strut@field
+    $\m@th\displaystyle%$
+      \eql@hook@eqin
 }
-\def\eql@mode@align{%
-  \let\eql@equations@mode@single\eql@false
-  \let\eql@multi@mode@lines\eql@false
-  \let\eql@equations@main\eql@multi@main
-  \let\eql@equations@end\@empty
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\eql@single@end@print{%
+    \eql@tagging@mathsave
+    $%$
+    \hfil
+    \kern\z@
+  \egroup
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+  \eql@fieldwidth@\wd\eql@fieldbox@
+  \eql@line@height@\ht\eql@fieldbox@
+  \eql@line@depth@\dp\eql@fieldbox@
+  \eql@totalwidth@\eql@fieldwidth@
+  \eql@totalrows@\@ne
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+  \if@eqnsw
+    \eql@tagbox@make\eql@compose@print
+    \eql@tagrows@\@ne
+  \else
+    \eql@tagwidth@\z@
+    \eql@tagrows@\z@
+  \fi
+  \eql@tagwidth@max@\eql@tagwidth@
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+  \eql@adjust@calc
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+  \halign{##\cr
+    \noalign{\eql@halign@before}%
+    \if@eqnsw
+      \eql@adjust@sel@tag
+    \else
+      \eql@adjust@sel@notag
+    \fi
+    \cr
+    \noalign{\eql@halign@after}%
+    \eql@tagging@tablesavelines
+  }%
+  \eql@row@\tw@
+  \eql@display@close
 }
-\def\eql@mode@lines{%
-  \let\eql@equations@mode@single\eql@false
-  \let\eql@multi@mode@lines\eql@true
-  \let\eql@equations@main\eql@multi@main
-  \let\eql@equations@end\@empty
-}
-\eql@mode@align
 %    \end{macrocode}
 %
 %
@@ -6023,7 +6643,7 @@ preview version published on CTAN
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Multi-Line Align Mode}
+% \section{Multi-Line Columns Mode}
 %
 % \TODO describe
 %
@@ -6032,16 +6652,16 @@ preview version published on CTAN
 %
 % \TODO describe
 %
-%   \macro{\eql@align@add@amp}
-%   \macro{\eql@align@completerow}
+%   \macro{\eql@columns@add@amp}
+%   \macro{\eql@columns@completerow}
 %    \begin{macrocode}
-\def\eql@align@add@amp#1{\if m#1&\omit\expandafter\eql@align@add@amp\fi}
-\def\eql@align@completerow{%
+\def\eql@columns@add@amp#1{\if m#1&\omit\expandafter\eql@columns@add@amp\fi}
+\def\eql@columns@completerow{%
   \count@\eql@totalcolumns@
   \advance\count@-\eql@column@
   \advance\count@\@ne
   \edef\eql@tmp{%
-    \expandafter\eql@align@add@amp\romannumeral\number\count@ 000q}%
+    \expandafter\eql@columns@add@amp\romannumeral\number\count@ 000q}%
   \eql@tmp
 }
 %    \end{macrocode}
@@ -6051,9 +6671,9 @@ preview version published on CTAN
 %
 % \TODO describe
 %
-%   \macro{\eql@align@measure@line@begin}
+%   \macro{\eql@columns@measure@line@begin}
 %    \begin{macrocode}
-\def\eql@align@measure@line@begin{%
+\def\eql@columns@measure@line@begin{%
 %<dev>\eql@dev{starting line \the\eql@row@}%
   \global\eql@column@\z@
   \eql@numbering@measure@line@begin
@@ -6062,28 +6682,28 @@ preview version published on CTAN
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\def\eql@align@measure@field{%
+\def\eql@columns@measure@field{%
   \eql@fieldlength@save\eql@column@
   \kern\wd\eql@fieldbox@
 }
 %    \end{macrocode}
 %
-%   \macro{\eql@align@measure@line@end}
+%   \macro{\eql@columns@measure@line@end}
 %    \begin{macrocode}
-\def\eql@align@measure@line@end{%
+\def\eql@columns@measure@line@end{%
   \eql@punct@apply@line
   \eql@hook@lineout
   &\omit
   \ifnum\eql@column@>\eql@totalcolumns@
     \global\eql@totalcolumns@\eql@column@
   \fi
-  \eql@align@measure@tag
+  \eql@columns@measure@tag
 }
 %    \end{macrocode}
 %
-%   \macro{\eql@align@measure@tag}
+%   \macro{\eql@columns@measure@tag}
 %    \begin{macrocode}
-\def\eql@align@measure@tag{%
+\def\eql@columns@measure@tag{%
   \ifnum\eql@numbering@target@<\z@
     \if@eqnsw
       \eql@tagbox@make\eql@compose@measure
@@ -6099,10 +6719,10 @@ preview version published on CTAN
 }
 %    \end{macrocode}
 %
-%   \macro{\eql@align@measure}
+%   \macro{\eql@columns@measure}
 %    \begin{macrocode}
-\def\eql@align@measure{%
-%<dev>\eql@dev@enter\eql@align@measure
+\def\eql@columns@measure{%
+%<dev>\eql@dev@enter\eql@columns@measure
   \eql@totalcolumns@\z@
   \eql@tagwidth@max@\z@
   \let\eql@tagwidth@tab\@empty
@@ -6111,8 +6731,8 @@ preview version published on CTAN
   \eql@measure@savecounters
   \setbox\z@\vbox{%
     \eql@numbering@measure@init
-    \eql@measure@init\eql@align@measure@line@begin
-    \eql@let@cr\eql@align@measure@line@end
+    \eql@measure@init\eql@columns@measure@line@begin
+    \eql@let@cr\eql@columns@measure@line@end
     \tabskip\z@skip
     \halign{%
       &%
@@ -6128,7 +6748,7 @@ preview version published on CTAN
           $%
         }%
         \global\eql@fieldwidth@\wd\eql@fieldbox@
-        \eql@align@measure@field
+        \eql@columns@measure@field
       &%
         \global\advance\eql@column@\@ne
         \setbox\eql@fieldbox@\hbox{%
@@ -6141,7 +6761,7 @@ preview version published on CTAN
             \eql@hook@colout
           $%
         }%
-        \eql@align@measure@field
+        \eql@columns@measure@field
         \hfil
       \crcr
       \noalign{%
@@ -6155,7 +6775,7 @@ preview version published on CTAN
       \ifvmode\else
         \eql@punct@apply@block
         \eql@hook@blockout
-        \eql@align@measure@line@end
+        \eql@columns@measure@line@end
         \cr
       \fi
       \noalign{%
@@ -6165,7 +6785,7 @@ preview version published on CTAN
 %    \TODO should we enforce even columns already here?!
 %    \TODO should we guard against no columns at all?!
 %    \begin{macrocode}
-      \eql@align@completerow
+      \eql@columns@completerow
       \cr
     }%
     \global\advance\eql@row@-\tw@
@@ -6204,12 +6824,12 @@ preview version published on CTAN
       \global\setbox\thr@@\lastbox
     }%
   \ifhbox\thr@@
-    \eql@align@colwidth@save
+    \eql@columns@colwidth@save
   \repeat
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-%<dev>\eql@dev@leave\eql@align@measure
+%<dev>\eql@dev@leave\eql@columns@measure
 }
 %    \end{macrocode}
 %
@@ -6218,9 +6838,9 @@ preview version published on CTAN
 %
 % \TODO describe
 %
-%   \macro{\eql@align@print@line@begin}
+%   \macro{\eql@columns@print@line@begin}
 %    \begin{macrocode}
-\def\eql@align@print@line@begin{%
+\def\eql@columns@print@line@begin{%
 %<dev>\eql@dev{starting line \the\eql@row@}%
   \global\eql@column@\z@
   \global\eql@line@pos@\eql@marginleft@
@@ -6233,13 +6853,13 @@ preview version published on CTAN
 }
 %    \end{macrocode}
 %
-%   \macro{\eql@align@print@field}
+%   \macro{\eql@columns@print@field}
 %    \begin{macrocode}
-\def\eql@align@print@field{%
+\def\eql@columns@print@field{%
 %    \end{macrocode}
 % determine available and used space
 %    \begin{macrocode}
-  \dimen@\eql@align@colwidth@get\eql@column@\relax
+  \dimen@\eql@columns@colwidth@get\eql@column@\relax
   \ifdim\wd\eql@fieldbox@>\z@
     \ifdim\eql@line@width@=\z@
       \eql@line@avail@\eql@line@pos@
@@ -6279,7 +6899,7 @@ preview version published on CTAN
 %
 %  \box\eql@fieldbox@
 %
-%  \dimen@\eql@align@colwidth@get\eql@column@\relax
+%  \dimen@\eql@columns@colwidth@get\eql@column@\relax
 %  \advance\dimen@-\wd\eql@fieldbox@
 %  \ifodd\eql@column@
 %    \kern\dimen@
@@ -6289,7 +6909,7 @@ preview version published on CTAN
 %    \kern\dimen@
 %  \fi
 %
-  \dimen@\eql@align@colwidth@get\eql@column@\relax
+  \dimen@\eql@columns@colwidth@get\eql@column@\relax
   \ifodd\eql@column@
     \kern\dimen@
   \else
@@ -6302,33 +6922,33 @@ preview version published on CTAN
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\def\eql@align@print@trailright{%
+\def\eql@columns@print@trailright{%
    &\omit
     \global\advance\eql@column@\@ne
     \setbox\eql@fieldbox@\hbox{%
       \kern-\wd\eql@fieldbox@\box\eql@fieldbox@
     }%
-    \eql@align@print@field
+    \eql@columns@print@field
 }
 %    \end{macrocode}
 %
-%   \macro{\eql@align@print@line@end}
+%   \macro{\eql@columns@print@line@end}
 %    \begin{macrocode}
-\def\eql@align@print@line@end{%
+\def\eql@columns@print@line@end{%
   \eql@punct@apply@line
   \eql@hook@lineout
 % \TODO add an even column with empty stuff if box processing deferred
   \ifodd\eql@column@
-    \expandafter\eql@align@print@trailright
+    \expandafter\eql@columns@print@trailright
   \fi
-  \eql@align@completerow
-  \eql@align@print@tag
+  \eql@columns@completerow
+  \eql@columns@print@tag
 }
 %    \end{macrocode}
 %
-%   \macro{\eql@align@print@tag}
+%   \macro{\eql@columns@print@tag}
 %    \begin{macrocode}
-\def\eql@align@print@tag{%
+\def\eql@columns@print@tag{%
   \dimen@\eql@totalwidth@
   \advance\dimen@\eql@colsep@
   \kern-\dimen@
@@ -6349,15 +6969,15 @@ preview version published on CTAN
 }
 %    \end{macrocode}
 %
-%   \macro{\eql@align@print}
+%   \macro{\eql@columns@print}
 %    \begin{macrocode}
-\def\eql@align@print{%
-%<dev>\eql@dev@enter\eql@align@print
-  \eql@align@adjust
+\def\eql@columns@print{%
+%<dev>\eql@dev@enter\eql@columns@print
+  \eql@columns@adjust
   \eql@display@init
   \eql@numbering@print@init
-  \eql@print@init\eql@align@print@line@begin
-  \eql@let@cr\eql@align@print@line@end
+  \eql@print@init\eql@columns@print@line@begin
+  \eql@let@cr\eql@columns@print@line@end
   \tabskip\eql@marginleft@
   \halign{%
     &%
@@ -6376,7 +6996,7 @@ preview version published on CTAN
         \eql@tagging@mathaddlast
       }%
       \global\eql@fieldwidth@\wd\eql@fieldbox@
-      \eql@align@print@field
+      \eql@columns@print@field
       \tabskip\z@skip
     &%
       \global\advance\eql@column@\@ne
@@ -6396,7 +7016,7 @@ preview version published on CTAN
         $%
         \eql@tagging@mathaddlast
       }%
-      \eql@align@print@field
+      \eql@columns@print@field
       \hfil
       \tabskip\eql@colsep@\relax
     \crcr
@@ -6410,13 +7030,13 @@ preview version published on CTAN
     \ifvmode\else
       \eql@punct@apply@block
       \eql@hook@blockout
-      \eql@align@print@line@end
+      \eql@columns@print@line@end
       \cr
     \fi
     \noalign{%
       \eql@hook@blockafter
       \eql@halign@after
-%<dev>\eql@dev@leave\eql@align@print
+%<dev>\eql@dev@leave\eql@columns@print
     }%
     \eql@tagging@tablesavealign
   }%
@@ -6431,7 +7051,7 @@ preview version published on CTAN
 % \TODO does this respect the margin for numbers in centre mode?
 %
 %    \begin{macrocode}
-\def\eql@align@adjust{%
+\def\eql@columns@adjust{%
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -6448,20 +7068,20 @@ preview version published on CTAN
 %    \TODO should we guard against no columns?!
 %    \begin{macrocode}
   \ifnum\eql@totalcolumns@<\thr@@
-    \let\eql@align@margins\eql@true
+    \let\eql@columns@margins\eql@true
   \fi
 %    \end{macrocode}
 %
-% Determine the number of intercolumn spaces |\eql@align@inter@|:
+% Determine the number of intercolumn spaces |\eql@columns@inter@|:
 %    \begin{macrocode}
-  \eql@align@inter@\eql@totalcolumns@
-  \divide\eql@align@inter@\tw@
-  \advance\eql@align@inter@\m@ne
+  \eql@columns@inter@\eql@totalcolumns@
+  \divide\eql@columns@inter@\tw@
+  \advance\eql@columns@inter@\m@ne
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-  \ifdefined\eql@flushleft
-    \eql@flushleftmargin@\glueexpr\eql@flushleftmargin@val\relax
+  \ifdefined\eql@layoutleft
+    \eql@layoutleftmargin@\glueexpr\eql@layoutleftmargin@val\relax
   \else
     \eql@adjust@tagmargin
   \fi
@@ -6470,19 +7090,19 @@ preview version published on CTAN
 %    \begin{macrocode}
   \eql@colsep@\displaywidth
   \advance\eql@colsep@-\eql@totalwidth@
-  \ifdefined\eql@flushleft
-    \advance\eql@colsep@-\eql@flushleftmargin@
+  \ifdefined\eql@layoutleft
+    \advance\eql@colsep@-\eql@layoutleftmargin@
   \else
     \advance\eql@colsep@-\eql@tagmargin@
-    \ifdefined\eql@align@margins\else
+    \ifdefined\eql@columns@margins\else
       \ifdim\eql@tagmargin@>\z@
         \advance\eql@colsep@-\eql@tagsepmin@
       \fi
     \fi
   \fi
-  \count@\eql@align@inter@
-  \ifdefined\eql@align@margins
-    \ifdefined\eql@flushleft
+  \count@\eql@columns@inter@
+  \ifdefined\eql@columns@margins
+    \ifdefined\eql@layoutleft
       \advance\count@\@ne
     \else
       \advance\count@\tw@
@@ -6508,26 +7128,26 @@ preview version published on CTAN
 % Now determine the left margin |\eql@marginleft@|
 % \TODO complete
 %    \begin{macrocode}
-  \ifdefined\eql@flushleft
+  \ifdefined\eql@layoutleft
     \ifdim\eql@colsep@=\eql@colsepmin@
       \eql@marginleft@\displaywidth
       \advance\eql@marginleft@-\eql@totalwidth@
-      \advance\eql@marginleft@-\eql@align@inter@\eql@colsep@
-      \ifdim\eql@marginleft@>\eql@flushleftmargin@
-        \eql@marginleft@\eql@flushleftmargin@
+      \advance\eql@marginleft@-\eql@columns@inter@\eql@colsep@
+      \ifdim\eql@marginleft@>\eql@layoutleftmargin@
+        \eql@marginleft@\eql@layoutleftmargin@
       \else
-        \ifdim\eql@marginleft@<\eql@flushleftmarginmin@
-          \eql@marginleft@\eql@flushleftmarginmin@
+        \ifdim\eql@marginleft@<\eql@layoutleftmarginmin@
+          \eql@marginleft@\eql@layoutleftmarginmin@
         \fi
       \fi
     \else
-      \eql@marginleft@\eql@flushleftmargin@
+      \eql@marginleft@\eql@layoutleftmargin@
     \fi
   \else
-    \ifdefined\eql@align@margins
+    \ifdefined\eql@columns@margins
       \eql@marginleft@\displaywidth
       \advance\eql@marginleft@-\eql@totalwidth@
-      \advance\eql@marginleft@-\eql@align@inter@\eql@colsep@
+      \advance\eql@marginleft@-\eql@columns@inter@\eql@colsep@
       \ifdim\eql@marginleft@<\eql@tagmargin@
         \eql@marginleft@\z@
       \else
@@ -6555,9 +7175,9 @@ preview version published on CTAN
 % at the corresponding side as far as possible:
 %    \begin{macrocode}
   \ifdefined\eql@tagsleft
-    \let\eql@align@adjust@test\eql@align@adjust@test@tagleft
+    \let\eql@columns@adjust@test\eql@columns@adjust@test@tagleft
   \else
-    \let\eql@align@adjust@test\eql@align@adjust@test@tagright
+    \let\eql@columns@adjust@test\eql@columns@adjust@test@tagright
   \fi
   \eql@row@\eql@totalrows@
   \loop\ifnum\eql@row@>\z@
@@ -6575,8 +7195,8 @@ preview version published on CTAN
       \fi
     \fi
     \ifdim\eql@tagwidth@>\z@
-      \eql@align@adjust@calc
-      \eql@align@adjust@test
+      \eql@columns@adjust@calc
+      \eql@columns@adjust@test
     \fi
     \advance\eql@row@\m@ne
   \repeat
@@ -6584,7 +7204,7 @@ preview version published on CTAN
 % From now on |\eql@totalwidth@| will include
 % the left margin and the total intercolumn separation:
 %    \begin{macrocode}
-  \advance\eql@totalwidth@\eql@align@inter@\eql@colsep@
+  \advance\eql@totalwidth@\eql@columns@inter@\eql@colsep@
   \advance\eql@totalwidth@\eql@marginleft@
 }
 %    \end{macrocode}
@@ -6592,7 +7212,7 @@ preview version published on CTAN
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Calc Space.}
 %
-%   \macro{\eql@align@adjust@calc}
+%   \macro{\eql@columns@adjust@calc}
 % Compute the space that is available at the beginning and at the end
 % of a particular row |\eql@row@|.
 % The space available at the beginning is returned in |\eql@line@avail@|
@@ -6602,9 +7222,9 @@ preview version published on CTAN
 % The total used width is returned in |\eql@line@width@|
 % and |\@tempcntb| describes the last used intercolumn space.
 % The available space at the end of the row is given as the difference
-% to |\eql@totalwidth@| and |\eql@align@inter@|:
+% to |\eql@totalwidth@| and |\eql@columns@inter@|:
 %    \begin{macrocode}
-\def\eql@align@adjust@calc{%
+\def\eql@columns@adjust@calc{%
   \eql@line@pos@\z@
   \eql@column@\z@
   \eql@line@avail@\eql@totalwidth@
@@ -6613,7 +7233,7 @@ preview version published on CTAN
   \@tempcntb\z@
   \edef\@tempb{\eql@fieldlength@get\eql@row@}%
   \@for\@tempa:=\@tempb\do
-    \eql@align@adjust@calc@col
+    \eql@columns@adjust@calc@col
   \advance\@tempcnta\m@ne
   \divide\@tempcnta\tw@
   \advance\@tempcntb\m@ne
@@ -6621,16 +7241,16 @@ preview version published on CTAN
 }
 %    \end{macrocode}
 %
-%   \macro{\eql@align@adjust@calc@col}
-% The macro |\eql@align@adjust@width@col| iterates over columns.
+%   \macro{\eql@columns@adjust@calc@col}
+% The macro |\eql@columns@adjust@width@col| iterates over columns.
 % When a non-blank field is encountered,
 % the available space on the left will be fixed if it is still undetermined,
 % and the total width is updated to the current position:
 %    \begin{macrocode}
-\def\eql@align@adjust@calc@col{%
+\def\eql@columns@adjust@calc@col{%
   \advance\eql@column@\@ne
   \@tempdima\@tempa\relax
-  \dimen@\eql@align@colwidth@get\eql@column@\relax
+  \dimen@\eql@columns@colwidth@get\eql@column@\relax
   \ifdim\@tempdima>\z@
     \ifdim\eql@line@width@=\z@
       \eql@line@avail@\eql@line@pos@
@@ -6655,10 +7275,10 @@ preview version published on CTAN
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Placement for Right Tags.}
 %
-%   \macro{\eql@align@adjust@test@tagright}
+%   \macro{\eql@columns@adjust@test@tagright}
 % Test whether the spacing can be adjusted to make the current row fit:
 %    \begin{macrocode}
-\def\eql@align@adjust@test@tagright{%
+\def\eql@columns@adjust@test@tagright{%
 %    \end{macrocode}
 % The register |\@tempdima| will hold the amount of available space.
 %    \begin{macrocode}
@@ -6678,23 +7298,23 @@ preview version published on CTAN
 % and minimal left margin (in left alignment layout).
 %    \begin{macrocode}
     \dimen@\@tempcntb\eql@colsepmin@
-    \ifdefined\eql@flushleft
-      \advance\dimen@\eql@flushleftmarginmin@
+    \ifdefined\eql@layoutleft
+      \advance\dimen@\eql@layoutleftmarginmin@
     \fi
     \ifdim\dimen@>\@tempdima\else
 %    \end{macrocode}
-% If so, hand over to |\eql@align@adjust@modify@tagright|.
+% If so, hand over to |\eql@columns@adjust@modify@tagright|.
 %    \begin{macrocode}
-      \eql@align@adjust@modify@tagright
+      \eql@columns@adjust@modify@tagright
     \fi
   \fi
 }
 %    \end{macrocode}
 %
-%   \macro{\eql@align@adjust@modify@tagright}
+%   \macro{\eql@columns@adjust@modify@tagright}
 % Adjust the intercolumn space and left margin to make the row fit.
 %    \begin{macrocode}
-\def\eql@align@adjust@modify@tagright{%
+\def\eql@columns@adjust@modify@tagright{%
 %    \end{macrocode}
 % If there are any intercolumn spaces that contribute to the available space,
 % determine how much intercolumn separation would be needed
@@ -6707,10 +7327,10 @@ preview version published on CTAN
   \ifnum\@tempcntb>\z@
     \dimen@\@tempdima
     \count@\@tempcntb
-    \ifdefined\eql@flushleft
+    \ifdefined\eql@layoutleft
       \advance\dimen@-\eql@marginleft@
     \else
-      \ifdefined\eql@align@margins
+      \ifdefined\eql@columns@margins
         \advance\count@\@ne
       \fi
     \fi
@@ -6741,17 +7361,17 @@ preview version published on CTAN
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Placement for Left Tags.}
 %
-%   \macro{\eql@align@adjust@test@tagleft}
+%   \macro{\eql@columns@adjust@test@tagleft}
 % Test whether the spacing can be adjusted to make the current row fit:
 %    \begin{macrocode}
-\def\eql@align@adjust@test@tagleft{%
+\def\eql@columns@adjust@test@tagleft{%
 %    \end{macrocode}
 % The register |\@tempdima| will hold the deficit amount of space
 % at the beginning of the row without adjustable space,
 % and the register |\count@| will hold the number of
 % intercolumn spaces that would contribute to space adjustments.
 %    \begin{macrocode}
-  \count@\eql@align@inter@
+  \count@\eql@columns@inter@
   \advance\count@-\@tempcnta
   \@tempdima\eql@tagwidth@
   \advance\@tempdima-\eql@line@avail@
@@ -6766,8 +7386,8 @@ preview version published on CTAN
 % If not, first verify that the tag will fit the line
 % (or the maxumal left margin in left alignment layout).
 %    \begin{macrocode}
-    \ifdefined\eql@flushleft
-      \dimen@\eql@flushleftmarginmax@
+    \ifdefined\eql@layoutleft
+      \dimen@\eql@layoutleftmarginmax@
     \else
       \dimen@\displaywidth
     \fi
@@ -6781,9 +7401,9 @@ preview version published on CTAN
       \advance\dimen@\@tempdima
       \ifdim\dimen@>\displaywidth\else
 %    \end{macrocode}
-% If so, hand over to |\eql@align@adjust@modify@tagleft|.
+% If so, hand over to |\eql@columns@adjust@modify@tagleft|.
 %    \begin{macrocode}
-        \eql@align@adjust@modify@tagleft
+        \eql@columns@adjust@modify@tagleft
       \fi
     \fi
   \fi
@@ -6792,10 +7412,10 @@ preview version published on CTAN
 %
 % \TODO implement a maximum shift (if tag+sep exceeds max, don't adjust)
 % \TODO could this mechanism possibly shift any longer line past the margin?!
-%   \macro{\eql@align@adjust@modify@tagleft}
+%   \macro{\eql@columns@adjust@modify@tagleft}
 % Adjust the intercolumn space and left margin to make the row fit.
 %    \begin{macrocode}
-\def\eql@align@adjust@modify@tagleft{%
+\def\eql@columns@adjust@modify@tagleft{%
 %    \end{macrocode}
 % If there are any intercolumn spaces that contribute to the available space,
 % determine how much intercolumn separation would be needed
@@ -6809,7 +7429,7 @@ preview version published on CTAN
     \dimen@\displaywidth
     \advance\dimen@-\eql@totalwidth@
     \advance\dimen@-\@tempdima
-    \ifdefined\eql@align@margins
+    \ifdefined\eql@columns@margins
       \advance\count@\@ne
     \fi
     \divide\dimen@\count@
@@ -6823,7 +7443,7 @@ preview version published on CTAN
         \dimen@\eql@colsepmin@
       \fi
       \advance\dimen@-\eql@colsep@
-      \advance\eql@marginleft@-\eql@align@inter@\dimen@
+      \advance\eql@marginleft@-\eql@columns@inter@\dimen@
       \advance\eql@colsep@\dimen@
     \fi
   \fi
@@ -7123,6 +7743,156 @@ preview version published on CTAN
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Single-Line Main}
+%
+%    \begin{macrocode}
+\def\eql@single@cr{%
+  \eql@error{Cannot use `\string\\' within display equation.
+    Please switch to equations environment}%
+}
+%    \end{macrocode}
+%
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@single@start{%
+  \eql@halign@catchprevdepth
+  \eql@tagging@start
+  \eql@dollardollar@begin
+  \eql@numbering@eval@mode
+  \let\eql@numbering@subeq@use\eql@false
+  \eql@stack@save@single
+%    \end{macrocode}
+%
+%    \TODO make other display environments push these!?
+%    \begin{macrocode}
+  \eql@numbering@single@init
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+  \ifdefined\eql@single@native
+    \let\eql@single@start@sel\eql@single@start@native
+    \let\eql@single@end@sel\eql@single@end@native
+    \let\raisetag\eql@raisetag@default
+  \else
+    \let\eql@single@start@sel\eql@single@start@print
+    \let\eql@single@end@sel\eql@single@end@print
+  \fi
+  \ifdefined\eql@single@crerror\else
+    \let\\\eql@single@cr
+  \fi
+  \eql@single@start@sel
+}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\eql@single@end{%
+  \eql@punct@apply@block
+  \eql@hook@eqout
+  \eql@single@end@sel
+  \eql@stack@restore
+  \eql@dollardollar@end
+  \eql@tagging@end
+  \eql@halign@leave
+}
+%    \end{macrocode}
+%
+% \TODO: try to feed in tagging after catchprevdepth
+%    \begin{macrocode}
+\def\eql@single@main{%
+  \expandafter\eql@single@start
+  \eql@scan@body
+  \eql@single@end
+}
+%    \end{macrocode}
+%
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@mode@equation{%
+  \ifdefined\eql@single@doscan
+    \let\eql@equations@main\eql@single@main
+    \let\eql@equations@end\@empty
+  \else
+    \let\eql@equations@main\@undefined
+    \let\eql@equations@end\eql@single@end
+  \fi
+}
+%    \end{macrocode}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Multi-Line Main}
+%
+% \TODO note that switching from align to lines mode,
+% the width can be incorrect due to different formatting (punctuation only?!).
+% only minor discrpancies expected and lines can adjust
+%   \macro{\eql@multi@main}
+%    \begin{macrocode}
+\let\eql@multi@mode@lines\eql@false
+\def\eql@multi@main{%
+  \eql@halign@catchprevdepth
+  \eql@tagging@start
+  \eql@dollardollar@begin
+  \eql@numbering@eval@mode
+  \eql@stack@save@multi
+  \ifdefined\eql@subequations@active
+    \let\eql@numbering@subeq@use\eql@false
+  \fi
+  \ifdefined\eql@numbering@subeq@use
+    \eql@numbering@subeq@init
+  \fi
+  \let\intertext\eql@intertext
+  \let\endintertext\endeql@intertext
+  \let\shoveleft\eql@adjust@alignleft
+  \let\shovecenter\eql@adjust@aligncenter
+  \let\shoveright\eql@adjust@alignright
+  \ifdefined\eql@multi@mode@lines
+    \expandafter\eql@lines@measure
+  \else
+    \ifdefined\eql@ampproof@active
+      \eql@ampproof
+    \fi
+    \expandafter\eql@columns@measure
+  \fi
+  \ifx\eql@numbering@subeq@use\@ne
+    \eql@numbering@subeq@revert
+  \fi
+  \ifdefined\eql@multi@mode@lines\else
+    \ifdefined\eql@multi@linesfallback
+      \ifnum\eql@totalcolumns@=\@ne
+        \let\eql@multi@mode@lines\eql@true
+%        \eql@lines@measure
+      \fi
+    \fi
+  \fi
+  \ifdefined\eql@multi@mode@lines
+    \expandafter\eql@lines@print
+  \else
+    \expandafter\eql@columns@print
+  \fi
+  \ifdefined\eql@numbering@subeq@use
+    \eql@numbering@subeq@close
+  \fi
+  \eql@stack@restore
+  \eql@dollardollar@end
+  \eql@tagging@end
+  \eql@halign@leave
+}
+%    \end{macrocode}
+%
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@mode@columns{%
+  \let\eql@equations@main\eql@multi@main
+  \let\eql@equations@end\@empty
+  \let\eql@multi@mode@lines\eql@false
+}
+\def\eql@mode@lines{%
+  \let\eql@equations@main\eql@multi@main
+  \let\eql@equations@end\@empty
+  \let\eql@multi@mode@lines\eql@true
+}
+%    \end{macrocode}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Equations Environment}
 %
 % We now declare the main environment and its symbolic versions.
@@ -7276,70 +8046,6 @@ preview version published on CTAN
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \subsection{Independent Routines of amsmath}
-%
-%   \macro{\eqref}
-% \ctanpkg{amsmath} defines the macro |\eqref|
-% to refer to equation labels in a proper format
-% We provide it for completeness:
-%    \begin{macrocode}
-\DeclareRobustCommand{\eql@eqref}[1]{\textup{\eql@tag@boxedform{\ref{#1}}}}
-%    \end{macrocode}
-%
-%   \macro{\numberwithin}
-% \ctanpkg{amsmath} defines the macro |\numberwithin|
-% to specify that equations should be numbered within sections.
-% The \LaTeX{} kernel contains a similar command
-% |\counterwithin| (with a slightly extended syntax) that can be used
-% as a drop-in replacement for |\numberwithin|:
-%    \begin{macrocode}
-\DeclareRobustCommand{\eql@numberwithin}[3][\arabic]{%
-  \@ifundefined{c@#2}{\@nocounterr{#2}}{%
-    \@ifundefined{c@#3}{\@nocounterr{#3}}{%
-      \ifdefined\HyOrg@addtoreset
-        \HyOrg@addtoreset{#2}{#3}%
-      \else
-        \@addtoreset{#2}{#3}%
-      \fi
-      \expandafter\xdef\csname the#2\endcsname{%
-        \expandafter\noexpand\csname the#3\endcsname.\noexpand#1{#2}}%
-      \ifdefined\theHequation
-        \expandafter\xdef\csname theH#2\endcsname{%
-          \expandafter\noexpand
-          \csname the\@ifundefined{theH#3}{}H#3\endcsname.%
-            \noexpand\arabic{#2}}%
-      \fi
-    }%
-  }%
-}
-%    \end{macrocode}
-%
-%   \imacro{\allowdisplaybreaks}
-% \ctanpkg{amsmath} defines the macro |\allowdisplaybreaks|
-% which we also provide for completeness.
-% The package uses the general setup mechanism instead:
-%    \begin{macrocode}
-\DeclareRobustCommand{\eql@allowdisplaybreaks}[1][4]{%
-  \eqnlinesset{allowbreaks=#1}%
-}
-%    \end{macrocode}
-%
-%   \imacro{\notag}
-% \ctanpkg{amsmath} defines the alias |\notag| for |\nonumber|
-% which we also provide for completeness:
-%    \begin{macrocode}
-\newcommand{\eql@notag}{\nonumber}
-%    \end{macrocode}
-%
-%   \imacro{\thetag}
-% \ctanpkg{amsmath} defines |\thetag| to print a tag
-% which we also provide for completeness:
-%    \begin{macrocode}
-\newcommand{\eql@thetag}{\leavevmode\eql@tag@boxedform}
-%    \end{macrocode}
-%
-%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Options}
 %
@@ -7418,8 +8124,21 @@ preview version published on CTAN
   \eql@decide@select{#1}{#2}{#3}{%
     {,abovebelow,both,tb}{#4#5},%
     {above,top,t}{#4},%
-    {below,bottom,b}{#5}}%
-  }
+    {below,bottom,b}{#5}}}
+%    \end{macrocode}
+%
+%   \macro{\eql@decide@situation}
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@decide@situation#1#2#3#4{%
+  \eql@decide@select{#1}{#2}{#3}{%
+    {{long}{\def#4{0}}},%
+    {{short}{\def#4{1}}},%
+    {{cont}{\def#4{2}}},%
+    {{par}{\def#4{3}}},%
+    {{top}{\def#4{4}}},%
+    {{noskip}{\def#4{5}}},%
+    {{medskip}{\def#4{6}}}}}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7482,86 +8201,6 @@ preview version published on CTAN
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \subsection{Parameter Sets}
-%
-% \TODO par@above plus parskip?
-%    \begin{macrocode}
-\def\eql@defaults@classic{%
-  \def\eql@tagsepmin@val{.5\fontdimen6\textfont\tw@}%
-  \def\eql@colsepmax@val{.5\maxdimen}%
-  \def\eql@spread{\jot}%
-  \let\eql@tagmargin@val\@undefined
-  \eql@tagmargin@ratio@\p@
-  \def\eql@tagmargin@threshold{0.5}%
-  \def\eql@flushleftmargin@val{\leftmargini}%
-  \let\eql@display@height\@undefined
-  \let\eql@display@depth\@undefined
-  \eql@skip@mode@short@\tw@
-  \eql@skip@mode@cont@\@ne
-  \eql@skip@mode@par@\z@
-  \eql@skip@mode@top@\z@
-  \def\eql@skip@long@above{\abovedisplayskip}%
-  \def\eql@skip@long@below{\belowdisplayskip}%
-  \def\eql@skip@short@above{\abovedisplayshortskip}%
-  \def\eql@skip@short@below{\belowdisplayshortskip}%
-  \def\eql@skip@cont@above{\eql@skip@short@above}%
-  \def\eql@skip@cont@below{\eql@skip@short@below}%
-  \def\eql@skip@par@above{\eql@skip@long@above}%
-  \def\eql@skip@par@below{\eql@skip@long@below}%
-  \def\eql@skip@top@above{\eql@skip@long@above}%
-  \def\eql@skip@top@below{\eql@skip@long@below}%
-  \def\eql@skip@med@above{\abovedisplayskip/2}%
-  \def\eql@skip@med@below{\belowdisplayskip/2}%
-  \def\eql@skip@medtag@above{\z@skip}%
-  \def\eql@skip@medtag@below{\z@skip}%
-  \def\eql@skip@tag@above{\z@skip}%
-  \def\eql@skip@tag@below{\z@skip}%
-}
-%    \end{macrocode}
-%
-% values based on 10pt vs 12pt
-%    \begin{macrocode}
-\def\eql@defaults@eqnlines{%
-  \def\eql@tagsepmin@val{.5em}%
-  \def\eql@colsepmax@val{2em}%
-  \def\eql@spread{0.2\normalbaselineskip}%
-  \let\eql@tagmargin@val\@undefined
-  \eql@tagmargin@ratio@.334\p@
-  \def\eql@tagmargin@threshold{0.5}%
-  \def\eql@flushleftmargin@val{\leftmargini}%
-  \def\eql@display@height{\ht\eql@strutbox@}%
-  \def\eql@display@depth{\dp\eql@strutbox@}%
-  \eql@skip@mode@short@\@ne
-  \eql@skip@mode@cont@\z@
-  \eql@skip@mode@par@\z@
-  \eql@skip@mode@top@\z@
-  \def\eql@skip@long@above{0.75\normalbaselineskip
-    \@plus0.25\normalbaselineskip\@minus0.4\normalbaselineskip}%
-  \let\eql@skip@long@below\eql@skip@long@above
-  \def\eql@skip@short@above{0.0\normalbaselineskip
-    \@plus0.25\normalbaselineskip}%
-  \def\eql@skip@short@below{0.0\normalbaselineskip
-    \@plus0.25\normalbaselineskip}%
-  \def\eql@skip@med@above{0.4\normalbaselineskip
-    \@plus0.2\normalbaselineskip\@minus0.2\normalbaselineskip}%
-  \let\eql@skip@med@below\eql@skip@med@above
-  \def\eql@skip@cont@above{\z@skip}%
-  \def\eql@skip@cont@below{\eql@skip@long@below}%
-  \def\eql@skip@par@above{\eql@skip@long@above}%
-  \def\eql@skip@par@below{\eql@skip@long@below}%
-  \def\eql@skip@top@above{\z@skip}%
-  \def\eql@skip@top@below{\z@skip}%
-  \def\eql@skip@tag@above{\z@skip}%
-  \def\eql@skip@tag@below{\z@skip}%
-  \def\eql@skip@partag@above{\z@skip}%
-  \def\eql@skip@partag@below{\z@skip}%
-  \def\eql@skip@medtag@above{\z@skip}%
-  \def\eql@skip@medtag@below{\z@skip}%
-}
-\eql@defaults@eqnlines
-%    \end{macrocode}
-%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Options Declarations}
 %
 % \TODO describe
@@ -7571,8 +8210,8 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\eql@define@key{equationsbox}{gathered,gather,ga,lines,lined,ln,\string~}[]{%
-  \eql@mode@lined}
+\eql@define@key{equationsbox}{gathered,gather,ga,lines,ln,\string~}[]{%
+  \eql@mode@stacked}
 \eql@define@key{equationsbox}{aligned,align,al,columns,col,@}[]{%
   \eql@mode@aligned}
 \eql@define@key{equationsbox}{top,t}[]{\let\eql@box@box\vtop}
@@ -7587,13 +8226,13 @@ preview version published on CTAN
 % \TODO describe
 %    \begin{macrocode}
 \eql@define@key{equations}{equation,eq,single,1}[]{\eql@mode@equation}
-\eql@define@key{equations}{gathered,gather,ga,lines,lined,ln,\string~}[]{%
+\eql@define@key{equations}{gathered,gather,ga,lines,ln,\string~}[]{%
   \eql@mode@lines}
 \eql@define@key{equations}{aligned,align,al,columns,col,@}[]{%
-  \eql@mode@align}
+  \eql@mode@columns}
 \eql@define@key{equations}{native}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@single@native%
-  \ifdefined\eql@single@native\let\eql@flushleft\eql@false\fi}
+  \ifdefined\eql@single@native\let\eql@layoutleft\eql@false\fi}
 \eql@define@key{setup}{native}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@single@native}
 \eql@define@key{setup}{scanequation}[true]{%
@@ -7611,7 +8250,7 @@ preview version published on CTAN
 % \TODO describe
 %    \begin{macrocode}
 \def\eql@keycat{equations,equationsbox,setup}
-\eql@define@key\eql@keycat{spread}[\jot]{\def\eql@spread{#1}}
+\eql@define@key\eql@keycat{spread}{\def\eql@spread@val{#1}}
 \eql@define@key\eql@keycat{strut}[true]{\eql@decide@if{#3}{#2}{#1}%
   {\let\eql@strut@field\eql@strut}{\let\eql@strut@field\relax}}
 \eql@define@key\eql@keycat{struttag}[true]{\eql@decide@if{#3}{#2}{#1}%
@@ -7773,33 +8412,27 @@ preview version published on CTAN
 \eql@define@key{setup}{abovecontskip}{%
   \def\eql@skip@cont@above{#1}}
 \eql@define@key{setup}{abovecontskip*}[]{%
-  \def\eql@skip@cont@above{\eql@spread-\eql@skip@long@below}}
+  \def\eql@skip@cont@above{\eql@spread@val-\eql@skip@long@below}}
 \eql@define@key{setup}{belowcontskip}{%
   \def\eql@skip@cont@below{#1}}
 \eql@define@key{setup}{shortmode}{%
   \eql@decide@select{#3}{#2}{#1}{%
-    {{off,never,no}{\eql@skip@mode@short@\z@}},%
-    {{above,neverbelow,notbelow,belowoff}{\eql@skip@mode@short@\@ne}},%
-    {{belowone,belowsingle}{\eql@skip@mode@short@\tw@}},%
-    {{belowall,always,on}{\eql@skip@mode@short@\thr@@}}}}
+    {{off,never,no}{\def\eql@skip@mode@short{0}}},%
+    {{above,neverbelow,notbelow,belowoff}{\def\eql@skip@mode@short{1}}},%
+    {{belowone,belowsingle}{\def\eql@skip@mode@short{2}}},%
+    {{belowall,always,on}{\def\eql@skip@mode@short{3}}}}}
+\eql@define@key{setup}{abovecontmode}{%
+  \eql@decide@situation{#3}{#2}{#1}\eql@skip@mode@cont@above}
 \eql@define@key{setup}{belowcontmode}{%
-  \eql@decide@select{#3}{#2}{#1}{%
-    {{long}{\eql@skip@mode@cont@\z@}},%
-    {{short}{\eql@skip@mode@cont@\@ne}},%
-    {{cont}{\eql@skip@mode@cont@\tw@}}}}
+  \eql@decide@situation{#3}{#2}{#1}\eql@skip@mode@cont@below}
+\eql@define@key{setup}{aboveparmode}{%
+  \eql@decide@situation{#3}{#2}{#1}\eql@skip@mode@par@above}
 \eql@define@key{setup}{belowparmode}{%
-  \eql@decide@select{#3}{#2}{#1}{%
-    {{long}{\eql@skip@mode@par@\z@}},%
-    {{short}{\eql@skip@mode@par@\@ne}},%
-    {{cont}{\eql@skip@mode@par@\tw@}},%
-    {{par}{\eql@skip@mode@par@\thr@@}}}}
+  \eql@decide@situation{#3}{#2}{#1}\eql@skip@mode@par@below}
+\eql@define@key{setup}{abovetopmode}{%
+  \eql@decide@situation{#3}{#2}{#1}\eql@skip@mode@top@above}
 \eql@define@key{setup}{belowtopmode}{%
-  \eql@decide@select{#3}{#2}{#1}{%
-    {{long}{\eql@skip@mode@top@\z@}},%
-    {{short}{\eql@skip@mode@top@\@ne}},%
-    {{cont}{\eql@skip@mode@top@\tw@}},%
-    {{par}{\eql@skip@mode@top@\thre@@}},%
-    {{top}{\eql@skip@mode@top@4\relax}}}}
+  \eql@decide@situation{#3}{#2}{#1}\eql@skip@mode@top@below}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7819,10 +8452,10 @@ preview version published on CTAN
 % \TODO describe
 %    \begin{macrocode}
 \def\eql@keycat{equations,setup}
-\eql@define@key\eql@keycat{tagmargin}{\def\eql@tagmargin@val{#1}}
+\eql@define@key\eql@keycat{tagmargin}[]{\def\eql@tagmargin@val{#1}
+  \ifx\eql@tagmargin@val\@empty\let\eql@tagmargin@val\@undefined\fi}
 \eql@define@key\eql@keycat{tagmargin*}{%
   \settowidth\dimen@{#1}\edef\eql@tagmargin@val{\the\dimen@}}
-\eql@define@key\eql@keycat{tagmargincalc}[]{\let\eql@tagmargin@val\@undefined}
 \eql@define@key\eql@keycat{tagmarginratio}{%
   \eql@tagmargin@ratio@\dimexpr#1pt\relax}
 \eql@define@key\eql@keycat{tagmarginthreshold}{%
@@ -7838,15 +8471,20 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\eql@define@key{setup}{taglayout}{\eql@tag@setbox{#1}}
-\eql@define@key{setup}{taglayout*}{\eql@tag@setbox@{#1}}
+\eql@define@key{setup}{tagbox,taglayout}{\eql@tag@setbox{#1}}
+\eql@define@key{setup}{tagbox,taglayout*}{\eql@tag@setbox@{#1}}
 \eql@define@key{setup}{tagform}{\eql@tag@setform#1}
 \eql@define@key{setup}{tagform*}{\eql@tag@setform@{#1}}
-\eql@define@key{setup}{subeqtemplate}{\def\eql@subequations@template{#1}}
+\eql@define@key{setup}{subeqtemplate}{%
+  \def\eql@subequations@template####1####2{#1}%
+  \expandafter\def\expandafter\eql@subequations@template\expandafter{%
+    \eql@subequations@template\theparentequation{equation}}%
+}
+%\def\eql@subequations@template{#1}}
 \eql@define@key{setup}{autolabel}[true]{%
-  \eql@decide@bool{#3}{#2}{#1}\eql@autolabel}
+  \eql@decide@bool{#3}{#2}{#1}\eql@numbering@autolabel}
 \eql@define@key{setup}{autotag}[true]{%
-  \eql@decide@bool{#3}{#2}{#1}\eql@autotag}
+  \eql@decide@bool{#3}{#2}{#1}\eql@numbering@autotag}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7857,8 +8495,10 @@ preview version published on CTAN
 \def\eql@keycat{equations,setup}
 \eql@define@key\eql@keycat{numberline,numline,n}[all]{%
   \eql@numbering@set{##1}}
-\eql@define@key\eql@keycat{nonumber,nn,*}[]{\let\eql@numbering@active\eql@false}
-\eql@define@key\eql@keycat{donumber,dn,!}[]{\let\eql@numbering@active\eql@true}
+\eql@define@key\eql@keycat{nonumber,nn,*}[]{%
+  \let\eql@numbering@active\eql@false}
+\eql@define@key\eql@keycat{donumber,dn,!}[]{%
+  \let\eql@numbering@active\eql@true}
 \eql@define@key\eql@keycat{number,num}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@numbering@active}
 \eql@define@key\eql@keycat{tagsleft,leqno}[]{\let\eql@tagsleft\eql@true}
@@ -7876,19 +8516,19 @@ preview version published on CTAN
 %    \begin{macrocode}
 \def\eql@keycat{equations,setup}
 \eql@define@key\eql@keycat{layout}{\eql@decide@select{#3}{#2}{#1}{%
-  {{center,c}{\let\eql@flushleft\eql@false}},%
-  {{left,l}{\let\eql@flushleft\eql@true}}}}
-\eql@define@key\eql@keycat{center}[]{\let\eql@flushleft\eql@false}
-\eql@define@key\eql@keycat{flushleft,left}[]{\let\eql@flushleft\eql@true}
-\eql@define@key\eql@keycat{leftmargin}{\def\eql@flushleftmargin@val{#1}}
+  {{center,c}{\let\eql@layoutleft\eql@false}},%
+  {{left,l}{\let\eql@layoutleft\eql@true}}}}
+\eql@define@key\eql@keycat{center}[]{\let\eql@layoutleft\eql@false}
+\eql@define@key\eql@keycat{flushleft,left}[]{\let\eql@layoutleft\eql@true}
+\eql@define@key\eql@keycat{leftmargin}{\def\eql@layoutleftmargin@val{#1}}
 \eql@define@key\eql@keycat{leftmargin*}{%
-  \settowidth\dimen@{#1}\edef\eql@flushleftmargin@val{\the\dimen@}}
+  \settowidth\dimen@{#1}\edef\eql@layoutleftmargin@val{\the\dimen@}}
 \eql@define@key\eql@keycat{minleftmargin}{%
-  \eql@flushleftmarginmin@\glueexpr#1\relax}
+  \eql@layoutleftmarginmin@\glueexpr#1\relax}
 \eql@define@key\eql@keycat{maxleftmargin}{%
-  \eql@flushleftmarginmax@\glueexpr#1\relax}
+  \eql@layoutleftmarginmax@\glueexpr#1\relax}
 \eql@define@key\eql@keycat{maxleftmargin*}[]{%
-  \eql@flushleftmarginmax@.5\maxdimen}
+  \eql@layoutleftmarginmax@.5\maxdimen}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7903,7 +8543,7 @@ preview version published on CTAN
 \eql@define@key\eql@keycat{maxcolsep}{\def\eql@colsepmax@val{#1}}
 \eql@define@key\eql@keycat{maxcolsep*}[]{\def\eql@colsepmax@val{.5\maxdimen}}
 \eql@define@key\eql@keycat{margins}[true]{%
-  \eql@decide@bool{#3}{#2}{#1}\eql@align@margins}
+  \eql@decide@bool{#3}{#2}{#1}\eql@columns@margins}
 \def\eql@keycat{equationsbox,setup}
 \eql@define@key\eql@keycat{margin}{%
   \def\eql@box@marginleft{#1}\def\eql@box@marginright{#1}}
@@ -7941,7 +8581,7 @@ preview version published on CTAN
 \def\eql@keycat{equations,equationsbox,setup}
 \eql@define@key\eql@keycat{classout}{\eql@class@innerleft@set{#1}}
 \eql@define@key\eql@keycat{classin}{\eql@class@innerright@set{#1}}
-\eql@define@key\eql@keycat{classin*}{\eql@class@innerlead@set{#1}}
+\eql@define@key\eql@keycat{classlead,classin*}{\eql@class@innerlead@set{#1}}
 \eql@define@key\eql@keycat{ampeq}[]{\eql@class@ampeq}
 \eql@define@key\eql@keycat{eqamp}[]{\eql@class@eqamp}
 \eql@define@key\eql@keycat{class}{\eql@decide@select{#3}{#2}{#1}{%
@@ -8017,6 +8657,91 @@ preview version published on CTAN
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Parameter Sets}
+%
+% \TODO par@above plus parskip?
+%    \begin{macrocode}
+\def\eql@defaults@classic{%
+  \eqnlinesset{mintagsep={.5\fontdimen6\textfont2\relax}}%
+  \eqnlinesset{maxcolsep*}%
+  \eqnlinesset{spread={\jot}}%
+  \eqnlinesset{tagmargin}%
+  \eqnlinesset{tagmarginratio=1}%
+  \eqnlinesset{tagmarginthreshold=0.5}%
+  \eqnlinesset{leftmargin={\leftmargini}}%
+  \eqnlinesset{displayheight*}%
+  \eqnlinesset{displaydepth*}%
+  \eqnlinesset{shortmode=belowsingle}%
+  \eqnlinesset{abovecontmode=short}%
+  \eqnlinesset{belowcontmode=short}%
+  \eqnlinesset{aboveparmode=long}%
+  \eqnlinesset{belowparmode=long}%
+  \eqnlinesset{abovetopmode=long}%
+  \eqnlinesset{belowtopmode=long}%
+  \eqnlinesset{abovelongskip={\abovedisplayskip}}%
+  \eqnlinesset{belowlongskip={\belowdisplayskip}}%
+  \eqnlinesset{aboveshortskip={\abovedisplayshortskip}}%
+  \eqnlinesset{belowshortskip={\belowdisplayshortskip}}%
+  \eqnlinesset{abovemedskip={.5\abovedisplayskip}}%
+  \eqnlinesset{belowmedskip={.5\belowdisplayskip}}%
+  \eqnlinesset{abovecontskip=0pt}%
+  \eqnlinesset{belowcontskip=0pt}%
+  \eqnlinesset{aboveparskip=0pt}%
+  \eqnlinesset{belowparskip=0pt}%
+  \eqnlinesset{abovetopskip=0pt}%
+  \eqnlinesset{belowtopskip=0pt}%
+  \eqnlinesset{abovetagskip=0pt}%
+  \eqnlinesset{belowtagskip=0pt}%
+  \eqnlinesset{abovemedtagskip=0pt}%
+  \eqnlinesset{belowmedtagskip=0pt}%
+  \eqnlinesset{abovepartagskip=0pt}%
+  \eqnlinesset{belowpartagskip=0pt}%
+}
+%    \end{macrocode}
+%
+% values based on 10pt vs 12pt
+%    \begin{macrocode}
+\def\eql@defaults@eqnlines{%
+  \eqnlinesset{mintagsep=.5em}%
+  \eqnlinesset{maxcolsep=2em}%
+  \eqnlinesset{spread={0.2\normalbaselineskip}}%
+  \eqnlinesset{tagmargin}%
+  \eqnlinesset{tagmarginratio=.334}%
+  \eqnlinesset{tagmarginthreshold=0.5}%
+  \eqnlinesset{leftmargin={\leftmargini}}%
+  \eqnlinesset{displayheight}%
+  \eqnlinesset{displaydepth}%
+  \eqnlinesset{shortmode=above}%
+  \eqnlinesset{abovecontmode=noskip}%
+  \eqnlinesset{belowcontmode=long}%
+  \eqnlinesset{aboveparmode=long}%
+  \eqnlinesset{belowparmode=long}%
+  \eqnlinesset{abovetopmode=noskip}%
+  \eqnlinesset{belowtopmode=long}%
+  \eqnlinesset{longskip={0.75\normalbaselineskip
+    plus 0.25\normalbaselineskip minus 0.4\normalbaselineskip}}%
+  \eqnlinesset{aboveshortskip={0.0\normalbaselineskip
+    plus 0.25\normalbaselineskip}}%
+  \eqnlinesset{belowshortskip={0.0\normalbaselineskip
+    plus 0.25\normalbaselineskip}}%
+  \eqnlinesset{medskip={0.4\normalbaselineskip
+    plus 0.2\normalbaselineskip minus 0.2\normalbaselineskip}}%
+  \eqnlinesset{abovecontskip=0pt}%
+  \eqnlinesset{belowcontskip=0pt}%
+  \eqnlinesset{aboveparskip=0pt}%
+  \eqnlinesset{belowparskip=0pt}%
+  \eqnlinesset{abovetopskip=0pt}%
+  \eqnlinesset{belowtopskip=0pt}%
+  \eqnlinesset{abovetagskip=0pt}%
+  \eqnlinesset{belowtagskip=0pt}%
+  \eqnlinesset{abovemedtagskip=0pt}%
+  \eqnlinesset{belowmedtagskip=0pt}%
+  \eqnlinesset{abovepartagskip=0pt}%
+  \eqnlinesset{belowpartagskip=0pt}%
+}
+%    \end{macrocode}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Component Selection}
 %
 % \TODO describe
@@ -8041,7 +8766,7 @@ preview version published on CTAN
 \newenvironment{eql@align}
   {\eqnaddopt{align}\equations}{\endequations}
 \newenvironment{eql@flalign}
-  {\eqnaddopt{align,margins=false}\equations}{\endequations}
+  {\eqnaddopt{align,margins=false,maxcolsep*}\equations}{\endequations}
 \newenvironment{eql@equation*}
   {\eqnaddopt{nonumber}\eql@equation}{\endequations}
 \newenvironment{eql@gather*}
@@ -8338,11 +9063,6 @@ preview version published on CTAN
 \eql@define@key{provide}{sqr}[]{\eql@provide@sqr}
 \eql@define@key{provide}{ang}[]{\eql@provide@ang}
 \eql@define@key{provide}{eqref}[]{\eql@provide@cmd{eqref}{#1}}
-\eql@define@key{provide}{notag}[]{\eql@provide@cmd{notag}{#1}}
-\eql@define@key{provide}{thetag}[]{\eql@provide@cmd{thetag}{#1}}
-\eql@define@key{provide}{allowdisplaybreaks}[]{%
-  \eql@provide@cmd{allowdisplaybreaks}{#1}}
-\eql@define@key{provide}{numberwithin}[]{\eql@provide@cmd{numberwithin}{#1}}
 \eql@define@key{provide}{tagform}[]{%
   \def\tagform@##1{\maketag@@@{\eql@tag@form{#1}}}}
 \eql@define@key{provide}{maketag}[]{%
@@ -8384,6 +9104,13 @@ preview version published on CTAN
 % Pass undeclared options on to \ctanpkg{keyval} processing:
 %    \begin{macrocode}
 \DeclareOption*{\expandafter\eqnlinesset\expandafter{\CurrentOption}}
+%    \end{macrocode}
+%
+% Set defaults for package:
+%    \begin{macrocode}
+\eql@defaults@eqnlines
+\eql@mode@columns
+\eql@mode@aligned
 %    \end{macrocode}
 %
 % Process package options:

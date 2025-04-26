@@ -1,6 +1,6 @@
 all: eqnlines.pdf eqnlines.sty
 
-eqnlines.pdf: eqnlines.dtx
+eqnlines.pdf: eqnlines.dtx eqnlines.sty
 	pdflatex eqnlines.dtx
 	pdflatex eqnlines.dtx
 
