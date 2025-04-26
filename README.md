@@ -12,6 +12,7 @@ The repository consists of the packages:
 * [delimset](https://ctan.org/pkg/delimset)
 * [sesstime](https://ctan.org/pkg/sesstime)
 * [childdoc](https://ctan.org/pkg/childdoc)
+* [mathfixs](https://ctan.org/pkg/mathfixs)
 
 The packages in this repository may be distributed and/or modified
 under the conditions spelled out in the corresponding subdirectories
