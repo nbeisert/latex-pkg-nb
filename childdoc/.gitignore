@@ -1,0 +1,10 @@
+#exclude all files
+*
+
+#include relevant files
+!/.gitignore
+!/childdoc.dtx
+!/childdoc.ins
+!/README
+!/Makefile
+!/childdoc.def

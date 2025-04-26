@@ -1,4 +1,4 @@
-PACKAGES = collref mpostinl exframe graphbox delimset sesstime
+PACKAGES = collref mpostinl exframe graphbox delimset sesstime childdoc
 TARGETS = all touch clean clean-all clean-bak
 
 $(TARGETS): $(PACKAGES)
