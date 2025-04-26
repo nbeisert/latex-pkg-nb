@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{metastr}[2020/06/28 v1.1 Metadata Strings Storage]
+\ProvidesPackage{metastr}[2020/08/27 v1.1.1 Metadata Strings Storage]
 
 \RequirePackage{keyval}
 
@@ -190,10 +190,15 @@
   \mstr@ifwritepdf[auto]{\metawritepdf}%
 }
 
+\ifdefined\AddToHook
+\DeclareHookRule{begindocument}{metastr}{before}{hyperref}
+\AddToHook{begindocument}{\mstr@begindoc}
+\else
 \begingroup
 \toks@\expandafter{\expandafter\mstr@begindoc\@begindocumenthook}%
 \xdef\@begindocumenthook{\the\toks@}%
 \endgroup
+\fi
 
 \metadef{draft}
 \newcommand{\mstr@set@draft}{%
@@ -257,7 +262,8 @@
 \metaset{titlematter}{%
   \metapick[#1]{titletext}%
   \metapick[#1]{authortext}%
-  \metapick[#1]{datatext}}
+  \metapick[#1]{datatext}%
+  \metaget[skip]{titlematter}}
 \metaset[print]{titletext}{%
   \metatitleline[print]{title}%
   \metatitlelinetwo[print]{subtitle}[print]{draft}}
@@ -267,7 +273,8 @@
   \metatitlelinetwo[print]{location}[print]{date}}
 \ifmstr@opt@titlematter\else
 \metaset{titlematter}{%
-  \metapick[#1]{titletext}}
+  \metapick[#1]{titletext}%
+  \metaget[skip]{titlematter}}
 \metaset[print]{titletext}{%
   \metatitleline[print]{title}%
   \metatitlelinetwo[print]{subtitle}[print]{draft}%
@@ -679,7 +686,8 @@
 \metaset[course]{titlematter}{%
   \metapick[course]{titletext}%
   \metapick[course]{datatext}%
-  \metapick[course]{authortext}}
+  \metapick[course]{authortext}%
+  \metaget[skip]{titlematter}}
 \metaset[course]{titletext}{%
   \metatitleline[print]{course}%
   \metatitlelinetwo[print]{material}[print]{draft}}
@@ -689,7 +697,8 @@
   \metatitlelinetwo[print]{institution}[print]{period}}
 \ifmstr@opt@titlematter\else
 \metaset[course]{titlematter}{%
-  \metapick[course]{titletext}}
+  \metapick[course]{titletext}%
+  \metaget[skip]{titlematter}}
 \metaset[course]{titletext}{%
   \metatitleline[print]{course}%
   \metatitlelinetwo[print]{material}[print]{draft}%

@@ -18,10 +18,10 @@
 % and the derived files metastr.sty and metasamp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{metastr}[2020/06/28 v1.1 Metadata Strings Storage]
-%<sample>\ProvidesFile{metasamp.tex}[2020/06/28 v1.1 sample for metastr]
+%<package>\ProvidesPackage{metastr}[2020/08/27 v1.1.1 Metadata Strings Storage]
+%<sample>\ProvidesFile{metasamp.tex}[2020/08/27 v1.1.1 sample for metastr]
 %<*driver>
-\def\thedate#1{2020/06/28}\def\theversion#1{v1.1}
+\def\thedate#1{2020/08/27}\def\theversion#1{v1.1.1}
 \ProvidesFile{metastr.dtx}[\thedate{} \theversion{} metastr reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -94,6 +94,7 @@ facilitate basic internationalisation and localisation.
 \parskip0ex
 \tableofcontents
 \endgroup
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -239,7 +240,6 @@ it should therefore be set by the command:
 %
 The starred version declares the language for PDF metadata
 rather than the document contents.
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Working with Strings}
@@ -562,12 +562,10 @@ and serves a similar purpose as the \LaTeX{} command |\maketitle|:
 |\metaset{titlematter}{%|\\
 |  \metapick[#1]{titletext}%|\\
 |  \metapick[#1]{authortext}%|\\
-|  \metapick[#1]{datatext}}|
+|  \metapick[#1]{datatext}%|\\
+|  \metaget[skip]{titlematter}}|
 \end{tabular}
 \end{center}
-%
-
-%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Write Document Metadata}
@@ -1371,7 +1369,6 @@ or&|\metaunset[auto]{writepdf}|
 \end{tabular}
 \end{center}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Feature Suggestions}
 \label{sec:suggestions}
@@ -1394,10 +1391,22 @@ Make use of the \textsf{babel} package for translations of basic terms.
 % load babel when not only en?
 %\item
 %title translations via titletext?
+%\item
+%perhaps use \textsf{xparse} to generate robust commands for optional variants
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1.1:} 2020/08/27
+
+\begin{itemize}
+\item
+introduce |skip| variant for |titlematter| register
+\item
+adjust hook to new \LaTeXe\ (2020-10) hook processing
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.1:} 2020/06/28
@@ -1417,8 +1426,6 @@ fix saving of PDF info (|keeppdfinfo|) with updated \textsf{hyperxmp} package
 fix package options |hyperref|, |hyperxmp|, |checkdef|, |xmppdfinfo|
 \item
 fix compatibility with updated \textsf{doclicense} package (v2)
-\item
-\ldots
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1428,6 +1435,7 @@ fix compatibility with updated \textsf{doclicense} package (v2)
 \item
 first version, published on CTAN
 \end{itemize}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2101,12 +2109,19 @@ some representations of the selected license:
 %    \end{macrocode}
 
 % Hook |\mstr@begindoc| to begining of |document| block
-% before all other hooks are called:
+% before hooks by \textsf{hyperref} are called;
+% legacy code for latex releases earlier than 2020-10
+% to add hook before all other hooks are called:
 %    \begin{macrocode}
+\ifdefined\AddToHook
+\DeclareHookRule{begindocument}{metastr}{before}{hyperref}
+\AddToHook{begindocument}{\mstr@begindoc}
+\else
 \begingroup
 \toks@\expandafter{\expandafter\mstr@begindoc\@begindocumenthook}%
 \xdef\@begindocumenthook{\the\toks@}%
 \endgroup
+\fi
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2228,7 +2243,8 @@ some representations of the selected license:
 \metaset{titlematter}{%
   \metapick[#1]{titletext}%
   \metapick[#1]{authortext}%
-  \metapick[#1]{datatext}}
+  \metapick[#1]{datatext}%
+  \metaget[skip]{titlematter}}
 \metaset[print]{titletext}{%
   \metatitleline[print]{title}%
   \metatitlelinetwo[print]{subtitle}[print]{draft}}
@@ -2241,7 +2257,8 @@ some representations of the selected license:
 %    \begin{macrocode}
 \ifmstr@opt@titlematter\else
 \metaset{titlematter}{%
-  \metapick[#1]{titletext}}
+  \metapick[#1]{titletext}%
+  \metaget[skip]{titlematter}}
 \metaset[print]{titletext}{%
   \metatitleline[print]{title}%
   \metatitlelinetwo[print]{subtitle}[print]{draft}%
@@ -3058,7 +3075,8 @@ some representations of the selected license:
 \metaset[course]{titlematter}{%
   \metapick[course]{titletext}%
   \metapick[course]{datatext}%
-  \metapick[course]{authortext}}
+  \metapick[course]{authortext}%
+  \metaget[skip]{titlematter}}
 \metaset[course]{titletext}{%
   \metatitleline[print]{course}%
   \metatitlelinetwo[print]{material}[print]{draft}}
@@ -3071,7 +3089,8 @@ some representations of the selected license:
 %    \begin{macrocode}
 \ifmstr@opt@titlematter\else
 \metaset[course]{titlematter}{%
-  \metapick[course]{titletext}}
+  \metapick[course]{titletext}%
+  \metaget[skip]{titlematter}}
 \metaset[course]{titletext}{%
   \metatitleline[print]{course}%
   \metatitlelinetwo[print]{material}[print]{draft}%
