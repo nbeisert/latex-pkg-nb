@@ -1,0 +1,10 @@
+#exclude all files
+*
+
+#include relevant files
+!/.gitignore
+!/Makefile
+!/metastr.dtx
+!/metastr.ins
+!/metastr.sty
+!/README.txt
