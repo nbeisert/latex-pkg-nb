@@ -1,4 +1,4 @@
-eqnlines v0.6
+eqnlines v0.6.1
 Copyright 2024-2025 Niklas Beisert
 
 Based on the latex package amsmath:
@@ -30,10 +30,10 @@ README.txt, eqnlines.ins and eqnlines.dtx.
 
 Run "(pdf)latex eqnlines.dtx" to compile the manual eqnlines.pdf.
 
-Run "latex eqnlines.ins" to create the package eqnlines.sty and the
-development version eqnlines-dev.sty.
-Copy the file eqnlines.sty to an appropriate directory of your LaTeX
-distribution, e.g. texmf-root/tex/latex/eqnlines.
+Run "latex eqnlines.ins" to create the package eqnlines.sty
+and the development version eqnlines-dev.sty.
+Copy the file eqnlines.sty to an appropriate directory
+of your LaTeX distribution, e.g. texmf-root/tex/latex/eqnlines.
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3
