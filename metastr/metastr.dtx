@@ -18,10 +18,10 @@
 % and the derived files metastr.sty and metasamp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{metastr}[2020/02/06 v1.0 Metadata Strings Storage]
-%<sample>\ProvidesFile{metasamp.tex}[2020/02/06 v1.0 sample for metastr]
+%<package>\ProvidesPackage{metastr}[2020/06/28 v1.1 Metadata Strings Storage]
+%<sample>\ProvidesFile{metasamp.tex}[2020/06/28 v1.1 sample for metastr]
 %<*driver>
-\def\thedate#1{2020/02/06}\def\theversion#1{v1.0}
+\def\thedate#1{2020/06/28}\def\theversion#1{v1.1}
 \ProvidesFile{metastr.dtx}[\thedate{} \theversion{} metastr reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -184,14 +184,20 @@ The basic set of registers consists of:
 \\
 |keywords| & (a list of) keywords describing the document
 \\
+|titlematter| & composition register for title matter
+\\
 |titletext| & composition register for title
+\\
+|authortext| & composition register for author
+\\
+|datatext| & composition register for location and date
 \end{tabular}
 \end{center}
 %
 
 The register |titletext| composes information
 for printing the title
-(such as |title|, |subtitle|, |author|, |location| and |date|).
+(such as |title|, |subtitle| but also |author|, |location| and |date|).
 It can serve a similar purpose as the \LaTeX{} command |\maketitle|.
 
 Finally, there are some auxiliary registers:
@@ -212,6 +218,9 @@ name of the source file
 \\
 |draft| &
 indicator of draft version
+\\
+|linebreak| &
+expands to linebreak when printed or space otherwise
 \end{tabular}
 \end{center}
 %
@@ -313,6 +322,7 @@ see \secref{sec:language}.
 Moreover, certain attributes related to the registers
 could be stored in additional variants.
 
+\DescribeMacro{titletext}
 For example, the register |titletext| exists in
 the default variant (mainly intended for writing out metadata)
 and the |print| variant
@@ -331,17 +341,20 @@ The |print| variant is accessed by the command:
 |\metapick[print]{titletext}|
 \end{center}
 %
-It expands to four lines
-containing |title|, |subtitle| + |draft|, |author| and |location| + |date|
+It expands to two lines containing |title| and |subtitle| + |draft|
 (as far as filled):
 %
 \begin{center}
 \textit{title}\\
-\textit{subtitle} |\par| \textit{draft}\\
-\textit{author}\\
-\textit{location}, \textit{date}
+\textit{subtitle} |\par| \textit{draft}
 \end{center}
 %
+In fact, the legacy behaviour of |titletext|
+also adds two lines containing |author| and |location| + |date|,
+as in the new composition register |titlematter| to be explained below;
+this behaviour needs to be disabled explicitly
+for purposes of backwards compatibility
+by the package option |titlematter|.
 The formatting style of each line is given
 by the variant |style| of the first register on this line;
 the vertical space above each line is
@@ -350,10 +363,29 @@ Two items on a single line are separated by the variant |sep|
 of the second register;
 an unfilled |sep| variant puts the two items on individual lines
 (by default this applies to |subtitle| and |draft|).
-In this way the layout of the title display on the title page
-can be adjusted conveniently
-(by default it mimics the \LaTeX{} command |\maketitle|
-in the class \textsf{article}).
+
+\DescribeMacro{titlematter}
+The composition register |titlematter| (in |print| variant):
+%
+\begin{center}
+|\metapick[print]{titlematter}|
+\end{center}
+%
+collects extended information
+on the documents for display on the title page
+(it substitutes the \LaTeX{} command |\maketitle| in the class \textsf{article}
+whose display it mimics):
+%
+\begin{center}
+\textit{title}\\
+\textit{subtitle} |\par| \textit{draft}\\
+\textit{author}\\
+\textit{location}, \textit{date}
+\end{center}
+%
+By adjusting the definitions,
+the layout of the title display on the title page
+can be adjusted conveniently.
 
 Variants are always specified by an argument |[|\textit{var}|]|
 in square brackets preceding the register |{|\textit{reg}|}|.
@@ -411,6 +443,9 @@ When this register is accessed by
 it will read the default variant of \textit{reg1}
 which will pass on to \textit{reg2} in \textit{var}
 (rather than in the default variant).
+A useful application within title declarations
+is |\metapick[#1]{linebreak}| which expands to a line break
+when the title is displayed and to a space when the title is used elsewhere.
 
 \DescribeMacro{\metaifpick}
 \DescribeMacro{\metacompose}
@@ -464,14 +499,18 @@ as |[|\textit{var}|]| is \emph{mandatory}:
 %
 Here, the default variant is accessed by an empty argument \textit{var}.
 
+\DescribeMacro{titletext}
+\DescribeMacro{\metatitleline}
+\DescribeMacro{\metatitlelinetwo}
 To illustrate a construction using variants,
-let us consider the above register |titletext|.
+let us consider the above register |titletext|
+(with activated package option |titlematter|).
 It is defined in the generic variant as:
 %
 \begin{center}
 \begin{tabular}{l}
 |\metaset{titletext}{%|\\
-|  \metacompose[#1]{draft}{}{: }{}%|\\
+|  \metacompose[#1]{draft}{}{\metaget[sep]{draft}}{}%|\\
 |  \metapick[#1]{title}%|\\
 |  \metacompose[#1]{subtitle}{\metaget[sep]{subtitle}}{}{}}|
 \end{tabular}
@@ -486,9 +525,7 @@ The |print| variant to output a full title for the document is defined by:
 \begin{tabular}{l}
 |\metaset[print]{titletext}{%|\\
 |  \metatitleline[print]{title}%|\\
-|  \metatitlelinetwo[print]{subtitle}[print]{draft}%|\\
-|  \metatitleline[print]{author}%|\\
-|  \metatitlelinetwo[print]{location}[print]{date}}|
+|  \metatitlelinetwo[print]{subtitle}[print]{draft}|
 \end{tabular}
 \end{center}
 %
@@ -510,6 +547,28 @@ this expands to the vertical skip defined by the variant |skip|
 and an encapsulated paragraph of the register value
 in the layout defined by the variant |style|.
 
+\DescribeMacro{authortext}
+\DescribeMacro{datetext}
+\DescribeMacro{titlematter}
+The composition registers |authortext| and |datetext| work in
+a similar fashion as |titletext| and compose
+the registers |author| and |location| + |date|, respectively.
+The composition register |titlematter| (in variant |print|)
+prints out the title, author and date information
+and serves a similar purpose as the \LaTeX{} command |\maketitle|:
+%
+\begin{center}
+\begin{tabular}{l}
+|\metaset{titlematter}{%|\\
+|  \metapick[#1]{titletext}%|\\
+|  \metapick[#1]{authortext}%|\\
+|  \metapick[#1]{datatext}}|
+\end{tabular}
+\end{center}
+%
+
+%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Write Document Metadata}
 \label{sec:meta}
@@ -528,7 +587,7 @@ and \textsf{hyperref} |\hypersetup| options is given by:
 \begin{tabular}{l@{\quad$\to$\quad}l}
 |titletext| & |pdftitle|
 \\
-|author| & |pdfauthor|
+|authortext| & |pdfauthor|
 \\
 |subject| & |pdfsubject|
 \\
@@ -538,6 +597,8 @@ and \textsf{hyperref} |\hypersetup| options is given by:
 %
 Here, |titletext| is used instead of |title| to compose information
 from the registers |draft|, |title| and |subtitle| (as far as filled).
+Similarly, |authortext| composes information on the author,
+typically just |author|.
 Note that |\metawritepdfinfo| will be effective
 only when invoked before the contents of the first page are written out.
 
@@ -825,7 +886,7 @@ The appropriate license URL and CC logo is selected
 by the command as well, e.g.
 %
 \begin{center}
-\includegraphics{doclicense-CC-by-sa}\\
+\includegraphics{doclicense-CC-by-sa-88x31}\\
 \url{https://creativecommons.org/licenses/by-sa/4.0/}
 \end{center}
 %
@@ -1073,6 +1134,9 @@ display CC logo from \textsf{doclicense} package.
 \item |cclogocurr=dollar|\textbar|euro|\textbar|yen|
 (initially set to |dollar|) --
 select currency symbol for Creative Commons NonCommercial logos.
+\item |cclogoshape=box|\textbar|slim|
+(initially set to |box|) --
+select shape of Creative Commons NonCommercial logos.
 \item |xmppdfinfo|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
 write the basic PDF info block
@@ -1082,6 +1146,12 @@ if this option is set,
 \item |draft|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 fill |draft| register with ``DRAFT''.
+\item |titlematter|[|=true|\textbar|false|]
+(no value implies |true|, initially set to |false|) --
+when set to |true|, composition register |titletext|
+prints only the title; when set to |false|,
+|titletext| also prints authorship, location and date information
+(legacy behaviour).
 \item |course|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |false|) --
 Setup extended registers for course materials, see \secref{sec:extras}.
@@ -1102,6 +1172,15 @@ Available internationalisations currently consist of:
 \end{center}
 \end{itemize}
 %
+
+Selected package options can be adjusted after the package
+has been loaded by the command:
+%
+\begin{center}
+|\metasetup{|\textit{opts}|}|
+\end{center}
+%
+Presently, only |draft| can be adjusted.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Extras}
@@ -1130,8 +1209,8 @@ upon setting the package option |course|:
 \end{center}
 %
 
-The variant |course| of the register |titletext| displays a
-compilation of these registers for display on a title page:
+The variant |course| of the register |titlematter| (or |titletext|)
+displays a compilation of these registers for display on a title page:
 %
 \begin{center}
 \textit{course}\\
@@ -1224,13 +1303,13 @@ This package can use the package
 \href{http://ctan.org/pkg/hyperxmp}{\textsf{hyperxmp}}
 to write extended metadata to a PDF file.
 Compatibility with the \textsf{hyperxmp} package
-has been tested with v4.1 (2019/04/05).
+has been tested with v5.4 (2020/06/19).
 \item
 This package can use the Creative Commons license icon files
 included in the package
 \href{http://ctan.org/pkg/doclicense}{\textsf{doclicense}}.
 Compatibility with the \textsf{doclicense} package
-has been tested with v1.10.0 (2019/06/05).
+has been tested with v2.0.1 (2020/06/26).
 \item
 This package can use the Creative Commons license icon fonts
 included in the package
@@ -1312,10 +1391,35 @@ Further translations of copyright and license statements.
 Export translations to files
 \item
 Make use of the \textsf{babel} package for translations of basic terms.
+% load babel when not only en?
+%\item
+%title translations via titletext?
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1:} 2020/06/28
+
+\begin{itemize}
+\item
+|\metasetup| to adjust some package options (|draft|)
+\item
+|titlematter|, |authortext|, |datatext| composition registers added;
+legacy behaviour of |titletext| preserved,
+can be changed by package option |titlematter|
+\item
+|linebreak| register added
+\item
+fix saving of PDF info (|keeppdfinfo|) with updated \textsf{hyperxmp} package
+\item
+fix package options |hyperref|, |hyperxmp|, |checkdef|, |xmppdfinfo|
+\item
+fix compatibility with updated \textsf{doclicense} package (v2)
+\item
+\ldots
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.0:} 2020/02/06
@@ -1380,20 +1484,20 @@ first version, published on CTAN
 
 % Set some options for the \textsf{metastr} package:
 %    \begin{macrocode}
-\PassOptionsToPackage{draft}{metastr}
 \PassOptionsToPackage{loadlang=en|de|fr|es}{metastr}
 %%\PassOptionsToPackage{loadlang=en|fr|es}{metastr}
 %%\PassOptionsToPackage{loadlang=de|en}{metastr}
 \PassOptionsToPackage{cclogocurr=euro}{metastr}
+%%\PassOptionsToPackage{cclogoshape=slim}{metastr}
 %    \end{macrocode}
 
 % Include the \textsf{metastr} package along with
 % \textsf{graphicx}, \textsf{babel}
 % and \textsf{ccicons} (where available):
 %    \begin{macrocode}
-\usepackage{metastr}
+\usepackage[titlematter]{metastr}
 \usepackage{graphicx}
-\usepackage{babel}
+\usepackage[english]{babel}
 \IfFileExists{ccicons.sty}{\usepackage{ccicons}}{}
 %    \end{macrocode}
 
@@ -1462,6 +1566,7 @@ first version, published on CTAN
 \metaset{date}{2020/02/06}
 \metaset{partof}{The metastr Package}
 \metaset[print]{partof}{The \textsf{metastr} Package}
+\metasetup{draft=true}
 %    \end{macrocode}
 
 % Copyright settings:
@@ -1504,7 +1609,7 @@ first version, published on CTAN
 %    \begin{macrocode}
 \pdfbookmark[1]{\metaterm{title}}{title}
 \begin{center}
-\metapick[print]{titletext}
+\metapick[print]{titlematter}
 \end{center}
 %    \end{macrocode}
 
@@ -1611,6 +1716,7 @@ some representations of the selected license:
 % \macro{checkdef}
 % \macro{cclogo}
 % \macro{cclogocurr}
+% \macro{cclogoshape}
 % \macro{xmppdfinfo}
 % Store the selected package options in some corresponding internal macros:
 %    \begin{macrocode}
@@ -1620,23 +1726,28 @@ some representations of the selected license:
 \newif\ifmstr@opt@xmppdfinfo\mstr@opt@xmppdfinfotrue
 \newif\ifmstr@opt@course\mstr@opt@coursefalse
 \newif\ifmstr@opt@draft\mstr@opt@draftfalse
+\newif\ifmstr@opt@titlematter\mstr@opt@titlematterfalse
 \newif\ifmstr@opt@cclogo\mstr@opt@cclogotrue
 \def\mstr@opt@cclogocurr{dollar}
+\def\mstr@opt@cclogoshape{box}
 \def\mstr@opt@loadlang{en}
 \def\mstr@group{mstr@}
-\define@key{\mstr@group}{hyperref}[true]
-  {\csname mstr@opt@hyperref#1\endcsname}
-\define@key{\mstr@group}{hyperxmp}[true]
-  {\csname mstr@opt@hyperxmp#1\endcsname}
-\define@key{\mstr@group}{checkdef}[true]
-  {\csname mstr@opt@checkdef#1\endcsname}
-\define@key{\mstr@group}{xmppdfinfo}[true]
-  {\csname mstr@opt@xmppdfinfo#1\endcsname}
+\define@key{\mstr@group}{hyperref}[true]{%
+  \csname mstr@opt@hyperref#1\endcsname}
+\define@key{\mstr@group}{hyperxmp}[true]{%
+  \csname mstr@opt@hyperxmp#1\endcsname}
+\define@key{\mstr@group}{checkdef}[true]{%
+  \csname mstr@opt@checkdef#1\endcsname}
+\define@key{\mstr@group}{xmppdfinfo}[true]{%
+  \csname mstr@opt@xmppdfinfo#1\endcsname}
 \define@key{\mstr@group}{cclogo}[true]{\csname mstr@opt@cclogo#1\endcsname}
 \define@key{\mstr@group}{cclogocurr}{\def\mstr@opt@cclogocurr{#1}}
+\define@key{\mstr@group}{cclogoshape}{\def\mstr@opt@cclogoshape{#1}}
 \define@key{\mstr@group}{loadlang}{\def\mstr@opt@loadlang{#1}}
 \define@key{\mstr@group}{course}[true]{\csname mstr@opt@course#1\endcsname}
 \define@key{\mstr@group}{draft}[true]{\csname mstr@opt@draft#1\endcsname}
+\define@key{\mstr@group}{titlematter}[true]{%
+  \csname mstr@opt@titlematter#1\endcsname}
 %    \end{macrocode}
 
 % Pass undeclared options on to \textsf{keyval} processing:
@@ -1648,6 +1759,14 @@ some representations of the selected license:
 % Process global options while loading package:
 %    \begin{macrocode}
 \ProcessOptions
+%    \end{macrocode}
+
+% \macro{\metasetup}
+% |\metasetup| processes package options
+% when the package has already been loaded:
+%    \begin{macrocode}
+\def\mstr@setup{mstr@setup}
+\newcommand{\metasetup}[1]{\setkeys\mstr@setup{#1}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1666,6 +1785,7 @@ some representations of the selected license:
 %    \begin{macrocode}
 \ifmstr@opt@hyperref\RequirePackage{hyperref}\fi
 \ifmstr@opt@hyperxmp\RequirePackage{hyperxmp}\fi
+\ifmstr@opt@xmppdfinfo\ifdefined\xmptilde\hypersetup{keeppdfinfo}\fi\fi
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2003,11 +2123,14 @@ some representations of the selected license:
 %    \begin{macrocode}
 \metadef{draft}
 %    \end{macrocode}
-% Set draft text (if |draft| option set):
+% Set draft text (if |draft| option set), declare |draft| option:
 %    \begin{macrocode}
-\ifmstr@opt@draft
-\metaset{draft}{\metatranslate[#1]{draft}}
-\fi
+\newcommand{\mstr@set@draft}{%
+  \ifmstr@opt@draft\metaset{draft}{\metatranslate[##1]{draft}}%
+  \else\metaunset{draft}\fi}
+\define@key{\mstr@setup}{draft}[true]{%
+  \csname mstr@opt@draft#1\endcsname\mstr@set@draft}%
+\mstr@set@draft
 %    \end{macrocode}
 
 % \macro{title}
@@ -2028,13 +2151,28 @@ some representations of the selected license:
 \metadef{keywords}
 %    \end{macrocode}
 
+% \macro{linebreak}
+% Declare an auxiliary register to break a line in |print| variant
+% and display a space otherwise:
+%    \begin{macrocode}
+\metadef{linebreak}
+\metaset[]{linebreak}{ }
+\metaset[print]{linebreak}{\\}
+%    \end{macrocode}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \paragraph{Title Composition.}
+% \paragraph{Title and Author Composition.}
 %
+% \macro{titlematter}
 % \macro{titletext}
+% \macro{authortext}
+% \macro{datatext}
 % Declare register to compose title display (analogous to |\maketitle|):
 %    \begin{macrocode}
+\metadef{titlematter}
 \metadef{titletext}
+\metadef{authortext}
+\metadef{datatext}
 %    \end{macrocode}
 
 % \macro{\metatitleline}
@@ -2074,18 +2212,42 @@ some representations of the selected license:
 \metaset[skip]{date}{\vspace{1.5em}}
 \metaset[sep]{subtitle}{ -- }
 \metaset[sep]{date}{, }
+\metaset[sep]{draft}{: }
 %    \end{macrocode}
-% Preset for |titletext| in generic and |print| variants:
+% Preset for |titlematter|, |titletext|, |authortext| and |datatext|
+% in generic and |print| variants:
 %    \begin{macrocode}
 \metaset{titletext}{%
-  \metacompose[#1]{draft}{}{: }{}%
+  \metacompose[#1]{draft}{}{\metaget[sep]{draft}}{}%
   \metapick[#1]{title}%
   \metacompose[#1]{subtitle}{\metaget[sep]{subtitle}}{}{}}
+\metaset{authortext}{\metapick[#1]{author}}
+\metaset{datatext}{%
+  \metacompose[#1]{location}{}{\metaget[sep]{date}}{}%
+  \metapick[#1]{date}}
+\metaset{titlematter}{%
+  \metapick[#1]{titletext}%
+  \metapick[#1]{authortext}%
+  \metapick[#1]{datatext}}
+\metaset[print]{titletext}{%
+  \metatitleline[print]{title}%
+  \metatitlelinetwo[print]{subtitle}[print]{draft}}
+\metaset[print]{authortext}{%
+  \metatitleline[print]{author}}
+\metaset[print]{datatext}{%
+  \metatitlelinetwo[print]{location}[print]{date}}
+%    \end{macrocode}
+% Legacy presets:
+%    \begin{macrocode}
+\ifmstr@opt@titlematter\else
+\metaset{titlematter}{%
+  \metapick[#1]{titletext}}
 \metaset[print]{titletext}{%
   \metatitleline[print]{title}%
   \metatitlelinetwo[print]{subtitle}[print]{draft}%
-  \metatitleline[print]{author}%
-  \metatitlelinetwo[print]{location}[print]{date}}
+  \metapick[print]{authortext}%
+  \metapick[print]{datatext}}
+\fi
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2138,8 +2300,6 @@ some representations of the selected license:
 % before the start of the document:
 %    \begin{macrocode}
 \newcommand{\metawritepdfpreamble}{\ifdefined\hypersetup
-  \ifmstr@opt@xmppdfinfo
-    \ifdefined\xmptilde\hypersetup{keeppdfinfo}\fi\fi
   \metaif[]{language}
     {\hypersetup{pdflang={\metaget[]{language}}}}{}%
   \ifdefined\xmptilde
@@ -2155,7 +2315,7 @@ some representations of the selected license:
 %    \begin{macrocode}
 \newcommand{\metawritepdfinfo}{\ifdefined\hypersetup
   \metaifpick[\mstr@lang@meta]{author}
-    {\hypersetup{pdfauthor={\metapick[\mstr@lang@meta]{author}}}}{}%
+    {\hypersetup{pdfauthor={\metapick[\mstr@lang@meta]{authortext}}}}{}%
   \metaifpick[\mstr@lang@meta]{title}
     {\hypersetup{pdftitle={\metapick[\mstr@lang@meta]{titletext}}}}{}%
   \metaifpick[\mstr@lang@meta]{subject}
@@ -2313,7 +2473,9 @@ some representations of the selected license:
   \centerline{\metapick[#1]{licenselogo}}}
 \metaset[cmd]{licenselogo}{\includegraphics{#1}}
 \metaset[print]{licenselogo}{%
-  \mstr@getbare[cmd]{licenselogo}{\metaget[]{licenselogo}}}
+  \IfFileExists{\metaget[]{licenselogo}.pdf}%
+    {\mstr@getbare[cmd]{licenselogo}{\metaget[]{licenselogo}}}%
+    {\mstr@getbare[cmd]{licenselogo}{\metaget[nocurr]{licenselogo}}}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2668,12 +2830,16 @@ some representations of the selected license:
 \metaset[logo]{cc@by-nc-sa}{doclicense-CC-by-nc-sa}
 \metaset[logo]{cc@by-nc-nd}{doclicense-CC-by-nc-nd}
 %    \end{macrocode}
-% Use euro sign versions:
+% Select currency versions:
 %    \begin{macrocode}
-\mstr@iftext\mstr@opt@cclogocurr{euro}{
-\metaset[logo]{cc@by-nc}{doclicense-CC-by-nc-eu}
-\metaset[logo]{cc@by-nc-sa}{doclicense-CC-by-nc-sa-eu}
-\metaset[logo]{cc@by-nc-nd}{doclicense-CC-by-nc-nd-eu}}
+\mstr@iftext\mstr@opt@cclogocurr{dollar}{\metaset[curr]{licenselogo}{}}
+\mstr@iftext\mstr@opt@cclogocurr{euro}{\metaset[curr]{licenselogo}{-eu}}
+\mstr@iftext\mstr@opt@cclogocurr{yen}{\metaset[curr]{licenselogo}{-jp}}
+%    \end{macrocode}
+% Select shape versions:
+%    \begin{macrocode}
+\mstr@iftext\mstr@opt@cclogoshape{box}{\metaset[shape]{licenselogo}{-88x31}}
+\mstr@iftext\mstr@opt@cclogoshape{slim}{\metaset[shape]{licenselogo}{-80x15}}
 %    \end{macrocode}
 
 % \macro{\mstr@setcclogo}
@@ -2684,8 +2850,13 @@ some representations of the selected license:
   \ifmstr@opt@cclogo
     \IfFileExists{doclicense.sty}{%
       \ifdefined\includegraphics
+      \IfFileExists{doclicense-CC-by-88x31.pdf}
+        {\metaset[size]{licenselogo}{-88x31}}{}
       \metaset{licenselogo}{%
-        \metapick[logo]{licensecc}}
+        \metapick[logo]{licensecc}\metaget[curr]{licenselogo}%
+        \metaget[shape]{licenselogo}}%
+      \metaset[nocurr]{licenselogo}{%
+        \metapick[logo]{licensecc}\metaget[shape]{licenselogo}}%
       \fi}{\GenericWarning{please install package `doclicense'}}%
   \fi}
 %    \end{macrocode}
@@ -2884,11 +3055,29 @@ some representations of the selected license:
 % Fill |titletext| in |course| variant to display
 % relevant title data for the course material:
 %    \begin{macrocode}
+\metaset[course]{titlematter}{%
+  \metapick[course]{titletext}%
+  \metapick[course]{datatext}%
+  \metapick[course]{authortext}}
+\metaset[course]{titletext}{%
+  \metatitleline[print]{course}%
+  \metatitlelinetwo[print]{material}[print]{draft}}
+\metaset[course]{authortext}{%
+  \metatitleline[print]{instructor}}
+\metaset[course]{datatext}{%
+  \metatitlelinetwo[print]{institution}[print]{period}}
+%    \end{macrocode}
+% Legacy presets:
+%    \begin{macrocode}
+\ifmstr@opt@titlematter\else
+\metaset[course]{titlematter}{%
+  \metapick[course]{titletext}}
 \metaset[course]{titletext}{%
   \metatitleline[print]{course}%
   \metatitlelinetwo[print]{material}[print]{draft}%
-  \metatitlelinetwo[print]{institution}[print]{period}%
-  \metatitleline[print]{instructor}}
+  \metapick[course]{datatext}%
+  \metapick[course]{authortext}}
+\fi
 %    \end{macrocode}
 
 % Inherit title, subtitle, author and date:

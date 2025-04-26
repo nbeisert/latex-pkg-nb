@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{metastr}[2020/02/06 v1.0 Metadata Strings Storage]
+\ProvidesPackage{metastr}[2020/06/28 v1.1 Metadata Strings Storage]
 
 \RequirePackage{keyval}
 
@@ -27,31 +27,40 @@
 \newif\ifmstr@opt@xmppdfinfo\mstr@opt@xmppdfinfotrue
 \newif\ifmstr@opt@course\mstr@opt@coursefalse
 \newif\ifmstr@opt@draft\mstr@opt@draftfalse
+\newif\ifmstr@opt@titlematter\mstr@opt@titlematterfalse
 \newif\ifmstr@opt@cclogo\mstr@opt@cclogotrue
 \def\mstr@opt@cclogocurr{dollar}
+\def\mstr@opt@cclogoshape{box}
 \def\mstr@opt@loadlang{en}
 \def\mstr@group{mstr@}
-\define@key{\mstr@group}{hyperref}[true]
-  {\csname mstr@opt@hyperref#1\endcsname}
-\define@key{\mstr@group}{hyperxmp}[true]
-  {\csname mstr@opt@hyperxmp#1\endcsname}
-\define@key{\mstr@group}{checkdef}[true]
-  {\csname mstr@opt@checkdef#1\endcsname}
-\define@key{\mstr@group}{xmppdfinfo}[true]
-  {\csname mstr@opt@xmppdfinfo#1\endcsname}
+\define@key{\mstr@group}{hyperref}[true]{%
+  \csname mstr@opt@hyperref#1\endcsname}
+\define@key{\mstr@group}{hyperxmp}[true]{%
+  \csname mstr@opt@hyperxmp#1\endcsname}
+\define@key{\mstr@group}{checkdef}[true]{%
+  \csname mstr@opt@checkdef#1\endcsname}
+\define@key{\mstr@group}{xmppdfinfo}[true]{%
+  \csname mstr@opt@xmppdfinfo#1\endcsname}
 \define@key{\mstr@group}{cclogo}[true]{\csname mstr@opt@cclogo#1\endcsname}
 \define@key{\mstr@group}{cclogocurr}{\def\mstr@opt@cclogocurr{#1}}
+\define@key{\mstr@group}{cclogoshape}{\def\mstr@opt@cclogoshape{#1}}
 \define@key{\mstr@group}{loadlang}{\def\mstr@opt@loadlang{#1}}
 \define@key{\mstr@group}{course}[true]{\csname mstr@opt@course#1\endcsname}
 \define@key{\mstr@group}{draft}[true]{\csname mstr@opt@draft#1\endcsname}
+\define@key{\mstr@group}{titlematter}[true]{%
+  \csname mstr@opt@titlematter#1\endcsname}
 
 \DeclareOption*{\expandafter\setkeys\expandafter\mstr@group%
   \expandafter{\CurrentOption}}
 
 \ProcessOptions
 
+\def\mstr@setup{mstr@setup}
+\newcommand{\metasetup}[1]{\setkeys\mstr@setup{#1}}
+
 \ifmstr@opt@hyperref\RequirePackage{hyperref}\fi
 \ifmstr@opt@hyperxmp\RequirePackage{hyperxmp}\fi
+\ifmstr@opt@xmppdfinfo\ifdefined\xmptilde\hypersetup{keeppdfinfo}\fi\fi
 
 \def\mstr@exptwo#1{\expandafter#1\expandafter}
 \def\mstr@csdo#1#2{\expandafter#1\csname#2\endcsname}
@@ -187,9 +196,12 @@
 \endgroup
 
 \metadef{draft}
-\ifmstr@opt@draft
-\metaset{draft}{\metatranslate[#1]{draft}}
-\fi
+\newcommand{\mstr@set@draft}{%
+  \ifmstr@opt@draft\metaset{draft}{\metatranslate[##1]{draft}}%
+  \else\metaunset{draft}\fi}
+\define@key{\mstr@setup}{draft}[true]{%
+  \csname mstr@opt@draft#1\endcsname\mstr@set@draft}%
+\mstr@set@draft
 
 \metadef{title}
 \metadef{subtitle}
@@ -199,7 +211,14 @@
 \metadef{subject}
 \metadef{keywords}
 
+\metadef{linebreak}
+\metaset[]{linebreak}{ }
+\metaset[print]{linebreak}{\\}
+
+\metadef{titlematter}
 \metadef{titletext}
+\metadef{authortext}
+\metadef{datatext}
 
 \def\metatitleline[#1]#2{%
   \metacompose[#1]{#2}
@@ -226,15 +245,35 @@
 \metaset[skip]{date}{\vspace{1.5em}}
 \metaset[sep]{subtitle}{ -- }
 \metaset[sep]{date}{, }
+\metaset[sep]{draft}{: }
 \metaset{titletext}{%
-  \metacompose[#1]{draft}{}{: }{}%
+  \metacompose[#1]{draft}{}{\metaget[sep]{draft}}{}%
   \metapick[#1]{title}%
   \metacompose[#1]{subtitle}{\metaget[sep]{subtitle}}{}{}}
+\metaset{authortext}{\metapick[#1]{author}}
+\metaset{datatext}{%
+  \metacompose[#1]{location}{}{\metaget[sep]{date}}{}%
+  \metapick[#1]{date}}
+\metaset{titlematter}{%
+  \metapick[#1]{titletext}%
+  \metapick[#1]{authortext}%
+  \metapick[#1]{datatext}}
+\metaset[print]{titletext}{%
+  \metatitleline[print]{title}%
+  \metatitlelinetwo[print]{subtitle}[print]{draft}}
+\metaset[print]{authortext}{%
+  \metatitleline[print]{author}}
+\metaset[print]{datatext}{%
+  \metatitlelinetwo[print]{location}[print]{date}}
+\ifmstr@opt@titlematter\else
+\metaset{titlematter}{%
+  \metapick[#1]{titletext}}
 \metaset[print]{titletext}{%
   \metatitleline[print]{title}%
   \metatitlelinetwo[print]{subtitle}[print]{draft}%
-  \metatitleline[print]{author}%
-  \metatitlelinetwo[print]{location}[print]{date}}
+  \metapick[print]{authortext}%
+  \metapick[print]{datatext}}
+\fi
 
 \metadef{url}
 \metadef{urlmessage}
@@ -246,8 +285,6 @@
 \metadef{source}
 
 \newcommand{\metawritepdfpreamble}{\ifdefined\hypersetup
-  \ifmstr@opt@xmppdfinfo
-    \ifdefined\xmptilde\hypersetup{keeppdfinfo}\fi\fi
   \metaif[]{language}
     {\hypersetup{pdflang={\metaget[]{language}}}}{}%
   \ifdefined\xmptilde
@@ -257,7 +294,7 @@
 
 \newcommand{\metawritepdfinfo}{\ifdefined\hypersetup
   \metaifpick[\mstr@lang@meta]{author}
-    {\hypersetup{pdfauthor={\metapick[\mstr@lang@meta]{author}}}}{}%
+    {\hypersetup{pdfauthor={\metapick[\mstr@lang@meta]{authortext}}}}{}%
   \metaifpick[\mstr@lang@meta]{title}
     {\hypersetup{pdftitle={\metapick[\mstr@lang@meta]{titletext}}}}{}%
   \metaifpick[\mstr@lang@meta]{subject}
@@ -344,7 +381,9 @@
   \centerline{\metapick[#1]{licenselogo}}}
 \metaset[cmd]{licenselogo}{\includegraphics{#1}}
 \metaset[print]{licenselogo}{%
-  \mstr@getbare[cmd]{licenselogo}{\metaget[]{licenselogo}}}
+  \IfFileExists{\metaget[]{licenselogo}.pdf}%
+    {\mstr@getbare[cmd]{licenselogo}{\metaget[]{licenselogo}}}%
+    {\mstr@getbare[cmd]{licenselogo}{\metaget[nocurr]{licenselogo}}}}
 
 \newcommand{\metawritepdfrights}{\ifdefined\hypersetup\ifdefined\xmptilde
     \metaifpick[\mstr@lang@meta]{rightstext}
@@ -499,17 +538,23 @@
 \metaset[logo]{cc@by-nc}{doclicense-CC-by-nc}
 \metaset[logo]{cc@by-nc-sa}{doclicense-CC-by-nc-sa}
 \metaset[logo]{cc@by-nc-nd}{doclicense-CC-by-nc-nd}
-\mstr@iftext\mstr@opt@cclogocurr{euro}{
-\metaset[logo]{cc@by-nc}{doclicense-CC-by-nc-eu}
-\metaset[logo]{cc@by-nc-sa}{doclicense-CC-by-nc-sa-eu}
-\metaset[logo]{cc@by-nc-nd}{doclicense-CC-by-nc-nd-eu}}
+\mstr@iftext\mstr@opt@cclogocurr{dollar}{\metaset[curr]{licenselogo}{}}
+\mstr@iftext\mstr@opt@cclogocurr{euro}{\metaset[curr]{licenselogo}{-eu}}
+\mstr@iftext\mstr@opt@cclogocurr{yen}{\metaset[curr]{licenselogo}{-jp}}
+\mstr@iftext\mstr@opt@cclogoshape{box}{\metaset[shape]{licenselogo}{-88x31}}
+\mstr@iftext\mstr@opt@cclogoshape{slim}{\metaset[shape]{licenselogo}{-80x15}}
 
 \newcommand{\mstr@setcclogo}{%
   \ifmstr@opt@cclogo
     \IfFileExists{doclicense.sty}{%
       \ifdefined\includegraphics
+      \IfFileExists{doclicense-CC-by-88x31.pdf}
+        {\metaset[size]{licenselogo}{-88x31}}{}
       \metaset{licenselogo}{%
-        \metapick[logo]{licensecc}}
+        \metapick[logo]{licensecc}\metaget[curr]{licenselogo}%
+        \metaget[shape]{licenselogo}}%
+      \metaset[nocurr]{licenselogo}{%
+        \metapick[logo]{licensecc}\metaget[shape]{licenselogo}}%
       \fi}{\GenericWarning{please install package `doclicense'}}%
   \fi}
 
@@ -631,11 +676,26 @@
 \metaset[skip]{instructor}{\vspace{6ex}}
 \metaset[sep]{period}{, }
 
+\metaset[course]{titlematter}{%
+  \metapick[course]{titletext}%
+  \metapick[course]{datatext}%
+  \metapick[course]{authortext}}
+\metaset[course]{titletext}{%
+  \metatitleline[print]{course}%
+  \metatitlelinetwo[print]{material}[print]{draft}}
+\metaset[course]{authortext}{%
+  \metatitleline[print]{instructor}}
+\metaset[course]{datatext}{%
+  \metatitlelinetwo[print]{institution}[print]{period}}
+\ifmstr@opt@titlematter\else
+\metaset[course]{titlematter}{%
+  \metapick[course]{titletext}}
 \metaset[course]{titletext}{%
   \metatitleline[print]{course}%
   \metatitlelinetwo[print]{material}[print]{draft}%
-  \metatitlelinetwo[print]{institution}[print]{period}%
-  \metatitleline[print]{instructor}}
+  \metapick[course]{datatext}%
+  \metapick[course]{authortext}}
+\fi
 
 \metaset{title}{\metapick[#1]{course}}
 \metaset{subtitle}{\metapick[#1]{material}}

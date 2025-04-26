@@ -1,4 +1,4 @@
-metastr v1.0
+metastr v1.1
 Copyright 2020 Niklas Beisert
 
 metastr is a LaTeX2e package
