@@ -14,6 +14,7 @@ The repository consists of the packages:
 * [childdoc](https://ctan.org/pkg/childdoc)
 * [mathfixs](https://ctan.org/pkg/mathfixs)
 * [metastr](https://ctan.org/pkg/metastr)
+* [eqnlines](https://ctan.org/pkg/eqnlines)
 
 The packages in this repository may be distributed and/or modified
 under the conditions spelled out in the corresponding subdirectories

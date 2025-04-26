@@ -1,4 +1,4 @@
-PACKAGES = collref mpostinl exframe graphbox delimset sesstime childdoc mathfixs metastr
+PACKAGES = collref mpostinl exframe graphbox delimset sesstime childdoc mathfixs metastr eqnlines
 TARGETS = all touch clean clean-all clean-bak
 
 $(TARGETS): $(PACKAGES)

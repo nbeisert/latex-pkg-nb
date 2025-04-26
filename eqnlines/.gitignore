@@ -1,0 +1,10 @@
+#exclude all files
+*
+
+#include relevant files
+!/.gitignore
+!/eqnlines.dtx
+!/eqnlines.ins
+!/Makefile
+!/README.txt
+!/eqnlines.sty
