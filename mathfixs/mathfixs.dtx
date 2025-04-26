@@ -1,14 +1,14 @@
 % \iffalse
 %
-% mathfixs.dtx Copyright (C) 2018 Niklas Beisert
+% mathfixs.dtx Copyright (C) 2018-2024 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
 % of this license or (at your option) any later version.
 % The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
-% and version 1.3 or later is part of all distributions of LaTeX
-% version 2005/12/01 or later.
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008 or later.
 %
 % This work has the LPPL maintenance status `maintained'.
 %
@@ -18,10 +18,11 @@
 % and the derived files mathfixs.sty and mafxsamp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mathfixs}[2018/12/30 v1.01 various fixes for math mode]
-%<sample>\ProvidesFile{mafxsamp.tex}[2018/12/30 v1.01 sample for mathfixs]
+%<package>\ProvidesPackage{mathfixs}[2024/10/23 v1.1 various fixes for math mode]
+%<sample>\ProvidesFile{mafxsamp.tex}[2024/10/23 v1.1 sample for mathfixs]
 %<*driver>
-%\ProvidesFile{mathfixs.drv}[2018/12/30 v1.01 mathfixs reference manual file]
+\def\thedate#1{2024/10/23}\def\theversion#1{v1.1}
+\ProvidesFile{mathfixs.dtx}[\thedate{} \theversion{} mathfixs reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -29,24 +30,29 @@
 \usepackage{hyperref}
 \usepackage{hyperxmp}
 \usepackage[usenames]{color}
+\usepackage{amssymb}
 
 \hypersetup{colorlinks=true}
 \hypersetup{pdfstartview=FitH}
 \hypersetup{pdfpagemode=UseNone}
 \hypersetup{pdfsource={}}
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfcopyright={Copyright 2018 Niklas Beisert.
+\hypersetup{pdfcopyright={Copyright 2018-2024 Niklas Beisert.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
-\hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
+\hypersetup{pdflicenseurl={https://www.latex-project.org/lppl.txt}}
 \hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K,
   Wolfgang-Pauli-Strasse 27}}
 \hypersetup{pdfcontactpostcode={8093}}
 \hypersetup{pdfcontactcity={Zurich}}
 \hypersetup{pdfcontactcountry={Switzerland}}
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
-\hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
+\hypersetup{pdfcontacturl={https://people.phys.ethz.ch/\xmptilde nbeisert/}}
+
+\newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
+\newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
+\newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\textsf{#1}}}
 
 \parskip1ex
 \parindent0pt
@@ -65,7 +71,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package mathfixs}}
-\date{30 December 2018, \textsf{v1.01}}
+\date{\thedate{}, \theversion{}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -82,32 +88,6 @@ It also adds some related macros.
 \parskip0ex
 \tableofcontents
 \endgroup
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\makeatletter
-\newcommand{\timingprint}[2][l]{%
-  \ifhmode\par\fi%
-  \ifvmode%
-    \@bsphack%
-    \dimen@\prevdepth%
-    \nointerlineskip%
-    \if r#1%
-      \smash{\rlap{\hspace{\textwidth}\parbox[t]{1cm}%
-        {\raggedright\renewcommand{\bfdefault}{b}#2}}}%
-    \else%
-      \smash{\llap{\parbox[t]{1cm}%
-        {\raggedleft\renewcommand{\bfdefault}{b}#2}}}%
-    \fi%
-    \prevdepth\dimen@%
-    \@esphack%
-  \fi}
-\newcommand{\printmark}[1]{\timingprint{\footnotesize#1}}
-\newcommand{\printremark}[1]{%
-  \timingprint[r]{\tiny\sffamily\hrule#1\hrule}}
-\makeatother
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,9 +127,11 @@ to some extent to accommodate for the desired style.
 \section{Usage}
 
 To use the package \textsf{mathfixs} add the command
+%
 \begin{center}
 |\usepackage{mathfixs}|
 \end{center}
+%
 to the preamble of your \LaTeX{} document.
 Furthermore you must select the desired features explicitly
 as described below, otherwise the package will have no effect.
@@ -163,6 +145,7 @@ which may modify the default behaviour in an unintended fashion.
 
 \DescribeMacro{\ProvideMathFix}
 Features and options can be selected by the commands:
+%
 \begin{center}
 \begin{tabular}{rl}
 &|\usepackage[|\textit{opts}|]{mathfixs}|
@@ -262,7 +245,7 @@ without further adjustments.
 \DescribeMacro{\genfrac}
 \DescribeMacro{\dfrac}
 \DescribeMacro{\tfrac}
-The macro |\genfrac| of the package \textsf{amsmath}
+The macro |\genfrac| of the package \ctanpkg{amsmath}
 is modified suitably when the latter is loaded.
 This also affects the macros |\dfrac| and |\tfrac| for fractions
 in styles |\displaystyle| and |\textstyle|, respectively.
@@ -324,7 +307,7 @@ has a more uniform appearance:
 \DescribeMacro{\rfrac}
 The feature |rfrac| defines the macro |\rfrac|
 to typeset a fraction in text style or smaller.
-It is similar to |\tfrac| of the package \textsf{amsmath},
+It is similar to |\tfrac| of the package \ctanpkg{amsmath},
 but it will not choose text style when in the script styles
 and it will not produce surrounding space
 when the feature |frac| is used.
@@ -344,8 +327,8 @@ The spacing around the slash should be reduced
 to join the expression.
 The package provides this representation
 as the feature |vfrac| defining the macro |\vfrac|.
-It is similar to |\nicefrac| of the package \textsf{nicefrac}
-or the more advanced implementation |\sfrac| of the package \textsf{xfrac}.
+It is similar to |\nicefrac| of the package \ctanpkg{nicefrac}
+or the more advanced implementation |\sfrac| of the package \ctanpkg{xfrac}.
 As vulgar fractions are often (mainly) used within plain text,
 the macro |\vfrac| also works in text mode.
 The optional argument |vfrac={\|\textit{cmd}|}| specifies
@@ -413,7 +396,7 @@ y\mskip-5mu
 \DescribeMacro{rootskippre}
 \DescribeMacro{rootskippost}
 The option |rootclass=|\textit{class}
-can be used to customise the math class of the vulgar fraction.
+can be used to customise the math class of the root.
 The option |rootskipend=|\textit{muskip}
 defines the additional skip at the end of the radicand
 within the radical (must be given in math units |mu|).
@@ -437,7 +420,7 @@ specifies the starting height with a default value of $0.8$.
 \subsection{Space Representing Multiplication Signs}
 
 Mathematical expressions regularly omit explicit multiplication signs
-between factors, e.g. $x^2yz$. All is well unless
+between factors, e.g.\ $x^2yz$. All is well unless
 some of the factors are compound expressions such as
 $\Delta x$ or differentials $dx$ (or $\mathrm{d}x$)
 where additional space is typically inserted by
@@ -512,8 +495,8 @@ provided by \TeX{} to have a default italic shape.
 Upright capital Greek letters remain accessible
 by switching to the upright shape using |\mathrm|
 or by declaring them as part of an operator,
-e.g. |\operatorname| or |\DeclareMathOperator|
-(package \textsf{amsmath}).
+e.g.\ |\operatorname| or |\DeclareMathOperator|
+(package \ctanpkg{amsopt} within \ctanpkg{amsmath}).
 
 The optional argument |greekcaps=|\textit{pre} will
 instead define the macros |\|\textit{pre}|Gamma|, etc.,
@@ -537,9 +520,10 @@ This allows them to be typeset in different font series
 such as |\mathbold| described below.
 However, when trying to cast them in upright shape
 they will be typeset as altogether different symbols,
-e.g. |\mathrm{\alpha}| becomes the ligature `ff'
+e.g.\ |\mathrm{\alpha}| becomes the ligature `ff'
 which occupies the same slot in the \TeX{} font encodings OML vs.\ OT1.
 Hence, some caution is needed when this feature is used.
+Note that math font redefinitions may clash with this feature.
 
 The optional argument |greeklower=|\textit{pre} will
 instead define the macros |\|\textit{pre}|alpha|, etc.,
@@ -547,6 +531,11 @@ and keep the original definitions.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Bold Fonts}
+
+Combining bold fonts and math mode in \LaTeX\ sometimes
+yields unintuitive results.
+The following two features assist
+the intuitive use of bold fonts in math mode.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Feature \texttt{autobold}.}
@@ -580,9 +569,488 @@ To typeset bold italic letters simply use |\mathbold{abc}|.
 To make this work for lowercase Greek letters as well,
 the feature |greeklower| must be activated.
 The optional argument |mathbold={\|\textit{cmd}|}| specifies
-an alternative command name |\|\textit{cmd} for |\mathbold|, e.g.
-|mathbold={\mathbit}|.
+an alternative command name |\|\textit{cmd} for |\mathbold|,
+e.g.\ |mathbold={\mathbit}|.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Mathematical Functions and Operators}
+
+\LaTeX\ defines many basic standard mathematical functions and operators,
+see below.
+The following features fill some gaps in the collection of functions
+and they provide worthwhile alternative representations for some
+functions and operators. All of the following features require
+that the package \ctanpkg{amsopn} (part of \ctanpkg{amsmath})
+is loaded \emph{before} \textsf{mathfixs}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Native \LaTeX{} Functions and Operators.}
+
+As a reference, \LaTeX{} supplies the following functions and operators.
+All of them are overwritten by \ctanpkg{amsopn} within \ctanpkg{amsmath}.
+
+Exponential and logarithm functions:
+%
+\begin{center}
+\begin{tabular}{lll}
+macro & output & description \\
+\hline
+|\exp| & $\exp$ & exponential function \\
+|\log| & $\log$ & logarithm function \\
+|\lg| & $\lg$ & common logarithm function \\
+|\ln| & $\ln$ & natural logarithm function \\
+\end{tabular}
+\end{center}
+
+Trigonometric functions:
+%
+\begin{center}
+\begin{tabular}{lll}
+macro & output & description \\
+\hline
+|\sin| & $\sin$ & sine function \\
+|\cos| & $\cos$ & cosine function \\
+|\tan| & $\tan$ & tangent function \\
+|\cot| & $\cot$ & cotangent function \\
+|\sec| & $\sec$ & secant function \\
+|\csc| & $\csc$ & cosecant function \\
+|\arcsin| & $\arcsin$ & inverse sine function \\
+|\arccos| & $\arccos$ & inverse cosine function \\
+|\arctan| & $\arctan$ & inverse tangent function \\
+\end{tabular}
+\end{center}
+
+Hyperbolic functions:
+%
+\begin{center}
+\begin{tabular}{lll}
+macro & output & description \\
+\hline
+|\sinh| & $\sinh$ & hyperbolic sine function \\
+|\cosh| & $\cosh$ & hyperbolic cosine function \\
+|\tanh| & $\tanh$ & hyperbolic tangent function \\
+|\coth| & $\coth$ & hyperbolic cotangent function \\
+\end{tabular}
+\end{center}
+
+Extremal values:
+%
+\begin{center}
+\begin{tabular}{lll}
+macro & output & description \\
+\hline
+|\max| & $\max$ & maximum of a set \\
+|\min| & $\min$ & minimum of a set \\
+|\sup| & $\sup$ & supremum of a set \\
+|\inf| & $\inf$ & infimum of a set \\
+\end{tabular}
+\end{center}
+
+Limits:
+%
+\begin{center}
+\begin{tabular}{lll}
+macro & output & description \\
+\hline
+|\lim| & $\lim$ & limit operator \\
+|\limsup| & $\limsup$ & limit superior operator \\
+|\liminf| & $\liminf$ & limit inferior operator \\
+|\injlim| & inj\,lim & ? (\ctanpkg{amsopn}/\ctanpkg{amsmath} only) \\
+|\projlim| & proj\,lim & ? (\ctanpkg{amsopn}/\ctanpkg{amsmath} only) \\
+\end{tabular}
+\end{center}
+
+Assorted functions and operators:
+%
+\begin{center}
+\begin{tabular}{lll}
+macro & output & description \\
+\hline
+|\arg| & $\arg$ & argument of a complex number \\
+|\det| & $\det$ & determinant of a matrix \\
+|\ker| & $\ker$ & kernel of a map \\
+|\dim| & $\dim$ & dimension of \ldots \\
+|\deg| & $\deg$ & degree of \ldots \\
+|\gcd| & $\gcd$ & greatest common divisor \\
+|\hom| & $\hom$ & ? \\
+|\Pr| & $\Pr$ & ? \\
+\end{tabular}
+\end{center}
+
+Modulo statements:
+%
+\begin{center}
+\begin{tabular}{lll}
+macro & output & description \\
+\hline
+|\bmod| & $X \bmod Y$ & modulo statement \\
+|\pmod| & $X \pmod Y$ & modulo statement in parentheses \\
+|\mod| & $X\mkern18mu \bmod Y$ & modulo statement with space
+(\ctanpkg{amsmath} only) \\
+\end{tabular}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Feature \texttt{genop}.}
+\DescribeMacro{genop}
+\DescribeMacro{...}
+%
+The package defines several
+additional mathematical functions, operators and symbols
+which are not included in the \LaTeX\ macro library.
+These may be provided by other packages as well,
+or they can easily be defined by |\DeclareMathOperator|
+or used by |\operatorname|.
+Nevertheless, it is convenient to have these objects declared
+by a simple switch rather than by issuing a formal \LaTeX{} clause.
+
+The additional macros are grouped by category
+and each category is included as a feature.
+The first category describes
+assorted mathematical functions, operators and symbols.
+Further categories are provided in the following paragraphs.
+
+In order to evade clashes, the package allows to
+individually select the desired definitions
+from the assorted section
+with optionally defined macro names:
+%
+\begin{center}
+\begin{tabular}{llll}
+feature & macro & output & description \\
+\hline
+|sgn| & |\sgn| & sgn & signum function \\
+|res| & |\res| & res & residue operator \\
+|lcm| & |\lcm| & lcm & least common multiple \\
+|span| & |\Span| & span & span \\
+|diag| & |\diag| & diag & diagonal matrix \\
+|spec| & |\spec| & spec & spectrum \\
+|const| & |\const| & const & anything constant \\
+\hline
+|genop| & & & all of the above
+\end{tabular}
+\end{center}
+%
+The following two-letter operators
+are not included in the above class
+and must be implemented individually:
+%
+\begin{center}
+\begin{tabular}{llll}
+feature & macro & output & description \\
+\hline
+|id| & |\id| & id & identity map \\
+|tr| & |\tr| & tr & trace \\
+\end{tabular}
+\end{center}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Feature \texttt{reim}.}
+\DescribeMacro{reim}
+\DescribeMacro{\Re}
+\DescribeMacro{\Im}
+%
+\LaTeX{} assigns the symbols `$\Re$' and `$\Im$' to projectors
+to the real and imaginary parts of complex numbers.
+Another established representation for these projectors is given by
+`Re' and `Im'.
+The feature |reim| overwrites the predefined macros |\Re| and |\Im|
+with a textual representation:
+%
+\begin{center}
+\begin{tabular}{lll}
+macro & output & description \\
+\hline
+|\Re| & Re & real part of a complex number \\
+|\Im| & Im & imaginary part of a complex number \\
+\end{tabular}
+\end{center}
+%
+The optional argument |reim={\|\textit{cmdr}|\|\textit{cmdi}|}| specifies
+alternative command names |\|\textit{cmdr} and |\|\textit{cmdi}
+for |\Re| and |\Im|.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Feature \texttt{trig}.}
+\DescribeMacro{trig}
+\DescribeMacro{\arccot}
+\DescribeMacro{\arcsec}
+\DescribeMacro{\arccsc}
+%
+\LaTeX{} defines most trigonometric functions and their inverses
+like $\sin$, $\cos$ and $\arctan$, but three of their inverses are omitted.
+The feature |trig| supplies the remaining
+three inverse trigonometric functions:
+\begin{center}
+\begin{tabular}{lll}
+macro & output & description \\
+\hline
+|\arccot| & arccot & inverse cotangent function \\
+|\arcsec| & arcsec & inverse secant function \\
+|\arccsc| & arccsc & inverse cosecant function \\
+\end{tabular}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Feature \texttt{hyp}.}
+\DescribeMacro{hyp}
+\DescribeMacro{\sech}
+\DescribeMacro{\csch}
+\DescribeMacro{\ar...h}
+%
+\LaTeX{} defines four hyperbolic functions $\sinh$, $\cosh$ and $\tanh$,
+but two of them and all inverses are omitted.
+The feature |hyp| supplies the remaining two hyperbolic functions
+along with all inverse hypberbolic functions:
+\begin{center}
+\begin{tabular}{lll}
+macro & output & description \\
+\hline
+|\sech| & sech & hyperbolic secant function \\
+|\csch| & csch & hyperbolic cosecant function \\
+|\arsinh| & arsinh & inverse hyperbolic sine function \\
+|\arcosh| & arcosh & inverse hyperbolic cosine function \\
+|\artanh| & artanh & inverse hyperbolic tangent function \\
+|\arcoth| & arcoth & inverse hyperbolic cotangent function \\
+|\arsech| & arsech & inverse hyperbolic secant function \\
+|\arcsch| & arcsch & inverse hyperbolic cosecant function \\
+\end{tabular}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Feature \texttt{mapchar}.}
+\DescribeMacro{mapchar}
+\DescribeMacro{\dom}
+\DescribeMacro{\codom}
+\DescribeMacro{\supp}
+\DescribeMacro{\im}
+\DescribeMacro{\coker}
+\DescribeMacro{\rank}
+%
+The feature |mapchar| supplies further characteristics of maps:
+%
+\begin{center}
+\begin{tabular}{lll}
+macro & output & description \\
+\hline
+|\dom| & dom & domain \\
+|\codom| & codom & codomain \\
+|\supp| & supp & support \\
+|\im| & im & image \\
+|\coker| & coker & cokernel \\
+|\rank| & rank & rank \\
+\end{tabular}
+\end{center}
+%
+The optional argument |mapchar={\|\textit{cmdim}|}| specifies
+an alternative command name |\|\textit{cmdim} for |\im|
+which has only two letters and might easily clash with other definitions.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Feature \texttt{mapclass}.}
+\DescribeMacro{mapclass}
+\DescribeMacro{\Hom}
+\DescribeMacro{\End}
+\DescribeMacro{\Isom}
+\DescribeMacro{\Aut}
+%
+The feature |mapclass| supplies symbols for the sets of
+homomorphisms, endomorphisms, isomorphisms and automorphisms
+as classes/categories of structure-preserving maps:
+%
+\begin{center}
+\begin{tabular}{lll}
+macro & output & description \\
+\hline
+|\Hom| & Hom & homomorphisms \\
+|\End| & End & endomorphisms \\
+|\Isom| & Isom & isomorphisms \\
+|\Aut| & Aut & automorphisms
+\end{tabular}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Feature \texttt{vecdiff}.}
+\DescribeMacro{vecdiff}
+\DescribeMacro{vecrot}
+\DescribeMacro{\grad}
+\DescribeMacro{\div}
+\DescribeMacro{\curl}
+%
+The feature |vecdiff| supplies the three common differential operators
+gradient, divergence and curl for vectors:
+%
+\begin{center}
+\begin{tabular}{llll}
+macro & output & description \\
+\hline
+|\grad| & grad & gradient \\
+|\div| & div & divergence \\
+|\curl| & curl (rot) & curl (alternative form)
+\end{tabular}
+\end{center}
+%
+The feature |vecrot|[|={\|\textit{cmd}|}|]
+supplies the alternative form `rot' for curl/rotor on top of |\curl|
+with the option to specify an alternative command name.
+The feature |lapl|, see below, supplies the Laplace operator.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Particular Symbols}
+
+The package provides a couple of standard mathematical symbols.
+Of course, users can be trusted to define these symbols themselves
+or, more likely, use them straight away.
+Nevertheless, here we go \ldots
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Mathematical Constants.}
+\DescribeMacro{econst}
+\DescribeMacro{iunit}
+\DescribeMacro{piconst}
+%
+Three of the most relevant mathematical constants are Euler's number $e$,
+the imaginary unit $i$ and the circle's constant $\pi$
+(with the relation $e^{i\pi}=-1$).
+The package provides macros for these
+with either upright or math italic representations:
+%
+\begin{center}
+\begin{tabular}{llll}
+feature & macro & output & description \\
+\hline
+|econst| & |\econst| & e & Euler's number (upright) \\
+|econst*| & |\econst| & $e$ & Euler's number (math italic) \\
+|iunit| & |\iunit| & i & imaginary unit (upright) \\
+|iunit*| & |\iunit| & $i$ & imaginary unit (math italic) \\
+|iunit*nb| & |\iunit| & $\mathring{\imath}$ & imaginary unit
+                        (NB's silly circle version) \\
+|piconst| & |\piconst| & $\mathrm{\pi}$ & circle constant $\pi$
+                         (upright, if only \ldots)\\
+|piconst*| & |\piconst| & $\pi$ & circle constant $\pi$ (math italic)
+\end{tabular}
+\end{center}
+%
+Each macro and representation is provided as an individual feature
+\textit{feature}[|={\|\textit{cmd}|}|]
+which offers the option to customise the macro name to |\|\textit{cmd}.
+
+\DescribeMacro{econstclass}
+As Euler's number is commonly used within exponentiation
+which looks dense in compound expressions
+(e.g.\ $2e^{\sin x}F$),
+|\econst| is defined as |\mathinner|
+which adds some space around the exponentiation in such a situation
+(e.g.\ $2\mathinner{e}^{\sin x}F$).
+Use |{\econst}| if such spacing is undesired.
+The option |econstclass=|\textit{class}
+can be used to customise the math class of |\econst|.
+
+An upright version of |\pi| needs to be supplied
+for the feature |piconst| to work properly.
+If the macro |\uppi| from the package \ctanpkg{upgreek}
+in the bundle \ctanpkg{was} is available
+at the time of loading, it will be used.
+Otherwise an upright |\pi| can be supplied by package \ctanpkg{unicode-math}.
+Note that the feature |piconst| (without |*|) may interfere
+with the feature |greeklower|. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Derivative Symbols.}
+\DescribeMacro{\der}
+\DescribeMacro{\diff}
+%
+The package provides some assorted elementary symbols and compounds:
+%
+\begin{center}
+\begin{tabular}{llll}
+feature & macro & output & description \\
+\hline
+|der| & |\der| & d & derivative symbol (upright) \\
+|der*| & |\der| & $d$ & derivative symbol (math italic) \\
+|diff| & |\diff{|$x$|}| & d$x$ & coordinate differential (upright) \\
+|diff*| & |\diff{|$x$|}| & $dx$ & coordinate differential (math italic) \\
+\end{tabular}
+\end{center}
+%
+Each macro and representation is provided as an individual feature
+\textit{feature}[|={\|\textit{cmd}|}|]
+which offers the option to customise the macro name to |\|\textit{cmd}.
+
+The coordinate differential |\diff| is meant to be used
+within integrals and as a differential form,
+and it can be used in the denominator of differentiation expressions.
+In all of these, it is understood as a compound which should be
+separated from surrounding symbols.
+Therefore |\diff{|$x$|}| is declared as |\mathinner|
+which adds spacing where needed.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Assorted Symbols.}
+\DescribeMacro{\order}
+\DescribeMacro{\Order}
+\DescribeMacro{\lapl}
+\DescribeMacro{\defeq}
+\DescribeMacro{\eqdef}
+%
+The package provides some assorted elementary symbols and compounds:
+%
+\begin{center}
+\begin{tabular}{llll}
+feature & macro & output & description \\
+\hline
+|order| & |\order| & $o$ & anything of order less than \\
+|Order| & |\Order| & $O$ & anything of order at most \\
+|Order*| & |\Order| & $\mathcal{O}$ & anything of order at most
+                                      (calligraphic) \\
+|lapl| & |\lapl| & $\mathnormal{\Delta}$ & Laplace operator \\
+|defeq| & |\defeq| & $\mathrel{\mathop:}=$ & is defined as \\
+|eqdef| & |\eqdef| & $=\mathrel{\mathop:}$ & defines \\
+\end{tabular}
+\end{center}
+%
+Each macro and representation is provided as an individual feature
+\textit{feature}[|={\|\textit{cmd}|}|]
+which offers the option to customise the macro name to |\|\textit{cmd}.
+
+The defining symbols |\defeq| and |\eqdef| both typeset
+the colon to be vertically aligned with the equation sign.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Feature \texttt{numset}.}
+\DescribeMacro{numset}
+\DescribeMacro{numsetfont}
+\DescribeMacro{\numset}
+%
+The feature |numset| provides the macro |\numset|
+to typeset a number set such as the integers
+which is commonly denoted by a (blackboard) bold letter
+such as $\mathbb{Z}$ or $\mathbf{Z}$.
+The feature |numset={\|\textit{cmd}|}|
+offers the option to customise the macro name to |\|\textit{cmd}.
+The default font for this feature is |\mathbb| of \ctanpkg{amssymb}
+if available at the time of loading, otherwise |\mathbf|;
+it can be adjusted by |numsetfont={|\textit{mathfont}|}|.
+
+\DescribeMacro{numsets}
+The standard number fields are provided by the feature |numsets|
+as follows:
+%
+\begin{center}
+\begin{tabular}{llll}
+macro & output & description \\
+\hline
+|\Natural| & $\mathbb{N}$ & set of natural numbers \\
+|\Integer| & $\mathbb{Z}$ & field of integer numbers \\
+|\Rational| & $\mathbb{Q}$ & field of rational numbers \\
+|\Real| & $\mathbb{R}$ & field of real numbers \\
+|\Complex| & $\mathbb{C}$ & field of complex numbers \\
+|\Quaternion| & $\mathbb{H}$ & skew field of quaternions \\
+|\Octonion| & $\mathbb{O}$ & division algebra of quaternions \\
+\end{tabular}
+\end{center}
+%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -591,15 +1059,15 @@ an alternative command name |\|\textit{cmd} for |\mathbold|, e.g.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-Copyright \copyright{} 2018 Niklas Beisert
+Copyright \copyright{} 2018--2024 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
 of this license or (at your option) any later version.
 The latest version of this license is in
-  \url{http://www.latex-project.org/lppl.txt}
-and version 1.3 or later is part of all distributions of \LaTeX{}
-version 2005/12/01 or later.
+  \url{https://www.latex-project.org/lppl.txt}
+and version 1.3c or later is part of all distributions of \LaTeX{}
+version 2008 or later.
 
 This work has the LPPL maintenance status `maintained'.
 
@@ -644,28 +1112,26 @@ distribution, e.g.\ \textit{texmf-root}|/tex/latex/mathfixs|.
 The package is related to other packages available at CTAN:
 \begin{itemize}
 \item
-This package uses the package
-\href{http://ctan.org/pkg/keyval}{\textsf{keyval}}
-from the \href{http://ctan.org/pkg/latex-graphics}{\textsf{graphics}} bundle
+This package uses the package \ctanpkg{keyval}
 to process the options for the package, environments and macros.
-Compatibility with the \textsf{keyval} package
+Compatibility with the \ctanpkg{keyval} package
 has been tested with v1.15 (2014/10/28).
 \item
-This package was designed to be compatible with
-the package \href{http://ctan.org/pkg/amsmath}{\textsf{amsmath}}.
-To prevent \textsf{amsmath} from overwriting some features,
-it should be loaded before the present package.
-Compatibility with the \textsf{amsmath} package
+This package is designed to be compatible with
+the package \ctanpkg{amsmath}.
+To prevent \ctanpkg{amsmath} from overwriting some features,
+it should be loaded \emph{before} the present package.
+Compatibility with the \ctanpkg{amsmath} package
 has been tested with v2.17a (2017/09/02).
 \item
 This package reproduces the functionality of the
-package \href{http://ctan.org/pkg/fixmath}{\textsf{fixmath}} v0.9 (2000/04/11)
-from the bundle \href{http://ctan.org/pkg/was}{\textsf{was}}.
+package \ctanpkg{fixmath} v0.9 (2000/04/11)
+from the bundle \ctanpkg{was}.
 \item
 Functionality to typeset common fractions is also provided by
-the packages \href{http://ctan.org/pkg/nicefrac}{\textsf{nicefrac}}
-from the bundle \href{http://ctan.org/pkg/units}{\textsf{units}}
-and \href{http://ctan.org/pkg/xfrac}{\textsf{xfrac}}
+the packages \ctanpkg{nicefrac}
+from the bundle \ctanpkg{units}
+and \ctanpkg{xfrac}
 offering a more advanced implementation.
 \end{itemize}
 
@@ -677,12 +1143,49 @@ offering a more advanced implementation.
 %%
 %\begin{itemize}
 %\item
-% redefine macros |\Re|, |\Im|, |\mod|
-% complete macros for trigonometric functions?
+% set of elliptic functions and constants
+%\item
+% improvement for vector accent plancement
+%\item
+% transpose sign
+%\item
+% \mathup: no need as \mathrm does just that in whatever font
+%\item
+% standard classes of Lie groups
+%\item
+% alternative representations for some operators
 %\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1:} 2024/10/23
+
+\begin{itemize}
+\item
+added feature |genop| for additional functions, operators and symbols
+\item
+added feature |reim| to change the definitions
+of |\Re| and |\Im| to `Re' and `Im'
+\item
+added features |trig| and |hyp| to complete the definitions
+of trigonometric and hypberbolic functions
+\item
+added feature |mapchar| to represent characteristics of maps
+\item
+added feature |mapclass| to represent structure-preserving maps
+\item
+added feature |vecdiff| to represent vector differential operators
+\item
+added representation for mathematical constants $e$, $i$, $\pi$
+\item
+added features |der| and |diff| to represent derivative symbols
+\item
+added assorted symbols
+\item
+added feature |numset| and |numset| to represent number sets
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.01:} 2018/12/30
@@ -742,9 +1245,10 @@ first version published on CTAN
 \parindent0pt
 %    \end{macrocode}
 
-% Include \textsf{amsmath} and the \textsf{mathfixs} package:
+% Include \ctanpkg{amsmath}, \ctanpkg{amssymb}
+% and the \textsf{mathfixs} package:
 %    \begin{macrocode}
-\RequirePackage{amsmath}
+\RequirePackage{amsmath,amssymb}
 \RequirePackage[autobold]{mathfixs}
 %    \end{macrocode}
 
@@ -753,6 +1257,7 @@ first version published on CTAN
 \ProvideMathFix{greekcaps,mathbold}
 \ProvideMathFix{frac,rfrac,vfrac}
 \ProvideMathFix{multskip}
+\ProvideMathFix{der,diff}
 %    \end{macrocode}
 
 % Start document body:
@@ -849,14 +1354,13 @@ y\sqrt[123]{x}z
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \paragraph{Spaces Representing Multiplication.}
+% \paragraph{Spaces Representing Multiplication and Derivative Symbols.}
 %    \begin{macrocode}
-\paragraph{Spaces Representing Multiplication.}
+\paragraph{Spaces Representing Multiplication and Derivative Symbols.}
 %    \end{macrocode}
 
 % Explicit spacing:
 %    \begin{macrocode}
-\newcommand{\der}{\mathrm{d}}
 \[
 \int x\.\der x
 \]
@@ -864,7 +1368,6 @@ y\sqrt[123]{x}z
 
 % Implicit spacing:
 %    \begin{macrocode}
-\newcommand{\diff}[1]{\mathinner{\der#1}}
 \[
 \int x\diff{x}
 \]
@@ -891,12 +1394,66 @@ c\operatorname{\Gamma}(x)
 \paragraph{Bold Text with Math Symbols: $abc123\alpha\Gamma$.}
 %    \end{macrocode}
 
-% Capital letters:
+% Bold text:
 %    \begin{macrocode}
 \[
 aG\alpha\Gamma
 \qquad\mathbold{aG\alpha\Gamma}
 \qquad\ProvideMathFix{greeklower}\mathbold{aG\alpha\Gamma}
+\]
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Real and Imaginary Parts.}
+%    \begin{macrocode}
+\paragraph{Real and Imaginary Parts.}
+%    \end{macrocode}
+
+% Change representation for |\Re| and |\Im|:
+%    \begin{macrocode}
+\[
+\Re(z),\Im(z)
+\qquad\ProvideMathFix{reim}
+\Re(z),\Im(z)
+\qquad\ProvideMathFix{reim={\nRe\nIm}}
+\nRe(z),\nIm(z)
+\]
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Functions, Operators, Symbols.}
+%    \begin{macrocode}
+\paragraph{Functions, Operators, Symbols.}
+%    \end{macrocode}
+
+% Some examples of vector differential operators:
+%    \begin{macrocode}
+\[
+\ProvideMathFix{vecdiff,lapl,defeq}
+\lapl f=\div\grad f,
+\qquad
+\lapl v=\grad\div v-\curl\curl v,
+\]
+%    \end{macrocode}
+% Some examples of mathematical constants:
+%    \begin{macrocode}
+\[
+\ProvideMathFix{econst,iunit,piconst}
+\econst^{\iunit\piconst}=-1,
+\qquad
+\ProvideMathFix{econst*,iunit*,piconst*}
+\econst^{\iunit\piconst}=-1,
+\qquad
+\ProvideMathFix{econst,defeq,iunit*nb,numsets}
+z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
+\quad x,y,r,\theta\in\Real
+\]
+%    \end{macrocode}
+% Some examples of operators and symbols:
+%    \begin{macrocode}
+\[
+\ProvideMathFix{res,hyp,iunit*,piconst*}
+\res_{z=\iunit \piconst n} \csch(z)=(-1)^n
 \]
 %    \end{macrocode}
 
@@ -921,9 +1478,9 @@ aG\alpha\Gamma
 % \paragraph{Required Packages.}
 %
 % The package loads the package
-% \textsf{keyval}
+% \ctanpkg{keyval}
 % if not yet present.
-% \textsf{keyval} is used for extended options processing:
+% \ctanpkg{keyval} is used for extended options processing:
 %    \begin{macrocode}
 \RequirePackage{keyval}
 %    \end{macrocode}
@@ -965,7 +1522,7 @@ aG\alpha\Gamma
 % Define a new math alphabet |\mathbold|
 % as the bold series and italic shape
 % of the standard computer modern math font
-% (see package \textsf{fixmath}):
+% (see package \ctanpkg{fixmath}):
 %
 %    \begin{macrocode}
 \DeclareMathAlphabet{\mafx@mathbold}{OML}{cmm}{b}{it}
@@ -981,7 +1538,7 @@ aG\alpha\Gamma
 % \paragraph{Spacing Adjustment for Fractions.}
 %
 % Save primitive definition of |\over| into |\@@over|
-% (compatible with \textsf{amsmath}):
+% (compatible with \ctanpkg{amsmath}):
 %
 %    \begin{macrocode}
 \ifdefined\@@over\else\let\@@over=\over\fi
@@ -989,7 +1546,7 @@ aG\alpha\Gamma
 
 % Define math class selectors for fractions (without/with delimiters):
 %    \begin{macrocode}
-\def\mafx@frac@class{\mathinner}
+\let\mafx@frac@class=\mathinner
 \def\mafx@frac@delimclass{\mathopen{}\mathclose}
 %    \end{macrocode}
 
@@ -1004,13 +1561,13 @@ aG\alpha\Gamma
 % \macro{\genfrac}
 % Define replacement for |\@genfrac| (called by |\genfrac|)
 % which uses the appropriate math class selector.
-% If the package \textsf{amsmath} is not loaded, this definition will
+% If the package \ctanpkg{amsmath} is not loaded, this definition will
 % have no impact:
 %    \begin{macrocode}
-\def\mafx@@genfrac#1#2#3#4#5{\begingroup%
-  \ifx#2\@@overwithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi%
-  \ifx#2\@@abovewithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi%
-  \ifx#2\@@atopwithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi%
+\def\mafx@@genfrac#1#2#3#4#5{\begingroup
+  \ifx#2\@@overwithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi
+  \ifx#2\@@abovewithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi
+  \ifx#2\@@atopwithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi
   \mafx@frac@class{#1{\begingroup#4\endgroup#2#3\relax#5}}%
   \endgroup}
 %    \end{macrocode}
@@ -1039,7 +1596,7 @@ aG\alpha\Gamma
 % Define a fraction in text style or smaller
 % using the ordinary math class (no surrounding space), e.g.: $\frac{1}{2}$:
 %    \begin{macrocode}
-\DeclareRobustCommand{\mafx@rfrac}[2]{{\mathchoice%
+\DeclareRobustCommand{\mafx@rfrac}[2]{{\mathchoice
   {\textstyle{\begingroup#1\endgroup\@@over#2}}%
   {\begingroup#1\endgroup\@@over#2}%
   {\begingroup#1\endgroup\@@over#2}%
@@ -1058,7 +1615,7 @@ aG\alpha\Gamma
 % Define the math class and spacing parameters as (negative) spaces
 % around the dividing slash:
 %    \begin{macrocode}
-\def\mafx@vfrac@class{\mathinner}
+\let\mafx@vfrac@class=\mathinner
 \def\mafx@vfrac@preskip{\thinmuskip}
 \def\mafx@vfrac@postskip{0.6667\thinmuskip}
 %    \end{macrocode}
@@ -1120,21 +1677,21 @@ aG\alpha\Gamma
 % \macro{\root}
 % Replacement for |\root| \ldots|\of|
 % which stores the |\leftroot| and |\uproot| parameters
-% specified in the exponent (see package \textsf{amsmath}).
+% specified in the exponent (see package \ctanpkg{amsmath}).
 % It does so by first storing them in global parameters
 % and then converting them to local ones to avoid
 % interference with nested radicals.
 % As usual, the macro then passes on to |\r@@t|
 % with |\mathpalette|:
 %    \begin{macrocode}
-\def\mafx@root#1\of{
+\def\mafx@root#1\of{%
   \setbox\rootbox\hbox{$\m@th\scriptscriptstyle{%
     \gdef\mafx@gleftroot{0}\gdef\mafx@guproot{0}%
     \def\leftroot##1{\gdef\mafx@gleftroot{##1}}%
     \def\uproot##1{\gdef\mafx@guproot{##1}}%
     #1}$}%
-  \let\mafx@leftroot=\mafx@gleftroot%
-  \let\mafx@uproot=\mafx@guproot%
+  \let\mafx@leftroot=\mafx@gleftroot
+  \let\mafx@uproot=\mafx@guproot
   \mathpalette\r@@t}
 %    \end{macrocode}
 
@@ -1146,12 +1703,12 @@ aG\alpha\Gamma
 %    \end{macrocode}
 % Determine the font selector for the current style:
 %    \begin{macrocode}
-  \ifx#1\scriptstyle\let\mafx@tmp@fontsel=\scriptfont\else%
-  \ifx#1\scriptscriptstyle\let\mafx@tmp@fontsel=\scriptscriptfont\else%
-  \let\mafx@tmp@fontsel=\textfont\fi\fi%
+  \ifx#1\scriptstyle\let\mafx@tmp@fontsel=\scriptfont\else
+  \ifx#1\scriptscriptstyle\let\mafx@tmp@fontsel=\scriptscriptfont\else
+  \let\mafx@tmp@fontsel=\textfont\fi\fi
 %    \end{macrocode}
 % Generate a radical with empty radicand in cramped style
-% (see package \textsf{mathtools})
+% (see package \ctanpkg{mathtools})
 % at the desired height and depth and store in a box
 % for subsequent measurements:
 %    \begin{macrocode}
@@ -1185,7 +1742,7 @@ aG\alpha\Gamma
 % Place exponent box and return to intended start of radical sign:
 %    \begin{macrocode}
   \mkern-\mafx@leftroot mu%
-  \raise\dimen@\copy\rootbox%
+  \raise\dimen@\copy\rootbox
   \mkern\mafx@leftroot mu%
   \kern-0.6\wd\z@%
 %    \end{macrocode}
@@ -1201,7 +1758,7 @@ aG\alpha\Gamma
 % Draw a vertical rule starting from relative height |\mafx@root@close|
 % of the radical:
 %    \begin{macrocode}
-  \ifx\mafx@root@close\@empty\else%
+  \ifx\mafx@root@close\@empty\else
   \setlength\dimen@{\fontdimen8\mafx@tmp@fontsel3}%
   \lower\dimen@\hbox{%
     \vrule width\dimen@ height\ht\z@ depth -\mafx@root@close\ht\z@}%
@@ -1215,7 +1772,7 @@ aG\alpha\Gamma
 % \macro{root}
 % Implement replacement |\sqrt| and |\root|:
 %    \begin{macrocode}
-\define@key{mafx@}{root}[]{
+\define@key{mafx@}{root}[]{%
   \let\sqrt=\mafx@sqrt
   \let\@sqrt=\mafx@@sqrt
   \let\root=\mafx@root
@@ -1231,7 +1788,7 @@ aG\alpha\Gamma
 % Define configurable parameters for alternative root:
 %    \begin{macrocode}
 \define@key{mafx@}{rootclose}[0.8]{\def\mafx@root@close{#1}}
-\define@key{mafx@}{rootclass}{\def\mafx@root@class{#1}}
+\define@key{mafx@}{rootclass}{\let\mafx@root@class=#1}
 \define@key{mafx@}{rootskipend}{\def\mafx@root@endskip{#1}}
 \define@key{mafx@}{rootskippre}{\def\mafx@root@preskip{#1}}
 \define@key{mafx@}{rootskippost}{\def\mafx@root@postskip{#1}}
@@ -1250,7 +1807,7 @@ aG\alpha\Gamma
 \let\mafx@old@dot=\.
 \def\mafx@dot@skip{\thinmuskip}
 \def\mafx@dot{\mskip\mafx@dot@skip}
-\def\mafx@per@dot{\begingroup\ifmmode\def\mafx@tmp{\mafx@dot}\else%
+\def\mafx@per@dot{\begingroup\ifmmode\def\mafx@tmp{\mafx@dot}\else
   \def\mafx@tmp{\mafx@old@dot}\fi\expandafter\endgroup\mafx@tmp}
 %    \end{macrocode}
 
@@ -1270,7 +1827,7 @@ aG\alpha\Gamma
 % \macro{...}
 % Define capital Greek letters as letters
 % (instead of the default assignment as operators).
-% This implementation follows the package \textsf{fixmath}:
+% This implementation follows the package \ctanpkg{fixmath}:
 %    \begin{macrocode}
 \DeclareMathSymbol{\mafx@Gamma}{\mathalpha}{letters}{0}
 \DeclareMathSymbol{\mafx@Delta}{\mathalpha}{letters}{1}
@@ -1311,7 +1868,7 @@ aG\alpha\Gamma
 % \macro{...}
 % Define lowercase Greek letters in standard type |\mathalpha|
 % (instead of the default assiment |\mathord|).
-% This implementation follows the package \textsf{fixmath}:
+% This implementation follows the package \ctanpkg{fixmath}:
 %    \begin{macrocode}
 \DeclareMathSymbol{\mafx@alpha}{\mathalpha}{letters}{11}
 \DeclareMathSymbol{\mafx@beta}{\mathalpha}{letters}{12}
@@ -1382,6 +1939,336 @@ aG\alpha\Gamma
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Assorted Functions, Operators, Symbols.}
+%
+% Define macros for assorted functions, operators, symbols:
+%    \begin{macrocode}
+\DeclareMathOperator{\mafx@sgn}{sgn}
+\DeclareMathOperator*{\mafx@res}{res}
+\DeclareMathOperator{\mafx@lcm}{lcm}
+\DeclareMathOperator{\mafx@span}{span}
+\DeclareMathOperator{\mafx@diag}{diag}
+\DeclareMathOperator{\mafx@spec}{spec}
+\DeclareMathOperator{\mafx@const}{const}
+\DeclareMathOperator{\mafx@id}{id}
+\DeclareMathOperator{\mafx@tr}{tr}
+%    \end{macrocode}
+
+% Implement assorted functions, operators and symbols individually
+% with the option to adjust their macro names:
+%    \begin{macrocode}
+\define@key{mafx@}{sgn}[\sgn]{\let#1=\mafx@sgn}
+\define@key{mafx@}{res}[\res]{\let#1=\mafx@res}
+\define@key{mafx@}{lcm}[\lcm]{\let#1=\mafx@lcm}
+\define@key{mafx@}{diag}[\diag]{\let#1=\mafx@diag}
+\define@key{mafx@}{span}[\Span]{\let#1=\mafx@span}
+\define@key{mafx@}{spec}[\spec]{\let#1=\mafx@spec}
+\define@key{mafx@}{const}[\const]{\let#1=\mafx@const}
+\define@key{mafx@}{id}[\id]{\let#1=\mafx@id}
+\define@key{mafx@}{tr}[\tr]{\let#1=\mafx@tr}
+%    \end{macrocode}
+%
+% \macro{genop}
+% Implement all assorted functions, operators and symbols:
+%    \begin{macrocode}
+\define@key{mafx@}{genop}[]{%
+  \ProvideMathFix{sgn,res,lcm,diag,span,spec,const}%
+}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Real and Imaginary Part Projectors in Text Form.}
+%
+% \macro{\Re}
+% \macro{\Im}
+% Define a different notation for real and imaginary part projectors are the
+% textual symbols `Re' and `Im':
+%    \begin{macrocode}
+\DeclareMathOperator{\mafx@Re}{Re}
+\DeclareMathOperator{\mafx@Im}{Im}
+%    \end{macrocode}
+
+% \macro{reim}
+% Implement textual notation for \verb+\Re+ and \verb+\Im+:
+%    \begin{macrocode}
+\define@key{mafx@}{reim}[\Re\Im]{%
+  \expandafter\let\@firstoftwo#1=\mafx@Re
+  \expandafter\let\@secondoftwo#1=\mafx@Im
+}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Remaining Inverse Trigonometric Functions.}
+%
+% \macro{\arccot}
+% \macro{\arcsec}
+% \macro{\arccsc}
+% Define remaining inverse trigonometric functions
+% and their inverses:
+%    \begin{macrocode}
+\DeclareMathOperator{\mafx@arccot}{arccot}
+\DeclareMathOperator{\mafx@arcsec}{arcsec}
+\DeclareMathOperator{\mafx@arccsc}{arccsc}
+%    \end{macrocode}
+
+% \macro{trig}
+% Implement remaining trigonometric functions:
+%    \begin{macrocode}
+\define@key{mafx@}{trig}[]{%
+  \let\arccot=\mafx@arccot
+  \let\arcsec=\mafx@arcsec
+  \let\arccsc=\mafx@arccsc
+}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Remaining Hyperbolic Functions.}
+%
+% \macro{\sech}
+% \macro{\csch}
+% \macro{\ar...h}
+% Define remaining hyperbolic functions
+% and their inverses:
+%    \begin{macrocode}
+\DeclareMathOperator{\mafx@sech}{sech}
+\DeclareMathOperator{\mafx@csch}{csch}
+\DeclareMathOperator{\mafx@arsinh}{arsinh}
+\DeclareMathOperator{\mafx@arcosh}{arcosh}
+\DeclareMathOperator{\mafx@artanh}{artanh}
+\DeclareMathOperator{\mafx@arcoth}{arcoth}
+\DeclareMathOperator{\mafx@arsech}{arsech}
+\DeclareMathOperator{\mafx@arcsch}{arcsch}
+%    \end{macrocode}
+
+% \macro{hyp}
+% Implement remaining hyperbolic functions:
+%    \begin{macrocode}
+\define@key{mafx@}{hyp}[]{%
+  \let\sech=\mafx@sech
+  \let\csch=\mafx@csch
+  \let\arsinh=\mafx@arsinh
+  \let\arcosh=\mafx@arcosh
+  \let\artanh=\mafx@artanh
+  \let\arcoth=\mafx@arcoth
+  \let\arsech=\mafx@arsech
+  \let\arcsch=\mafx@arcsch
+}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Characteristics of Maps.}
+%
+% Define macros for characteristics of maps:
+%    \begin{macrocode}
+\DeclareMathOperator{\mafx@dom}{dom}
+\DeclareMathOperator{\mafx@supp}{supp}
+\DeclareMathOperator{\mafx@codom}{codom}
+\DeclareMathOperator{\mafx@im}{im}
+\DeclareMathOperator{\mafx@rank}{rank}
+\DeclareMathOperator{\mafx@coker}{coker}
+%    \end{macrocode}
+
+% Implement characteristics of maps
+% with the option to adjust the macro name for |\im|
+% to evade potential clashes for two letter definition:
+%    \begin{macrocode}
+\define@key{mafx@}{mapchar}[\im]{%
+  \let\dom=\mafx@dom
+  \let\supp=\mafx@supp
+  \let\codom=\mafx@codom
+  \let#1=\mafx@im
+  \let\rank=\mafx@rank
+  \let\coker=\mafx@coker
+}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Classes of Structure-Preserving Maps.}
+%
+% \macro{\Hom}
+% \macro{\End}
+% \macro{\Isom}
+% \macro{\Aut}
+% Define classes of structure-preserving maps:
+%    \begin{macrocode}
+\DeclareMathOperator{\mafx@Hom}{Hom}
+\DeclareMathOperator{\mafx@End}{End}
+\DeclareMathOperator{\mafx@Isom}{Isom}
+\DeclareMathOperator{\mafx@Aut}{Aut}
+%    \end{macrocode}
+
+% \macro{mapclass}
+% Implement classes of structure-preserving maps:
+%    \begin{macrocode}
+\define@key{mafx@}{mapclass}[]{%
+  \let\Hom=\mafx@Hom
+  \let\Eng=\mafx@Eng
+  \let\Isom=\mafx@Isom
+  \let\Aut=\mafx@Aut
+}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Differential Operators for Vectors.}
+%
+% \macro{\grad}
+% \macro{\div}
+% \macro{\curl}
+% Define differential operators gradient, divergence and curl
+% (alternative form rot):
+%    \begin{macrocode}
+\DeclareMathOperator{\mafx@grad}{grad}
+\DeclareMathOperator{\mafx@div}{div}
+\DeclareMathOperator{\mafx@curl}{curl}
+\DeclareMathOperator{\mafx@rot}{rot}
+%    \end{macrocode}
+
+% \macro{vecdiff}
+% Implement differential operators for vectors individually
+% with the option to adjust their macro names.
+% Implement alternative rot for curl/rotor
+% with the option to adjust its macro name:
+%    \begin{macrocode}
+\define@key{mafx@}{vecdiff}[]{%
+  \let\grad=\mafx@grad
+  \let\div=\mafx@div
+  \let\curl=\mafx@curl
+}
+\define@key{mafx@}{vecrot}[\curl]{\let#1=\mafx@rot}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Mathematical Constants.}
+%
+% \macro{\econst}
+% \macro{\iunit}
+% \macro{\piconst}
+% Define macros for mathematical constants.
+% Use |\uppi| for upright |\pi| if available at the time of loading,
+% otherwise use plain |\pi| hoping for availability of an upright version:
+%    \begin{macrocode}
+\let\mafx@econst@class=\mathinner
+\DeclareRobustCommand{\mafx@econstup}{\mafx@econst@class{\operator@font e}}
+\DeclareRobustCommand{\mafx@econstit}{\mafx@econst@class{\mathnormal{e}}}
+\DeclareRobustCommand{\mafx@iunitup}{{\operator@font i}}
+\DeclareRobustCommand{\mafx@iunitit}{{\mathnormal{i}}}
+\DeclareRobustCommand{\mafx@iunitnb}{{\mathnormal{\mathring\imath}}}
+\ifdefined\uppi
+\DeclareRobustCommand{\mafx@piconstup}{{\uppi}}
+\else\ifdefined\symup
+\DeclareRobustCommand{\mafx@piconstup}{{\symup{\pi}}}
+\else
+\DeclareRobustCommand{\mafx@piconstup}{{\operator@font\pi}}
+\fi\fi
+\ifdefined\symit
+\DeclareRobustCommand{\mafx@piconstit}{{\symit{\pi}}}
+\else
+\DeclareRobustCommand{\mafx@piconstit}{{\mathnormal{\pi}}}
+\fi
+%    \end{macrocode}
+
+% \macro{econst}
+% \macro{numsetclass}
+% \macro{iunit}
+% \macro{piconst}
+% Implement mathematical constants individually
+% with the option to adjust their macro names:
+%    \begin{macrocode}
+\define@key{mafx@}{econst}[\econst]{\let#1=\mafx@econstup}
+\define@key{mafx@}{econst*}[\econst]{\let#1=\mafx@econstit}
+\define@key{mafx@}{econstclass}{\let\mafx@econst@class=#1}
+\define@key{mafx@}{iunit}[\iunit]{\let#1=\mafx@iunitup}
+\define@key{mafx@}{iunit*}[\iunit]{\let#1=\mafx@iunitit}
+\define@key{mafx@}{iunit*nb}[\iunit]{\let#1=\mafx@iunitnb}
+\define@key{mafx@}{piconst}[\piconst]{\let#1=\mafx@piconstup}
+\define@key{mafx@}{piconst*}[\piconst]{\let#1=\mafx@piconstit}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Derivative Symbols.}
+%
+% Define macros for derivative symbols:
+%    \begin{macrocode}
+\DeclareRobustCommand{\mafx@derup}{{\operator@font d}}
+\DeclareRobustCommand{\mafx@derit}{{\mathnormal{d}}}
+\DeclareRobustCommand{\mafx@diffup}[1]{\mathinner{\mafx@derup#1}}
+\DeclareRobustCommand{\mafx@diffit}[1]{\mathinner{\mafx@derit#1}}
+%    \end{macrocode}
+
+% Implement derivative symbols individually
+% with the option to adjust their macro names:
+%    \begin{macrocode}
+\define@key{mafx@}{der}[\der]{\let#1=\mafx@derup}
+\define@key{mafx@}{der*}[\der]{\let#1=\mafx@derit}
+\define@key{mafx@}{diff}[\diff]{\let#1=\mafx@diffup}
+\define@key{mafx@}{diff*}[\diff]{\let#1=\mafx@diffit}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Assorted Symbols.}
+%
+% Define macros for assorted symbols:
+%    \begin{macrocode}
+\DeclareRobustCommand{\mafx@order}{\mathnormal{o}}
+\DeclareRobustCommand{\mafx@Order}{\mathnormal{O}}
+\DeclareRobustCommand{\mafx@OrderCal}{\mathcal{O}}
+\DeclareRobustCommand{\mafx@defeq}{\mathrel{\mathop:}=}
+\DeclareRobustCommand{\mafx@eqdef}{=\mathrel{\mathop:}}
+\DeclareRobustCommand{\mafx@lapl}{\mathnormal{\Delta}}
+%    \end{macrocode}
+
+% Implement assorted symbols individually
+% with the option to adjust their macro names:
+%    \begin{macrocode}
+\define@key{mafx@}{order}[\order]{\let#1=\mafx@order}
+\define@key{mafx@}{Order}[\Order]{\let#1=\mafx@Order}
+\define@key{mafx@}{Order*}[\Order]{\let#1=\mafx@OrderCal}
+\define@key{mafx@}{defeq}[\defeq]{\let#1=\mafx@defeq}
+\define@key{mafx@}{eqdef}[\eqdef]{\let#1=\mafx@eqdef}
+\define@key{mafx@}{lapl}[\lapl]{\let#1=\mafx@lapl}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Number Sets.}
+%
+% \macro{\numset}
+% Define macros for number sets.
+% Use default font |\mathbb| if available, otherwise |\mathbf|:
+%    \begin{macrocode}
+\ifdefined\mathbb
+\let\mafx@numset@font=\mathbb
+\else
+\let\mafx@numset@font=\mathbf
+\fi
+\DeclareRobustCommand{\mafx@numset}{\mafx@numset@font}
+\DeclareRobustCommand{\mafx@numsetZ}{\mafx@numset{Z}}
+\DeclareRobustCommand{\mafx@numsetQ}{\mafx@numset{Q}}
+\DeclareRobustCommand{\mafx@numsetR}{\mafx@numset{R}}
+\DeclareRobustCommand{\mafx@numsetC}{\mafx@numset{C}}
+\DeclareRobustCommand{\mafx@numsetH}{\mafx@numset{H}}
+\DeclareRobustCommand{\mafx@numsetN}{\mafx@numset{N}}
+\DeclareRobustCommand{\mafx@numsetO}{\mafx@numset{O}}
+%    \end{macrocode}
+
+% \macro{numset}
+% \macro{numsetfont}
+% \macro{numsets}
+% Implement number set font and a collection of standard number sets by name:
+%    \begin{macrocode}
+\define@key{mafx@}{numset}[\numset]{\let#1=\mafx@numset}
+\define@key{mafx@}{numsetfont}{\let\mafx@numset@font=#1}
+\define@key{mafx@}{numsets}[]{%
+  \let\Integer=\mafx@numsetZ
+  \let\Rational=\mafx@numsetQ
+  \let\Real=\mafx@numsetR
+  \let\Complex=\mafx@numsetC
+  \let\Quaternion=\mafx@numsetH
+  \let\Natural=\mafx@numsetN
+  \let\Octonion=\mafx@numsetO
+}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Package Options.}
 %
 % \macro{\ProvideMathFix}
@@ -1390,7 +2277,7 @@ aG\alpha\Gamma
 \newcommand{\ProvideMathFix}[1]{\setkeys{mafx@}{#1}}
 %    \end{macrocode}
 
-% Pass undeclared options on to \textsf{keyval} processing:
+% Pass undeclared options on to \ctanpkg{keyval} processing:
 %    \begin{macrocode}
 \DeclareOption*{\expandafter\ProvideMathFix\expandafter{\CurrentOption}}
 %    \end{macrocode}

@@ -6,18 +6,18 @@
 %%
 %% mathfixs.dtx  (with options: `package')
 %% 
-%% Copyright (C) 2018 Niklas Beisert
+%% Copyright (C) 2018-2024 Niklas Beisert
 %% 
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either version 1.3
 %% of this license or (at your option) any later version.
 %% The latest version of this license is in
-%%   http://www.latex-project.org/lppl.txt
-%% and version 1.3 or later is part of all distributions of LaTeX
-%% version 2005/12/01 or later.
+%%   https://www.latex-project.org/lppl.txt
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{mathfixs}[2018/12/30 v1.01 various fixes for math mode]
+\ProvidesPackage{mathfixs}[2024/10/23 v1.1 various fixes for math mode]
 
 \RequirePackage{keyval}
 
@@ -40,16 +40,16 @@
 
 \ifdefined\@@over\else\let\@@over=\over\fi
 
-\def\mafx@frac@class{\mathinner}
+\let\mafx@frac@class=\mathinner
 \def\mafx@frac@delimclass{\mathopen{}\mathclose}
 
 \DeclareRobustCommand{\mafx@frac}[2]{%
     \mafx@frac@class{\begingroup#1\endgroup\@@over#2}}
 
-\def\mafx@@genfrac#1#2#3#4#5{\begingroup%
-  \ifx#2\@@overwithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi%
-  \ifx#2\@@abovewithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi%
-  \ifx#2\@@atopwithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi%
+\def\mafx@@genfrac#1#2#3#4#5{\begingroup
+  \ifx#2\@@overwithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi
+  \ifx#2\@@abovewithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi
+  \ifx#2\@@atopwithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi
   \mafx@frac@class{#1{\begingroup#4\endgroup#2#3\relax#5}}%
   \endgroup}
 
@@ -61,7 +61,7 @@
 \define@key{mafx@}{fracclass}{\def\mafx@frac@class{#1}}
 \define@key{mafx@}{fracdelimclass}{\def\mafx@frac@delimclass{#1}}
 
-\DeclareRobustCommand{\mafx@rfrac}[2]{{\mathchoice%
+\DeclareRobustCommand{\mafx@rfrac}[2]{{\mathchoice
   {\textstyle{\begingroup#1\endgroup\@@over#2}}%
   {\begingroup#1\endgroup\@@over#2}%
   {\begingroup#1\endgroup\@@over#2}%
@@ -69,7 +69,7 @@
 
 \define@key{mafx@}{rfrac}[\rfrac]{\let#1=\mafx@rfrac}
 
-\def\mafx@vfrac@class{\mathinner}
+\let\mafx@vfrac@class=\mathinner
 \def\mafx@vfrac@preskip{\thinmuskip}
 \def\mafx@vfrac@postskip{0.6667\thinmuskip}
 \DeclareRobustCommand{\mafx@vfrac}[2]{\ifmmode%
@@ -92,20 +92,20 @@
 \DeclareRobustCommand\mafx@sqrt{\@ifnextchar[\@sqrt{\@sqrt[]}}
 \def\mafx@@sqrt[#1]{\root#1\of}
 
-\def\mafx@root#1\of{
+\def\mafx@root#1\of{%
   \setbox\rootbox\hbox{$\m@th\scriptscriptstyle{%
     \gdef\mafx@gleftroot{0}\gdef\mafx@guproot{0}%
     \def\leftroot##1{\gdef\mafx@gleftroot{##1}}%
     \def\uproot##1{\gdef\mafx@guproot{##1}}%
     #1}$}%
-  \let\mafx@leftroot=\mafx@gleftroot%
-  \let\mafx@uproot=\mafx@guproot%
+  \let\mafx@leftroot=\mafx@gleftroot
+  \let\mafx@uproot=\mafx@guproot
   \mathpalette\r@@t}
 
 \def\mafx@r@@t#1#2{\mafx@root@class{%
-  \ifx#1\scriptstyle\let\mafx@tmp@fontsel=\scriptfont\else%
-  \ifx#1\scriptscriptstyle\let\mafx@tmp@fontsel=\scriptscriptfont\else%
-  \let\mafx@tmp@fontsel=\textfont\fi\fi%
+  \ifx#1\scriptstyle\let\mafx@tmp@fontsel=\scriptfont\else
+  \ifx#1\scriptscriptstyle\let\mafx@tmp@fontsel=\scriptscriptfont\else
+  \let\mafx@tmp@fontsel=\textfont\fi\fi
   \sbox\z@{$\m@th#1\nulldelimiterspace=\z@\radical\z@{#2}$}%
   \setlength\dimen@{\ht\z@}%
   \ifx#1\displaystyle
@@ -124,18 +124,18 @@
   \setbox\@ne\hbox{$\m@th#1\mskip\mafx@uproot mu$}%
   \addtolength\dimen@{\wd\@ne}%
   \mkern-\mafx@leftroot mu%
-  \raise\dimen@\copy\rootbox%
+  \raise\dimen@\copy\rootbox
   \mkern\mafx@leftroot mu%
   \kern-0.6\wd\z@%
   \mkern\mafx@root@preskip\sqrtsign{#2\mskip\mafx@root@endskip}%
-  \ifx\mafx@root@close\@empty\else%
+  \ifx\mafx@root@close\@empty\else
   \setlength\dimen@{\fontdimen8\mafx@tmp@fontsel3}%
   \lower\dimen@\hbox{%
     \vrule width\dimen@ height\ht\z@ depth -\mafx@root@close\ht\z@}%
   \fi%
   \mkern\mafx@root@postskip}}
 
-\define@key{mafx@}{root}[]{
+\define@key{mafx@}{root}[]{%
   \let\sqrt=\mafx@sqrt
   \let\@sqrt=\mafx@@sqrt
   \let\root=\mafx@root
@@ -143,7 +143,7 @@
 }
 
 \define@key{mafx@}{rootclose}[0.8]{\def\mafx@root@close{#1}}
-\define@key{mafx@}{rootclass}{\def\mafx@root@class{#1}}
+\define@key{mafx@}{rootclass}{\let\mafx@root@class=#1}
 \define@key{mafx@}{rootskipend}{\def\mafx@root@endskip{#1}}
 \define@key{mafx@}{rootskippre}{\def\mafx@root@preskip{#1}}
 \define@key{mafx@}{rootskippost}{\def\mafx@root@postskip{#1}}
@@ -151,7 +151,7 @@
 \let\mafx@old@dot=\.
 \def\mafx@dot@skip{\thinmuskip}
 \def\mafx@dot{\mskip\mafx@dot@skip}
-\def\mafx@per@dot{\begingroup\ifmmode\def\mafx@tmp{\mafx@dot}\else%
+\def\mafx@per@dot{\begingroup\ifmmode\def\mafx@tmp{\mafx@dot}\else
   \def\mafx@tmp{\mafx@old@dot}\fi\expandafter\endgroup\mafx@tmp}
 
 \define@key{mafx@}{multskip}[\thinmuskip]{%
@@ -245,6 +245,185 @@
   \expandafter\let\csname #1varphi\endcsname=\mafx@varphi
   \expandafter\let\csname #1varrho\endcsname=\mafx@varrho
   \expandafter\let\csname #1varsigma\endcsname=\mafx@varsigma
+}
+
+\DeclareMathOperator{\mafx@sgn}{sgn}
+\DeclareMathOperator*{\mafx@res}{res}
+\DeclareMathOperator{\mafx@lcm}{lcm}
+\DeclareMathOperator{\mafx@span}{span}
+\DeclareMathOperator{\mafx@diag}{diag}
+\DeclareMathOperator{\mafx@spec}{spec}
+\DeclareMathOperator{\mafx@const}{const}
+\DeclareMathOperator{\mafx@id}{id}
+\DeclareMathOperator{\mafx@tr}{tr}
+
+\define@key{mafx@}{sgn}[\sgn]{\let#1=\mafx@sgn}
+\define@key{mafx@}{res}[\res]{\let#1=\mafx@res}
+\define@key{mafx@}{lcm}[\lcm]{\let#1=\mafx@lcm}
+\define@key{mafx@}{diag}[\diag]{\let#1=\mafx@diag}
+\define@key{mafx@}{span}[\Span]{\let#1=\mafx@span}
+\define@key{mafx@}{spec}[\spec]{\let#1=\mafx@spec}
+\define@key{mafx@}{const}[\const]{\let#1=\mafx@const}
+\define@key{mafx@}{id}[\id]{\let#1=\mafx@id}
+\define@key{mafx@}{tr}[\tr]{\let#1=\mafx@tr}
+\define@key{mafx@}{genop}[]{%
+  \ProvideMathFix{sgn,res,lcm,diag,span,spec,const}%
+}
+
+\DeclareMathOperator{\mafx@Re}{Re}
+\DeclareMathOperator{\mafx@Im}{Im}
+
+\define@key{mafx@}{reim}[\Re\Im]{%
+  \expandafter\let\@firstoftwo#1=\mafx@Re
+  \expandafter\let\@secondoftwo#1=\mafx@Im
+}
+
+\DeclareMathOperator{\mafx@arccot}{arccot}
+\DeclareMathOperator{\mafx@arcsec}{arcsec}
+\DeclareMathOperator{\mafx@arccsc}{arccsc}
+
+\define@key{mafx@}{trig}[]{%
+  \let\arccot=\mafx@arccot
+  \let\arcsec=\mafx@arcsec
+  \let\arccsc=\mafx@arccsc
+}
+
+\DeclareMathOperator{\mafx@sech}{sech}
+\DeclareMathOperator{\mafx@csch}{csch}
+\DeclareMathOperator{\mafx@arsinh}{arsinh}
+\DeclareMathOperator{\mafx@arcosh}{arcosh}
+\DeclareMathOperator{\mafx@artanh}{artanh}
+\DeclareMathOperator{\mafx@arcoth}{arcoth}
+\DeclareMathOperator{\mafx@arsech}{arsech}
+\DeclareMathOperator{\mafx@arcsch}{arcsch}
+
+\define@key{mafx@}{hyp}[]{%
+  \let\sech=\mafx@sech
+  \let\csch=\mafx@csch
+  \let\arsinh=\mafx@arsinh
+  \let\arcosh=\mafx@arcosh
+  \let\artanh=\mafx@artanh
+  \let\arcoth=\mafx@arcoth
+  \let\arsech=\mafx@arsech
+  \let\arcsch=\mafx@arcsch
+}
+
+\DeclareMathOperator{\mafx@dom}{dom}
+\DeclareMathOperator{\mafx@supp}{supp}
+\DeclareMathOperator{\mafx@codom}{codom}
+\DeclareMathOperator{\mafx@im}{im}
+\DeclareMathOperator{\mafx@rank}{rank}
+\DeclareMathOperator{\mafx@coker}{coker}
+
+\define@key{mafx@}{mapchar}[\im]{%
+  \let\dom=\mafx@dom
+  \let\supp=\mafx@supp
+  \let\codom=\mafx@codom
+  \let#1=\mafx@im
+  \let\rank=\mafx@rank
+  \let\coker=\mafx@coker
+}
+
+\DeclareMathOperator{\mafx@Hom}{Hom}
+\DeclareMathOperator{\mafx@End}{End}
+\DeclareMathOperator{\mafx@Isom}{Isom}
+\DeclareMathOperator{\mafx@Aut}{Aut}
+
+\define@key{mafx@}{mapclass}[]{%
+  \let\Hom=\mafx@Hom
+  \let\Eng=\mafx@Eng
+  \let\Isom=\mafx@Isom
+  \let\Aut=\mafx@Aut
+}
+
+\DeclareMathOperator{\mafx@grad}{grad}
+\DeclareMathOperator{\mafx@div}{div}
+\DeclareMathOperator{\mafx@curl}{curl}
+\DeclareMathOperator{\mafx@rot}{rot}
+
+\define@key{mafx@}{vecdiff}[]{%
+  \let\grad=\mafx@grad
+  \let\div=\mafx@div
+  \let\curl=\mafx@curl
+}
+\define@key{mafx@}{vecrot}[\curl]{\let#1=\mafx@rot}
+
+\let\mafx@econst@class=\mathinner
+\DeclareRobustCommand{\mafx@econstup}{\mafx@econst@class{\operator@font e}}
+\DeclareRobustCommand{\mafx@econstit}{\mafx@econst@class{\mathnormal{e}}}
+\DeclareRobustCommand{\mafx@iunitup}{{\operator@font i}}
+\DeclareRobustCommand{\mafx@iunitit}{{\mathnormal{i}}}
+\DeclareRobustCommand{\mafx@iunitnb}{{\mathnormal{\mathring\imath}}}
+\ifdefined\uppi
+\DeclareRobustCommand{\mafx@piconstup}{{\uppi}}
+\else\ifdefined\symup
+\DeclareRobustCommand{\mafx@piconstup}{{\symup{\pi}}}
+\else
+\DeclareRobustCommand{\mafx@piconstup}{{\operator@font\pi}}
+\fi\fi
+\ifdefined\symit
+\DeclareRobustCommand{\mafx@piconstit}{{\symit{\pi}}}
+\else
+\DeclareRobustCommand{\mafx@piconstit}{{\mathnormal{\pi}}}
+\fi
+
+\define@key{mafx@}{econst}[\econst]{\let#1=\mafx@econstup}
+\define@key{mafx@}{econst*}[\econst]{\let#1=\mafx@econstit}
+\define@key{mafx@}{econstclass}{\let\mafx@econst@class=#1}
+\define@key{mafx@}{iunit}[\iunit]{\let#1=\mafx@iunitup}
+\define@key{mafx@}{iunit*}[\iunit]{\let#1=\mafx@iunitit}
+\define@key{mafx@}{iunit*nb}[\iunit]{\let#1=\mafx@iunitnb}
+\define@key{mafx@}{piconst}[\piconst]{\let#1=\mafx@piconstup}
+\define@key{mafx@}{piconst*}[\piconst]{\let#1=\mafx@piconstit}
+
+\DeclareRobustCommand{\mafx@derup}{{\operator@font d}}
+\DeclareRobustCommand{\mafx@derit}{{\mathnormal{d}}}
+\DeclareRobustCommand{\mafx@diffup}[1]{\mathinner{\mafx@derup#1}}
+\DeclareRobustCommand{\mafx@diffit}[1]{\mathinner{\mafx@derit#1}}
+
+\define@key{mafx@}{der}[\der]{\let#1=\mafx@derup}
+\define@key{mafx@}{der*}[\der]{\let#1=\mafx@derit}
+\define@key{mafx@}{diff}[\diff]{\let#1=\mafx@diffup}
+\define@key{mafx@}{diff*}[\diff]{\let#1=\mafx@diffit}
+
+\DeclareRobustCommand{\mafx@order}{\mathnormal{o}}
+\DeclareRobustCommand{\mafx@Order}{\mathnormal{O}}
+\DeclareRobustCommand{\mafx@OrderCal}{\mathcal{O}}
+\DeclareRobustCommand{\mafx@defeq}{\mathrel{\mathop:}=}
+\DeclareRobustCommand{\mafx@eqdef}{=\mathrel{\mathop:}}
+\DeclareRobustCommand{\mafx@lapl}{\mathnormal{\Delta}}
+
+\define@key{mafx@}{order}[\order]{\let#1=\mafx@order}
+\define@key{mafx@}{Order}[\Order]{\let#1=\mafx@Order}
+\define@key{mafx@}{Order*}[\Order]{\let#1=\mafx@OrderCal}
+\define@key{mafx@}{defeq}[\defeq]{\let#1=\mafx@defeq}
+\define@key{mafx@}{eqdef}[\eqdef]{\let#1=\mafx@eqdef}
+\define@key{mafx@}{lapl}[\lapl]{\let#1=\mafx@lapl}
+
+\ifdefined\mathbb
+\let\mafx@numset@font=\mathbb
+\else
+\let\mafx@numset@font=\mathbf
+\fi
+\DeclareRobustCommand{\mafx@numset}{\mafx@numset@font}
+\DeclareRobustCommand{\mafx@numsetZ}{\mafx@numset{Z}}
+\DeclareRobustCommand{\mafx@numsetQ}{\mafx@numset{Q}}
+\DeclareRobustCommand{\mafx@numsetR}{\mafx@numset{R}}
+\DeclareRobustCommand{\mafx@numsetC}{\mafx@numset{C}}
+\DeclareRobustCommand{\mafx@numsetH}{\mafx@numset{H}}
+\DeclareRobustCommand{\mafx@numsetN}{\mafx@numset{N}}
+\DeclareRobustCommand{\mafx@numsetO}{\mafx@numset{O}}
+
+\define@key{mafx@}{numset}[\numset]{\let#1=\mafx@numset}
+\define@key{mafx@}{numsetfont}{\let\mafx@numset@font=#1}
+\define@key{mafx@}{numsets}[]{%
+  \let\Integer=\mafx@numsetZ
+  \let\Rational=\mafx@numsetQ
+  \let\Real=\mafx@numsetR
+  \let\Complex=\mafx@numsetC
+  \let\Quaternion=\mafx@numsetH
+  \let\Natural=\mafx@numsetN
+  \let\Octonion=\mafx@numsetO
 }
 
 \newcommand{\ProvideMathFix}[1]{\setkeys{mafx@}{#1}}
