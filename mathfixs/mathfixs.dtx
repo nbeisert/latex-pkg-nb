@@ -18,10 +18,10 @@
 % and the derived files mathfixs.sty and mafxsamp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mathfixs}[2024/10/23 v1.1 various fixes for math mode]
-%<sample>\ProvidesFile{mafxsamp.tex}[2024/10/23 v1.1 sample for mathfixs]
+%<package>\ProvidesPackage{mathfixs}[2024/10/25 v1.11 various fixes for math mode]
+%<sample>\ProvidesFile{mafxsamp.tex}[2024/10/25 v1.11 sample for mathfixs]
 %<*driver>
-\def\thedate#1{2024/10/23}\def\theversion#1{v1.1}
+\def\thedate#1{2024/10/25}\def\theversion#1{v1.11}
 \ProvidesFile{mathfixs.dtx}[\thedate{} \theversion{} mathfixs reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -1160,6 +1160,14 @@ offering a more advanced implementation.
 \subsection{Revision History}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.11:} 2024/10/25
+
+\begin{itemize}
+\item
+fixed misspelled definition |\End|
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.1:} 2024/10/23
 
 \begin{itemize}
@@ -2102,7 +2110,7 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 %    \begin{macrocode}
 \define@key{mafx@}{mapclass}[]{%
   \let\Hom=\mafx@Hom
-  \let\Eng=\mafx@Eng
+  \let\End=\mafx@End
   \let\Isom=\mafx@Isom
   \let\Aut=\mafx@Aut
 }
