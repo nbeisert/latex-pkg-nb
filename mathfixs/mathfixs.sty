@@ -17,7 +17,7 @@
 %% version 2005/12/01 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{mathfixs}[2018/01/17 v1.0 various fixes for math mode]
+\ProvidesPackage{mathfixs}[2018/12/30 v1.01 various fixes for math mode]
 
 \RequirePackage{keyval}
 
@@ -72,7 +72,7 @@
 \def\mafx@vfrac@class{\mathinner}
 \def\mafx@vfrac@preskip{\thinmuskip}
 \def\mafx@vfrac@postskip{0.6667\thinmuskip}
-\newcommand{\mafx@vfrac}[2]{\ifmmode%
+\DeclareRobustCommand{\mafx@vfrac}[2]{\ifmmode%
   \mafx@vfrac@class{\textstyle%
     ^{#1}\mkern-\mafx@vfrac@preskip/\mkern-\mafx@vfrac@postskip_{#2}}%
   \else$\mafx@vfrac{#1}{#2}$\fi}

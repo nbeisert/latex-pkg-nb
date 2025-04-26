@@ -1,4 +1,4 @@
-mathfixs v1.0
+mathfixs v1.01
 Copyright 2018 Niklas Beisert
 
 mathfixs is a LaTeX2e package to fix some odd behaviour in math mode

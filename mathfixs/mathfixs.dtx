@@ -18,10 +18,10 @@
 % and the derived files mathfixs.sty and mafxsamp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mathfixs}[2018/01/17 v1.0 various fixes for math mode]
-%<sample>\ProvidesFile{mafxsamp.tex}[2018/01/17 v1.0 sample for mathfixs]
+%<package>\ProvidesPackage{mathfixs}[2018/12/30 v1.01 various fixes for math mode]
+%<sample>\ProvidesFile{mafxsamp.tex}[2018/12/30 v1.01 sample for mathfixs]
 %<*driver>
-%\ProvidesFile{mathfixs.drv}[2018/01/17 v1.0 mathfixs reference manual file]
+%\ProvidesFile{mathfixs.drv}[2018/12/30 v1.01 mathfixs reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -40,12 +40,18 @@
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
 \hypersetup{pdflicenseurl={http://www.latex-project.org/lppl.txt}}
-\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K, Wolfgang-Pauli-Strasse 27}}
+\hypersetup{pdfcontactaddress={ETH Zurich, ITP, HIT K,
+  Wolfgang-Pauli-Strasse 27}}
 \hypersetup{pdfcontactpostcode={8093}}
 \hypersetup{pdfcontactcity={Zurich}}
 \hypersetup{pdfcontactcountry={Switzerland}}
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
 \hypersetup{pdfcontacturl={http://people.phys.ethz.ch/\xmptilde nbeisert/}}
+
+\parskip1ex
+\parindent0pt
+\let\olditemize\itemize
+\def\itemize{\olditemize\parskip0pt}
 
 \begin{document}
 
@@ -59,7 +65,7 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \hypersetup{pdfsubject={Manual for the LaTeX2e Package mathfixs}}
-\date{17 January 2018, \textsf{v1.0}}
+\date{30 December 2018, \textsf{v1.01}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -72,7 +78,10 @@ capital Greek letters.
 It also adds some related macros.
 \end{abstract}
 
+\begingroup
+\parskip0ex
 \tableofcontents
+\endgroup
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -234,8 +243,6 @@ and the ends of the math expression or subexpression in parentheses.
 Also, no space is generated
 in the script styles (|\|[|script|]|scriptstyle|).
 
-\medskip
-\noindent
 \DescribeMacro{\frac}
 The feature |frac| redefines the macro |\frac|
 such that all fractions have the inner math class
@@ -252,8 +259,6 @@ unnecessary in almost all situations,
 and leads to a rather uniform appearance
 without further adjustments.
 
-\medskip
-\noindent
 \DescribeMacro{\genfrac}
 \DescribeMacro{\dfrac}
 \DescribeMacro{\tfrac}
@@ -284,8 +289,6 @@ the redefined macro must be enclosed in a block
 when passed as an argument. For example, |x^\frac{1}{2}|
 produces an error and must be written as |x^{\frac{1}{2}}|.
 
-\medskip
-\noindent
 \DescribeMacro{fracclass}
 \DescribeMacro{fracdelimclass}
 The option |fracclass=|\textit{class}
@@ -318,8 +321,6 @@ has a more uniform appearance:
 \]
 %
 
-\medskip
-\noindent
 \DescribeMacro{\rfrac}
 The feature |rfrac| defines the macro |\rfrac|
 to typeset a fraction in text style or smaller.
@@ -350,8 +351,6 @@ the macro |\vfrac| also works in text mode.
 The optional argument |vfrac={\|\textit{cmd}|}| specifies
 an alternative command name |\|\textit{cmd} for |\vfrac|.
 
-\medskip
-\noindent
 \DescribeMacro{vfracclass}
 \DescribeMacro{vfracskippre}
 \DescribeMacro{vfracskippost}
@@ -409,8 +408,6 @@ y\mskip-5mu
 \]
 %
 
-\medskip
-\noindent
 \DescribeMacro{rootclass}
 \DescribeMacro{rootskipend}
 \DescribeMacro{rootskippre}
@@ -424,8 +421,6 @@ The options |rootskippre=|\textit{muskip}
 and |rootskippost=|\textit{muskip}
 define additional skip around the radical.
 
-\medskip
-\noindent
 \DescribeMacro{rootclose}
 The option |rootclose| adds a closing mark
 to the end of the top bar of radicals:
@@ -510,8 +505,6 @@ one can use |\mathnormal|,
 but this may be tedious if most capital Greek letters in a document
 actually represent variables.
 
-\medskip
-\noindent
 The feature |greekcaps| redefines the 11 capital Greek letters
 |\Gamma|, |\Delta|, |\Theta|, |\Lambda|, |\Xi|, |\Pi|,
 |\Sigma|, |\Upsilon|, |\Phi|, |\Psi| and |\Omega|
@@ -534,8 +527,6 @@ Lowercase Greek letters are fixed to the default math italic
 font because (unfortunately) no upright counterparts exist
 in the Compute Modern family of fonts.
 
-\medskip
-\noindent
 The feature |greeklower| redefines the 23 lowercase Greek letters
 |\alpha|, \ldots, |\omega|
 as well as their 6 variants
@@ -571,8 +562,6 @@ One might argue that it is bad practice to have math symbols in titles
 in the first place,
 but this point of view perhaps does not apply universally.
 
-\medskip
-\noindent
 \DescribeMacro{\bfseries}
 \DescribeMacro{\mdseries}
 The feature |autobold| overwrites the \LaTeX{} font commands
@@ -602,10 +591,6 @@ an alternative command name |\|\textit{cmd} for |\mathbold|, e.g.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-\begingroup
-\parskip1ex
-\parindent0pt
-
 Copyright \copyright{} 2018 Niklas Beisert
 
 This work may be distributed and/or modified under the
@@ -622,8 +607,6 @@ The Current Maintainer of this work is Niklas Beisert.
 
 This work consists of the files |README.txt|, |mathfixs.ins| and |mathfixs.dtx|
 as well as the derived files |mathfixs.sty|, |mafxsamp.tex| and |mathfixs.pdf|.
-
-\endgroup
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Files and Installation}
@@ -688,18 +671,26 @@ offering a more advanced implementation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\subsection{Feature Suggestions}
-%\label{sec:suggestions}
 %
 %The following is a list of features which may be useful for future
 %versions of this package:
 %%
 %\begin{itemize}
 %\item
-%...
+% redefine macros |\Re|, |\Im|, |\mod|
+% complete macros for trigonometric functions?
 %\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.01:} 2018/12/30
+
+\begin{itemize}
+\item
+fix for |\vfrac| in aligned math
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.0:} 2018/01/17
@@ -715,8 +706,6 @@ first version published on CTAN
 \appendix
 
 \settowidth\MacroIndent{\rmfamily\scriptsize 000\ }
-\parskip1ex
-\parindent0pt
 
  \DocInput{mathfixs.dtx}
 
@@ -727,7 +716,6 @@ first version published on CTAN
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Sample File}
-% \label{sec:sample}
 %\iffalse
 %<*sample>
 %\fi
@@ -923,7 +911,6 @@ aG\alpha\Gamma
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Implementation}
-% \label{sec:implementation}
 %\iffalse
 %<*package>
 %\fi
@@ -1080,7 +1067,7 @@ aG\alpha\Gamma
 % Define a vulgar representation of a rational number, e.g.: $^1\!/\!_2$.
 % Automatically switch to math mode if in text mode:
 %    \begin{macrocode}
-\newcommand{\mafx@vfrac}[2]{\ifmmode%
+\DeclareRobustCommand{\mafx@vfrac}[2]{\ifmmode%
   \mafx@vfrac@class{\textstyle%
     ^{#1}\mkern-\mafx@vfrac@preskip/\mkern-\mafx@vfrac@postskip_{#2}}%
   \else$\mafx@vfrac{#1}{#2}$\fi}
