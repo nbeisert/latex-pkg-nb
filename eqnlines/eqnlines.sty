@@ -21,7 +21,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[2020/10/01]
-\ProvidesPackage{eqnlines}[2025/04/03 v0.7 Single- and multi-line equations]
+\ProvidesPackage{eqnlines}[2025/04/09 v0.7.1 Single- and multi-line equations]
 \let\eql@false\@undefined
 \let\eql@true\@empty
 \ifdefined\dollardollar@begin
@@ -112,6 +112,9 @@
   \@ifpackageloaded{amsmath}{}{\AddToHook{package/amsmath/before}{#1}}}
 \def\eql@amsmath@undefine#1{\eql@amsmath@before{\let#1\@undefined}}
 \def\eql@amsmath@let#1#2{\eql@amsmath@undefine#1\let#1#2}
+\@ifpackageloaded{amsmath}{}{
+  \DeclareHookRule{package/amsmath/after}
+    {eqnlines}{after}{latex-lab-testphase-math}}
 \let\eql@tagging@on\eql@false
 \IfFormatAtLeastTF{2025-06-01}{%
   \csname tag_if_active:T\endcsname{\let\eql@tagging@on\eql@true}}{}
@@ -156,6 +159,7 @@
     }%
   }
   \def\eql@tagging@end{}
+  \def\eql@tagging@register@env{\math_register_env:n}
   \ExplSyntaxOff
 \else
   \def\eql@tagging@mathsave{}
@@ -173,6 +177,7 @@
   \def\eql@tagging@alignright{}
   \def\eql@tagging@start{}
   \def\eql@tagging@end{}
+  \def\eql@tagging@register@env{\@gobble}
 \fi
 \let\eql@tagsleft\eql@false
 \let\eql@layoutleft\eql@false
@@ -3913,6 +3918,7 @@
     {{eqnlines}{\eql@defaults@eqnlines}}}}
 \let\eql@provide@opt@equation\eql@true
 \let\eql@provide@opt@amsmathends\eql@true
+\let\eql@provide@opt@backup\eql@false
 \let\eql@provide@opt@amsmath\eql@true
 \let\eql@provide@opt@ang\eql@true
 \let\eql@provide@opt@eqref\eql@true
@@ -3922,6 +3928,9 @@
 \eql@define@key{setup}{amsmathends}[true]{%
   \eql@error@packageoption{#2}%
   \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@amsmathends}
+\eql@define@key{setup}{backup}[true]{%
+  \eql@error@packageoption{#2}%
+  \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@backup}
 \eql@define@key{setup}{amsmath}[true]{%
   \eql@error@packageoption{#2}%
   \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@amsmath}
@@ -4134,14 +4143,73 @@
     \eql@amsmath@endfix{alignedat}{aligned}%
   }
 }
-\def\eql@provide@env#1#2{%
+\def\eql@backup@env@amsmath#1{%
+  \eql@amsmath@after{%
+    \eql@provide@moveenv{ams#1}{#1}%
+    \eql@provide@moveenv{ams#1*}{#1*}%
+  }%
+}
+\def\eql@backup@env@equation{%
+  \eql@amsmath@after{%
+    \eql@provide@moveenv{amsequation}{equation}%
+    \eql@tagging@register@env{amsequation}%
+    \eql@provide@moveenv{amsequation*}{equation*}%
+    \eql@tagging@register@env{amsequation*}%
+  }%
+  \AddToHook{package/hyperref/after}{%
+    \@ifpackageloaded{amsmath}{}{%
+      \let\latexequation\H@equation
+      \let\endlatexequation\H@endequation
+      \eql@tagging@register@env{latexequation}%
+      \eql@provide@moveenv{hyperrefequation}{equation}%
+      \eql@tagging@register@env{hyperrefequation}%
+    }%
+  }%
+  \@ifpackageloaded{amsmath}{}{\@ifpackageloaded{hyperref}{}{%
+    \eql@provide@moveenv{latexequation}{equation}%
+    \eql@tagging@register@env{latexequation}%
+  }}%
+}
+\def\eql@backup@env@multlined{%
+  \AddToHook{package/mathtools/after}{%
+    \eql@provide@moveenv{amsmultlined}{multlined}%
+  }%
+}
+\def\eql@backup@env@subequations{%
+  \eql@amsmath@after{%
+    \eql@provide@moveenv{amssubequations}{subequations}%
+  }%
+  \AddToHook{package/hyperref/after}{%
+    \AddToHook{cmd/amssubequations/before}%
+    {%
+      \stepcounter{equation}%
+      \protected@edef\theHparentequation{\theHequation}%
+      \addtocounter{equation}{-1}%
+    }%
+    \AddToHook{cmd/amssubequations/after}%
+    {%
+      \def\theHequation{\theHparentequation\alph{equation}}%
+      \ignorespaces
+    }%
+  }%
+}
+\def\eql@backup@env{%
+  \eql@backup@env@equation
+  \eql@backup@env@amsmath{gather}
+  \eql@backup@env@amsmath{multline}
+  \eql@backup@env@amsmath{align}
+  \eql@backup@env@amsmath{flalign}
+  \eql@backup@env@amsmath{aligned}
+  \eql@backup@env@amsmath{gathered}
+  \eql@backup@env@multlined
+  \eql@backup@env@subequations
+}
+\def\eql@provide@env@amsmath#1#2{%
   \eql@provide@onlyonce{#1}{#2}%
   \ifdefined\eql@tmp
     \expandafter\eql@provide@moveenv\expandafter{\eql@tmp}{eql@#1}%
   \else
     \eql@amsmath@after{%
-      \eql@provide@moveenv{ams#1}{#1}%
-      \eql@provide@moveenv{ams#1*}{#1*}%
       \eql@provide@moveenv{#1}{eql@#1}%
       \eql@provide@moveenv{#1*}{eql@#1*}%
     }%
@@ -4161,22 +4229,14 @@
     \expandafter\eql@provide@moveenv\expandafter{\eql@tmp}{eql@equation}%
   \else
     \eql@amsmath@after{%
-      \eql@provide@moveenv{amsequation}{equation}%
-      \eql@provide@moveenv{amsequation*}{equation*}%
       \eql@provide@moveenv{equation}{eql@equation}%
       \eql@provide@moveenv{equation*}{eql@equation*}%
     }%
     \AddToHook{package/hyperref/after}{%
       \@ifpackageloaded{amsmath}{}{%
-        \let\latexequation\H@equation
-        \let\endlatexequation\H@endequation
-        \eql@provide@moveenv{hyperrefequation}{equation}%
         \eql@provide@moveenv{equation}{eql@equation}%
       }%
     }%
-    \@ifpackageloaded{amsmath}{}{\@ifpackageloaded{hyperref}{}{%
-      \eql@provide@moveenv{latexequation}{equation}%
-    }}%
     \eql@provide@moveenv{equation}{eql@equation}%
     \eql@provide@moveenv{equation*}{eql@equation*}%
     \eql@amsmath@before{\eql@provide@undefineenv{equation*}}%
@@ -4194,7 +4254,6 @@
     \expandafter\eql@provide@moveenv\expandafter{\eql@tmp}{eql@multlined}%
   \else
     \AddToHook{package/mathtools/after}{%
-      \eql@provide@moveenv{amsmultlined}{multlined}%
       \eql@provide@moveenv{multlined}{eql@multlined}%
     }%
     \eql@provide@moveenv{multlined}{eql@multlined}%
@@ -4209,7 +4268,6 @@
       \expandafter{\eql@tmp}{eql@subequations}%
   \else
     \eql@amsmath@after{%
-      \eql@provide@moveenv{amssubequations}{subequations}%
       \eql@provide@moveenv{subequations}{eql@subequations}%
     }%
     \AddToHook{package/hyperref/after}{%
@@ -4217,17 +4275,6 @@
       \AddToHook{cmd/subequations/after}[hyperref]{}%
       \RemoveFromHook{cmd/subequations/before}[hyperref]%
       \RemoveFromHook{cmd/subequations/after}[hyperref]%
-      \AddToHook{cmd/amssubequations/before}%
-      {%
-        \stepcounter{equation}%
-        \protected@edef\theHparentequation{\theHequation}%
-        \addtocounter{equation}{-1}%
-      }%
-      \AddToHook{cmd/amssubequations/after}%
-      {%
-        \def\theHequation{\theHparentequation\alph{equation}}%
-        \ignorespaces
-      }%
       \AddToHook{begindocument/end}{%
         \eql@provide@moveenv{subequations}{eql@subequations}%
       }%
@@ -4255,12 +4302,12 @@
   \let\>\eql@equations@ang@close
 }
 \eql@define@key{provide}{equation}[]{\eql@provide@env@equation{#1}}
-\eql@define@key{provide}{gather}[]{\eql@provide@env{gather}{#1}}
-\eql@define@key{provide}{multline}[]{\eql@provide@env{multline}{#1}}
-\eql@define@key{provide}{align}[]{\eql@provide@env{align}{#1}}
-\eql@define@key{provide}{flalign}[]{\eql@provide@env{flalign}{#1}}
-\eql@define@key{provide}{aligned}[]{\eql@provide@env{aligned}{#1}}
-\eql@define@key{provide}{gathered}[]{\eql@provide@env{gathered}{#1}}
+\eql@define@key{provide}{gather}[]{\eql@provide@env@amsmath{gather}{#1}}
+\eql@define@key{provide}{multline}[]{\eql@provide@env@amsmath{multline}{#1}}
+\eql@define@key{provide}{align}[]{\eql@provide@env@amsmath{align}{#1}}
+\eql@define@key{provide}{flalign}[]{\eql@provide@env@amsmath{flalign}{#1}}
+\eql@define@key{provide}{aligned}[]{\eql@provide@env@amsmath{aligned}{#1}}
+\eql@define@key{provide}{gathered}[]{\eql@provide@env@amsmath{gathered}{#1}}
 \eql@define@key{provide}{multlined}[]{\eql@provide@env@multlined{#1}}
 \eql@define@key{provide}{subequations}[]{\eql@provide@env@subequations{#1}}
 \eql@define@key{provide}{sqr}[]{\eql@provide@sqr}
@@ -4306,8 +4353,9 @@
     \fi
   }
 \fi
-\ifdefined\eql@provide@opt@equation\eqnlinesprovide{equation,sqr}\fi
 \ifdefined\eql@provide@opt@amsmathends\eql@amsmath@fixends\fi
+\ifdefined\eql@provide@opt@backup\eql@backup@env\fi
+\ifdefined\eql@provide@opt@equation\eqnlinesprovide{equation,sqr}\fi
 \ifdefined\eql@provide@opt@amsmath
   \eqnlinesprovide{%
     multline,gather,align,flalign,%

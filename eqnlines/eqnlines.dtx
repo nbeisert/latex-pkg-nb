@@ -23,10 +23,10 @@
 % and the derived files eqnlines.sty.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[2020/10/01]
-%<package&!dev>\ProvidesPackage{eqnlines}[2025/04/03 v0.7 Single- and multi-line equations]
-%<package&dev>\ProvidesPackage{eqnlines-dev}[2025/04/03 v0.7 Single- and multi-line equations (development)]
+%<package&!dev>\ProvidesPackage{eqnlines}[2025/04/09 v0.7.1 Single- and multi-line equations]
+%<package&dev>\ProvidesPackage{eqnlines-dev}[2025/04/09 v0.7.1 Single- and multi-line equations (development)]
 %<*driver>
-\def\thedate#1{2025/04/03}\def\theversion#1{v0.7}
+\def\thedate#1{2025/04/09}\def\theversion#1{v0.7.1}
 \ProvidesFile{eqnlines.dtx}[\thedate{} \theversion{} eqnlines reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -1252,7 +1252,7 @@ to spot alongside equation context and somewhat out of place anyway.
 \DescribeKey{punct}
 The package supplies a semi-automatic scheme by which
 equations are terminated by a specific punctuation mark.
-\footnote{Clearly, the implementation of the scheme
+\unskip\footnote{Clearly, the implementation of the scheme
 will takes higher efforts than direct coding.
 Hence, the scheme can be useful in situations
 where equations typically terminate phrases or
@@ -1805,6 +1805,8 @@ option & type & description \\
                    environments and macros \\
 |amsmathends| & bool & patch \ctanpkg{amsmath} environments
                    with individual endings \\
+|backup| & bool & backup original \ctanpkg{amsmath} environments
+                   as |ams...| \\
 |ang| & bool & provide |\<|\ldots|\>| \\
 |eqref| & bool & provide |\eqref| \\
 \end{tabular}
@@ -1977,9 +1979,9 @@ of the package \ctanpkg{amsmath}.
 The present code is based on \ctanpkg{amsmath} v2.17t (2024/11/05).
 Compatibility with the \ctanpkg{amsmath} package is maintained
 whether \ctanpkg{eqnlines} is loaded before or after \ctanpkg{amsmath}.
-By default, \ctanpkg{eqnlines} will rename
-the math environments of \ctanpkg{amsmath} with a prefix |ams...|
-and overwrite them with its own implementations.
+By default, \ctanpkg{eqnlines} overwrites
+most math environments of \ctanpkg{amsmath} with its own implementations.
+It can also preserve them as |ams...| if needed.
 Alternatively, \ctanpkg{eqnlines} may assign individual names
 to the maths environments and preserve the ones of \ctanpkg{amsmath}.
 The other features provided by \ctanpkg{amsmath}
@@ -2045,11 +2047,11 @@ change |\@ifpackageloaded| to |\IfPackageLoaded...|
 when command is less recent.
 %
 \item
-allow amsmath loading after eqnlines when pdf tagging is active
-(cannot put a hook on latex-lab-amsmath)
+simplify |\advance| using |\dimexpr|, |\glueexpr|, |\numexpr|
 %
 \item
-simplify |\advance| using |\dimexpr|, |\glueexpr|, |\numexpr|
+|\intertext| might not collaborate correctly with pdf tagging
+%
 \end{itemize}
 \fi
 
@@ -2065,6 +2067,16 @@ simplify |\advance| using |\dimexpr|, |\glueexpr|, |\numexpr|
 \ldots
 \end{itemize}
 \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v0.7.1:} 2025/04/09
+
+\begin{itemize}
+\item
+improvements for pdf tagging
+\item
+backup all available math environments at the start using |backup| switch
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v0.7:} 2025/04/03
@@ -2456,6 +2468,13 @@ preview version published on CTAN
 \def\eql@amsmath@let#1#2{\eql@amsmath@undefine#1\let#1#2}
 %    \end{macrocode}
 %
+% \TODO temporary fix for development stages
+%    \begin{macrocode}
+\@ifpackageloaded{amsmath}{}{
+  \DeclareHookRule{package/amsmath/after}
+    {eqnlines}{after}{latex-lab-testphase-math}}
+%    \end{macrocode}
+%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{PDF Tagging Support}
 %
@@ -2527,6 +2546,7 @@ preview version published on CTAN
     }%
   }
   \def\eql@tagging@end{}
+  \def\eql@tagging@register@env{\math_register_env:n}
   \ExplSyntaxOff
 \else
   \def\eql@tagging@mathsave{}
@@ -2544,6 +2564,7 @@ preview version published on CTAN
   \def\eql@tagging@alignright{}
   \def\eql@tagging@start{}
   \def\eql@tagging@end{}
+  \def\eql@tagging@register@env{\@gobble}
 \fi
 %    \end{macrocode}
 %
@@ -4371,9 +4392,11 @@ preview version published on CTAN
 % \TODO there seems to be an offset of 1em in predisplaysize
 %   towards actual content, nice.
 % \TODO must not use setlength or setcounter when calc is loaded
+% \TODO do we actually need penalty adjustments
+%   in case of paragraphs above or below?
 %    \begin{macrocode}
 \def\eql@display@close{%
-% \TODO temporary fix
+% \TODO temporary fix for development stages
   \ifdefined\eql@tagging@on
     \ifdefined\dollardollar@begin\else
       \belowdisplayskip-\belowdisplayskip
@@ -4530,7 +4553,7 @@ preview version published on CTAN
   \fi
   \prevgraf\count@
   \global\eql@skip@mode@leave@\eql@skip@mode@leave@
-% \TODO temporary fix
+% \TODO temporary fix for development stages
   \ifdefined\eql@tagging@on
     \ifdefined\dollardollar@begin\else
       \belowdisplayskip-\belowdisplayskip
@@ -8636,6 +8659,7 @@ preview version published on CTAN
 %    \begin{macrocode}
 \let\eql@provide@opt@equation\eql@true
 \let\eql@provide@opt@amsmathends\eql@true
+\let\eql@provide@opt@backup\eql@false
 \let\eql@provide@opt@amsmath\eql@true
 \let\eql@provide@opt@ang\eql@true
 \let\eql@provide@opt@eqref\eql@true
@@ -8645,6 +8669,9 @@ preview version published on CTAN
 \eql@define@key{setup}{amsmathends}[true]{%
   \eql@error@packageoption{#2}%
   \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@amsmathends}
+\eql@define@key{setup}{backup}[true]{%
+  \eql@error@packageoption{#2}%
+  \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@backup}
 \eql@define@key{setup}{amsmath}[true]{%
   \eql@error@packageoption{#2}%
   \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@amsmath}
@@ -8907,14 +8934,93 @@ preview version published on CTAN
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@provide@env#1#2{%
+\def\eql@backup@env@amsmath#1{%
+  \eql@amsmath@after{%
+    \eql@provide@moveenv{ams#1}{#1}%
+    \eql@provide@moveenv{ams#1*}{#1*}%
+  }%
+}
+%    \end{macrocode}
+%
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@backup@env@equation{%
+  \eql@amsmath@after{%
+    \eql@provide@moveenv{amsequation}{equation}%
+    \eql@tagging@register@env{amsequation}%
+    \eql@provide@moveenv{amsequation*}{equation*}%
+    \eql@tagging@register@env{amsequation*}%
+  }%
+  \AddToHook{package/hyperref/after}{%
+    \@ifpackageloaded{amsmath}{}{%
+      \let\latexequation\H@equation
+      \let\endlatexequation\H@endequation
+      \eql@tagging@register@env{latexequation}%
+      \eql@provide@moveenv{hyperrefequation}{equation}%
+      \eql@tagging@register@env{hyperrefequation}%
+    }%
+  }%
+  \@ifpackageloaded{amsmath}{}{\@ifpackageloaded{hyperref}{}{%
+    \eql@provide@moveenv{latexequation}{equation}%
+    \eql@tagging@register@env{latexequation}%
+  }}%
+}
+%    \end{macrocode}
+%
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@backup@env@multlined{%
+  \AddToHook{package/mathtools/after}{%
+    \eql@provide@moveenv{amsmultlined}{multlined}%
+  }%
+}
+%    \end{macrocode}
+%
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@backup@env@subequations{%
+  \eql@amsmath@after{%
+    \eql@provide@moveenv{amssubequations}{subequations}%
+  }%
+  \AddToHook{package/hyperref/after}{%
+    \AddToHook{cmd/amssubequations/before}%
+    {%
+      \stepcounter{equation}%
+      \protected@edef\theHparentequation{\theHequation}%
+      \addtocounter{equation}{-1}%
+    }%
+    \AddToHook{cmd/amssubequations/after}%
+    {%
+      \def\theHequation{\theHparentequation\alph{equation}}%
+      \ignorespaces
+    }%
+  }%
+}
+%    \end{macrocode}
+%
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@backup@env{%
+  \eql@backup@env@equation
+  \eql@backup@env@amsmath{gather}
+  \eql@backup@env@amsmath{multline}
+  \eql@backup@env@amsmath{align}
+  \eql@backup@env@amsmath{flalign}
+  \eql@backup@env@amsmath{aligned}
+  \eql@backup@env@amsmath{gathered}
+  \eql@backup@env@multlined
+  \eql@backup@env@subequations
+}
+%    \end{macrocode}
+%
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@provide@env@amsmath#1#2{%
   \eql@provide@onlyonce{#1}{#2}%
   \ifdefined\eql@tmp
     \expandafter\eql@provide@moveenv\expandafter{\eql@tmp}{eql@#1}%
   \else
     \eql@amsmath@after{%
-      \eql@provide@moveenv{ams#1}{#1}%
-      \eql@provide@moveenv{ams#1*}{#1*}%
       \eql@provide@moveenv{#1}{eql@#1}%
       \eql@provide@moveenv{#1*}{eql@#1*}%
     }%
@@ -8938,22 +9044,14 @@ preview version published on CTAN
     \expandafter\eql@provide@moveenv\expandafter{\eql@tmp}{eql@equation}%
   \else
     \eql@amsmath@after{%
-      \eql@provide@moveenv{amsequation}{equation}%
-      \eql@provide@moveenv{amsequation*}{equation*}%
       \eql@provide@moveenv{equation}{eql@equation}%
       \eql@provide@moveenv{equation*}{eql@equation*}%
     }%
     \AddToHook{package/hyperref/after}{%
       \@ifpackageloaded{amsmath}{}{%
-        \let\latexequation\H@equation
-        \let\endlatexequation\H@endequation
-        \eql@provide@moveenv{hyperrefequation}{equation}%
         \eql@provide@moveenv{equation}{eql@equation}%
       }%
     }%
-    \@ifpackageloaded{amsmath}{}{\@ifpackageloaded{hyperref}{}{%
-      \eql@provide@moveenv{latexequation}{equation}%
-    }}%
     \eql@provide@moveenv{equation}{eql@equation}%
     \eql@provide@moveenv{equation*}{eql@equation*}%
     \eql@amsmath@before{\eql@provide@undefineenv{equation*}}%
@@ -8975,7 +9073,6 @@ preview version published on CTAN
     \expandafter\eql@provide@moveenv\expandafter{\eql@tmp}{eql@multlined}%
   \else
     \AddToHook{package/mathtools/after}{%
-      \eql@provide@moveenv{amsmultlined}{multlined}%
       \eql@provide@moveenv{multlined}{eql@multlined}%
     }%
     \eql@provide@moveenv{multlined}{eql@multlined}%
@@ -8994,7 +9091,6 @@ preview version published on CTAN
       \expandafter{\eql@tmp}{eql@subequations}%
   \else
     \eql@amsmath@after{%
-      \eql@provide@moveenv{amssubequations}{subequations}%
       \eql@provide@moveenv{subequations}{eql@subequations}%
     }%
     \AddToHook{package/hyperref/after}{%
@@ -9002,17 +9098,6 @@ preview version published on CTAN
       \AddToHook{cmd/subequations/after}[hyperref]{}%
       \RemoveFromHook{cmd/subequations/before}[hyperref]%
       \RemoveFromHook{cmd/subequations/after}[hyperref]%
-      \AddToHook{cmd/amssubequations/before}%
-      {%
-        \stepcounter{equation}%
-        \protected@edef\theHparentequation{\theHequation}%
-        \addtocounter{equation}{-1}%
-      }%
-      \AddToHook{cmd/amssubequations/after}%
-      {%
-        \def\theHequation{\theHparentequation\alph{equation}}%
-        \ignorespaces
-      }%
       \AddToHook{begindocument/end}{%
         \eql@provide@moveenv{subequations}{eql@subequations}%
       }%
@@ -9052,12 +9137,12 @@ preview version published on CTAN
 % \TODO describe
 %    \begin{macrocode}
 \eql@define@key{provide}{equation}[]{\eql@provide@env@equation{#1}}
-\eql@define@key{provide}{gather}[]{\eql@provide@env{gather}{#1}}
-\eql@define@key{provide}{multline}[]{\eql@provide@env{multline}{#1}}
-\eql@define@key{provide}{align}[]{\eql@provide@env{align}{#1}}
-\eql@define@key{provide}{flalign}[]{\eql@provide@env{flalign}{#1}}
-\eql@define@key{provide}{aligned}[]{\eql@provide@env{aligned}{#1}}
-\eql@define@key{provide}{gathered}[]{\eql@provide@env{gathered}{#1}}
+\eql@define@key{provide}{gather}[]{\eql@provide@env@amsmath{gather}{#1}}
+\eql@define@key{provide}{multline}[]{\eql@provide@env@amsmath{multline}{#1}}
+\eql@define@key{provide}{align}[]{\eql@provide@env@amsmath{align}{#1}}
+\eql@define@key{provide}{flalign}[]{\eql@provide@env@amsmath{flalign}{#1}}
+\eql@define@key{provide}{aligned}[]{\eql@provide@env@amsmath{aligned}{#1}}
+\eql@define@key{provide}{gathered}[]{\eql@provide@env@amsmath{gathered}{#1}}
 \eql@define@key{provide}{multlined}[]{\eql@provide@env@multlined{#1}}
 \eql@define@key{provide}{subequations}[]{\eql@provide@env@subequations{#1}}
 \eql@define@key{provide}{sqr}[]{\eql@provide@sqr}
@@ -9159,16 +9244,21 @@ preview version published on CTAN
 \fi
 %    \end{macrocode}
 %
-% Provide native \LaTeX{} environment |equation|
-% and symbolic shortcut |\[...\]| if desired:
-%    \begin{macrocode}
-\ifdefined\eql@provide@opt@equation\eqnlinesprovide{equation,sqr}\fi
-%    \end{macrocode}
-%
 % Make the ending statements for \ctanpkg{amsmath} environments independent
 % if desired, so that they may be overwritten individually:
 %    \begin{macrocode}
 \ifdefined\eql@provide@opt@amsmathends\eql@amsmath@fixends\fi
+%    \end{macrocode}
+%
+% \TODO describe
+%    \begin{macrocode}
+\ifdefined\eql@provide@opt@backup\eql@backup@env\fi
+%    \end{macrocode}
+%
+% Provide native \LaTeX{} environment |equation|
+% and symbolic shortcut |\[...\]| if desired:
+%    \begin{macrocode}
+\ifdefined\eql@provide@opt@equation\eqnlinesprovide{equation,sqr}\fi
 %    \end{macrocode}
 %
 % Provide \ctanpkg{amsmath} equation environments if desired:
