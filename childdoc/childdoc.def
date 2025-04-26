@@ -17,56 +17,97 @@
 %% version 2005/12/01 or later.
 %% 
 \ifdefined\childdocmain\endinput\fi
-\ProvidesFile{childdoc.def}[2018/01/17 v1.6 child document driver]
+\ProvidesFile{childdoc.def}[2018/12/30 v2.0 child document driver]
 
 \newif\ifchilddoc
+\newif\ifchilddocmanual
 
 \edef\childdocname{\scantokens\expandafter{\jobname\noexpand}}
+\let\childdocjob\childdocname
+
+\newcommand{\childdocdisable}
+{
+  \renewcommand{\childdocmain}[1]{\renewcommand{\childdocmain}[1]{\endinput}}
+  \renewcommand{\childdocof}[1]{}
+  \renewcommand{\childdocby}[2][]{}
+  \renewcommand{\childdocforward}[2][]{}
+  \renewcommand{\childdocdisable}{}
+}
 
 \newcommand{\childdocmain}[1]
 {
-  \renewcommand{\childdocmain}[1]{\endinput}
-  \renewcommand{\childdocof}[1]{}
-  \renewcommand{\childdocforward}[2][]{}
-  \begingroup
-    \def\childdoctmp{#1}
-    \ifx\childdocname\childdoctmp
-      \def\childdoctmp{\childdocfalse}
-    \else
-      \def\childdoctmp{\childdoctrue}
-    \fi
-    \expandafter
-  \endgroup
-  \childdoctmp
-  \ifchilddoc
-    \includeonly{\childdocname}
-    \def\jobname{#1}
+  \childdocdisable\childdocmain{}
+  \if?#1?\else
+    \begingroup
+      \def\childdoctmp{#1}
+      \ifx\childdoctmp\childdocname
+        \def\childdoctmp{}
+      \else
+        \def\childdoctmp
+        {
+          \childdoctrue
+          \includeonly{\childdocname}
+          \def\childdocjob{#1}
+          \def\jobname{#1}
+        }
+      \fi
+      \expandafter
+    \endgroup
+    \childdoctmp
   \fi
 }
 
-\newcommand{\childdoc}{\childdocmain}
-
 \newcommand{\childdocof}[1]
 {
+  \childdocdisable
+  \childdoctrue
+  \includeonly{\childdocname}
+  \def\jobname{#1}
+  \def\childdocjob{#1}
   \input{#1}
+}
+
+\newcommand{\childdocby}[2][]
+{
+  \childdocdisable
+  \childdoctrue
+  \childdocmanualtrue
+  \if?#1?\else
+    \def\jobname{#2}
+  \fi
+  \def\childdocjob{#2}
+  \input{#2}
+  \endinput
 }
 
 \newcommand{\childdocforward}[2][]
 {
-  \def\jobname{#2}
-  \def\childdocname{#2}
   \begingroup
-    \def\childdoctmp{#1}
-    \def\childdocempty{}
-    \ifx\childdoctmp\childdocempty
-      \def\childdoctmp{\input{#2}}
+    \if?#1?
+      \def\childdoctmp
+      {
+        \def\childdocname{#2}
+        \def\childdocjob{#2}
+        \def\jobname{#2}
+        \input{#2}
+        \endinput
+      }
     \else
-      \def\childdoctmp{\input{#1}}
+      \def\childdoctmp
+      {
+        \childdocdisable
+        \def\childdocname{#2}
+        \childdoctrue
+        \includeonly{#2}
+        \def\childdocjob{#1}
+        \def\jobname{#1}
+        \input{#1}
+        \endinput
+      }
     \fi
     \expandafter
   \endgroup
   \childdoctmp
-  \endinput
 }
 
 \newcommand{\childdocforwardprefix}[3][]
@@ -79,12 +120,12 @@
   \childdoctmp
 }
 
+\newcommand{\childdoc}{\childdocmain}
+
 \newcommand{\childdocredirect}[2][]
 {
   \begingroup
-    \def\childdoctmp{#1}
-    \def\childdocempty{}
-    \ifx\childdoctmp\childdocempty
+    \if?#1?
       \def\childdoctmp{\childdocforward{#2}}
     \else
       \def\childdoctmp{\childdocforwardprefix{#1}{#2}}
