@@ -18,10 +18,10 @@
 % and the derived files mathfixs.sty and mafxsamp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mathfixs}[2024/10/25 v1.11 various fixes for math mode]
-%<sample>\ProvidesFile{mafxsamp.tex}[2024/10/25 v1.11 sample for mathfixs]
+%<package>\ProvidesPackage{mathfixs}[2024/11/18 v1.12 various fixes for math mode]
+%<sample>\ProvidesFile{mafxsamp.tex}[2024/11/18 v1.12 sample for mathfixs]
 %<*driver>
-\def\thedate#1{2024/10/25}\def\theversion#1{v1.11}
+\def\thedate#1{2024/11/18}\def\theversion#1{v1.12}
 \ProvidesFile{mathfixs.dtx}[\thedate{} \theversion{} mathfixs reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -1160,6 +1160,14 @@ offering a more advanced implementation.
 \subsection{Revision History}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.12:} 2024/11/18
+
+\begin{itemize}
+\item
+fixed loading without \ctanpkg{amsmath}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.11:} 2024/10/25
 
 \begin{itemize}
@@ -1949,6 +1957,11 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Assorted Functions, Operators, Symbols.}
 %
+% The following definitions require \ctanpkg{amsmath}:
+%    \begin{macrocode}
+\ifdefined\DeclareMathOperator
+%    \end{macrocode}
+
 % Define macros for assorted functions, operators, symbols:
 %    \begin{macrocode}
 \DeclareMathOperator{\mafx@sgn}{sgn}
@@ -2143,6 +2156,11 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
   \let\curl=\mafx@curl
 }
 \define@key{mafx@}{vecrot}[\curl]{\let#1=\mafx@rot}
+%    \end{macrocode}
+
+% The above definitions required \ctanpkg{amsmath}:
+%    \begin{macrocode}
+\fi
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

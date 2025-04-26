@@ -17,7 +17,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{mathfixs}[2024/10/25 v1.11 various fixes for math mode]
+\ProvidesPackage{mathfixs}[2024/11/18 v1.12 various fixes for math mode]
 
 \RequirePackage{keyval}
 
@@ -247,6 +247,8 @@
   \expandafter\let\csname #1varsigma\endcsname=\mafx@varsigma
 }
 
+\ifdefined\DeclareMathOperator
+
 \DeclareMathOperator{\mafx@sgn}{sgn}
 \DeclareMathOperator*{\mafx@res}{res}
 \DeclareMathOperator{\mafx@lcm}{lcm}
@@ -347,6 +349,8 @@
   \let\curl=\mafx@curl
 }
 \define@key{mafx@}{vecrot}[\curl]{\let#1=\mafx@rot}
+
+\fi
 
 \let\mafx@econst@class=\mathinner
 \DeclareRobustCommand{\mafx@econstup}{\mafx@econst@class{\operator@font e}}
