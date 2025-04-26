@@ -21,7 +21,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[2020/10/01]
-\ProvidesPackage{eqnlines}[2025/02/25 v0.5 Single- and multi-line equations]
+\ProvidesPackage{eqnlines}[2025/03/11 v0.6 Single- and multi-line equations]
 \let\eql@ifnextchar@loose\kernel@ifnextchar
 \long\def\eql@ifnextchar@tight#1#2#3{%
   \let\reserved@d= #1%
@@ -99,8 +99,10 @@
 \def\eql@warn@tag@multiple{\eql@warning{Multiple equation \string\tag's:
       previous tag declaration will be lost}}
 \def\eql@amsmath@after#1{\AddToHook{package/amsmath/after}{#1}}
-\def\eql@amsmath@futurebefore#1{%
+\def\eql@amsmath@before#1{%
   \@ifpackageloaded{amsmath}{}{\AddToHook{package/amsmath/before}{#1}}}
+\def\eql@amsmath@undefine#1{\eql@amsmath@before{\let#1\@undefined}}
+\def\eql@amsmath@let#1#2{\eql@amsmath@undefine#1\let#1#2}
 \let\eql@false\@undefined
 \let\eql@true\@empty
 \newskip\eql@regunset@
@@ -109,7 +111,7 @@
   #1\eql@regunset@\relax
   \AtBeginDocument{%
     \ifdim#1=\eql@regunset@
-      \setlength#1{#2}%
+      #1\glueexpr#2\relax
     \fi
   }%
 }
@@ -134,30 +136,45 @@
 \def\eql@box@marginright{\z@skip}
 \def\eql@box@colsep{2em}
 \def\eql@spread{\jot}
+\newdimen\eql@spread@amount@
 \newdimen\eql@tagfuzz@
 \eql@tagfuzz@16sp\relax
-\newskip\eql@abovedisplayskip@
-\newskip\eql@belowdisplayskip@
-\newskip\eql@abovedisplaytagskip@
-\newskip\eql@belowdisplaytagskip@
-\eql@abovedisplaytagskip@\z@skip
-\eql@belowdisplaytagskip@\z@skip
-\newcount\eql@displayshortmode@
-\eql@displayshortmode@\tw@
-\newskip\eql@abovedisplaycontskip@
-\eql@regsetdelayed\eql@abovedisplaycontskip@\abovedisplayshortskip
-\newskip\eql@abovedisplaytopskip@
-\newskip\eql@belowdisplaytopskip@
-\eql@abovedisplaytopskip@\z@skip
-\eql@regsetdelayed\eql@belowdisplaytopskip@\belowdisplayskip
-\newskip\eql@abovedisplayparskip@
-\eql@regsetdelayed\eql@abovedisplayparskip@\abovedisplayskip
 \def\eql@display@height{\ht\eql@strutbox@}
 \def\eql@display@depth{\dp\eql@strutbox@}
-\newskip\eql@abovedisplaymedskip@
-\newskip\eql@belowdisplaymedskip@
-\eql@regsetdelayed\eql@abovedisplaymedskip@\belowdisplayshortskip
-\eql@regsetdelayed\eql@belowdisplaymedskip@\eql@belowdisplaymedskip@
+\newcount\eql@skip@mode@short@
+\eql@skip@mode@short@\tw@
+\newcount\eql@skip@mode@cont@
+\eql@skip@mode@cont@\z@
+\newcount\eql@skip@mode@par@
+\eql@skip@mode@par@\z@
+\newcount\eql@skip@mode@top@
+\eql@skip@mode@top@\z@
+\newcount\eql@skip@mode@leave@
+\let\eql@skip@force@leave\@undefined
+\newcount\eql@skip@mode@above@
+\newcount\eql@skip@mode@below@
+\let\eql@skip@force@above\@undefined
+\let\eql@skip@force@below\@undefined
+\let\eql@skip@custom@above\@undefined
+\let\eql@skip@custom@below\@undefined
+\def\eql@skip@long@above{\abovedisplayskip}
+\def\eql@skip@long@below{\belowdisplayskip}
+\def\eql@skip@short@above{\abovedisplayshortskip}
+\def\eql@skip@short@below{\belowdisplayshortskip}
+\def\eql@skip@cont@above{\eql@skip@short@above}
+\def\eql@skip@cont@below{\eql@skip@short@below}
+\def\eql@skip@par@above{\eql@skip@long@above}
+\def\eql@skip@par@below{\eql@skip@long@below}
+\def\eql@skip@top@above{\eql@skip@long@above}
+\def\eql@skip@top@below{\eql@skip@long@below}
+\def\eql@skip@med@above{\abovedisplayskip/2}
+\def\eql@skip@med@below{\belowdisplayskip/2}
+\def\eql@skip@tag@above{\z@skip}
+\def\eql@skip@tag@below{\z@skip}
+\def\eql@skip@partag@above{\z@skip}
+\def\eql@skip@partag@below{\z@skip}
+\def\eql@skip@medtag@above{\z@skip}
+\def\eql@skip@medtag@below{\z@skip}
 \newdimen\eql@colsepmin@
 \newdimen\eql@colsepmax@
 \def\eql@colsepmin@val{1em}
@@ -182,16 +199,18 @@
 \newdimen\eql@tagwidth@
 \newdimen\eql@line@height@
 \newdimen\eql@line@depth@
-\newif\ifmeasuring@
+\ifdefined\measuring@true\else
+  \expandafter\newif\csname ifmeasuring@\endcsname
+\fi
 \AddToHook{package/hyperref/after}{
   \ifdefined\Hy@ifnotmeasuring
     \renewcommand\Hy@ifnotmeasuring[1]{\ifmeasuring@\else#1\fi}
   \fi
 }
 \ifdefined\@displaytrue\else
-\everydisplay\expandafter{\the\everydisplay\@displaytrue}
+  \expandafter\newif\csname if@display\endcsname
+  \everydisplay\expandafter{\the\everydisplay\@displaytrue}
 \fi
-\newif\if@display
 \let\eql@hook@blockbefore\@empty
 \let\eql@hook@blockafter\@empty
 \let\eql@hook@blockin\@empty
@@ -205,6 +224,68 @@
 \let\eql@hook@innerleft\@empty
 \let\eql@hook@innerright\@empty
 \let\eql@hook@innerlead\@empty
+\let\eql@tagging@on\eql@false
+\IfFormatAtLeastTF{2025-06-01}{%
+  \csname tag_if_active:T\endcsname{\let\eql@tagging@on\eql@true}}{}
+\ifdefined\eql@tagging@on
+  \def\eql@tagging@mathsave{%
+    \UseTaggingSocket{math/luamml/save/nNn}{{}\displaystyle{mtd}}}
+  \def\eql@tagging@mathaddlast{%
+    \UseTaggingSocket{math/luamml/mtable/finalizecol}{last}}
+  \def\eql@tagging@tagbegin{%
+    \UseTaggingSocket{math/display/tag/begin}}
+  \def\eql@tagging@tagend{%
+    \UseTaggingSocket{math/display/tag/end}}
+  \def\eql@tagging@tagsave{%
+    \UseTaggingSocket{math/luamml/mtable/tag/save}}
+  \def\eql@tagging@tagaddbox{%
+    \setbox\z@\copy\eql@tagbox@%
+    \UseTaggingSocket{math/luamml/mtable/tag/set}}
+  \def\eql@tagging@tablesaveinner{%
+    \UseExpandableTaggingSocket{math/luamml/mtable/innertable/save}}
+  \def\eql@tagging@tableaddinner{%
+    \UseTaggingSocket{math/luamml/mtable/innertable/finalize}}
+  \def\eql@tagging@tablesavelines{%
+    \UseExpandableTaggingSocket{math/luamml/mtable/finalize}{gather}}
+  \def\eql@tagging@tablesavealign{%
+    \UseExpandableTaggingSocket{math/luamml/mtable/finalize}{align}}
+  \def\eql@tagging@alignleft{%
+    \UseTaggingSocket{math/luamml/mtable/aligncol}{left}}
+  \def\eql@tagging@aligncenter{%
+    \UseTaggingSocket{math/luamml/mtable/aligncol}{center}}
+  \def\eql@tagging@alignright{%
+    \UseTaggingSocket{math/luamml/mtable/aligncol}{right}}
+  \let\eql@single@doscan\eql@true
+  \let\eql@scan@body\eql@scan@body@rescan
+  \ExplSyntaxOn
+  \def\eql@tagging@start{%
+    \bool_if:NF\l__math_collected_bool{%
+      \toks@\expandafter{\eql@tagging@opt}%
+      \edef\eql@tmp{{\@currenvir}{[\the\toks@] \the\eql@scan@reg@}}%
+      \expandafter\__math_process:nn\eql@tmp
+      \@kernel@math@registered@begin
+      \bool_set_true:N\l__math_collected_bool
+    }%
+  }
+  \def\eql@tagging@end{}
+  \ExplSyntaxOff
+\else
+  \def\eql@tagging@mathsave{}
+  \def\eql@tagging@mathaddlast{}
+  \def\eql@tagging@tagbegin{}
+  \def\eql@tagging@tagend{}
+  \def\eql@tagging@tagsave{}
+  \def\eql@tagging@tagaddbox{}
+  \def\eql@tagging@tablesaveinner{}
+  \def\eql@tagging@tableaddinner{}
+  \def\eql@tagging@tablesavelines{}
+  \def\eql@tagging@tablesavealign{}
+  \def\eql@tagging@alignleft{}
+  \def\eql@tagging@aligncenter{}
+  \def\eql@tagging@alignright{}
+  \def\eql@tagging@start{}
+  \def\eql@tagging@end{}
+\fi
 \let\eql@punct@col\@empty
 \let\eql@punct@line\relax
 \let\eql@punct@block\relax
@@ -288,8 +369,7 @@
   \eql@box@lastfield
   \cr
   \noalign{%
-    \setlength\skip@{#1}%
-    \vskip\skip@
+    \vskip\glueexpr#1\relax
   }%
 }
 \let\eql@box@box\vcenter
@@ -305,10 +385,10 @@
 \def\eql@box@open@align{%
   \let\eql@box@lastfield\@empty
   \eql@halign@init{%
-}%
+  }%
   \tabskip\z@skip
   \halign\bgroup
-      &%
+    &%
       \let\eql@box@lastfield\eql@box@lastfield@odd
       \global\setbox\eql@fieldbox@\hbox{%
         \eql@strut@field
@@ -318,12 +398,14 @@
           ##%
           \eql@class@innerleft
           \eql@hook@innerleft
+          \eql@tagging@mathsave
         $%
+        \eql@tagging@mathaddlast
       }%
       \hfil
       \kern\wd\eql@fieldbox@
       \tabskip\z@skip
-      &%
+    &%
       \eql@fieldwidth@\wd\eql@fieldbox@
       \kern-\eql@fieldwidth@
       \box\eql@fieldbox@
@@ -338,10 +420,12 @@
           ##%
           \eql@punct@apply@col
           \eql@hook@colout
+          \eql@tagging@mathsave
         $%
+        \eql@tagging@mathaddlast
       }%
       \hfil
-      \tabskip\eql@colsep@
+      \tabskip\eql@colsep@\relax
     \crcr
     \noalign{%
       \eql@hook@blockbefore
@@ -359,44 +443,49 @@
   \tabskip\z@skip
   \halign\bgroup
     &%
-    \eql@shape@pos@\m@ne
-    \setbox\eql@fieldbox@\hbox{%
-      \eql@strut@field
-      \@lign
-      $\m@th\displaystyle
-        \eql@hook@colin
-        ##%
-        \eql@punct@apply@col
-        \eql@hook@colout
-      $%
-    }%
-    \ifnum\eql@shape@pos@=\m@ne
-      \eql@shape@eval
-    \fi
-    \ifcase\eql@shape@pos@
-      \kern\eql@shape@amount@
-      \box\eql@fieldbox@
-      \skip@\@flushglue
-      \advance\skip@\eql@paddingleft@\relax
-      \advance\skip@\eql@paddingright@\relax
-      \advance\skip@-\eql@shape@amount@\relax
-      \hskip\skip@
-    \or
-      \skip@\@flushglue
-      \advance\skip@\eql@paddingleft@\relax
-      \hskip\skip@
-      \box\eql@fieldbox@
-      \skip@\@flushglue
-      \advance\skip@\eql@paddingright@\relax
-      \hskip\skip@
-    \or
-      \skip@\@flushglue
-      \advance\skip@\eql@paddingleft@\relax
-      \advance\skip@\eql@paddingright@\relax
-      \hskip\skip@
-      \box\eql@fieldbox@
-    \fi
-    \tabskip\eql@colsep@
+      \eql@shape@pos@\m@ne
+      \setbox\eql@fieldbox@\hbox{%
+        \eql@strut@field
+        \@lign
+        $\m@th\displaystyle
+          \eql@hook@colin
+          ##%
+          \eql@punct@apply@col
+          \eql@hook@colout
+          \eql@tagging@mathsave
+        $%
+        \eql@tagging@mathaddlast
+      }%
+      \ifnum\eql@shape@pos@=\m@ne
+        \eql@shape@eval
+      \fi
+      \ifcase\eql@shape@pos@
+        \kern\eql@shape@amount@
+        \box\eql@fieldbox@
+        \skip@\@flushglue
+        \advance\skip@\eql@paddingleft@\relax
+        \advance\skip@\eql@paddingright@\relax
+        \advance\skip@-\eql@shape@amount@\relax
+        \hskip\skip@
+        \eql@tagging@alignleft
+      \or
+        \skip@\@flushglue
+        \advance\skip@\eql@paddingleft@\relax
+        \hskip\skip@
+        \box\eql@fieldbox@
+        \skip@\@flushglue
+        \advance\skip@\eql@paddingright@\relax
+        \hskip\skip@
+        \eql@tagging@aligncenter
+      \or
+        \skip@\@flushglue
+        \advance\skip@\eql@paddingleft@\relax
+        \advance\skip@\eql@paddingright@\relax
+        \hskip\skip@
+        \box\eql@fieldbox@
+        \eql@tagging@alignright
+      \fi
+      \tabskip\eql@colsep@\relax
     \crcr
     \noalign{%
       \eql@hook@blockbefore
@@ -413,6 +502,7 @@
     \noalign{%
       \eql@hook@blockafter
     }%
+    \eql@tagging@tablesaveinner
   \egroup
 }
 \def\eql@box@start{%
@@ -425,17 +515,16 @@
   \eql@nextopt@process{equationsbox}%
   \let\eql@punct@block\eql@punct@main
   \let\eql@punct@main\relax
-  \setlength\eql@colsep@\eql@box@colsep
-  \setlength\eql@paddingleft@\eql@paddingleft@val
-  \setlength\eql@paddingright@\eql@paddingright@val
-  \setlength\eql@indent@\eql@indent@val
+  \eql@colsep@\glueexpr\eql@box@colsep\relax
+  \eql@paddingleft@\glueexpr\eql@paddingleft@val\relax
+  \eql@paddingright@\glueexpr\eql@paddingright@val\relax
+  \eql@indent@\glueexpr\eql@indent@val\relax
   \eql@stack@save@boxed
   \let\eql@flushleft\eql@false
   \eql@row@\z@
   \eql@totalrows@\@M
   \eql@shape@sel
-  \setlength\skip@\eql@box@marginleft
-  \hskip\skip@
+  \hskip\glueexpr\eql@box@marginleft\relax
   \eql@box@box\bgroup
     \eql@display@leave
     \let\\\eql@box@cr
@@ -448,8 +537,8 @@
 \newcommand{\eql@box@end}{%
     \eql@box@close
   \egroup
-  \setlength\skip@\eql@box@marginright
-  \hskip\skip@
+  \eql@tagging@tableaddinner
+  \hskip\glueexpr\eql@box@marginright\relax
   \eql@stack@restore
   \eql@box@endmath
 }
@@ -471,151 +560,55 @@
 \def\eql@mode@aligned{\let\eql@box@mode@lines\eql@false}
 \def\eql@mode@lined{\let\eql@box@mode@lines\eql@true}
 \eql@mode@aligned
-\eql@amsmath@futurebefore{
-  \let\c@parentequation\@undefined
-  \let\theparentequation\@undefined
+\def\eql@tag@setbox@#1{%
+  \def\eql@tag@box##1{#1}%
 }
-\ifdefined\c@parentequation\else
-\newcounter{parentequation}
-\fi
-\def\eql@subequations@template{\theparentequation\alph{equation}}
-\let\eql@subequations@active\eql@false
-\def\eql@subequations@init{%
-  \edef\eql@subequations@restorecounter{%
-    \global\c@equation\the\c@equation\relax}%
-  \ifdefined\eql@blocktag
-    \expandafter\eql@tag@makenext\eql@blocktag
-    \eql@nexttag
-    \global\advance\eql@numbering@refcount@\@ne
-    \protected@edef\theHparentequation{eql-\the\eql@numbering@refcount@}%
-    \protected@edef\theparentequation{\eql@tag@text}%
-  \else
-    \advance\c@equation\@ne
-    \protected@edef\theparentequation{\theequation}%
-    \ifdefined\theHequation
-      \protected@edef\theHparentequation{\theHequation}%
-    \fi
-  \fi
-  \global\c@parentequation\c@equation
-  \global\c@equation\z@
-  \let\theequation\eql@subequations@template
-  \def\theHequation{\theHparentequation.\arabic{equation}}%
-}
-\def\eql@subequations@close{%
-  \ifnum\c@equation=\z@
-    \eql@subequations@restorecounter
-  \else
-    \global\c@equation\c@parentequation
-  \fi
-}
-\def\eql@subequations@start{%
-  \let\eql@blocktag\@undefined
-  \let\eql@blocklabel\@undefined
-  \eql@nextopt@process{subequations}%
-  \eql@subequations@init
-  \global\advance\eql@numbering@refcount@\@ne
-  \edef\eql@subequations@currentHref{equation.eql-\the\eql@numbering@refcount@}%
-  \eql@Hy@anchor\eql@subequations@currentHref
-  \edef\eql@subequations@thepage{\thepage}%
-  \def\@currentcounter{equation}%
-  \let\@currentHref\eql@subequations@currentHref
-  \protected@edef\@currentlabel{\p@equation\theparentequation}%
-  \let\@currentlabelname\eql@labelname@default
-  \let\eql@subequations@active\eql@true
-  \ifdefined\eql@blocklabel
-    \ifdefined\eql@SK
-      \SK@\SK@@label\eql@blocklabel
-    \fi
-  \fi
-  \ignorespaces
-}
-\def\eql@subequations@end{%
-  \ifnum\c@equation>\z@
-    \ifdefined\eql@blocklabel
-      \begingroup
-        \def\@currentcounter{equation}%
-        \let\thepage\eql@subequations@thepage
-        \let\@currentHref\eql@subequations@currentHref
-        \protected@edef\@currentlabel{\p@equation\theparentequation}%
-        \let\@currentlabelname\eql@labelname@default
-        \expandafter\eql@label@clean\expandafter{\eql@blocklabel}%
-      \endgroup
-    \fi
-  \fi
-  \eql@subequations@close
-  \ignorespacesafterend
-}
-\newenvironment{eql@subequations}{%
-  \eql@subequations@testall\eql@subequations@start%
-}{%
-  \eql@subequations@end
-}
-\def\eql@subequations@testall{\eql@subequations@testopt}
-\def\eql@subequations@testopt#1{%
-  \eql@ifnextchar@tight[%]
-    {\eql@subequations@addopt{\eql@subequations@testat{#1}}}%
-    {\eql@subequations@testat{#1}}}
-\def\eql@subequations@addopt#1[#2]{\eqnaddopt{#2}#1}
-\def\eql@subequations@testat#1{%
-  \eql@ifat@tight%
-    {\eql@subequations@addlabel{#1}}%
-    {#1}}
-\def\eql@subequations@addlabel#1#2{\eqnaddopt{label={#2}}#1}
-\ifdefined\maketag@@@\else
-\def\maketag@@@#1{\hbox{\m@th\normalfont#1}}
-\fi
-\ifdefined\tagform@\else
-\def\tagform@#1{\maketag@@@{(\ignorespaces#1\unskip\@@italiccorr)}}
-\fi
-\def\eql@tag@setmake@#1{%
-  \def\maketag@@@##1{\hbox{\m@th\normalfont#1}}%
-}
-\def\eql@tag@setmake#1{%
-  \def\maketag@@@##1{\hbox{\m@th\normalfont#1}}%
+\def\eql@tag@setbox#1{%
+  \def\eql@tag@box##1{\hbox{\m@th\normalfont#1}}%
 }
 \def\eql@tag@setform@#1{%
-  \def\tagform@##1{\maketag@@@{#1}}%
+  \def\eql@tag@form##1{#1}%
 }
 \def\eql@tag@setform#1#2#3{%
-  \def\tagform@##1{\maketag@@@{#1\ignorespaces#2\unskip\@@italiccorr#3}}%
+  \def\eql@tag@form##1{#1\ignorespaces#2\unskip\@@italiccorr#3}%
 }
-
+\eql@tag@setbox{#1}
+\eql@tag@setform({#1})
+\def\eql@tag@boxedform#1{\eql@tag@box{\eql@tag@form{#1}}}
 \newdimen\eql@raisetag@amount@
 \def\eql@raisetag@default{%
   \eql@warning{\string\raisetag\space not allowed here}
   \@gobble
 }
-\eql@amsmath@after{\let\eql@raisetag@default\raisetag}
-\eql@amsmath@futurebefore{\let\raisetag\@undefined}
-\let\raisetag\eql@raisetag@default
-\def\eql@raisetag#1{\setlength\dimen@{#1}\global\eql@raisetag@amount@\dimen@}%
-\let\eql@SK\@undefined
-\let\eql@SK@lab@relax\@empty
-\let\eql@SK@makelabel\@gobble
+\eql@amsmath@let\raisetag\eql@raisetag@default
+\def\eql@raisetag#1{\global\eql@raisetag@amount@\glueexpr#1\relax}%
+\let\eql@SK@loaded\eql@false
+\let\eql@SK@label\@gobble
+\let\eql@SK@clearlabel\@empty
+\let\eql@SK@setlabel\@gobble
 \let\eql@SK@printlabel@right\@empty
 \let\eql@SK@printlabel@left\@empty
 \let\eql@SK@printlabel@line\@empty
 \def\eql@label@clean{\eql@label@org}
 \AddToHook{package/showkeys/after}{
-  \let\eql@SK\@empty
-  \def\eql@SK@lab@relax{\let\eql@SK@lab\relax}
-  \eql@SK@lab@relax
+  \let\eql@SK@loaded\eql@true
+  \def\eql@SK@label#1{\SK@\SK@@label#1}
+  \def\eql@SK@clearlabel{\let\eql@SK@lab\relax}
+  \eql@SK@clearlabel
   \def\eql@SK@@label#1>#2\SK@{%
     \def\eql@SK@lab{\smash{\SK@labelcolor\showkeyslabelformat{#2}}}%
   }
-  \def\eql@SK@makelabel#1{%
-    \SK@\eql@SK@@label#1%
-  }
+  \def\eql@SK@setlabel#1{\SK@\eql@SK@@label#1}
   \def\eql@SK@printlabel@right{%
     \ifx\eql@SK@lab\relax\else
       \rlap{\kern\marginparsep\eql@SK@lab}%
-      \eql@SK@lab@relax
+      \eql@SK@clearlabel
     \fi
   }
   \def\eql@SK@printlabel@left{%
     \ifx\eql@SK@lab\relax\else
       \llap{\eql@SK@lab\kern\marginparsep}%
-      \eql@SK@lab@relax
+      \eql@SK@clearlabel
     \fi
   }
   \def\eql@SK@printlabel@line{%
@@ -627,7 +620,7 @@
           \eql@SK@lab
           \kern\marginparsep
         }%
-        \eql@SK@lab@relax
+        \eql@SK@clearlabel
       \else
         \rlap{%
           \dimen@\displaywidth
@@ -636,7 +629,7 @@
           \eql@SK@lab
         }%
       \fi
-      \eql@SK@lab@relax
+      \eql@SK@clearlabel
       \prevdepth\dimen@
     \fi
   }
@@ -649,9 +642,6 @@
 \let\eql@nexttag\@undefined
 \def\eql@tag@default{%
   \eql@error{\string\tag\space not allowed here}{}\eql@tag@gobble}
-\eql@amsmath@after{
-  \let\eql@tag@default\tag
-}
 \let\tag\eql@tag@default
 \def\eql@tag@gobble@[#1]#2{}
 \def\eql@tag@gobble{%
@@ -668,14 +658,14 @@
 }
 \def\eql@tag@makenext@star[#1]#2{%
   \global\def\eql@nexttag{%
-    \let\eql@tag@tool\maketag@@@
+    \let\eql@tag@tool\@firstofone
     \protected@edef\eql@tag@text{#2}%
     \protected@edef\eql@tag@label{#1}%
   }%
 }
 \def\eql@tag@makenext@[#1]#2{%
   \global\def\eql@nexttag{%
-    \let\eql@tag@tool\tagform@
+    \let\eql@tag@tool\eql@tag@form
     \protected@edef\eql@tag@text{#2}%
     \protected@edef\eql@tag@label{#1}%
     \protected@edef\eql@tag@label{\p@equation\eql@tag@label}%
@@ -683,9 +673,11 @@
 }
 \newcount\eql@numbering@refcount@
 \eql@numbering@refcount@\z@
+\def\eql@numbering@ref{equation.eql-\the\eql@numbering@refcount@}
+\def\eql@numbering@refstep{\global\advance\eql@numbering@refcount@\@ne}
 \def\eql@numbering@makeblockanchor{%
-  \global\advance\eql@numbering@refcount@\@ne
-  \global\edef\eql@label@currentHref{equation.eql-\the\eql@numbering@refcount@}%
+  \eql@numbering@refstep
+  \global\edef\eql@label@currentHref{\eql@numbering@ref}%
   \eql@Hy@anchor\eql@label@currentHref
   \global\edef\eql@label@thepage{\thepage}%
 }
@@ -698,19 +690,19 @@
     \eql@nexttag
     \def\@currentcounter{equation}%
     \let\@currentlabel\eql@tag@label
-    \global\advance\eql@numbering@refcount@\@ne
-    \edef\@currentHref{equation.eql-\the\eql@numbering@refcount@}%
+    \eql@numbering@refstep
+    \edef\@currentHref{\eql@numbering@ref}%
     \eql@Hy@anchor\@currentHref
     \global\let\eql@nexttag\@undefined
   \else
     \refstepcounter{equation}%
-    \let\eql@tag@tool\tagform@
+    \let\eql@tag@tool\eql@tag@form
     \edef\eql@tag@text{\theequation}%
   \fi
 }
 \def\eql@compose@label{%
   \ifmeasuring@\else
-    \eql@SK@lab@relax
+    \eql@SK@clearlabel
     \ifdefined\eql@nextlabel
       \ifnum
         \ifnum\eql@numbering@target@<\z@
@@ -724,7 +716,7 @@
   \fi
 }
 \def\eql@compose@label@{%
-  \eql@SK@makelabel\eql@nextlabel
+  \eql@SK@setlabel\eql@nextlabel
   \begingroup
     \ifnum\eql@numbering@target@=\eql@row@
       \eql@numbering@setblockanchor
@@ -735,7 +727,12 @@
   \endgroup
 }
 \def\eql@compose@tag{%
-  \eql@tag@tool\eql@tag@text
+  \eql@tagging@tagbegin
+  \eql@tag@box{%
+    \eql@tag@tool\eql@tag@text
+    \eql@tagging@tagsave
+  }%
+  \eql@tagging@tagend
 }
 \def\eql@compose@print{%
   \eql@compose@anchor
@@ -751,10 +748,10 @@
 \def\eql@compose@measure{%
   \ifdefined\eql@nexttag
     \eql@nexttag
-    \eql@tag@tool\eql@tag@text
+    \eql@tag@box{\eql@tag@tool\eql@tag@text}%
   \else
     \stepcounter{equation}%
-    \tagform@\theequation
+    \eql@tag@box{\eql@tag@form\theequation}%
   \fi
   \ifnum\eql@numbering@target@<\z@
     \global\let\eql@nextlabel\@undefined
@@ -813,7 +810,7 @@
 \def\eql@numbering@printsubeqlabel{%
   \ifdefined\eql@parentlabel
     \eql@numbering@makeblockanchor
-    \eql@SK@makelabel\eql@parentlabel
+    \eql@SK@setlabel\eql@parentlabel
     \begingroup
       \def\@currentcounter{equation}%
       \eql@numbering@setblockanchor
@@ -1108,6 +1105,92 @@
     \fi
   \fi
 }
+\eql@amsmath@undefine\c@parentequation
+\eql@amsmath@undefine\theparentequation
+\ifdefined\c@parentequation\else
+\newcounter{parentequation}
+\fi
+\def\eql@subequations@template{\theparentequation\alph{equation}}
+\let\eql@subequations@active\eql@false
+\def\eql@subequations@init{%
+  \edef\eql@subequations@restorecounter{%
+    \global\c@equation\the\c@equation\relax}%
+  \ifdefined\eql@blocktag
+    \expandafter\eql@tag@makenext\eql@blocktag
+    \eql@nexttag
+    \eql@numbering@refstep
+    \protected@edef\theHparentequation{\eql@numbering@ref}%
+    \protected@edef\theparentequation{\eql@tag@text}%
+  \else
+    \advance\c@equation\@ne
+    \protected@edef\theparentequation{\theequation}%
+    \ifdefined\theHequation
+      \protected@edef\theHparentequation{\theHequation}%
+    \fi
+  \fi
+  \global\c@parentequation\c@equation
+  \global\c@equation\z@
+  \let\theequation\eql@subequations@template
+  \def\theHequation{\theHparentequation.\arabic{equation}}%
+}
+\def\eql@subequations@close{%
+  \ifnum\c@equation=\z@
+    \eql@subequations@restorecounter
+  \else
+    \global\c@equation\c@parentequation
+  \fi
+}
+\def\eql@subequations@start{%
+  \let\eql@blocktag\@undefined
+  \let\eql@blocklabel\@undefined
+  \eql@nextopt@process{subequations}%
+  \eql@subequations@init
+  \eql@numbering@refstep
+  \edef\eql@subequations@currentHref{\eql@numbering@ref}%
+  \eql@Hy@anchor\eql@subequations@currentHref
+  \edef\eql@subequations@thepage{\thepage}%
+  \def\@currentcounter{equation}%
+  \let\@currentHref\eql@subequations@currentHref
+  \protected@edef\@currentlabel{\p@equation\theparentequation}%
+  \let\@currentlabelname\eql@labelname@default
+  \let\eql@subequations@active\eql@true
+  \ifdefined\eql@blocklabel
+    \eql@SK@label\eql@blocklabel
+  \fi
+  \ignorespaces
+}
+\def\eql@subequations@end{%
+  \ifnum\c@equation>\z@
+    \ifdefined\eql@blocklabel
+      \begingroup
+        \def\@currentcounter{equation}%
+        \let\thepage\eql@subequations@thepage
+        \let\@currentHref\eql@subequations@currentHref
+        \protected@edef\@currentlabel{\p@equation\theparentequation}%
+        \let\@currentlabelname\eql@labelname@default
+        \expandafter\eql@label@clean\expandafter{\eql@blocklabel}%
+      \endgroup
+    \fi
+  \fi
+  \eql@subequations@close
+  \ignorespacesafterend
+}
+\newenvironment{eql@subequations}{%
+  \eql@subequations@testall\eql@subequations@start%
+}{%
+  \eql@subequations@end
+}
+\def\eql@subequations@testall{\eql@subequations@testopt}
+\def\eql@subequations@testopt#1{%
+  \eql@ifnextchar@tight[%]
+    {\eql@subequations@addopt{\eql@subequations@testat{#1}}}%
+    {\eql@subequations@testat{#1}}}
+\def\eql@subequations@addopt#1[#2]{\eqnaddopt{#2}#1}
+\def\eql@subequations@testat#1{%
+  \eql@ifat@tight%
+    {\eql@subequations@addlabel{#1}}%
+    {#1}}
+\def\eql@subequations@addlabel#1#2{\eqnaddopt{label={#2}}#1}
 \def\eql@numbering@subeq@init{%
   \let\eql@save@theequation\theequation
   \let\eql@save@theHequation\theHequation
@@ -1139,9 +1222,8 @@
 }
 \DeclareRobustCommand{\eql@displaybreak@default}[1][4]{%
   \eql@warning{Invalid use of \string\displaybreak}{}}
-\eql@amsmath@futurebefore{\let\displaybreak\@undefined}
 \eql@amsmath@after{\let\eql@displaybreak@default\displaybreak}
-\let\displaybreak\eql@displaybreak@default
+\eql@amsmath@let\displaybreak\eql@displaybreak@default
 \newcount\eql@displaybreak@pen@
 \newcount\eql@displaybreak@prepen@
 \protected\def\eql@displaybreak@print{%
@@ -1165,19 +1247,13 @@
   \eql@ampprotect\eql@testopt@tight\eql@displaybreak@measure@{4}%
 }
 \def\eql@displaybreak@measure@[#1]{}
-\def\eql@display@atend#1{%
-  \expandafter\def\expandafter\eql@display@doatend\expandafter
-    {\eql@display@doatend#1}%
-}
 \newskip\eql@vspaceskip@
 \newskip\eql@abovespace@
 \newskip\eql@belowspace@
 \let\eql@vspace@org\vspace
 \def\eql@vspace{\eql@ifstar@loose\eql@vspace@\eql@vspace@}
 \def\eql@vspace@#1{%
-  \setlength\skip@{#1}%
-  \global\advance\eql@vspaceskip@\skip@
-}
+  \global\advance\eql@vspaceskip@\glueexpr#1\relax}
 \def\eql@display@init{%
   \eql@display@firstavail@\z@
   \eql@raisetag@firstlast@\z@
@@ -1188,50 +1264,140 @@
   \let\vspace\eql@vspace
 }
 \def\eql@display@close{%
-  \ifdim\eql@halign@prevdepth@=\maxdimen
-    \ifdim\predisplaysize=-\maxdimen
-      \abovedisplayskip\eql@abovedisplaycontskip@
-      \predisplaysize\maxdimen
-      \abovedisplayshortskip\abovedisplayskip
-      \belowdisplayshortskip\belowdisplayskip
-    \fi
-  \else
-    \ifdim\eql@halign@prevdepth@=\@m\p@
-      \predisplaypenalty\z@
-      \abovedisplayskip\eql@abovedisplaytopskip@
-      \belowdisplayskip\eql@belowdisplaytopskip@
-    \else
-      \predisplaypenalty\z@
-      \abovedisplayskip\eql@abovedisplayparskip@
-    \fi
-    \predisplaysize\maxdimen
-    \abovedisplayshortskip\abovedisplayskip
-    \belowdisplayshortskip\belowdisplayskip
-  \fi
-  \eql@display@doatend
   \ifdim\eql@display@firstavail@<\z@
     \eql@display@firstavail@\z@
   \fi
-  \advance\eql@display@firstavail@\displayindent
-  \ifdim\eql@display@firstavail@>\predisplaysize
-    \ifcase\eql@displayshortmode@
-    \or
-      \abovedisplayskip\abovedisplayshortskip
-    \or
-      \abovedisplayskip\abovedisplayshortskip
-      \ifnum\eql@row@=\tw@
-        \belowdisplayskip\belowdisplayshortskip
+  \eql@skip@mode@leave@\z@
+  \ifdim\eql@halign@prevdepth@=\maxdimen
+    \ifdim\predisplaysize=-\maxdimen
+      \eql@skip@mode@above@\tw@
+      \eql@skip@mode@below@\eql@skip@mode@cont@
+    \else
+      \eql@skip@mode@above@\z@
+      \eql@skip@mode@below@\z@
+      \advance\eql@display@firstavail@\displayindent
+      \ifdim\eql@display@firstavail@>\predisplaysize
+        \ifcase\eql@skip@mode@short@
+        \or
+          \eql@skip@mode@above@\@ne
+        \or
+          \eql@skip@mode@above@\@ne
+          \ifnum\eql@row@=\tw@
+            \eql@skip@mode@below@\@ne
+          \fi
+        \or
+          \eql@skip@mode@above@\@ne
+          \eql@skip@mode@below@\@ne
+        \fi
       \fi
-    \or
-      \abovedisplayskip\abovedisplayshortskip
-      \belowdisplayskip\belowdisplayshortskip
+    \fi
+  \else
+    \ifdim\eql@halign@prevdepth@=-\@m\p@
+      \eql@skip@mode@above@4\relax
+      \eql@skip@mode@below@\eql@skip@mode@top@
+      \eql@skip@mode@leave@\z@
+      \predisplaypenalty\z@
+      \ifcase\eql@skip@mode@top@
+      \or
+      \or
+      \or
+        \eql@skip@mode@leave@\@ne
+      \or
+        \postdisplaypenalty\z@
+        \eql@skip@mode@leave@\tw@
+      \fi
+    \else
+      \eql@skip@mode@above@\thr@@
+      \eql@skip@mode@below@\eql@skip@mode@par@
+      \eql@skip@mode@leave@\z@
+      \predisplaypenalty\z@
+      \ifnum\eql@skip@mode@par@=\thr@@
+        \eql@skip@mode@leave@\@ne
+      \fi
     \fi
   \fi
+  \ifdefined\eql@skip@force@above
+    \eql@skip@mode@above@\eql@skip@force@above\relax
+  \fi
+  \ifdefined\eql@skip@force@below
+    \eql@skip@mode@below@\eql@skip@force@below\relax
+  \fi
+  \ifdefined\eql@skip@force@leave
+    \eql@skip@mode@leave@\eql@skip@force@leave\relax
+  \fi
   \ifodd\eql@raisetag@firstlast@
-    \abovedisplayskip\eql@abovedisplaytagskip@
+    \ifcase\eql@skip@mode@above@
+      \abovedisplayskip\glueexpr\eql@skip@tag@above\relax
+    \or
+      \abovedisplayskip\glueexpr\eql@skip@tag@above\relax
+    \or
+      \abovedisplayskip\glueexpr\eql@skip@tag@above\relax
+    \or
+      \abovedisplayskip\glueexpr\eql@skip@partag@above\relax
+    \or
+      \abovedisplayskip\glueexpr\eql@skip@partag@above\relax
+    \or
+      \abovedisplayskip\z@skip
+    \or
+      \abovedisplayskip\glueexpr\eql@skip@medtag@above\relax
+    \or
+      \abovedisplayskip\glueexpr\eql@skip@custom@above\relax
+    \fi
+  \else
+    \ifcase\eql@skip@mode@above@
+      \abovedisplayskip\glueexpr\eql@skip@long@above\relax
+    \or
+      \abovedisplayskip\glueexpr\eql@skip@short@above\relax
+    \or
+      \abovedisplayskip\glueexpr\eql@skip@cont@above\relax
+    \or
+      \abovedisplayskip\glueexpr\eql@skip@par@above\relax
+    \or
+      \abovedisplayskip\glueexpr\eql@skip@top@above\relax
+    \or
+      \abovedisplayskip\z@skip
+    \or
+      \abovedisplayskip\glueexpr\eql@skip@medtag@above\relax
+    \or
+      \abovedisplayskip\glueexpr\eql@skip@custom@above\relax
+    \fi
   \fi
   \ifnum\eql@raisetag@firstlast@>\@ne
-    \belowdisplayskip\eql@belowdisplaytagskip@
+    \ifcase\eql@skip@mode@below@
+      \belowdisplayskip\glueexpr\eql@skip@tag@below\relax
+    \or
+      \belowdisplayskip\glueexpr\eql@skip@tag@below\relax
+    \or
+      \belowdisplayskip\glueexpr\eql@skip@tag@below\relax
+    \or
+      \belowdisplayskip\glueexpr\eql@skip@partag@below\relax
+    \or
+      \belowdisplayskip\glueexpr\eql@skip@partag@below\relax
+    \or
+      \belowdisplayskip\z@skip
+    \or
+      \belowdisplayskip\glueexpr\eql@skip@medtag@below\relax
+    \or
+      \belowdisplayskip\glueexpr\eql@skip@custom@below\relax
+    \fi
+  \else
+    \ifcase\eql@skip@mode@below@
+      \belowdisplayskip\glueexpr\eql@skip@long@below\relax
+    \or
+      \belowdisplayskip\glueexpr\eql@skip@short@below\relax
+    \or
+      \belowdisplayskip\glueexpr\eql@skip@cont@below\relax
+    \or
+      \belowdisplayskip\glueexpr\eql@skip@par@below\relax
+    \or
+      \belowdisplayskip\glueexpr\eql@skip@top@below\relax
+    \or
+      \belowdisplayskip\z@skip
+    \or
+      \belowdisplayskip\glueexpr\eql@skip@medtag@below\relax
+    \or
+      \belowdisplayskip\glueexpr\eql@skip@custom@below\relax
+    \fi
   \fi
   \ifnum\eql@displaybreak@pen@=\@MM\else
     \postdisplaypenalty\eql@displaybreak@pen@
@@ -1242,22 +1408,28 @@
   \advance\abovedisplayskip\eql@abovespace@
   \advance\belowdisplayskip\eql@belowspace@
   \advance\belowdisplayskip\eql@vspaceskip@
+  \abovedisplayshortskip\abovedisplayskip
+  \belowdisplayshortskip\belowdisplayskip
   \count@\prevgraf
   \advance\count@\eql@row@
   \advance\count@-\tw@
   \prevgraf\count@
+  \global\eql@skip@mode@leave@\eql@skip@mode@leave@
 }
 \def\eql@display@leave{%
   \let\label\eql@label@org
   \let\tag\eql@tag@default
   \let\raisetag\eql@raisetag@default
   \let\displaybreak\eql@displaybreak@default
+  \let\intertext\eql@intertext@default
   \let\vspace\eql@vspace@org
 }
 \expandafter\def\expandafter\@arrayparboxrestore\expandafter{%
   \@arrayparboxrestore
   \eql@display@leave
-  \eql@amprevert
+  \ifdefined\eql@ampproof@active
+    \eql@amprevert
+  \fi
   \@displayfalse
 }
 \newbox\eql@strutbox@
@@ -1276,14 +1448,11 @@
 }
 \AtBeginDocument{\eql@strut@make}
 \def\eql@halign@spread{%
-  \dimen@\eql@spread\relax
-  \advance\dimen@\normalbaselineskip
-  \ifdim\dimen@>\baselineskip
-    \normalbaselines
-    \dimen@\eql@spread\relax
-    \advance\dimen@\normalbaselineskip
-    \advance\dimen@-\baselineskip
-    \openup\dimen@
+  \eql@spread@amount@\glueexpr\eql@spread\relax
+  \advance\eql@spread@amount@\normalbaselineskip
+  \advance\eql@spread@amount@-\baselineskip
+  \ifdim\eql@spread@amount@>\z@
+    \openup\eql@spread@amount@
     \ifdefined\spread@equation
       \let\spread@equation\@empty
     \fi
@@ -1299,24 +1468,39 @@
     \eql@halign@prevdepth@\maxdimen
   \fi
 }
+\def\eql@halign@leave{%
+  \ifcase\eql@skip@mode@leave@
+  \or
+    \endgraf
+  \or
+    \endgraf
+    \prevdepth-\@m\p@
+  \fi
+}
 \def\eql@halign@before{%
   \ifdim\eql@halign@prevdepth@=\maxdimen\else
     \prevdepth\eql@halign@prevdepth@
   \fi
   \ifdim\prevdepth=-\@m\p@\else
-    \skip@\normalbaselineskip
-    \advance\skip@-\eql@display@height\relax
-    \advance\skip@-\prevdepth\relax
-    \ifdim\skip@<\normallineskiplimit
-      \vskip\normallineskip
-    \else
+    \ifdefined\eql@display@height
+      \skip@\baselineskip
+      \advance\skip@-\glueexpr\eql@display@height\relax
+      \advance\skip@-\prevdepth\relax
+      \ifdim\skip@<\lineskiplimit
+        \skip@\lineskip
+      \fi
+      \advance\skip@-\eql@spread@amount@\relax
       \vskip\skip@
+      \nointerlineskip
+    \else
+      \vskip-\eql@spread@amount@\relax
     \fi
-    \nointerlineskip
   \fi
 }
 \def\eql@halign@after{%
-  \prevdepth\eql@display@depth\relax
+  \ifdefined\eql@display@depth
+    \prevdepth\glueexpr\eql@display@depth\relax
+  \fi
 }
 \def\eql@halign@init#1{%
   \eql@halign@spread
@@ -1520,7 +1704,7 @@
     }%
 }
 \def\eql@adjust@shoveleft@[#1]{%
-  \eql@sregroup\setlength\dimen@{#1}\global\eql@shape@amount@\dimen@}
+  \eql@sregroup\global\eql@shape@amount@\glueexpr#1\relax}
 \def\eql@adjust@shovecenter{%
   \global\eql@shape@pos@\@ne\global\eql@shape@amount@\z@}
 \def\eql@adjust@shoveright{%
@@ -1531,7 +1715,12 @@
 }
 \def\eql@adjust@print#1#2{%
   \eql@restore@hfuzz
-  \hbox to\displaywidth{#1\unhbox\eql@fieldbox@\unkern#2}%
+  \hbox to\displaywidth{%
+    #1%
+    \unhbox\eql@fieldbox@\unkern
+    #2%
+    \eql@tagging@mathaddlast
+  }%
 }
 \def\eql@adjust@print@alignleft#1#2{%
   \ifnum\eql@row@=\@ne
@@ -1563,6 +1752,14 @@
   \eql@shape@sel
 }
 \def\eql@adjust@sel@tag{%
+  \eql@tagging@tagaddbox
+  \ifcase\eql@shape@pos@
+    \eql@tagging@alignleft
+  \or
+    \eql@tagging@aligncenter
+  \or
+    \eql@tagging@alignright
+  \fi
   \csname eql@adjust%
     @\ifdefined\eql@flushleft flushleft\else center\fi
     @\ifdefined\eql@tagsleft tagsleft\else tagsright\fi
@@ -1570,6 +1767,14 @@
     @tag\endcsname
 }
 \def\eql@adjust@sel@notag{%
+  \eql@tagging@tagaddbox
+  \ifcase\eql@shape@pos@
+    \eql@tagging@alignleft
+  \or
+    \eql@tagging@aligncenter
+  \or
+    \eql@tagging@alignright
+  \fi
   \csname eql@adjust%
     @\ifdefined\eql@flushleft flushleft\else center\fi
     @\ifdefined\eql@tagsleft tagsleft\else tagsright\fi
@@ -1982,6 +2187,9 @@
     Please switch to equations environment}%
 }
 \def\eql@single@start{%
+  \eql@halign@catchprevdepth
+  \eql@tagging@start
+  $$%$$
   \eql@numbering@eval@mode
   \let\eql@numbering@subeq@use\eql@false
   \eql@stack@save@single
@@ -2004,6 +2212,14 @@
   \eql@hook@eqout
   \eql@single@end@sel
   \eql@stack@restore
+  $$%$$
+  \eql@tagging@end
+  \eql@halign@leave
+}
+\def\eql@single@main{%
+  \expandafter\eql@single@start
+  \eql@scan@body
+  \eql@single@end
 }
 \def\eql@single@start@native{%
   \eql@hook@eqin
@@ -2042,6 +2258,7 @@
       \eql@hook@eqin
 }
 \def\eql@single@end@adjust{%
+    \eql@tagging@mathsave
     $%$
     \hfil
     \kern\z@
@@ -2060,6 +2277,7 @@
     \fi
     \cr
     \noalign{\eql@halign@after}%
+    \eql@tagging@tablesavelines
   }%
   \eql@row@\tw@
   \eql@display@close
@@ -2179,7 +2397,7 @@
     \else
       \penalty\eql@displaybreak@pen@
     \fi
-    \addtolength\eql@vspaceskip@{#1}%
+    \advance\eql@vspaceskip@\glueexpr#1\relax%
     \vskip\eql@vspaceskip@
     \global\eql@vspaceskip@\z@skip
   }%
@@ -2188,22 +2406,42 @@
   \let\\\eql@math@cr
   \let\eql@math@cr@@@#1%
 }
-\eql@amsmath@futurebefore{\let\intertext\@undefined}
-\providecommand{\intertext}{\eql@error{Invalid use of \string\intertext}}
-\def\eql@intertext@process#1{%
+\def\eql@intertext@default{\eql@error{Invalid use of \string\intertext}}
+\eql@amsmath@let\intertext\eql@intertext@default
+\def\eql@intertext@process{%
   \eql@math@cr@@@
   \cr
-  \ifmeasuring@\else
-    \expandafter\eql@intertext@print{#1}%
+  \ifmeasuring@
+    \expandafter\@gobble
+  \else
+    \expandafter\eql@intertext@print
   \fi
 }
 \def\eql@intertext@print#1{%
   \noalign{%
     \eql@halign@after
+    \let\eql@skip@force@below\z@
+    \let\eql@skip@force@above\z@
     \eql@setkeys{intertext}\eql@intertext@opt
-    \normalbaselines
+    \openup-\eql@spread@amount@
     \penalty\postdisplaypenalty
-    \addtolength\eql@vspaceskip@\belowdisplayskip
+    \ifcase\eql@skip@force@below\relax
+      \advance\eql@vspaceskip@\glueexpr\eql@skip@long@below\relax
+    \or
+      \advance\eql@vspaceskip@\glueexpr\eql@skip@short@below\relax
+    \or
+      \advance\eql@vspaceskip@\glueexpr\eql@skip@cont@below\relax
+    \or
+      \advance\eql@vspaceskip@\glueexpr\eql@skip@par@below\relax
+    \or
+      \advance\eql@vspaceskip@\glueexpr\eql@skip@top@below\relax
+    \or
+      \advance\eql@vspaceskip@\z@skip
+    \or
+      \advance\eql@vspaceskip@\glueexpr\eql@skip@med@below\relax
+    \or
+      \advance\eql@vspaceskip@\glueexpr\eql@skip@custom@below\relax
+    \fi
     \vskip\eql@vspaceskip@
     \global\eql@vspaceskip@\z@skip
     \vbox{%
@@ -2220,7 +2458,23 @@
       \par
     }%
     \penalty\predisplaypenalty
-    \vskip\abovedisplayskip
+    \ifcase\eql@skip@force@above\relax
+      \vskip\glueexpr\eql@skip@long@above\relax
+    \or
+      \vskip\glueexpr\eql@skip@short@above\relax
+    \or
+      \vskip\glueexpr\eql@skip@cont@above\relax
+    \or
+      \vskip\glueexpr\eql@skip@par@above\relax
+    \or
+      \vskip\glueexpr\eql@skip@top@above\relax
+    \or
+      \vskip\z@skip
+    \or
+      \vskip\glueexpr\eql@skip@med@above\relax
+    \or
+      \vskip\glueexpr\eql@skip@custom@above\relax
+    \fi
     \eql@halign@prevdepth@\z@
     \eql@halign@before
   }
@@ -2253,6 +2507,9 @@
 }
 \let\eql@multi@mode@lines\eql@false
 \def\eql@multi@main{%
+  \eql@halign@catchprevdepth
+  \eql@tagging@start
+  $$%$$
   \eql@numbering@eval@mode
   \eql@stack@save@multi
   \ifdefined\eql@subequations@active
@@ -2294,19 +2551,30 @@
     \eql@numbering@subeq@close
   \fi
   \eql@stack@restore
+  $$%$$
+  \eql@tagging@end
+  \eql@halign@leave
 }
 \def\eql@mode@equation{%
   \let\eql@equations@mode@single\eql@true
-  \let\eql@equations@end\eql@single@end
+  \ifdefined\eql@single@doscan
+    \let\eql@equations@main\eql@single@main
+    \let\eql@equations@end\@empty
+  \else
+    \let\eql@equations@main\@undefined
+    \let\eql@equations@end\eql@single@end
+  \fi
 }
 \def\eql@mode@align{%
   \let\eql@equations@mode@single\eql@false
   \let\eql@multi@mode@lines\eql@false
+  \let\eql@equations@main\eql@multi@main
   \let\eql@equations@end\@empty
 }
 \def\eql@mode@lines{%
   \let\eql@equations@mode@single\eql@false
   \let\eql@multi@mode@lines\eql@true
+  \let\eql@equations@main\eql@multi@main
   \let\eql@equations@end\@empty
 }
 \eql@mode@align
@@ -2412,12 +2680,12 @@
       \advance\dimen@-\eql@tagmargin@
       \divide\dimen@\tw@
       \eql@marginleft@\dimen@
-      \advance\eql@marginleft@-\eql@paddingleft@
+      \advance\eql@marginleft@-\glueexpr\eql@paddingleft@val\relax
       \ifdim\eql@marginleft@<\z@
         \eql@marginleft@\z@
       \fi
       \eql@marginright@\dimen@
-      \advance\eql@marginright@-\eql@paddingright@
+      \advance\eql@marginright@-\glueexpr\eql@paddingright@val\relax
       \ifdim\eql@marginright@<\z@
         \eql@marginright@\z@
       \fi
@@ -2439,6 +2707,7 @@
           ##%
           \eql@punct@apply@col
           \eql@hook@colout
+          \eql@tagging@mathsave
         $%
         \hfil
         \kern\z@
@@ -2462,6 +2731,7 @@
       \eql@hook@blockafter
       \eql@halign@after
     }%
+    \eql@tagging@tablesavelines
   }%
   \eql@display@close
 }
@@ -2487,47 +2757,11 @@
     \expandafter\eql@align@add@amp\romannumeral\number\count@ 000q}%
   \eql@tmp
 }
-\def\eql@align@preamble#1#2#3{%
-  &%
-  \global\advance\eql@column@\@ne
-  \hfil
-  \global\setbox\eql@fieldbox@\hbox{%
-    #3%
-    \@lign
-    $\m@th\displaystyle
-      \eql@hook@colin
-      ##%
-      \eql@class@innerleft
-      \eql@hook@innerleft
-    $%
-  }%
-  \global\eql@fieldwidth@\wd\eql@fieldbox@
-  #2%
-  \tabskip\z@skip
-  &%
-  \global\advance\eql@column@\@ne
-  \setbox\eql@fieldbox@\hbox{%
-\kern-\wd\eql@fieldbox@
-\box\eql@fieldbox@
-    #3%
-    \@lign
-    $\m@th\displaystyle
-      \eql@hook@innerright
-      \eql@class@innerright@sel
-      ##%
-      \eql@punct@apply@col
-      \eql@hook@colout
-    $%
-  }%
-  #2%
-  \hfil
-  \tabskip#1%
-}
 \def\eql@align@print@trailright{%
    &\omit
     \global\advance\eql@column@\@ne
     \setbox\eql@fieldbox@\hbox{%
-\kern-\wd\eql@fieldbox@\box\eql@fieldbox@
+      \kern-\wd\eql@fieldbox@\box\eql@fieldbox@
     }%
     \eql@align@print@field
 }
@@ -2598,8 +2832,10 @@
   \eql@numbering@print@line@eval
   \if@eqnsw
     \eql@tagbox@make\eql@compose@print
+    \eql@tagging@tagaddbox
     \eql@tagbox@print@multi
   \else
+    \eql@tagging@tagaddbox
     \kern\displaywidth
   \fi
 }
@@ -2611,7 +2847,44 @@
   \eql@let@cr\eql@align@print@line@end
   \tabskip\eql@marginleft@
   \halign{%
-    \span\eql@align@preamble\eql@colsep@\eql@align@print@field\eql@strut@field
+    &%
+      \global\advance\eql@column@\@ne
+      \hfil
+      \global\setbox\eql@fieldbox@\hbox{%
+        \eql@strut@field
+        \@lign
+        $\m@th\displaystyle
+          \eql@hook@colin
+          ##%
+          \eql@class@innerleft
+          \eql@hook@innerleft
+          \eql@tagging@mathsave
+        $%
+        \eql@tagging@mathaddlast
+      }%
+      \global\eql@fieldwidth@\wd\eql@fieldbox@
+      \eql@align@print@field
+      \tabskip\z@skip
+    &%
+      \global\advance\eql@column@\@ne
+      \setbox\eql@fieldbox@\hbox{%
+        \kern-\wd\eql@fieldbox@
+        \box\eql@fieldbox@
+        \eql@strut@field
+        \@lign
+        $\m@th\displaystyle
+          \eql@hook@innerright
+          \eql@class@innerright@sel
+          ##%
+          \eql@punct@apply@col
+          \eql@hook@colout
+          \eql@tagging@mathsave
+        $%
+        \eql@tagging@mathaddlast
+      }%
+      \eql@align@print@field
+      \hfil
+      \tabskip\eql@colsep@\relax
     \crcr
     \noalign{%
       \eql@halign@before
@@ -2630,6 +2903,7 @@
       \eql@hook@blockafter
       \eql@halign@after
     }%
+    \eql@tagging@tablesavealign
   }%
   \eql@display@close
 }
@@ -2670,8 +2944,36 @@
     \eql@numbering@measure@init
     \eql@measure@init\eql@align@measure@line@begin
     \eql@let@cr\eql@align@measure@line@end
+    \tabskip\z@skip
     \halign{%
-      \span\eql@align@preamble\z@skip\eql@align@measure@field\relax
+      &%
+        \global\advance\eql@column@\@ne
+        \hfil
+        \global\setbox\eql@fieldbox@\hbox{%
+          \@lign
+          $\m@th\displaystyle
+            \eql@hook@colin
+            ##%
+            \eql@class@innerleft
+            \eql@hook@innerleft
+          $%
+        }%
+        \global\eql@fieldwidth@\wd\eql@fieldbox@
+        \eql@align@measure@field
+      &%
+        \global\advance\eql@column@\@ne
+        \setbox\eql@fieldbox@\hbox{%
+          \@lign
+          $\m@th\displaystyle
+            \eql@hook@innerright
+            \eql@class@innerright@sel
+            ##%
+            \eql@punct@apply@col
+            \eql@hook@colout
+          $%
+        }%
+        \eql@align@measure@field
+        \hfil
       \crcr
       \noalign{%
         \eql@hook@blockbefore
@@ -2720,6 +3022,8 @@
   \repeat
 }
 \def\eql@align@adjust{%
+  \eql@colsepmin@\glueexpr\eql@colsepmin@val\relax
+  \eql@colsepmax@\glueexpr\eql@colsepmax@val\relax
   \ifodd\eql@totalcolumns@
     \advance\eql@totalcolumns@\@ne
   \fi
@@ -2991,7 +3295,7 @@
     \expandafter\[%\]
   \fi
 }
-\def\eql@scan@sqrang@cancel{\ignorespaces}
+\def\eql@scan@sqrang@cancel{\expandafter\ignorespaces\@gobble}
 \def\eql@scan@ang#1{%
   \def\eql@scan@end{#1\>}%
   \eql@scan@reg@{}\def\eql@scan@stack{b}%
@@ -3040,42 +3344,38 @@
 \def\eql@equations@processopt{%
   \let\eql@blocklabel\@undefined
   \let\eql@blocktag\@undefined
-  \let\eql@display@doatend\@empty
+  \let\eql@skip@force@above\@undefined
+  \let\eql@skip@force@below\@undefined
+  \let\eql@skip@force@leave\@undefined
   \eql@abovespace@\z@skip
   \eql@belowspace@\z@skip
   \eql@displaybreak@prepen@\@MM
   \eql@nextopt@process{equations}%
   \let\eql@punct@block\eql@punct@main
   \let\eql@punct@main\relax
-  \setlength\eql@paddingleft@\eql@paddingleft@val
-  \setlength\eql@paddingright@\eql@paddingright@val
-  \setlength\eql@indent@\eql@indent@val
-  \setlength\eql@colsepmin@\eql@colsepmin@val
-  \setlength\eql@colsepmax@\eql@colsepmax@val
+  \eql@indent@\glueexpr\eql@indent@val\relax
 }
 \newenvironment{equations}{%
   \ifmmode
     \eql@error@mathmode{\string\begin{\@currenvir}}%
     \expandafter\eql@scan@env\expandafter\eql@scan@env@cancel
   \else
-    \eql@halign@catchprevdepth
-    $$%$$
     \expandafter\eql@ampprotect\expandafter\eql@equations@testall
       \expandafter\eql@equations@start
   \fi
 }{%
   \eql@equations@end
-  $$%$$
   \ignorespacesafterend
 }
 \def\eql@equations@start{%
   \eql@equations@processopt
-  \ifdefined\eql@equations@mode@single
-    \expandafter\eql@single@start
+  \ifdefined\eql@equations@main
+    \expandafter\eql@scan@env\expandafter\eql@equations@main
   \else
-    \expandafter\eql@scan@env\expandafter\eql@multi@main
+    \expandafter\eql@single@start
   \fi
 }
+\newenvironment{equations@sqr}{}{}
 \def\eql@equations@sqr@opt{equation,nonumber}
 \protected\def\eql@equations@sqr@open{%
   \ifmmode
@@ -3083,12 +3383,12 @@
     \expandafter\eql@scan@sqr\expandafter\eql@scan@sqrang@cancel
   \else
     \expandafter\eqnaddopt\expandafter{\eql@equations@sqr@opt}%
-    \eql@halign@catchprevdepth
-    $$%$$
+    \begin{equations@sqr}%
     \expandafter\eql@ampprotect\expandafter\eql@equations@testall
       \expandafter\eql@equations@sqr@start
   \fi
 }
+\newenvironment{equations@ang}{}{}
 \def\eql@equations@ang@opt{align,nonumber}
 \protected\def\eql@equations@ang@open{%
   \ifmmode
@@ -3096,39 +3396,38 @@
     \expandafter\eql@scan@ang\expandafter\eql@scan@sqrang@cancel
   \else
     \expandafter\eqnaddopt\expandafter{\eql@equations@ang@opt}%
-    \eql@halign@catchprevdepth
-    $$%$$
+    \begin{equations@ang}%
     \expandafter\eql@ampprotect\expandafter\eql@equations@testall
       \expandafter\eql@equations@ang@start
   \fi
 }
 \def\eql@equations@sqr@start{%
   \eql@equations@processopt
-  \ifdefined\eql@equations@mode@single
-    \expandafter\eql@single@start
+  \ifdefined\eql@equations@main
+    \expandafter\eql@scan@sqr\expandafter\eql@equations@main
   \else
-    \expandafter\eql@scan@sqr\expandafter\eql@multi@main
+    \expandafter\eql@single@start
   \fi
 }
 \def\eql@equations@ang@start{%
   \eql@equations@processopt
-  \ifdefined\eql@equations@mode@single
-    \expandafter\eql@single@start
+  \ifdefined\eql@equations@main
+    \expandafter\eql@scan@ang\expandafter\eql@equations@main
   \else
-    \expandafter\eql@scan@ang\expandafter\eql@multi@main
+    \expandafter\eql@single@start
   \fi
 }
 \protected\def\eql@equations@sqr@close{%
   \eql@equations@end
-  $$%$$
+  \end{equations@sqr}%
   \ignorespaces
 }
 \protected\def\eql@equations@ang@close{%
   \eql@equations@end
-  $$%$$
+  \end{equations@ang}%
   \ignorespaces
 }
-\DeclareRobustCommand{\eql@eqref}[1]{\textup{\tagform@{\ref{#1}}}}
+\DeclareRobustCommand{\eql@eqref}[1]{\textup{\eql@tag@boxedform{\ref{#1}}}}
 \DeclareRobustCommand{\eql@numberwithin}[3][\arabic]{%
   \@ifundefined{c@#2}{\@nocounterr{#2}}{%
     \@ifundefined{c@#3}{\@nocounterr{#3}}{%
@@ -3152,7 +3451,7 @@
   \eqnlinesset{allowbreaks=#1}%
 }
 \newcommand{\eql@notag}{\nonumber}
-\newcommand{\eql@thetag}{\leavevmode\tagform@}
+\newcommand{\eql@thetag}{\leavevmode\eql@tag@boxedform}
 \RequirePackage{keyval}
 \def\eql@decide@select#1#2#3#4{%
   \def\@tempa{#3}%
@@ -3207,17 +3506,77 @@
     }%
   }%
 }
-\def\eql@setkeys#1#2{
+\def\eql@setkeys#1#2{%
   \def\eql@tmp{\setkeys{eql@#1}}%
   \expandafter\eql@tmp\expandafter{#2}%
 }
 \let\eql@nextopt\@empty
 \def\eql@nextopt@process#1{%
   \eql@setkeys{#1}\eql@nextopt
+  \let\eql@tagging@opt\eql@nextopt
   \global\let\eql@nextopt\@empty
 }
 \newcommand{\eqnaddopt}[1]{%
   \expandafter\def\expandafter\eql@nextopt\expandafter{\eql@nextopt,#1}}
+\def\eql@defaults@classic{%
+  \def\eql@colsepmax@val{.5\maxdimen}%
+  \def\eql@spread{\jot}%
+  \let\eql@display@height\@undefined
+  \let\eql@display@depth\@undefined
+  \eql@skip@mode@short@\tw@
+  \eql@skip@mode@cont@\@ne
+  \eql@skip@mode@par@\z@
+  \eql@skip@mode@top@\z@
+  \def\eql@skip@long@above{\abovedisplayskip}%
+  \def\eql@skip@long@below{\belowdisplayskip}%
+  \def\eql@skip@short@above{\abovedisplayshortskip}%
+  \def\eql@skip@short@below{\belowdisplayshortskip}%
+  \def\eql@skip@cont@above{\eql@skip@short@above}%
+  \def\eql@skip@cont@below{\eql@skip@short@below}%
+  \def\eql@skip@par@above{\eql@skip@long@above}%
+  \def\eql@skip@par@below{\eql@skip@long@below}%
+  \def\eql@skip@top@above{\eql@skip@long@above}%
+  \def\eql@skip@top@below{\eql@skip@long@below}%
+  \def\eql@skip@med@above{\abovedisplayskip/2}%
+  \def\eql@skip@med@below{\belowdisplayskip/2}%
+  \def\eql@skip@medtag@above{\z@skip}%
+  \def\eql@skip@medtag@below{\z@skip}%
+  \def\eql@skip@tag@above{\z@skip}%
+  \def\eql@skip@tag@below{\z@skip}%
+}
+\def\eql@defaults@eqnlines{%
+  \def\eql@colsepmax@val{2em}%
+  \def\eql@spread{0.2\normalbaselineskip}%
+  \def\eql@display@height{\ht\eql@strutbox@}%
+  \def\eql@display@depth{\dp\eql@strutbox@}%
+  \eql@skip@mode@short@\@ne
+  \eql@skip@mode@cont@\z@
+  \eql@skip@mode@par@\z@
+  \eql@skip@mode@top@\z@
+  \def\eql@skip@long@above{0.75\normalbaselineskip
+    \@plus0.25\normalbaselineskip\@minus0.4\normalbaselineskip}%
+  \let\eql@skip@long@below\eql@skip@long@above
+  \def\eql@skip@short@above{0.0\normalbaselineskip
+    \@plus0.2\normalbaselineskip}%
+  \def\eql@skip@short@below{0.0\normalbaselineskip
+    \@plus0.25\normalbaselineskip}%
+  \def\eql@skip@med@above{0.375\normalbaselineskip
+    \@plus0.225\normalbaselineskip\@minus0.2\normalbaselineskip}%
+  \let\eql@skip@med@below\eql@skip@med@above
+  \def\eql@skip@cont@above{\z@skip}%
+  \def\eql@skip@cont@below{\eql@skip@long@below}%
+  \def\eql@skip@par@above{\eql@skip@long@above}%
+  \def\eql@skip@par@below{\eql@skip@long@below}%
+  \def\eql@skip@top@above{\z@skip}%
+  \def\eql@skip@top@below{\z@skip}%
+  \def\eql@skip@tag@above{\z@skip}%
+  \def\eql@skip@tag@below{\z@skip}%
+  \def\eql@skip@partag@above{\z@skip}%
+  \def\eql@skip@partag@below{\z@skip}%
+  \def\eql@skip@medtag@above{\z@skip}%
+  \def\eql@skip@medtag@below{\z@skip}%
+}
+\eql@defaults@eqnlines
 \eql@define@key{equationsbox}{gathered,gather,ga,lines,lined,ln,\string~}[]{%
   \eql@mode@lined}
 \eql@define@key{equationsbox}{aligned,align,al,columns,col,@}[]{%
@@ -3236,6 +3595,8 @@
   \ifdefined\eql@single@native\let\eql@flushleft\eql@false\fi}
 \eql@define@key{setup}{native}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@single@native}
+\eql@define@key{setup}{scanequation}[true]{%
+  \eql@decide@bool{#3}{#2}{#1}\eql@single@doscan}
 \eql@define@key{setup}{sqropt}[]{%
   \def\eql@equations@sqr@opt{equation,#1}}
 \eql@define@key{setup}{angopt}[]{%
@@ -3254,130 +3615,172 @@
   \def\eql@display@height{#1}}
 \eql@define@key\eql@keycat{displaydepth}[\dp\eql@strutbox@]{%
   \def\eql@display@depth{#1}}
+\eql@define@key\eql@keycat{displayheight*}[]{%
+  \let\eql@display@height\@undefined}
+\eql@define@key\eql@keycat{displaydepth*}[]{%
+  \let\eql@display@depth\@undefined}
 \eql@define@key{equations}{noskip}[]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
-    {\eql@display@atend{%
-      \abovedisplayskip\z@skip
-      \abovedisplayshortskip\z@skip
-      \eql@abovedisplaytagskip@\z@skip}}%
-    {\eql@display@atend{%
-      \belowdisplayskip\z@skip
-      \belowdisplayshortskip\z@skip
-      \eql@belowdisplaytagskip@\z@skip}}}
-\eql@define@key{equations}{short}[]{%
+    {\def\eql@skip@force@above{5}}%
+    {\def\eql@skip@force@below{5}}}
+\eql@define@key{equations}{short}[above]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
-    {\eql@display@atend{%
-      \abovedisplayskip\abovedisplayshortskip}}%
-    {\eql@display@atend{%
-      \belowdisplayskip\belowdisplayshortskip}}}
+    {\def\eql@skip@force@above{1}}%
+    {\def\eql@skip@force@below{1}}}
 \eql@define@key{equations}{long}[]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
-    {\eql@display@atend{%
-      \abovedisplayshortskip\abovedisplayskip}}%
-    {\eql@display@atend{%
-      \belowdisplayshortskip\belowdisplayskip}}}
+    {\def\eql@skip@force@above{0}}%
+    {\def\eql@skip@force@below{0}}}
 \eql@define@key{equations}{medskip}[]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
-    {\eql@display@atend{%
-      \abovedisplayskip\eql@abovedisplaymedskip@}}%
-    {\eql@display@atend{%
-      \belowdisplayskip\eql@belowdisplaymedskip@}}}
+    {\def\eql@skip@force@above{6}}%
+    {\def\eql@skip@force@below{6}}}
+\eql@define@key{equations}{par}[par]{%
+  \eql@decide@select{#3}{#2}{#1}{%
+    {{default,}{\let\eql@skip@force@leave\@undefined}},%
+    {{cont,hmode}{\let\eql@skip@force@leave\z@}},%
+    {{par,vmode}{\let\eql@skip@force@leave\@ne
+      \ifdefined\eql@skip@force@below\else
+        \def\eql@skip@force@below{3}%
+      \fi}},%
+    {{top}{\let\eql@skip@force@leave\tw@
+      \ifdefined\eql@skip@force@below\else
+        \def\eql@skip@force@below{4}
+      \fi}}}}
 \eql@define@key{equations}{skip}{%
-  \setlength\eql@abovedisplayskip@{#1}%
-  \eql@belowdisplayskip@\eql@abovedisplayskip@%
-  \eql@display@atend{%
-    \abovedisplayskip\eql@abovedisplayskip@
-    \abovedisplayshortskip\abovedisplayskip
-    \eql@abovedisplaytagskip@\abovedisplayskip
-    \belowdisplayskip\abovedisplayskip
-    \belowdisplayshortskip\belowdisplayskip
-    \eql@belowdisplaytagskip@\belowdisplayskip}}
+  \def\eql@skip@force@above{7}%
+  \def\eql@skip@custom@above{#1}%
+  \let\eql@skip@force@below\eql@skip@force@above
+  \let\eql@skip@custom@below\eql@skip@custom@above}
 \eql@define@key{equations}{aboveskip}{%
-  \setlength\eql@abovedisplayskip@{#1}%
-  \eql@display@atend{%
-    \abovedisplayskip\eql@abovedisplayskip@
-    \abovedisplayshortskip\abovedisplayskip
-    \eql@abovedisplaytagskip@\abovedisplayskip}}
+  \def\eql@skip@force@above{7}%
+  \def\eql@skip@custom@above{#1}}
 \eql@define@key{equations}{belowskip}{%
-  \setlength\eql@belowdisplayskip@{#1}%
-  \eql@display@atend{%
-    \belowdisplayskip\eql@belowdisplayskip@
-    \belowdisplayshortskip\belowdisplayskip%
-    \eql@belowdisplaytagskip@\belowdisplayskip}}
+  \def\eql@skip@force@below{7}%
+  \def\eql@skip@custom@below{#1}}
 \eql@define@key{equations}{abovespace}{%
-  \addtolength\eql@abovespace@{#1}}
+  \advance\eql@abovespace@\glueexpr#1\relax}
 \eql@define@key{equations}{belowspace}{%
-  \addtolength\eql@belowspace@{#1}}
+  \advance\eql@belowspace@\glueexpr#1\relax}
 \eql@define@key{intertext}{skip}{%
-  \setlength\abovedisplayskip{#1}\belowdisplayskip\abovedisplayskip}
+  \def\eql@skip@force@above{7}%
+  \def\eql@skip@custom@above{#1}%
+  \let\eql@skip@force@below\eql@skip@force@above
+  \let\eql@skip@custom@below\eql@skip@custom@above}
 \eql@define@key{intertext}{aboveskip}{%
-  \setlength\belowdisplayskip{#1}}
+  \def\eql@skip@force@below{7}%
+  \def\eql@skip@custom@below{#1}}
 \eql@define@key{intertext}{belowskip}{%
-  \setlength\abovedisplayskip{#1}}
+  \def\eql@skip@force@above{7}%
+  \def\eql@skip@custom@above{#1}}
 \eql@define@key{intertext}{noskip}[]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
-    {\belowdisplayskip\z@skip\belowdisplayshortskip\z@skip}%
-    {\abovedisplayskip\z@skip\abovedisplayshortskip\z@skip}}
+    {\def\eql@skip@force@below{5}}%
+    {\def\eql@skip@force@above{5}}}
 \eql@define@key{intertext}{short}[]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
-    {\belowdisplayskip\belowdisplayshortskip}%
-    {\abovedisplayskip\abovedisplayshortskip}}
+    {\def\eql@skip@force@below{1}}%
+    {\def\eql@skip@force@above{1}}}
 \eql@define@key{intertext}{long}[]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
-    {\belowdisplayshortskip\belowdisplayskip}%
-    {\abovedisplayshortskip\abovedisplayskip}}
+    {\def\eql@skip@force@below{0}}%
+    {\def\eql@skip@force@above{0}}}
 \eql@define@key{intertext}{medskip}[]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
-    {\belowdisplayskip\eql@belowdisplaymedskip@}%
-    {\abovedisplayskip\eql@abovedisplaymedskip@}}
-\eql@define@key{setup}{skip}{%
-  \setlength\abovedisplayskip{#1}\belowdisplayskip\abovedisplayskip}
-\eql@define@key{setup}{aboveskip}{%
-  \setlength\abovedisplayskip{#1}}
-\eql@define@key{setup}{belowskip}{%
-  \setlength\belowdisplayskip{#1}}
+    {\def\eql@skip@force@below{6}}%
+    {\def\eql@skip@force@above{6}}}
+\eql@define@key{setup}{skip,longskip}{%
+  \abovedisplayskip\glueexpr#1\relax
+  \belowdisplayskip\abovedisplayskip
+  \def\eql@skip@long@above{#1}%
+  \let\eql@skip@long@below\eql@skip@long@above}
+\eql@define@key{setup}{aboveskip,abovelongskip}{%
+  \abovedisplayskip\glueexpr#1\relax
+  \def\eql@skip@long@above{#1}}
+\eql@define@key{setup}{belowskip,belowlongskip}{%
+  \belowdisplayskip\glueexpr#1\relax
+  \def\eql@skip@long@below{#1}}
 \eql@define@key{setup}{aboveshortskip}{%
-  \setlength\abovedisplayshortskip{#1}}
+  \abovedisplayshortskip\glueexpr#1\relax
+  \def\eql@skip@short@above{#1}}
 \eql@define@key{setup}{belowshortskip}{%
-  \setlength\belowdisplayshortskip{#1}}
+  \belowdisplayshortskip\glueexpr#1\relax
+  \def\eql@skip@short@below{#1}}
 \eql@define@key{setup}{tagskip}{%
-  \setlength\eql@abovedisplaytagskip@{#1}%
-  \eql@belowdisplaytagskip@\eql@abovedisplaytagskip@}
+  \def\eql@skip@tag@above{#1}%
+  \let\eql@skip@tag@below\eql@skip@tag@above}
 \eql@define@key{setup}{abovetagskip}{%
-  \setlength\eql@abovedisplaytagskip@{#1}}
+  \def\eql@skip@tag@above{#1}}
 \eql@define@key{setup}{belowtagskip}{%
-  \setlength\eql@belowdisplaytagskip@{#1}}
+  \def\eql@skip@tag@below{#1}}
 \eql@define@key{setup}{medskip}{%
-  \setlength\eql@abovedisplaymedskip@{#1}%
-  \eql@belowdisplaymedskip@\eql@abovedisplaymedskip@}
+  \def\eql@skip@med@above{#1}%
+  \let\eql@skip@med@below\eql@skip@med@above}
 \eql@define@key{setup}{abovemedskip}{%
-  \setlength\eql@abovedisplaymedskip@{#1}}
-\eql@define@key{setup}{abovetopskip}{%
-  \setlength\eql@abovedisplaytopskip@{#1}}
-\eql@define@key{setup}{aboveparskip}{%
-  \setlength\eql@abovedisplayparskip@{#1}}
-\eql@define@key{setup}{abovecontskip}{%
-  \setlength\eql@abovedisplaycontskip@{#1}}
+  \def\eql@skip@med@above{#1}}
 \eql@define@key{setup}{belowmedskip}{%
-  \setlength\eql@belowdisplaymedskip@{#1}}
+  \def\eql@skip@med@below{#1}}
+\eql@define@key{setup}{medtagskip}{%
+  \def\eql@skip@medtag@above{#1}%
+  \let\eql@skip@medtag@below\eql@skip@medtag@above}
+\eql@define@key{setup}{abovemedtagskip}{%
+  \def\eql@skip@medtag@above{#1}}
+\eql@define@key{setup}{belowmedtagskip}{%
+  \def\eql@skip@medtag@below{#1}}
+\eql@define@key{setup}{abovetopskip}{%
+  \def\eql@skip@top@above{#1}}
+\eql@define@key{setup}{belowtopskip}{%
+  \def\eql@skip@top@below{#1}}
+\eql@define@key{setup}{aboveparskip}{%
+  \def\eql@skip@par@above{#1}}
+\eql@define@key{setup}{belowparskip}{%
+  \def\eql@skip@par@below{#1}}
+\eql@define@key{setup}{abovepartagskip}{%
+  \def\eql@skip@partag@above{#1}}
+\eql@define@key{setup}{belowpartagskip}{%
+  \def\eql@skip@partag@below{#1}}
+\eql@define@key{setup}{abovecontskip}{%
+  \def\eql@skip@cont@above{#1}}
+\eql@define@key{setup}{abovecontskip*}[]{%
+  \def\eql@skip@cont@above{\eql@spread-\eql@skip@long@below}}
+\eql@define@key{setup}{belowcontskip}{%
+  \def\eql@skip@cont@below{#1}}
 \eql@define@key{setup}{shortmode}{%
   \eql@decide@select{#3}{#2}{#1}{%
-    {{off,never,no}{\eql@displayshortmode@\z@}},%
-    {{above,neverbelow,notbelow,belowoff}{\eql@displayshortmode@\@ne}},%
-    {{belowone,belowsingle}{\eql@displayshortmode@\tw@}},%
-    {{belowall,always,on}{\eql@displayshortmode@\thr@@}}}}
+    {{off,never,no}{\eql@skip@mode@short@\z@}},%
+    {{above,neverbelow,notbelow,belowoff}{\eql@skip@mode@short@\@ne}},%
+    {{belowone,belowsingle}{\eql@skip@mode@short@\tw@}},%
+    {{belowall,always,on}{\eql@skip@mode@short@\thr@@}}}}
+\eql@define@key{setup}{belowcontmode}{%
+  \eql@decide@select{#3}{#2}{#1}{%
+    {{long}{\eql@skip@mode@cont@\z@}},%
+    {{short}{\eql@skip@mode@cont@\@ne}},%
+    {{cont}{\eql@skip@mode@cont@\tw@}}}}
+\eql@define@key{setup}{belowparmode}{%
+  \eql@decide@select{#3}{#2}{#1}{%
+    {{long}{\eql@skip@mode@par@\z@}},%
+    {{short}{\eql@skip@mode@par@\@ne}},%
+    {{cont}{\eql@skip@mode@par@\tw@}},%
+    {{par}{\eql@skip@mode@par@\thr@@}}}}
+\eql@define@key{setup}{belowtopmode}{%
+  \eql@decide@select{#3}{#2}{#1}{%
+    {{long}{\eql@skip@mode@top@\z@}},%
+    {{short}{\eql@skip@mode@top@\@ne}},%
+    {{cont}{\eql@skip@mode@top@\tw@}},%
+    {{par}{\eql@skip@mode@top@\thre@@}},%
+    {{top}{\eql@skip@mode@top@4\relax}}}}
 \def\eql@keycat{equations,subequations}
 \eql@define@key\eql@keycat{label}{\eql@blocklabel@set{#1}}
 \eql@define@key\eql@keycat{tag}{\eql@blocktag@set{#1}}
 \eql@define@key\eql@keycat{tag*}{\eql@blocktag@setstar{#1}}
 \def\eql@keycat{equations,setup}
-\eql@define@key\eql@keycat{tagmargin}{\setlength\eql@tagmargin@{#1}}
+\eql@define@key\eql@keycat{tagmargin}{\eql@tagmargin@\glueexpr#1\relax}
 \eql@define@key\eql@keycat{tagmargin*}{\settowidth\eql@tagmargin@{#1}}
-\eql@define@key\eql@keycat{mintagsep}{\setlength\eql@tagsepmin@{#1}}
-\eql@define@key\eql@keycat{mintagwidth}{\setlength\eql@tagwidthmin@{#1}}
+\eql@define@key\eql@keycat{mintagsep}{\eql@tagsepmin@\glueexpr#1\relax}
+\eql@define@key\eql@keycat{mintagwidth}{\eql@tagwidthmin@\glueexpr#1\relax}
 \eql@define@key\eql@keycat{mintagwidth*}{\settowidth\eql@tagwidthmin@{#1}}
-\eql@define@key{setup}{taglayout}{\eql@tag@setmake{#1}}
-\eql@define@key{setup}{taglayout*}{\eql@tag@setmake@{#1}}
+\eql@define@key{setup}{taglayout}{\eql@tag@setbox{#1}}
+\eql@define@key{setup}{taglayout*}{\eql@tag@setbox@{#1}}
 \eql@define@key{setup}{tagform}{\eql@tag@setform#1}
 \eql@define@key{setup}{tagform*}{\eql@tag@setform@{#1}}
 \eql@define@key{setup}{subeqtemplate}{\def\eql@subequations@template{#1}}
@@ -3405,13 +3808,13 @@
 \eql@define@key\eql@keycat{center}[]{\let\eql@flushleft\eql@false}
 \eql@define@key\eql@keycat{flushleft,left}[]{\let\eql@flushleft\eql@true}
 \eql@define@key\eql@keycat{leftmargin}{%
-  \setlength\eql@flushleftmargin@{#1}}
+  \eql@flushleftmargin@\glueexpr#1\relax}
 \eql@define@key\eql@keycat{minleftmargin}{%
-  \setlength\eql@flushleftmarginmin@{#1}}
+  \eql@flushleftmarginmin@\glueexpr#1\relax}
 \eql@define@key\eql@keycat{maxleftmargin}{%
-  \setlength\eql@flushleftmarginmax@{#1}}
+  \eql@flushleftmarginmax@\glueexpr#1\relax}
 \eql@define@key\eql@keycat{maxleftmargin*}[]{%
-  \setlength\eql@flushleftmarginmax@{.5\maxdimen}}
+  \eql@flushleftmarginmax@.5\maxdimen}
 \def\eql@keycat{equations,setup}
 \eql@define@key\eql@keycat{marginbadness}{\eql@marginbadness@#1\relax}
 \eql@define@key\eql@keycat{maxbadness}{\eql@maxbadness@#1\relax}
@@ -3460,7 +3863,7 @@
 \eql@define@key\eql@keycat{punctcol*}[]{\let\eql@punct@col\relax}
 \let\eql@multi@linesfallback\eql@true
 \let\eql@single@crerror\eql@true
-\let\eql@ampproof@active\eql@true
+\let\eql@ampproof@active\eql@false
 \eql@define@key{setup}{linesfallback}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@multi@linesfallback}
 \eql@define@key{setup}{ampproof}[true]{%
@@ -3471,22 +3874,30 @@
   \eql@decide@if{#3}{#2}{#1}%
     {\let\eql@scan@body\eql@scan@body@rescan}%
     {\let\eql@scan@body\eql@scan@body@dump}}
-\let\eql@provide@amsmath\eql@true
-\let\eql@provide@equation\eql@true
-\let\eql@provide@ang\eql@true
-\let\eql@amsmath@dofixends\eql@true
+\eql@define@key{setup}{defaults}{%
+  \eql@decide@select{#3}{#2}{#1}{%
+    {{classic}{\eql@defaults@classic}},%
+    {{eqnlines}{\eql@defaults@eqnlines}}}}
+\let\eql@provide@opt@equation\eql@true
+\let\eql@provide@opt@amsmathends\eql@true
+\let\eql@provide@opt@amsmath\eql@true
+\let\eql@provide@opt@ang\eql@true
+\let\eql@provide@opt@eqref\eql@true
 \eql@define@key{setup}{equation}[true]{%
   \eql@error@packageoption{#2}%
-  \eql@decide@bool{#3}{#2}{#1}\eql@provide@equation}
-\eql@define@key{setup}{amsmath}[true]{%
-  \eql@error@packageoption{#2}%
-  \eql@decide@bool{#3}{#2}{#1}\eql@provide@amsmath}
+  \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@equation}
 \eql@define@key{setup}{amsmathends}[true]{%
   \eql@error@packageoption{#2}%
-  \eql@decide@bool{#3}{#2}{#1}\eql@amsmath@dofixends}
+  \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@amsmathends}
+\eql@define@key{setup}{amsmath}[true]{%
+  \eql@error@packageoption{#2}%
+  \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@amsmath}
 \eql@define@key{setup}{ang}[true]{%
   \eql@error@packageoption{#2}%
-  \eql@decide@bool{#3}{#2}{#1}\eql@provide@ang}
+  \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@ang}
+\eql@define@key{setup}{eqref}[true]{%
+  \eql@error@packageoption{#2}%
+  \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@eqref}
 \newenvironment{eql@gathered}
   {\eqnaddopt{lines}\equationsbox}{\endequationsbox}
 \newenvironment{eql@multlined}
@@ -3586,7 +3997,7 @@
       \eql@provide@movecmd{#1}{eql@#1}%
     }%
     \eql@provide@movecmd{#1}{eql@#1}%
-    \eql@amsmath@futurebefore{\eql@provide@undefinecmd{#1}}%
+    \eql@amsmath@before{\eql@provide@undefinecmd{#1}}%
   \fi
 }
 \def\eql@amsmath@endfix#1#2{%
@@ -3633,8 +4044,8 @@
     }%
     \eql@provide@moveenv{#1}{eql@#1}%
     \eql@provide@moveenv{#1*}{eql@#1*}%
-    \eql@amsmath@futurebefore{\eql@provide@undefineenv{#1}}%
-    \eql@amsmath@futurebefore{\eql@provide@undefineenv{#1*}}%
+    \eql@amsmath@before{\eql@provide@undefineenv{#1}}%
+    \eql@amsmath@before{\eql@provide@undefineenv{#1*}}%
   \fi
 }
 \def\eql@provide@env@equation#1{%
@@ -3661,7 +4072,13 @@
     }}%
     \eql@provide@moveenv{equation}{eql@equation}%
     \eql@provide@moveenv{equation*}{eql@equation*}%
-    \eql@amsmath@futurebefore{\eql@provide@undefineenv{equation*}}%
+    \eql@amsmath@before{\eql@provide@undefineenv{equation*}}%
+    \ifdefined\eql@tagging@on
+      \AddToHook{begindocument/end}{%
+        \eql@provide@moveenv{equation}{eql@equation}%
+        \eql@provide@moveenv{equation*}{eql@equation*}%
+      }%
+    \fi
   \fi
 }
 \def\eql@provide@env@multlined#1{%
@@ -3678,14 +4095,6 @@
       \eql@provide@undefineenv{multlined}}}%
   \fi
 }
-\def\eql@provide@env@subequations@reinstall{%
-  \global\let\subequations\eql@subequations
-  \let\@tempa\UseHook
-  \let\@tempb\UseHookWithArguments
-  \def\UseHook{\let\UseHook\@tempa\let\UseHookWithArguments\@tempb%
-    \expandafter\subequations\@gobble}%
-  \def\UseHookWithArguments{\expandafter\UseHook\@gobble}%
-}
 \def\eql@provide@env@subequations#1{%
   \eql@provide@onlyonce{subequations}{#1}%
   \ifdefined\eql@tmp
@@ -3695,7 +4104,6 @@
     \eql@amsmath@after{%
       \eql@provide@moveenv{amssubequations}{subequations}%
       \eql@provide@moveenv{subequations}{eql@subequations}%
-      \let\subequations\eql@provide@env@subequations@reinstall
     }%
     \AddToHook{package/hyperref/after}{%
       \AddToHook{cmd/subequations/before}[hyperref]{}%
@@ -3707,17 +4115,18 @@
         \stepcounter{equation}%
         \protected@edef\theHparentequation{\theHequation}%
         \addtocounter{equation}{-1}%
-      }
+      }%
       \AddToHook{cmd/amssubequations/after}%
       {%
         \def\theHequation{\theHparentequation\alph{equation}}%
         \ignorespaces
-      }
-    }
+      }%
+      \AddToHook{begindocument/end}{%
+        \eql@provide@moveenv{subequations}{eql@subequations}%
+      }%
+    }%
     \eql@provide@moveenv{subequations}{eql@subequations}%
-    \AddToHook{cmd/subequations/after}{}%
-    \let\subequations\eql@provide@env@subequations@reinstall
-    \eql@amsmath@futurebefore{\eql@provide@undefineenv{subequations}}%
+    \eql@amsmath@before{\eql@provide@undefineenv{subequations}}%
   \fi
 }
 \def\eql@provide@sqr{%
@@ -3727,6 +4136,12 @@
     \let\[\eql@equations@sqr@open
     \let\]\eql@equations@sqr@close
   }%
+  \ifdefined\eql@tagging@on
+    \AddToHook{begindocument/end}{%
+      \let\[\eql@equations@sqr@open
+      \let\]\eql@equations@sqr@close
+    }%
+  \fi
 }
 \def\eql@provide@ang{%
   \let\<\eql@equations@ang@open
@@ -3749,6 +4164,10 @@
 \eql@define@key{provide}{allowdisplaybreaks}[]{%
   \eql@provide@cmd{allowdisplaybreaks}{#1}}
 \eql@define@key{provide}{numberwithin}[]{\eql@provide@cmd{numberwithin}{#1}}
+\eql@define@key{provide}{tagform}[]{%
+  \def\tagform@##1{\maketag@@@{\eql@tag@form{#1}}}}
+\eql@define@key{provide}{maketag}[]{%
+  \def\maketag@@@##1{\eql@tag@box{##1}}}
 \newcommand{\eqnlinesprovide}[1]{%
   \eql@setkeys{provide}{#1}}
 \newcommand{\eqnlinesset}[1]{%
@@ -3759,14 +4178,14 @@
 \def\eql@error@packageoption#1{%
   \eql@error{may only use `#1' as a package option}%
 }
-\ifcsname tagsleft@true\endcsname\else
+\ifdefined\tagsleft@true\else
   \expandafter\newif\csname iftagsleft@\endcsname
 \fi
-\ifcsname @fleqntrue\endcsname\else
+\ifdefined\@fleqntrue\else
   \expandafter\newif\csname if@fleqn\endcsname
 \fi
-\ifdefined\eql@provide@amsmath
-  \let\eql@provide@equation\eql@true
+\ifdefined\eql@provide@opt@amsmath
+  \let\eql@provide@opt@equation\eql@true
   \eql@amsmath@after{%
     \iftagsleft@
       \eqnlinesset{tagsleft}
@@ -3780,21 +4199,16 @@
     \fi
   }
 \fi
-\ifdefined\eql@provide@equation
-  \eqnlinesprovide{equation,sqr}
-\fi
-\ifdefined\eql@amsmath@dofixends
-  \eql@amsmath@fixends
-\fi
-\ifdefined\eql@provide@amsmath
+\ifdefined\eql@provide@opt@equation\eqnlinesprovide{equation,sqr}\fi
+\ifdefined\eql@provide@opt@amsmathends\eql@amsmath@fixends\fi
+\ifdefined\eql@provide@opt@amsmath
   \eqnlinesprovide{%
     multline,gather,align,flalign,%
     multlined,gathered,aligned,%
-    subequations,eqref}
+    subequations}
 \fi
-\ifdefined\eql@provide@ang
-  \eqnlinesprovide{ang}
-\fi
+\ifdefined\eql@provide@opt@ang\eqnlinesprovide{ang}\fi
+\ifdefined\eql@provide@opt@eqref\eqnlinesprovide{eqref}\fi
 \endinput
 %%
 %% End of file `eqnlines.sty'.
