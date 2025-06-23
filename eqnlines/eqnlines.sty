@@ -21,7 +21,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[2020/10/01]
-\ProvidesPackage{eqnlines}[2025/05/29 v0.10 Single- and multi-line equations]
+\ProvidesPackage{eqnlines}[2025/06/23 v0.10.1 Single- and multi-line equations]
 \let\eql@false\@undefined
 \let\eql@true\@empty
 \def\eql@append#1#2{\edef#1{\unexpanded\expandafter{#1#2}}}
@@ -198,8 +198,8 @@
   \def\eql@tagging@start{%
     \csname bool_if:NF\expandafter\endcsname
       \csname l__math_collected_bool\endcsname{%
-      \toks@\expandafter{\eql@tagging@opt}%
-      \edef\eql@tmp{{\@currenvir}{[\the\toks@]\the\eql@scan@reg@}}%
+      \edef\eql@tmp{{\@currenvir}{[\unexpanded\expandafter{\eql@tagging@opt}]%
+        \the\eql@scan@reg@}}%
       \csname __math_process:nn\expandafter\endcsname\eql@tmp
       \@kernel@math@registered@begin
       \csname bool_set_true:N\expandafter\endcsname
@@ -1787,6 +1787,14 @@
     \fi
   \fi
 }
+\let\eql@beamerbasecolor@fix\@empty
+\AddToHook{package/beamerbasecolor/after}{%
+  \def\eql@beamerbasecolor@fix{%
+    \donotcolorouterdisplaymaths
+    \donotcoloroutermaths
+    \beamer@setdisplaymathcolor
+  }%
+}
 \newskip\eql@abovespace@
 \newskip\eql@belowspace@
 \def\eql@display@enter{%
@@ -1798,6 +1806,7 @@
   \else
     \eql@prevdepth@\maxdimen
   \fi
+  \eql@beamerbasecolor@fix
 }
 \def\eql@display@adjust{%
   \ifdefined\eql@display@linewidth

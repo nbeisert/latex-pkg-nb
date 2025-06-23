@@ -23,10 +23,10 @@
 % and the derived files eqnlines.sty.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[2020/10/01]
-%<package&!dev>\ProvidesPackage{eqnlines}[2025/05/29 v0.10 Single- and multi-line equations]
-%<package&dev>\ProvidesPackage{eqnlines-dev}[2025/05/29 v0.10 Single- and multi-line equations (development)]
+%<package&!dev>\ProvidesPackage{eqnlines}[2025/06/23 v0.10.1 Single- and multi-line equations]
+%<package&dev>\ProvidesPackage{eqnlines-dev}[2025/06/23 v0.10.1 Single- and multi-line equations (development)]
 %<*driver>
-\def\thedate#1{2025/05/29}\def\theversion#1{v0.10}
+\def\thedate#1{2025/06/23}\def\theversion#1{v0.10.1}
 \ProvidesFile{eqnlines.dtx}[\thedate{} \theversion{} eqnlines reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -2524,6 +2524,11 @@ to create anchors and references within the electronic document.
 Compatibility with the \ctanpkg{hyperref} package
 has been tested with v7.01l (2024/11/05).
 \item
+This package cooperates with the package \ctanpkg{beamer}
+in assigning default colours for math content.
+Compatibility with the \ctanpkg{beamer} package
+has been tested with v3.74 (2025/06/15).
+\item
 This package supports the display of labels and references
 through the package \ctanpkg{showkeys}.
 Compatibility with the \ctanpkg{showkeys} package
@@ -2647,6 +2652,14 @@ change bool registers to |char| 0 and 1 and |\||ifodd|
 \end{itemize}
 
 \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v0.10.1:} 2025/06/23
+
+\begin{itemize}
+\item
+fix for setting default colours (|math text|) in \ctanpkg{beamer}
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v0.10:} 2025/05/29
@@ -3273,8 +3286,8 @@ thanks to Till Bargheer for testing and reports
   \def\eql@tagging@start{%
     \csname bool_if:NF\expandafter\endcsname
       \csname l__math_collected_bool\endcsname{%
-      \toks@\expandafter{\eql@tagging@opt}%
-      \edef\eql@tmp{{\@currenvir}{[\the\toks@]\the\eql@scan@reg@}}%
+      \edef\eql@tmp{{\@currenvir}{[\unexpanded\expandafter{\eql@tagging@opt}]%
+        \the\eql@scan@reg@}}%
       \csname __math_process:nn\expandafter\endcsname\eql@tmp
       \@kernel@math@registered@begin
       \csname bool_set_true:N\expandafter\endcsname
@@ -6143,6 +6156,17 @@ thanks to Till Bargheer for testing and reports
 %
 % \TODO describe
 %
+%    \begin{macrocode}
+\let\eql@beamerbasecolor@fix\@empty
+\AddToHook{package/beamerbasecolor/after}{%
+  \def\eql@beamerbasecolor@fix{%
+    \donotcolorouterdisplaymaths
+    \donotcoloroutermaths
+    \beamer@setdisplaymathcolor
+  }%
+}
+%    \end{macrocode}
+%
 %   \lskip{\eql@abovespace@}
 %   \lskip{\eql@belowspace@}
 %    \begin{macrocode}
@@ -6161,6 +6185,7 @@ thanks to Till Bargheer for testing and reports
   \else
     \eql@prevdepth@\maxdimen
   \fi
+  \eql@beamerbasecolor@fix
 }
 %    \end{macrocode}
 %
