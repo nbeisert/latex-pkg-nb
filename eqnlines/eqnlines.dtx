@@ -23,10 +23,10 @@
 % and the derived files eqnlines.sty.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[2020/10/01]
-%<package&!dev>\ProvidesPackage{eqnlines}[2025/06/23 v0.10.1 Single- and multi-line equations]
-%<package&dev>\ProvidesPackage{eqnlines-dev}[2025/06/23 v0.10.1 Single- and multi-line equations (development)]
+%<package&!dev>\ProvidesPackage{eqnlines}[2025/10/25 v0.11 Single- and multi-line equations]
+%<package&dev>\ProvidesPackage{eqnlines-dev}[2025/10/25 v0.11 Single- and multi-line equations (development)]
 %<*driver>
-\def\thedate#1{2025/06/23}\def\theversion#1{v0.10.1}
+\def\thedate#1{2025/10/25}\def\theversion#1{v0.11}
 \ProvidesFile{eqnlines.dtx}[\thedate{} \theversion{} eqnlines reference manual file]
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -595,7 +595,7 @@ x&=\cos\phi & \phi&=\arccos x \\
 \DescribeEnv{align}
 The package also supplies or overwrites the \amsmath/
 environments |equation|, |gather|, |multline|, |align| and |flalign|
-including their starred at -|at| variants
+including their starred -|at| variants
 (but not the |split| construction).
 It is possible to define further equation environments \textit{env}
 with a predefined set of options \textit{opts} using:
@@ -1592,7 +1592,8 @@ by declaring `|\eqnpunct,|' before the equation
 (i.e.\ at the end of the textual phrase to which the punctuation mark belongs),
 at the end of the equation
 or by using the optional argument |[punct={,}]|.
-Likewise, |\eqnpunct{}| and |[punct{}]| eliminate a preset punctuation.
+Likewise, |\eqnpunct{}|, |[punct=~]| or |[punct={}]|
+eliminates a preset punctuation.
 \DescribeKey{. , \string~}
 The modifiers dot `|.|', comma `|,|' and tilde `|~|'
 for the equations environment are short forms for
@@ -1626,18 +1627,29 @@ e.g.\ \textit{sep}=|\,| or \textit{sep}=|\|\texttt{\textvisiblespace}.
 
 \DescribeKey{punctcol}
 \DescribeKey{punctline}
+\DescribeKey{punctall}
+\DescribeKey{`}
 For multi-line equations, there are two further levels of default punctuation
 for terminating columns and lines
-which are specified via the macros |\eqnpunctcol| and |\eqnpunctline|
-or the optional arguments |punctcol| and |punctline|.
+which are specified via the option |punctcol| and |punctline|.
 A punctuation item may also be handed on to the next lower level
 of punctuation via the starred forms |punct*| and |punctline*|.
+Several levels of punctuation can be specified simultaneously by |punctall|
+or via the modifier `|`|':
+%
+\begin{center}
+|punctall={|[[\textit{col}]\textit{line}]\textit{main}|}|
+\qquad
+|\[`{|[[\textit{col}]\textit{line}]\textit{main}|}|\,\ldots|\]|
+\end{center}
+%
+The special value `|~|' represents no punctuation
+and |\relax| hands down.
 
 \begin{example}
 \begin{scanexample}
-\eqnlinesset{punct={.},
-  punctcol={,},punctline={;}}
-\< x &= \cos\phi &
+\<`{,;.}
+   x &= \cos\phi &
 \phi &= \arccos x \\
    x &= (z+z^{-1})/2 &
 \phi &= -i\log z \>
@@ -1908,13 +1920,30 @@ These keys also take the values |above|, |below| or |both|.
 \end{example}
 
 \DescribeKey{par}
+By default, equation environments end in horizontal mode without indentation.
 The key |par| controls whether
-the equation environments end in horizontal mode (value |cont|)
+the equation environments end in horizontal mode as usual (value |cont|)
 or in vertical mode (value |par|, default)
 with a dedicated amount of glue |belowparskip|.
 An environment can also be made to end in vertical mode
 without interline skip (value |top|)
 using the glue |belowtopskip|.
+The key |par| can be used for situations when vertical mode is preferred,
+e.g.\ for lists following equations
+where the vertical space above the list is excessive.
+In the following example,
+|\hrule| will leave an empty line when not in vertical mode.
+
+\begin{example}
+\begin{scanexample}
+\hrule some text
+\[ \mbox{cont} \]
+\hrule some text
+\[[par] \mbox{par} \]
+\hrule
+\end{scanexample}
+\showexampleh
+\end{example}
 
 \DescribeKey{...skip}
 \DescribeInterfaceMacro{\vspace}
@@ -2162,7 +2191,7 @@ where the mark would otherwise smash equation content
 \phi &= \arccos x
 \eqncontrol{qed={shift=.5ex}} \>
 \end{scanexample}
-\showexampleh
+\showexampleh[0.6]
 \end{example}
 
 The options \textit{opts} can be used
@@ -2652,6 +2681,15 @@ change bool registers to |char| 0 and 1 and |\||ifodd|
 \end{itemize}
 
 \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v0.11:} 2025/10/25
+
+\begin{itemize}
+\item
+added option |punctall| and modifier `|`|'
+to specify several levels of punctuation at once
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v0.10.1:} 2025/06/23
@@ -3348,26 +3386,26 @@ thanks to Till Bargheer for testing and reports
 % an error message is invoked.
 % Single expansion is applied to the list of values:
 %    \begin{macrocode}
-\def\eql@decide@relax{\@tempb:=\relax}
+\def\eql@decide@relax{\eql@tmpb:=\relax}
 \def\eql@decide@select#1#2#3#4{%
-  \def\@tempa{#3}%
-  \let\@tempd\@undefined
-  \@for\@tempc:=#4\do{%
-    \ifdefined\@tempd\else
-      \edef\@tempb{\noexpand\@tempb:=\expandafter\@firstoftwo\@tempc}%
-      \ifx\@tempb\eql@decide@relax
-        \def\@tempa{\relax}%
+  \def\eql@tmpa{#3}%
+  \let\eql@tmpd\@undefined
+  \@for\eql@tmpc:=#4\do{%
+    \ifdefined\eql@tmpd\else
+      \edef\eql@tmpb{\noexpand\eql@tmpb:=\expandafter\@firstoftwo\eql@tmpc}%
+      \ifx\eql@tmpb\eql@decide@relax
+        \def\eql@tmpa{\relax}%
       \fi
-      \expandafter\@for\@tempb\do{%
-        \ifx\@tempa\@tempb
-          \edef\@tempd{\unexpanded\expandafter\expandafter\expandafter{%
-            \expandafter\@secondoftwo\@tempc}}%
+      \expandafter\@for\eql@tmpb\do{%
+        \ifx\eql@tmpa\eql@tmpb
+          \edef\eql@tmpd{\unexpanded\expandafter\expandafter\expandafter{%
+            \expandafter\@secondoftwo\eql@tmpc}}%
         \fi
       }%
     \fi
   }%
-  \ifdefined\@tempd
-    \@tempd
+  \ifdefined\eql@tmpd
+    \eql@tmpd
   \else
     \eql@error{undefined value '#3' for option '#2' of '#1'}%
   \fi
@@ -3999,6 +4037,22 @@ thanks to Till Bargheer for testing and reports
 \let\eql@punct@sep\relax
 %    \end{macrocode}
 %
+%   \macro{\eql@punct@set}
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@punct@relax{\relax}
+\def\eql@punct@tilde{~}
+\def\eql@punct@set#1#2{%
+  \def#1{#2}%
+  \ifx#1\eql@punct@relax
+    \let#1\relax
+  \fi
+  \ifx#1\eql@punct@tilde
+    \let#1\@empty
+  \fi
+}
+%    \end{macrocode}
+%
 %   \imacro{\eqnpunct}
 % Set the punction for columns, lines and blocks.
 % Note that the macro |\eqnpunct| sets the punctuation for the
@@ -4009,9 +4063,9 @@ thanks to Till Bargheer for testing and reports
   \eql@ifstar@tight\eql@punct@next@setrelax\eql@punct@next@set}
 \def\eql@punct@next@set#1{%
   \ifmmode
-    \def\eql@punct@col{#1}%
-    \def\eql@punct@line{#1}%
-    \def\eql@punct@block{#1}%
+    \eql@punct@set\eql@punct@col{#1}%
+    \eql@punct@set\eql@punct@line{#1}%
+    \eql@punct@set\eql@punct@block{#1}%
   \else
     \eqnaddopt{punct={#1}}%
   \fi
@@ -4831,9 +4885,8 @@ thanks to Till Bargheer for testing and reports
 %
 %    \begin{macrocode}
 \def\eql@raisetag@test#1{%
-  \def\@tempa{#1}%
-  \def\@tempb{!}%
-  \ifx\@tempa\@tempb
+  \def\eql@tmpa{#1}\def\eql@tmpb{!}%
+  \ifx\eql@tmpa\eql@tmpb
     \eql@tags@add@forceraise
   \else
     \eql@tags@add@raisesmash{#1}%
@@ -9285,8 +9338,8 @@ thanks to Till Bargheer for testing and reports
 % \TODO describe
 %    \begin{macrocode}
 \def\eql@transpose@scan@col#1\&{%
-  \def\@tempa{#1}%
-  \ifx\@tempa\eql@transpose@end\else
+  \def\eql@tmpa{#1}%
+  \ifx\eql@tmpa\eql@transpose@end\else
     \advance\eql@totalcolumns@\@ne
     \eql@row@\z@
     \let\eql@transpose@data@col\@empty
@@ -9310,8 +9363,8 @@ thanks to Till Bargheer for testing and reports
 % \TODO describe
 %    \begin{macrocode}
 \def\eql@transpose@scan@row#1\\{%
-  \def\@tempa{#1}%
-  \ifx\@tempa\eql@transpose@end\else
+  \def\eql@tmpa{#1}%
+  \ifx\eql@tmpa\eql@transpose@end\else
     \ifx\eql@transpose@active+
       \eql@transpose@scan@cell#1&\eql@transpose@end&%
     \else
@@ -9325,8 +9378,8 @@ thanks to Till Bargheer for testing and reports
 % \TODO describe
 %    \begin{macrocode}
 \def\eql@transpose@scan@cell#1&#2&{%
-  \def\@tempa{#2}%
-  \ifx\@tempa\eql@transpose@end
+  \def\eql@tmpa{#2}%
+  \ifx\eql@tmpa\eql@transpose@end
     \eql@transpose@append@row{#1}%
   \else
     \eql@transpose@append@row{#1&#2}%
@@ -9338,8 +9391,8 @@ thanks to Till Bargheer for testing and reports
 % \TODO describe
 %    \begin{macrocode}
 \def\eql@transpose@scan@cell@next#1&{%
-  \def\@tempa{#1}%
-  \ifx\@tempa\eql@transpose@end\else
+  \def\eql@tmpa{#1}%
+  \ifx\eql@tmpa\eql@transpose@end\else
     \eql@transpose@append@row{&#1}%
     \expandafter\eql@transpose@scan@cell@next
   \fi
@@ -10088,6 +10141,9 @@ thanks to Till Bargheer for testing and reports
   \fi
   \ifx\eql@parseopt@token~%
     \let\eql@parseopt@next\eql@parseopt@punctoff
+  \fi
+  \ifx\eql@parseopt@token`%
+    \let\eql@parseopt@next\eql@parseopt@punctall
   \fi
   \ifx\eql@parseopt@token-%
     \let\eql@parseopt@next\eql@parseopt@single
@@ -11113,21 +11169,48 @@ thanks to Till Bargheer for testing and reports
 % \paragraph{Punctuation.}
 %
 % Configure punctuation defaults:
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@punct@all#1#2#3#4#5\eql@punct@end{%
+  \def\eql@tmp{#4}\def\eql@tmpa{1}%
+  \ifx\eql@tmp\eql@tmpa
+    \ifnum#5=1111\relax
+      \eql@punct@set\eql@punct@col{#1}%
+      \eql@punct@set\eql@punct@line{#2}%
+      \eql@punct@set\eql@punct@main{#3}%
+    \else\ifnum#5=111\relax
+      \eql@punct@set\eql@punct@line{#1}%
+      \eql@punct@set\eql@punct@main{#2}%
+    \else\ifnum#5=11\relax
+      \eql@punct@set\eql@punct@main{#1}%
+    \else
+      \let\eql@punct@col\@empty
+      \let\eql@punct@line\@empty
+      \let\eql@punct@main\@empty
+    \fi\fi\fi
+  \else
+    \eql@error{Too many arguments to punctall}%
+  \fi
+}
+%    \end{macrocode}
+%
+% \TODO describe
 %    \begin{macrocode}
 \def\eql@keycat{equations,equationsbox,setup}
 \eql@define@key\eql@keycat{punctsep}[\,]{\def\eql@punct@sep{#1}}
-\eql@define@key\eql@keycat{punct}[.]{\def\eql@punct@main{#1}}
+\eql@define@key\eql@keycat{punct}[.]{\eql@punct@set\eql@punct@main{#1}}
 \eql@define@key\eql@keycat{punct*}[]{\let\eql@punct@main\relax}
-\eql@define@key\eql@keycat{punctline}[,]{\def\eql@punct@line{#1}}
+\eql@define@key\eql@keycat{punctline}[,]{\eql@punct@set\eql@punct@line{#1}}
 \eql@define@key\eql@keycat{punctline*}[]{\let\eql@punct@line\relax}
-\eql@define@key\eql@keycat{punctcol}[,]{\def\eql@punct@col{#1}}
+\eql@define@key\eql@keycat{punctcol}[,]{\eql@punct@set\eql@punct@col{#1}}
 \eql@define@key\eql@keycat{punctcol*}[]{\let\eql@punct@col\relax}
+\eql@define@key\eql@keycat{punctall}[,,.]{\eql@punct@all#111111\eql@punct@end}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
 \eql@define@key{control}{punctsep}[\,]{\def\eql@punct@sep{#1}}
-\eql@define@key{control}{punct}[.]{\def\eql@punct@block{#1}%
-  \def\eql@punct@line{#1}\def\eql@punct@col{#1}}
+\eql@define@key{control}{punct}[.]{\eql@punct@set\eql@punct@block{#1}%
+  \eql@punct@set\eql@punct@line{#1}\eql@punct@set\eql@punct@col{#1}}
 \eql@define@key{control}{punct*}[]{\let\eql@punct@block\relax}
 \eql@define@key{control}{punctapply}[]{\eql@punct@apply@block}
 %    \end{macrocode}
@@ -11290,6 +11373,7 @@ thanks to Till Bargheer for testing and reports
 \def\eql@parseopt@punctdot#1{\eqnaddopt{punct={.}}\eql@parseopt@peek}
 \def\eql@parseopt@punctcomma#1{\eqnaddopt{punct={,}}\eql@parseopt@peek}
 \def\eql@parseopt@punctoff#1{\eqnaddopt{punct={}}\eql@parseopt@peek}
+\def\eql@parseopt@punctall#1#2{\eqnaddopt{punctall={#2}}\eql@parseopt@peek}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11463,8 +11547,8 @@ thanks to Till Bargheer for testing and reports
 % If so, copy the ending routine into place:
 %    \begin{macrocode}
 \def\eql@amsmath@endfix#1#2{%
-  \long\edef\@tempa{\expandafter\noexpand\csname end#2\endcsname}%
-  \expandafter\ifx\csname end#1\endcsname\@tempa
+  \long\edef\eql@tmpa{\expandafter\noexpand\csname end#2\endcsname}%
+  \expandafter\ifx\csname end#1\endcsname\eql@tmpa
     \eql@provide@movecmd{end#1}{end#2}%
   \fi
 }
@@ -11736,9 +11820,8 @@ thanks to Till Bargheer for testing and reports
 % in place immediately (e.g.\ within a block in the document body):
 %    \begin{macrocode}
 \def\eql@provide@onlyonce#1#2{%
-  \def\eql@tmp{#2}%
-  \def\@tempa{#1}%
-  \ifx\eql@tmp\@tempa
+  \def\eql@tmp{#2}\def\eql@tmpa{#1}%
+  \ifx\eql@tmp\eql@tmpa
     \let\eql@tmp\@empty
   \fi
   \ifx\eql@tmp\@empty
@@ -11751,8 +11834,8 @@ thanks to Till Bargheer for testing and reports
     \fi
     \eql@letcs{eql@provided@#1}\eql@true
   \else
-    \def\@tempa{*}%
-    \ifx\eql@tmp\@tempa
+    \def\eql@tmpa{*}%
+    \ifx\eql@tmp\eql@tmpa
       \def\eql@tmp{#1}%
     \fi
   \fi
@@ -11770,16 +11853,15 @@ thanks to Till Bargheer for testing and reports
 % to avoid a potential error:
 %    \begin{macrocode}
 \def\eql@provide@eqref#1{%
-  \def\eql@tmp{#1}%
-  \def\@tempa{\eqref}%
-  \ifx\eql@tmp\@tempa
+  \def\eql@tmp{#1}\def\eql@tmpa{\eqref}%
+  \ifx\eql@tmp\eql@tmpa
     \let\eql@tmp\@empty
   \fi
   \ifx\eql@tmp\@empty
     \eql@provide@onlyonce{eqref}{}%
   \else
-    \def\@tempa{*}%
-    \ifx\eql@tmp\@tempa
+    \def\eql@tmpa{*}%
+    \ifx\eql@tmp\eql@tmpa
       \def\eql@tmp{eqref}%
     \else
       \edef\eql@tmp{\expandafter\@gobble\string#1}%

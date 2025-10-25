@@ -21,7 +21,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[2020/10/01]
-\ProvidesPackage{eqnlines}[2025/06/23 v0.10.1 Single- and multi-line equations]
+\ProvidesPackage{eqnlines}[2025/10/25 v0.11 Single- and multi-line equations]
 \let\eql@false\@undefined
 \let\eql@true\@empty
 \def\eql@append#1#2{\edef#1{\unexpanded\expandafter{#1#2}}}
@@ -227,26 +227,26 @@
   \def\eql@tagging@register@env{\@gobble}
 \fi
 \RequirePackage{keyval}
-\def\eql@decide@relax{\@tempb:=\relax}
+\def\eql@decide@relax{\eql@tmpb:=\relax}
 \def\eql@decide@select#1#2#3#4{%
-  \def\@tempa{#3}%
-  \let\@tempd\@undefined
-  \@for\@tempc:=#4\do{%
-    \ifdefined\@tempd\else
-      \edef\@tempb{\noexpand\@tempb:=\expandafter\@firstoftwo\@tempc}%
-      \ifx\@tempb\eql@decide@relax
-        \def\@tempa{\relax}%
+  \def\eql@tmpa{#3}%
+  \let\eql@tmpd\@undefined
+  \@for\eql@tmpc:=#4\do{%
+    \ifdefined\eql@tmpd\else
+      \edef\eql@tmpb{\noexpand\eql@tmpb:=\expandafter\@firstoftwo\eql@tmpc}%
+      \ifx\eql@tmpb\eql@decide@relax
+        \def\eql@tmpa{\relax}%
       \fi
-      \expandafter\@for\@tempb\do{%
-        \ifx\@tempa\@tempb
-          \edef\@tempd{\unexpanded\expandafter\expandafter\expandafter{%
-            \expandafter\@secondoftwo\@tempc}}%
+      \expandafter\@for\eql@tmpb\do{%
+        \ifx\eql@tmpa\eql@tmpb
+          \edef\eql@tmpd{\unexpanded\expandafter\expandafter\expandafter{%
+            \expandafter\@secondoftwo\eql@tmpc}}%
         \fi
       }%
     \fi
   }%
-  \ifdefined\@tempd
-    \@tempd
+  \ifdefined\eql@tmpd
+    \eql@tmpd
   \else
     \eql@error{undefined value '#3' for option '#2' of '#1'}%
   \fi
@@ -448,13 +448,24 @@
 \let\eql@punct@block\relax
 \let\eql@punct@main\relax
 \let\eql@punct@sep\relax
+\def\eql@punct@relax{\relax}
+\def\eql@punct@tilde{~}
+\def\eql@punct@set#1#2{%
+  \def#1{#2}%
+  \ifx#1\eql@punct@relax
+    \let#1\relax
+  \fi
+  \ifx#1\eql@punct@tilde
+    \let#1\@empty
+  \fi
+}
 \def\eqnpunct{%
   \eql@ifstar@tight\eql@punct@next@setrelax\eql@punct@next@set}
 \def\eql@punct@next@set#1{%
   \ifmmode
-    \def\eql@punct@col{#1}%
-    \def\eql@punct@line{#1}%
-    \def\eql@punct@block{#1}%
+    \eql@punct@set\eql@punct@col{#1}%
+    \eql@punct@set\eql@punct@line{#1}%
+    \eql@punct@set\eql@punct@block{#1}%
   \else
     \eqnaddopt{punct={#1}}%
   \fi
@@ -911,9 +922,8 @@
   \eql@ampprotecttwo\eql@ifstar@tight\eql@tags@add@raiseshift\eql@raisetag@test
 }
 \def\eql@raisetag@test#1{%
-  \def\@tempa{#1}%
-  \def\@tempb{!}%
-  \ifx\@tempa\@tempb
+  \def\eql@tmpa{#1}\def\eql@tmpb{!}%
+  \ifx\eql@tmpa\eql@tmpb
     \eql@tags@add@forceraise
   \else
     \eql@tags@add@raisesmash{#1}%
@@ -3822,8 +3832,8 @@
   \@namedef{eql@transpose@data@col@\the\eql@totalcolumns@}{%
     \ifcase\eql@row@#1\else\let\eql@tmp\eql@transpose@skip\fi}}
 \def\eql@transpose@scan@col#1\&{%
-  \def\@tempa{#1}%
-  \ifx\@tempa\eql@transpose@end\else
+  \def\eql@tmpa{#1}%
+  \ifx\eql@tmpa\eql@transpose@end\else
     \advance\eql@totalcolumns@\@ne
     \eql@row@\z@
     \let\eql@transpose@data@col\@empty
@@ -3839,8 +3849,8 @@
   \advance\eql@row@\@ne
   \eql@append\eql@transpose@data@col{\or\def\eql@tmp{#1}}}
 \def\eql@transpose@scan@row#1\\{%
-  \def\@tempa{#1}%
-  \ifx\@tempa\eql@transpose@end\else
+  \def\eql@tmpa{#1}%
+  \ifx\eql@tmpa\eql@transpose@end\else
     \ifx\eql@transpose@active+
       \eql@transpose@scan@cell#1&\eql@transpose@end&%
     \else
@@ -3850,8 +3860,8 @@
   \fi
 }
 \def\eql@transpose@scan@cell#1&#2&{%
-  \def\@tempa{#2}%
-  \ifx\@tempa\eql@transpose@end
+  \def\eql@tmpa{#2}%
+  \ifx\eql@tmpa\eql@transpose@end
     \eql@transpose@append@row{#1}%
   \else
     \eql@transpose@append@row{#1&#2}%
@@ -3859,8 +3869,8 @@
   \fi
 }
 \def\eql@transpose@scan@cell@next#1&{%
-  \def\@tempa{#1}%
-  \ifx\@tempa\eql@transpose@end\else
+  \def\eql@tmpa{#1}%
+  \ifx\eql@tmpa\eql@transpose@end\else
     \eql@transpose@append@row{&#1}%
     \expandafter\eql@transpose@scan@cell@next
   \fi
@@ -4303,6 +4313,9 @@
   \fi
   \ifx\eql@parseopt@token~%
     \let\eql@parseopt@next\eql@parseopt@punctoff
+  \fi
+  \ifx\eql@parseopt@token`%
+    \let\eql@parseopt@next\eql@parseopt@punctall
   \fi
   \ifx\eql@parseopt@token-%
     \let\eql@parseopt@next\eql@parseopt@single
@@ -4961,17 +4974,39 @@
 \eql@define@key\eql@keycat{class}{\eql@decide@select{#3}{#2}{#1}{%
   {{ampeq,amprel,eqafter,beforerel}\eql@class@ampeq},%
   {{eqamp,relamp,eqbefore,afterrel}\eql@class@eqamp}}}
+\def\eql@punct@all#1#2#3#4#5\eql@punct@end{%
+  \def\eql@tmp{#4}\def\eql@tmpa{1}%
+  \ifx\eql@tmp\eql@tmpa
+    \ifnum#5=1111\relax
+      \eql@punct@set\eql@punct@col{#1}%
+      \eql@punct@set\eql@punct@line{#2}%
+      \eql@punct@set\eql@punct@main{#3}%
+    \else\ifnum#5=111\relax
+      \eql@punct@set\eql@punct@line{#1}%
+      \eql@punct@set\eql@punct@main{#2}%
+    \else\ifnum#5=11\relax
+      \eql@punct@set\eql@punct@main{#1}%
+    \else
+      \let\eql@punct@col\@empty
+      \let\eql@punct@line\@empty
+      \let\eql@punct@main\@empty
+    \fi\fi\fi
+  \else
+    \eql@error{Too many arguments to punctall}%
+  \fi
+}
 \def\eql@keycat{equations,equationsbox,setup}
 \eql@define@key\eql@keycat{punctsep}[\,]{\def\eql@punct@sep{#1}}
-\eql@define@key\eql@keycat{punct}[.]{\def\eql@punct@main{#1}}
+\eql@define@key\eql@keycat{punct}[.]{\eql@punct@set\eql@punct@main{#1}}
 \eql@define@key\eql@keycat{punct*}[]{\let\eql@punct@main\relax}
-\eql@define@key\eql@keycat{punctline}[,]{\def\eql@punct@line{#1}}
+\eql@define@key\eql@keycat{punctline}[,]{\eql@punct@set\eql@punct@line{#1}}
 \eql@define@key\eql@keycat{punctline*}[]{\let\eql@punct@line\relax}
-\eql@define@key\eql@keycat{punctcol}[,]{\def\eql@punct@col{#1}}
+\eql@define@key\eql@keycat{punctcol}[,]{\eql@punct@set\eql@punct@col{#1}}
 \eql@define@key\eql@keycat{punctcol*}[]{\let\eql@punct@col\relax}
+\eql@define@key\eql@keycat{punctall}[,,.]{\eql@punct@all#111111\eql@punct@end}
 \eql@define@key{control}{punctsep}[\,]{\def\eql@punct@sep{#1}}
-\eql@define@key{control}{punct}[.]{\def\eql@punct@block{#1}%
-  \def\eql@punct@line{#1}\def\eql@punct@col{#1}}
+\eql@define@key{control}{punct}[.]{\eql@punct@set\eql@punct@block{#1}%
+  \eql@punct@set\eql@punct@line{#1}\eql@punct@set\eql@punct@col{#1}}
 \eql@define@key{control}{punct*}[]{\let\eql@punct@block\relax}
 \eql@define@key{control}{punctapply}[]{\eql@punct@apply@block}
 \eql@define@key{equationsbox}{frame}[\fbox]{%
@@ -5077,6 +5112,7 @@
 \def\eql@parseopt@punctdot#1{\eqnaddopt{punct={.}}\eql@parseopt@peek}
 \def\eql@parseopt@punctcomma#1{\eqnaddopt{punct={,}}\eql@parseopt@peek}
 \def\eql@parseopt@punctoff#1{\eqnaddopt{punct={}}\eql@parseopt@peek}
+\def\eql@parseopt@punctall#1#2{\eqnaddopt{punctall={#2}}\eql@parseopt@peek}
 \def\eql@defaults@classic{%
   \eqnlinesset{numberline=all}%
   \eqnlinesset{mintagsep={.5\fontdimen6\textfont2}}%
@@ -5179,8 +5215,8 @@
   \eql@provide@undefinecmd{end#1}%
 }
 \def\eql@amsmath@endfix#1#2{%
-  \long\edef\@tempa{\expandafter\noexpand\csname end#2\endcsname}%
-  \expandafter\ifx\csname end#1\endcsname\@tempa
+  \long\edef\eql@tmpa{\expandafter\noexpand\csname end#2\endcsname}%
+  \expandafter\ifx\csname end#1\endcsname\eql@tmpa
     \eql@provide@movecmd{end#1}{end#2}%
   \fi
 }
@@ -5339,9 +5375,8 @@
 \newenvironment{eql@xalignat*}
   {\eqnaddopt{nonumber}\eql@xalignat}{\endequations}
 \def\eql@provide@onlyonce#1#2{%
-  \def\eql@tmp{#2}%
-  \def\@tempa{#1}%
-  \ifx\eql@tmp\@tempa
+  \def\eql@tmp{#2}\def\eql@tmpa{#1}%
+  \ifx\eql@tmp\eql@tmpa
     \let\eql@tmp\@empty
   \fi
   \ifx\eql@tmp\@empty
@@ -5354,23 +5389,22 @@
     \fi
     \eql@letcs{eql@provided@#1}\eql@true
   \else
-    \def\@tempa{*}%
-    \ifx\eql@tmp\@tempa
+    \def\eql@tmpa{*}%
+    \ifx\eql@tmp\eql@tmpa
       \def\eql@tmp{#1}%
     \fi
   \fi
 }
 \def\eql@provide@eqref#1{%
-  \def\eql@tmp{#1}%
-  \def\@tempa{\eqref}%
-  \ifx\eql@tmp\@tempa
+  \def\eql@tmp{#1}\def\eql@tmpa{\eqref}%
+  \ifx\eql@tmp\eql@tmpa
     \let\eql@tmp\@empty
   \fi
   \ifx\eql@tmp\@empty
     \eql@provide@onlyonce{eqref}{}%
   \else
-    \def\@tempa{*}%
-    \ifx\eql@tmp\@tempa
+    \def\eql@tmpa{*}%
+    \ifx\eql@tmp\eql@tmpa
       \def\eql@tmp{eqref}%
     \else
       \edef\eql@tmp{\expandafter\@gobble\string#1}%
