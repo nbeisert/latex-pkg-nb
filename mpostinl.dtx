@@ -683,6 +683,15 @@ by |\mpostuse| defined by the \ctanpkg{beamer} package.
 (no value implies |true|, initially set to |true|) --
 Enable/disable warnings for unused figure labels.
 
+\item |outputdir=|\textit{dir} --
+Move all generated metapost figure files (|.mps|) to the directory \textit{dir}.
+The directory will be created if it does not exist.
+When displaying figures, the package will first check for files in \textit{dir},
+and fall back to the current directory if not found.
+This allows the same behavior as before:
+on the first pass, a placeholder box with the file path is shown;
+on the second pass, the actual figure is inserted.
+
 \end{itemize}
 %
 Admittedly, some of these options are hardly necessary
