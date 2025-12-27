@@ -21,7 +21,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[2020/10/01]
-\ProvidesPackage{eqnlines}[2025/10/25 v0.11 Single- and multi-line equations]
+\ProvidesPackage{eqnlines}[2025/12/27 v0.12 Single- and multi-line equations]
 \let\eql@false\@undefined
 \let\eql@true\@empty
 \def\eql@append#1#2{\edef#1{\unexpanded\expandafter{#1#2}}}
@@ -329,6 +329,10 @@
 \let\eql@display@marginleft\@undefined
 \let\eql@display@marginright\@undefined
 \def\eql@box@colsep{2em}
+\def\eql@break@line@sep{2em minus 1em}
+\def\eql@break@line@shortsep{1em}
+\def\eql@break@col@sep{2em minus 1em}
+\def\eql@break@col@shortsep{1em}
 \def\eql@spread@val{\jot}
 \newdimen\eql@spread@
 \newdimen\eql@tagfuzz@
@@ -477,11 +481,24 @@
     \eqnaddopt{punct*}%
   \fi
   \ignorespaces}
-\def\eql@punct@apply@col{%
+\def\eql@punct@print@col{%
   \ifx\eql@punct@col\@empty\else
     \eql@punct@sep
     \eql@punct@col
-    \let\eql@punct@col\@empty
+  \fi
+}
+\def\eql@punct@apply@col{%
+  \eql@punct@print@col
+  \let\eql@punct@col\@empty
+}
+\def\eql@punct@print@line{%
+  \ifx\eql@punct@line\relax
+    \eql@punct@print@col
+  \else
+    \ifx\eql@punct@line\@empty\else
+      \eql@punct@sep
+      \eql@punct@line
+    \fi
   \fi
 }
 \def\eql@punct@apply@line{%
@@ -561,6 +578,30 @@
     \kern\z@
   }%
 }
+\def\eql@break@line{\eql@srbgroup
+  \eql@ifnextgobble@tight~\eql@break@line@star
+    {\eql@punct@print@line\eql@break@line@star}}
+\def\eql@break@line@star{%
+  \eql@ifstar@tight
+    {\eql@break@opt[\eql@break@line@shortsep]}%
+    {\eql@testopt@tight\eql@break@opt\eql@break@line@sep}}
+\def\eql@break@col{\eql@srbgroup
+  \eql@ifnextgobble@tight~\eql@break@col@star
+    {\eql@punct@print@col\eql@break@col@star}}
+\def\eql@break@col@star{%
+  \eql@ifstar@tight
+    {\eql@break@opt[\eql@break@col@shortsep]}%
+    {\eql@testopt@tight\eql@break@opt\eql@break@col@sep}}
+\def\eql@break@opt[#1]{\eql@sregroup\hspace{\glueexpr#1\relax}}
+\def\eql@break@join{\eql@srbgroup
+  \eql@ifstar@tight
+    {\eql@break@join@opt[\eql@break@col@shortsep]}%
+    {\eql@testopt@tight\eql@break@join@opt\eql@break@col@sep}}
+\def\eql@break@join@opt[#1]#2{\eql@sregroup%
+  \hspace{\glueexpr#1\relax}#2\hspace{\glueexpr#1\relax}}
+\def\eqnsep{\eql@break@col}
+\def\eqnbreak{\eql@break@line}
+\def\eqnjoin{\eql@break@join}
 \DeclareRobustCommand{\eqnalt}[2][]{}
 \let\eql@tags@autolabel\eql@false
 \let\eql@tags@autotag\eql@true
@@ -792,8 +833,10 @@
   \ifdefined\eql@numbering@multi
     \global\@eqnswfalse
   \else
-    \ifnum\eql@tagpos@row@=\eql@row@
-      \global\advance\eql@tagpos@row@\@ne
+    \ifdefined\eql@tagpos@continuous\else
+      \ifnum\eql@tagpos@row@=\eql@row@
+        \global\advance\eql@tagpos@row@\@ne
+      \fi
     \fi
   \fi
 }
@@ -2194,13 +2237,18 @@
   \endgroup
   \let\eql@measure@restorestate\@gtempa
 }
-\protected\def\eql@display@cr{%
-  \eql@ampprotecttwo\eql@teststaropt@tight{%
+\protected\def\eql@display@cr{\eql@srbgroup
+  \eql@ifnextchar@tight~%
+    {\eql@numbernext\let\eql@punct@line\@empty\eql@display@cr@star}%
+    \eql@display@cr@star
+}
+\def\eql@display@cr@star{%
+  \eql@teststaropt@tight{%
       \global\eql@append\eql@interline@container{\eql@displaybreak@pen@\@M}%
-      \eql@display@cr@opt}
+      \eql@display@cr@opt}%
     \eql@display@cr@opt\z@skip
 }
-\def\eql@display@cr@opt[#1]{%
+\def\eql@display@cr@opt[#1]{\eql@sregroup
   \eql@display@endline
   \cr
   \noalign{%
@@ -3275,20 +3323,23 @@
     \eql@arrange@alignright@notag
   \fi
 }
-\protected\def\eql@box@cr{%
-  \eql@ampprotecttwo{\eql@ifnextchar@tight[}\eql@box@cr@skip\eql@box@cr@
+\protected\def\eql@box@cr{\eql@srbgroup%
+  \eql@ifnextgobble@tight~%
+    {\let\eql@punct@line\@empty\eql@box@cr@opt}%
+    \eql@box@cr@opt}
+\def\eql@box@cr@opt{\eql@ifnextchar@tight[\eql@box@cr@skip\eql@box@cr@plain}
+\def\eql@box@cr@plain{\eql@sregroup\eql@box@cr@}
+\def\eql@box@cr@skip[#1]{\eql@sregroup
+  \eql@box@cr@
+  \noalign{%
+    \vskip\glueexpr#1\relax
+  }%
 }
 \def\eql@box@cr@{%
   \eql@punct@apply@line
   \eql@hook@lineout
   \eql@box@lastcell
   \cr
-}
-\def\eql@box@cr@skip[#1]{%
-  \eql@box@cr@
-  \noalign{%
-    \vskip\glueexpr#1\relax
-  }%
 }
 \def\eql@box@lastcell@stacked{&\omit\kern-2\eql@colsep@}
 \def\eql@box@open@stacked{%
@@ -3525,6 +3576,9 @@
   \fi
   \ifx\eql@parseopt@token|%
     \let\eql@parseopt@next\eql@parseopt@columns
+  \fi
+  \ifx\eql@parseopt@token`%
+    \let\eql@parseopt@next\eql@parseopt@punctall
   \fi
 }
 \def\eql@box@processopt{%
@@ -4352,7 +4406,7 @@
   \eql@indent@\glueexpr\eql@indent@val\relax
   \eql@tagsepmin@\glueexpr\eql@tagsepmin@val\relax
 }
-\def\eql@single@cr{%
+\def\eql@single@cr@error{%
   \eql@error{Cannot use '\string\\' within display equation.
     Please switch to equations environment}%
 }
@@ -4364,8 +4418,8 @@
   \eql@numbering@init
   \eql@stack@save@equations
   \eql@numbering@single@init
-  \ifdefined\eql@single@crerror\else
-    \let\\\eql@single@cr
+  \ifdefined\eql@single@cr@mode
+    \let\\\eql@single@cr@mode
   \fi
   \ifdefined\eql@single@native
     \let\eql@single@start@sel\eql@single@start@native
@@ -4923,14 +4977,25 @@
     {\relax{\def\eql@colsepmax@val{#1}}}}}
 \eql@define@key\eql@keycat{fulllength}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@columns@fulllength}
+\eql@define@key\eql@keycat{linesep}{\eql@decide@select{#3}{#2}{#1}{%
+    {{0,\eql@decide@false}{\def\eql@break@line@sep{0pt}}},%
+    {\relax{\def\eql@break@line@sep{#1}}}}}
+\eql@define@key\eql@keycat{linesep*}{\eql@decide@select{#3}{#2}{#1}{%
+    {{0,\eql@decide@false}{\def\eql@break@line@shortsep{0pt}}},%
+    {\relax{\def\eql@break@line@shortsep{#1}}}}}
 \eql@define@key{equationsbox,setup}{colsep}{\eql@decide@select{#3}{#2}{#1}{%
     {{0,\eql@decide@false}{\def\eql@box@colsep{0pt}}},%
-    {\relax{\def\eql@box@colsep{#1}}}}}
+    {\relax{\def\eql@break@col@sep{#1}}}}%
+  \let\eql@box@colsep\eql@break@col@sep}
 \eql@define@key{equations}{colsep}{\eql@decide@select{#3}{#2}{#1}{%
-    {{0,\eql@decide@false}{\def\eql@box@colsep{0pt}}},%
-    {\relax{\def\eql@box@colsep{#1}}}}%
+    {{0,\eql@decide@false}{\def\eql@break@col@sep{0pt}}},%
+    {\relax{\def\eql@break@col@sep{#1}}}}%
   \let\eql@colsepmin@val\eql@box@colsep
-  \let\eql@colsepmax@val\eql@box@colsep}
+  \let\eql@colsepmax@val\eql@box@colsep
+  \let\eql@box@colsep\eql@break@col@sep}
+\eql@define@key\eql@keycat{colsep*}{\eql@decide@select{#3}{#2}{#1}{%
+    {{0,\eql@decide@false}{\def\eql@break@col@shortsep{0pt}}},%
+    {\relax{\def\eql@break@col@shortsep{#1}}}}}
 \def\eql@keycat{equations,equationsbox,setup}
 \eql@define@key\eql@keycat{shape}[default]{\eql@shape@set{#1}}
 \eql@define@key\eql@keycat{padding,pad}[indent]{%
@@ -5051,7 +5116,7 @@
     {{bottom}{\let\eql@markline@pos\eql@markline@pos@bottom}}}}
 \let\eql@multi@linesfallback\eql@false
 \let\eql@scan@par\eql@false
-\let\eql@single@crerror\eql@false
+\let\eql@single@cr@mode\eql@false
 \let\eql@ampproof@active\eql@false
 \eql@define@key{equations,setup}{linesfallback}[true]{%
   \eql@decide@select{#3}{#2}{#1}{%
@@ -5060,12 +5125,15 @@
     {{measure,full,\eql@decide@true}{\let\eql@multi@linesfallback\eql@true}}}}
 \eql@define@key{setup}{ampproof}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@ampproof@active}
-\eql@define@key{setup}{crerror}[true]{%
-  \eql@decide@bool{#3}{#2}{#1}\eql@single@crerror}
+\eql@define@key{equations,setup}{equationcr}{%
+  \eql@decide@select{#3}{#2}{#1}{%
+    {\eql@decide@false{\let\eql@single@cr@mode\eql@false}},%
+    {{\eql@decide@true,break}{\let\eql@single@cr@mode\eql@break@line}},%
+    {{error,verbose}{\let\eql@single@cr@mode\eql@single@cr@error}}}}
 \eql@define@key{setup}{modifierwarning}[true]{%
   \eql@decide@select{#3}{#2}{#1}{%
-    {{\eql@decide@false}{\let\eql@parseopt@warn\@empty}},%
-    {{\eql@decide@true}{\let\eql@parseopt@warn\eql@warn@parseopt}},%
+    {\eql@decide@false{\let\eql@parseopt@warn\@empty}},%
+    {\eql@decide@true{\let\eql@parseopt@warn\eql@warn@parseopt}},%
     {{verbose,+}{\let\eql@parseopt@warn\eql@warn@parseopt@verbose}}}}
 \let\eql@parseopt@warn\eql@warn@parseopt
 \eql@define@key{equations,setup}{rescan}[true]{%
@@ -5147,7 +5215,7 @@
   \eqnlinesset{belowtopskip=0pt}%
   \eqnlinesset{abovetagskip=0pt}%
   \eqnlinesset{belowtagskip=0pt}%
-  \eqnlinesset{crerror=false}%
+  \eqnlinesset{equationcr=off}%
   \eqnlinesset{linesfallback=false}%
 }
 \def\eql@defaults@eqnlines{%
@@ -5188,7 +5256,7 @@
     minus 0.25\normalbaselineskip}}%
   \eqnlinesset{belowtagskip={0.25\normalbaselineskip
     minus 0.25\normalbaselineskip}}%
-  \eqnlinesset{crerror=true}%
+  \eqnlinesset{equationcr=break}%
   \eqnlinesset{linesfallback=true}%
 }
 \def\eql@provide@movecmd#1#2{%

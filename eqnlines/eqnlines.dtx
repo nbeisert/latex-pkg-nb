@@ -20,14 +20,20 @@
 % The Current Maintainer of this work is Niklas Beisert.
 %
 % This work consists of the files eqnlines.dtx and eqnlines.ins
-% and the derived files eqnlines.sty.
+% and the derived files eqnlines.sty, eqnlines-dev.sty,
+% eqnlines.tex, eqnlines.pdf, eqnlines-src.tex, eqnlines-src.pdf.
 %
-%<package|sample>\NeedsTeXFormat{LaTeX2e}[2020/10/01]
-%<package&!dev>\ProvidesPackage{eqnlines}[2025/10/25 v0.11 Single- and multi-line equations]
-%<package&dev>\ProvidesPackage{eqnlines-dev}[2025/10/25 v0.11 Single- and multi-line equations (development)]
-%<*driver>
-\def\thedate#1{2025/10/25}\def\theversion#1{v0.11}
-\ProvidesFile{eqnlines.dtx}[\thedate{} \theversion{} eqnlines reference manual file]
+%<package>\NeedsTeXFormat{LaTeX2e}[2020/10/01]
+%<package&!dev>\ProvidesPackage{eqnlines}[2025/12/27 v0.12 Single- and multi-line equations]
+%<package&dev>\ProvidesPackage{eqnlines-dev}[2025/12/27 v0.12 Single- and multi-line equations (development)]
+%<source>\ProvidesFile{eqnlines-src.tex}[2025/12/27 v0.12 eqnlines source code documentation]
+%<manual>\ProvidesFile{eqnlines.tex}[2025/12/27 v0.12 eqnlines reference manual]
+%<*main|manual|source>
+\def\thedate/{2025/12/27}\def\theversion/{v0.12}
+\def\thecopyright/{2024\texorpdfstring{--}{-}2025 Niklas Beisert}
+%<*main>
+\ProvidesFile{eqnlines.dtx}[\thedate/ \theversion/ eqnlines package main file]
+%</main>
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -36,15 +42,31 @@
 \usepackage{hyperxmp}
 \usepackage[usenames]{color}
 
-\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
-\hypersetup{urlbordercolor={.5 1 1}}
-\hypersetup{linkbordercolor={1 .7 .7}}
-\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
-\hypersetup{keeppdfinfo=true}
-\hypersetup{pdfsource={}}
+%<*main>
+\title{The \markpkg{eqnlines} Package}
+\hypersetup{pdftitle={The eqnlines Package}}
+\hypersetup{pdfsubject={Main file for the LaTeX2e Package eqnlines}}
+%</main>
+%<manual>\title{The \markpkg{eqnlines} Package\\Reference Manual}
+%<manual>\hypersetup{pdftitle={The eqnlines Package -- Reference Manual}}
+%<manual>\hypersetup{pdfsubject={Reference Manual for the LaTeX2e Package eqnlines}}
+%<source>\title{The \markpkg{eqnlines} Package\\Source Code Documentation}
+%<source>\hypersetup{pdftitle={The eqnlines Package -- Source Code Documentation}}
+%<source>\hypersetup{pdfsubject={Documented Source for the LaTeX2e Package eqnlines}}
+\author{Niklas Beisert\\[2ex]
+  Institut f\"ur Theoretische Physik\\
+  Eidgen\"ossische Technische Hochschule Z\"urich\\
+  Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
+  \href{mailto:nbeisert@itp.phys.ethz.ch}
+  {\texttt{nbeisert@itp.phys.ethz.ch}}}
+\hypersetup{pdfauthor={Niklas Beisert}}
+\date{\thedate/, \theversion/\\[1ex]
+\url{https://ctan.org/pkg/eqnlines}\\[0.5ex]
+\url{https://github.com/nbeisert/latex-pkg-nb}}
+
 \hypersetup{pdflang={en-UK}}
 \hypersetup{pdfurl={https://ctan.org/pkg/eqnlines}}
-\hypersetup{pdfcopyright={Copyright 2024-2025 Niklas Beisert.
+\hypersetup{pdfcopyright={Copyright \thecopyright/.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
@@ -57,60 +79,29 @@
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
 \hypersetup{pdfcontacturl={https://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
-\usepackage{eqnlines}
-\eqnlinesset{belowtopmode=top,belowtopskip=0pt}
-\def\pstrut{\vphantom{(}}
-\def\bstrut{\vphantom{b}}
+\hypersetup{keeppdfinfo=true}
+\hypersetup{pdfsource={}}
+\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
+\hypersetup{urlbordercolor={.5 1 1}}
+\hypersetup{linkbordercolor={1 .7 .7}}
+\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
 
-\usepackage{verbatim}
-\makeatletter
-\def\example@addline#1{%
-  \g@addto@macro\example@dbuf{#1 }%
-  \g@addto@macro\example@pbuf{\item|#1|}}
-\def\scanexample{%
-  \gdef\example@dbuf{}%
-  \gdef\example@pbuf{}%
-  \begingroup
-  \@bsphack
-  \let\do\@makeother\dospecials
-  \catcode`\^^M\active
-  \def\verbatim@processline{\expandafter\example@addline\expandafter%
-    {\the\verbatim@line}}%
-  \verbatim@start}
-\def\endscanexample{\@esphack\endgroup\ignorespacesafterend}
-\def\printexample{\begingroup
-  \topsep\z@skip\parsep\z@skip\itemsep\z@skip\partopsep\z@skip\parskip\z@skip
-  \trivlist
-  \expandafter\scantokens\expandafter{\example@pbuf}%
-  \endtrivlist
-  \endgroup}
-\def\doexample{\expandafter\scantokens\expandafter{\example@dbuf}}
-\newcommand{\showexampleh}[1][0.5]{\par%
-  \parbox{\dimexpr#1\textwidth\relax}{\printexample}%
-  \parbox{\dimexpr\textwidth-#1\textwidth\relax}{\doexample}%
-  \par\medskip\ignorespaces}
-\newcommand{\showexamplev}{%
-  \printexample
-  \par\medskip
-  \parbox{\textwidth}{\doexample}%
-  \par\medskip\ignorespaces}
-\newenvironment{example}
-  {\parskip\z@skip\par\medskip\hrule\medskip}
-  {\par\hrule\par\medskip}
-\makeatother
-
-\newcommand{\TODO}{\textbf{\textcolor{red}{TODO:}} }
+\parskip1ex
+\parindent0pt
+\edef\itemize{\unexpanded\expandafter{\itemize}\parskip0pt}
 
 \newcommand{\markpkg}[1]{\textsf{#1}}
 \newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
 \newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
 \newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\markpkg{#1}}}
 
+\def\textvert{\texttt{\char"7C}}
+
+\newcommand{\TODO}{\textbf{\textcolor{red}{TODO:}} }
+
 \def\tex/{\TeX}
 \def\latex/{\LaTeX}
 \def\amsmath/{\ctanpkg{amsmath}}
-
-\def\textvert{\texttt{\char"7C}}
 
 \RenewDocElement[macrolike = true ,
   toplevel = false,
@@ -185,26 +176,53 @@
   printtype = \textit{bool}
   ]{LaTeXConditional}{lcond}
 
-\parskip1ex
-\parindent0pt
-\let\olditemize\itemize
-\def\itemize{\olditemize\parskip0pt}
+\usepackage{verbatim}
+\makeatletter
+\def\example@addline#1{%
+  \g@addto@macro\example@dbuf{#1 }%
+  \g@addto@macro\example@pbuf{\item|#1|}}
+\def\scanexample{%
+  \gdef\example@dbuf{}%
+  \gdef\example@pbuf{}%
+  \begingroup
+  \@bsphack
+  \let\do\@makeother\dospecials
+  \catcode`\^^M\active
+  \def\verbatim@processline{\expandafter\example@addline\expandafter%
+    {\the\verbatim@line}}%
+  \verbatim@start}
+\def\endscanexample{\@esphack\endgroup\ignorespacesafterend}
+\def\printexample{\begingroup
+  \topsep\z@skip\parsep\z@skip\itemsep\z@skip\partopsep\z@skip\parskip\z@skip
+  \trivlist
+  \expandafter\scantokens\expandafter{\example@pbuf}%
+  \endtrivlist
+  \endgroup}
+\def\doexample{\expandafter\scantokens\expandafter{\example@dbuf}}
+\newcommand{\showexampleh}[1][0.5]{\par%
+  \parbox{\dimexpr#1\textwidth\relax}{\printexample}%
+  \parbox{\dimexpr\textwidth-#1\textwidth\relax}{\doexample}%
+  \par\medskip\ignorespaces}
+\newcommand{\showexamplev}{%
+  \printexample
+  \par\medskip
+  \parbox{\textwidth}{\doexample}%
+  \par\medskip\ignorespaces}
+\newenvironment{example}
+  {\parskip\z@skip\par\medskip\hrule\medskip}
+  {\par\hrule\par\medskip}
+\makeatother
 
+\usepackage{eqnlines}
+\eqnlinesset{belowtopmode=top,belowtopskip=0pt}
+\def\pstrut{\vphantom{(}}
+\def\bstrut{\vphantom{b}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
-\title{The \markpkg{eqnlines} Package}
-\hypersetup{pdftitle={The eqnlines Package}}
-\author{Niklas Beisert\\[2ex]
-  Institut f\"ur Theoretische Physik\\
-  Eidgen\"ossische Technische Hochschule Z\"urich\\
-  Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
-  \href{mailto:nbeisert@itp.phys.ethz.ch}
-  {\texttt{nbeisert@itp.phys.ethz.ch}}}
-\hypersetup{pdfauthor={Niklas Beisert}}
-\hypersetup{pdfsubject={Manual for the LaTeX2e Package eqnlines}}
-\date{\thedate{}, \theversion{}\\[1ex]
-\url{https://ctan.org/pkg/eqnlines}\\[0.5ex]
-\url{https://github.com/nbeisert/latex-pkg-nb}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -226,6 +244,7 @@ equation environments as well as global settings.
 \endgroup
 
 
+%<*main|manual>
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
@@ -301,7 +320,6 @@ and moderately lower efficiency).
 Nevertheless, it remains original \LaTeXe{} code
 without using the \markpkg{expl3} layer.
 \end{itemize}
-%
 
 The package represents a stand-alone implementation
 of an equations environment
@@ -327,7 +345,7 @@ environments can be accessed using the alternate name |equations|.
 \label{sec:usage}
 
 % \TODO notice regarding development
-\textbf{Notice regarding package version \theversion{}:}
+\textbf{Notice regarding package version \theversion/:}
 Please note that this package is still in a development and testing stage
 in the present version.
 This mainly applies to the documentation of features and code:
@@ -536,6 +554,22 @@ x&=\cos\phi & \phi&=\arccos x \\
 \end{scanexample}
 \showexampleh
 \end{example}
+
+\DescribeInterfaceMacro{\\}
+\DescribeInterfaceMacro{&}
+As usual, lines are separated by `|\\|' and columns by `|&|'.
+Note that `|\\|' admits some optional parameters:
+%
+\begin{center}
+|\\|[|~|][|*|]|[|\textit{skip}|]|
+\end{center}
+%
+The combination |[|\textit{skip}|]| introduces
+additional glue between the lines;
+the modifier `|*|' inhibits a page break,
+and `|~|' indicates a continued equation
+which suppresses punctuation (see \secref{sec:puctuation})
+and defers numbering (see \secref{sec:numbering}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Alternative Forms.}
@@ -877,6 +911,7 @@ and there is no need to adjust the closing statement.
 
 \DescribeInterfaceMacro{\numberhere}
 \DescribeInterfaceMacro{\numbernext}
+\DescribeInterfaceMacro{\\\string~}
 The placement of a single number for an equation block can be adjusted by:
 %
 \begin{center}
@@ -890,6 +925,8 @@ the latter macro defers the number to the next line.
 For example, if an equation is broken into several lines
 one may use the combination |\numbernext \\|
 to assign the number to the last line.
+Note that the modified newline `|\\~|' combines
+|\numbernext| and |\\|
 
 \begin{example}
 \begin{scanexample}
@@ -1645,6 +1682,7 @@ or via the modifier `|`|':
 %
 The special value `|~|' represents no punctuation
 and |\relax| hands down.
+An empty argument for |punctall| or `|`|' removes all levels of punctuation.
 
 \begin{example}
 \begin{scanexample}
@@ -1655,6 +1693,22 @@ and |\relax| hands down.
 \phi &= -i\log z \>
 \end{scanexample}
 \showexampleh[0.4]
+\end{example}
+
+\DescribeInterfaceMacro{\\\string~}
+Note that the modified newline command `|\\~|' describes a break
+within a continued equation for which punctuation should be suppressed.
+This option can be used to stack several independent continued equations.
+
+\begin{example}
+\begin{scanexample}
+\<`{,.}
+   x &= \cos\phi \\~
+     &= (z+z^{-1})/2 \\
+\phi &= \arccos x \\~
+     &= -i\log z \>
+\end{scanexample}
+\showexampleh
 \end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2260,7 +2314,64 @@ Similarly, the package allows to frame tags:
   \mbox{highlight}\]
 \end{scanexample}
 \showexampleh[0.55]
+\end{example}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Single-Line Composition.}
+
+\DescribeInterfaceMacro{\\}
+\DescribeInterfaceMacro{\eqnbreak}
+\DescribeInterfaceMacro{\eqnsep}
+\DescribeInterfaceMacro{\eqnjoin}
+Several short pieces of math content
+may well fit within a single equation line,
+typically separated by some amount of space like |\qquad| or |\qquad|.
+The package provides several context-aware commands for this purpose:
+the commands |\eqncol| and |\eqnbreak| insert some horizontal glue,
+whereas |\eqnjoin| joins two parts of an equation with some conjunction.
+The glue typically includes some amount of shrink
+in order to accommodate the content when space is sparse.
+Furthermore, |\eqncol| and |\eqnbreak| also automatically insert
+the punctuation for columns and lines, respectively.
+For convenience,
+the newline command `|\\|' maps to |\eqnbreak|
+in single equation mode where it serves no other purpose.
+The commands have several optional arguments:
+%
+\begin{center}
+|\eqnsep|\textbar|\eqnbreak|\textbar|\\|\,%
+[|~|][|*|\textbar|[|\textit{skip}|]|]
+\qquad
+|\eqnjoin|[|*|\textbar|[|\textit{skip}|]|]|{|\textit{conjunction}|}|
+\end{center}
+%
+The modifier `|~|' suppresses punctuation
+and `|*|' chooses a shorter glue,
+whereas the optional argument \textit{skip}
+specifies the amount of glue explicitly.
+\DescribeKey{linesep}
+\DescribeKey{colsep}
+The default amounts of glue for |\eqnbreak| or `|\\|' and |\eqncol|
+are determined by the settings |linesep| and |colsep|, respectively.
+The starred variants |linesep*| and |colsep*|
+determine the short amount of glue.
+
+\begin{example}
+\begin{scanexample}
+\[ x = \cos\phi \\[4em]
+\phi = \arccos x \]
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\[`{,.} x = (z+z^{-1})/2 \\
+\phi = -i \log z \]
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\[ x = \cos\phi \eqnjoin*{\iff}
+\phi = \arccos x \]
+\end{scanexample}
+\showexampleh
 \end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2330,7 +2441,9 @@ option & description \\
 |linesfallback| & single column in align mode reverts to lines mode \\
                 & value |reuse| avoids third measuring pass \\
 |ampproof| & equip optional argument parsing with protection for `|&|' \\
-|crerror| & invoke an error when `|\\|' is used in a single equation \\
+|equationcr| & determine overloading of `|\\|' for single equations \\
+             & |off|: native \latex/ error; |error|: package error; \\
+             & |break|: insert horizontal glue (see \secref{sec:further}) \\
 |modifierwarning| & invoke a warning for unknown environment modifiers \\
 |scanpar| & allow scanning of |\par| within equation body \\
           & (e.g., for use in nested |\parbox| or |minipage|) \\
@@ -2391,13 +2504,15 @@ feature & description \\
 \end{tabular}
 \end{center}
 
+\iffalse
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\TODO
-%\subsection{List of Options}
-%\label{sec:options}
+\TODO
+\subsection{List of Options}
+\label{sec:options}
 
-%list:
-%EBSIGP (equations, box, subequations, intertext, global, package)
+list:
+EBSIGP (equations, box, subequations, intertext, global, package)
+\fi
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2408,7 +2523,7 @@ feature & description \\
 \subsection{Copyright}
 \label{sec:copyright}
 
-Copyright \copyright{} 2024--2025 Niklas Beisert
+Copyright \copyright{} \thecopyright/
 
 Based on the \latex/ package \amsmath/:
 Copyright \copyright{}
@@ -2428,7 +2543,8 @@ This work has the LPPL maintenance status `maintained'.
 The Current Maintainer of this work is Niklas Beisert.
 
 This work consists of the files |README.txt|, |eqnlines.ins| and |eqnlines.dtx|
-as well as the derived files |eqnlines.sty| and |eqnlines.pdf|.
+as well as the derived files |eqnlines.sty|, |eqnlines-dev.sty|,
+|eqnlines.tex|, |eqnlines.pdf|, |eqnlines-src.tex|, |eqnlines-src.pdf|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Credits}
@@ -2683,6 +2799,24 @@ change bool registers to |char| 0 and 1 and |\||ifodd|
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v0.12:} 2025/12/27
+
+\begin{itemize}
+\item
+split off source code documentation into separate document |eqnlines-src|
+\item
+added modified newline `|\\~|` to indicate continued equation
+with deferred numbering and punctuation suppressed
+\item
+added |\eqnsep|,  |\eqnbreak|, |\eqnjoin| for single-line compositions,
+mapped `|\\|' for single equations to |\eqnbreak|
+\item
+added modifier `|`|' to |equationsbox|
+\item
+removed faulty option |crerror|
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v0.11:} 2025/10/25
 
 \begin{itemize}
@@ -2857,39 +2991,45 @@ preview version published on CTAN
 thanks to Till Bargheer for testing and reports
 \end{itemize}
 
+%</main|manual>
+%<*main>
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\appendix
 
+\appendix
+%</main>
+%<*main|source>
+\raggedright
 \settowidth\MacroIndent{\rmfamily\scriptsize 0000\ }
 
 \DocInput{eqnlines.dtx}
+%</main|source>
 
 \end{document}
-%</driver>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%</main|manual|source>
 % \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% \appendix
-% \raggedright
-%\iffalse
+% \iffalse
 %<*package>
-%\fi
-%
+% \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Implementation}
 %
-% The appendix documents the various components
-% of the present package.
+% This appendix documents the implementation
+% for the various components of the \markpkg{eqnlines} package.
 %
 % The code for the package is based on the \amsmath/ package,
-% see \secref{sec:copyright} and \secref{sec:credits}.
+% see the reference manual for details.
 % It was forked at version v2.17t dated 2024/11/05.
 % Most of the code was substantially redesigned
 % (macros renamed, reshuffled, enhanced),
@@ -3635,6 +3775,18 @@ thanks to Till Bargheer for testing and reports
 \def\eql@box@colsep{2em}
 %    \end{macrocode}
 %
+%   \macro{\eql@break@line@sep}
+%   \macro{\eql@break@line@shortsep}
+%   \macro{\eql@break@col@sep}
+%   \macro{\eql@break@col@shortsep}
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@break@line@sep{2em minus 1em}
+\def\eql@break@line@shortsep{1em}
+\def\eql@break@col@sep{2em minus 1em}
+\def\eql@break@col@shortsep{1em}
+%    \end{macrocode}
+%
 %   \macro{\eql@spread@val}
 % The extra spread of equation lines is specified by |\eql@spread@val|:
 %    \begin{macrocode}
@@ -4079,17 +4231,40 @@ thanks to Till Bargheer for testing and reports
   \ignorespaces}
 %    \end{macrocode}
 %
+%   \macro{\eql@punct@print@col}
+% Output the punctuation for the present column.
+% If non-empty, prepend some separation:
+%    \begin{macrocode}
+\def\eql@punct@print@col{%
+  \ifx\eql@punct@col\@empty\else
+    \eql@punct@sep
+    \eql@punct@col
+  \fi
+}
+%    \end{macrocode}
+%
 %   \macro{\eql@punct@apply@col}
 % Output the punctuation for the present column.
-% If non-empty, prepend some separation.
 % Clear the punctuation so that no further
 % column punctuation is output within the current group:
 %    \begin{macrocode}
 \def\eql@punct@apply@col{%
-  \ifx\eql@punct@col\@empty\else
-    \eql@punct@sep
-    \eql@punct@col
-    \let\eql@punct@col\@empty
+  \eql@punct@print@col
+  \let\eql@punct@col\@empty
+}
+%    \end{macrocode}
+%
+% Output the punctuation currently set for lines unless disabled:
+%   \macro{\eql@punct@print@line}
+%    \begin{macrocode}
+\def\eql@punct@print@line{%
+  \ifx\eql@punct@line\relax
+    \eql@punct@print@col
+  \else
+    \ifx\eql@punct@line\@empty\else
+      \eql@punct@sep
+      \eql@punct@line
+    \fi
   \fi
 }
 %    \end{macrocode}
@@ -4225,6 +4400,58 @@ thanks to Till Bargheer for testing and reports
     \kern\z@
   }%
 }
+%    \end{macrocode}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Single-Line Composition}
+%
+% \TODO describe
+%
+%   \macro{\eql@break@line}
+%    \begin{macrocode}
+\def\eql@break@line{\eql@srbgroup
+  \eql@ifnextgobble@tight~\eql@break@line@star
+    {\eql@punct@print@line\eql@break@line@star}}
+\def\eql@break@line@star{%
+  \eql@ifstar@tight
+    {\eql@break@opt[\eql@break@line@shortsep]}%
+    {\eql@testopt@tight\eql@break@opt\eql@break@line@sep}}
+%    \end{macrocode}
+%
+%   \macro{\eql@break@col}
+%    \begin{macrocode}
+\def\eql@break@col{\eql@srbgroup
+  \eql@ifnextgobble@tight~\eql@break@col@star
+    {\eql@punct@print@col\eql@break@col@star}}
+\def\eql@break@col@star{%
+  \eql@ifstar@tight
+    {\eql@break@opt[\eql@break@col@shortsep]}%
+    {\eql@testopt@tight\eql@break@opt\eql@break@col@sep}}
+%    \end{macrocode}
+%
+%   \macro{\eql@break@opt}
+%    \begin{macrocode}
+\def\eql@break@opt[#1]{\eql@sregroup\hspace{\glueexpr#1\relax}}
+%    \end{macrocode}
+%
+%   \macro{\eql@break@join}
+%    \begin{macrocode}
+\def\eql@break@join{\eql@srbgroup
+  \eql@ifstar@tight
+    {\eql@break@join@opt[\eql@break@col@shortsep]}%
+    {\eql@testopt@tight\eql@break@join@opt\eql@break@col@sep}}
+\def\eql@break@join@opt[#1]#2{\eql@sregroup%
+  \hspace{\glueexpr#1\relax}#2\hspace{\glueexpr#1\relax}}
+%    \end{macrocode}
+%
+%   \macro{\eqnsep}
+%   \macro{\eqnbreak}
+%   \macro{\eqnjoin}
+% \TODO expand to lines and columns mode
+%    \begin{macrocode}
+\def\eqnsep{\eql@break@col}
+\def\eqnbreak{\eql@break@line}
+\def\eqnjoin{\eql@break@join}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4631,8 +4858,10 @@ thanks to Till Bargheer for testing and reports
   \ifdefined\eql@numbering@multi
     \global\@eqnswfalse
   \else
-    \ifnum\eql@tagpos@row@=\eql@row@
-      \global\advance\eql@tagpos@row@\@ne
+    \ifdefined\eql@tagpos@continuous\else
+      \ifnum\eql@tagpos@row@=\eql@row@
+        \global\advance\eql@tagpos@row@\@ne
+      \fi
     \fi
   \fi
 }
@@ -6754,20 +6983,26 @@ thanks to Till Bargheer for testing and reports
 %
 %   \macro{\eql@display@cr}
 %    \begin{macrocode}
-\protected\def\eql@display@cr{%
+\protected\def\eql@display@cr{\eql@srbgroup
+  \eql@ifnextchar@tight~%
+    {\eql@numbernext\let\eql@punct@line\@empty\eql@display@cr@star}%
+    \eql@display@cr@star
+}
 %    \end{macrocode}
 %
+%   \macro{\eql@display@cr@star}
 %    \begin{macrocode}
-  \eql@ampprotecttwo\eql@teststaropt@tight{%
+\def\eql@display@cr@star{%
+  \eql@teststaropt@tight{%
       \global\eql@append\eql@interline@container{\eql@displaybreak@pen@\@M}%
-      \eql@display@cr@opt}
+      \eql@display@cr@opt}%
     \eql@display@cr@opt\z@skip
 }
 %    \end{macrocode}
 %
 %   \macro{\eql@display@cr@opt}
 %    \begin{macrocode}
-\def\eql@display@cr@opt[#1]{%
+\def\eql@display@cr@opt[#1]{\eql@sregroup
   \eql@display@endline
   \cr
 %    \end{macrocode}
@@ -8531,20 +8766,23 @@ thanks to Till Bargheer for testing and reports
 %
 %   \macro{\eql@box@cr}
 %    \begin{macrocode}
-\protected\def\eql@box@cr{%
-  \eql@ampprotecttwo{\eql@ifnextchar@tight[}\eql@box@cr@skip\eql@box@cr@
+\protected\def\eql@box@cr{\eql@srbgroup%
+  \eql@ifnextgobble@tight~%
+    {\let\eql@punct@line\@empty\eql@box@cr@opt}%
+    \eql@box@cr@opt}
+\def\eql@box@cr@opt{\eql@ifnextchar@tight[\eql@box@cr@skip\eql@box@cr@plain}
+\def\eql@box@cr@plain{\eql@sregroup\eql@box@cr@}
+\def\eql@box@cr@skip[#1]{\eql@sregroup
+  \eql@box@cr@
+  \noalign{%
+    \vskip\glueexpr#1\relax
+  }%
 }
 \def\eql@box@cr@{%
   \eql@punct@apply@line
   \eql@hook@lineout
   \eql@box@lastcell
   \cr
-}
-\def\eql@box@cr@skip[#1]{%
-  \eql@box@cr@
-  \noalign{%
-    \vskip\glueexpr#1\relax
-  }%
 }
 %    \end{macrocode}
 %
@@ -8848,6 +9086,9 @@ thanks to Till Bargheer for testing and reports
   \fi
   \ifx\eql@parseopt@token|%
     \let\eql@parseopt@next\eql@parseopt@columns
+  \fi
+  \ifx\eql@parseopt@token`%
+    \let\eql@parseopt@next\eql@parseopt@punctall
   \fi
 }
 %    \end{macrocode}
@@ -9844,6 +10085,7 @@ thanks to Till Bargheer for testing and reports
 }
 %    \end{macrocode}
 %
+%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Interface}
@@ -10199,10 +10441,10 @@ thanks to Till Bargheer for testing and reports
 % In the following, we define the main routine
 % for the single-line equation mode.
 %
-%   \macro{\eql@single@cr}
+%   \macro{\eql@single@cr@error}
 % Cannot use line breaks, produce an error message:
 %    \begin{macrocode}
-\def\eql@single@cr{%
+\def\eql@single@cr@error{%
   \eql@error{Cannot use '\string\\' within display equation.
     Please switch to equations environment}%
 }
@@ -10225,8 +10467,8 @@ thanks to Till Bargheer for testing and reports
   \eql@numbering@init
   \eql@stack@save@equations
   \eql@numbering@single@init
-  \ifdefined\eql@single@crerror\else
-    \let\\\eql@single@cr
+  \ifdefined\eql@single@cr@mode
+    \let\\\eql@single@cr@mode
   \fi
   \ifdefined\eql@single@native
     \let\eql@single@start@sel\eql@single@start@native
@@ -11094,14 +11336,25 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 %    \begin{macrocode}
+\eql@define@key\eql@keycat{linesep}{\eql@decide@select{#3}{#2}{#1}{%
+    {{0,\eql@decide@false}{\def\eql@break@line@sep{0pt}}},%
+    {\relax{\def\eql@break@line@sep{#1}}}}}
+\eql@define@key\eql@keycat{linesep*}{\eql@decide@select{#3}{#2}{#1}{%
+    {{0,\eql@decide@false}{\def\eql@break@line@shortsep{0pt}}},%
+    {\relax{\def\eql@break@line@shortsep{#1}}}}}
 \eql@define@key{equationsbox,setup}{colsep}{\eql@decide@select{#3}{#2}{#1}{%
     {{0,\eql@decide@false}{\def\eql@box@colsep{0pt}}},%
-    {\relax{\def\eql@box@colsep{#1}}}}}
+    {\relax{\def\eql@break@col@sep{#1}}}}%
+  \let\eql@box@colsep\eql@break@col@sep}
 \eql@define@key{equations}{colsep}{\eql@decide@select{#3}{#2}{#1}{%
-    {{0,\eql@decide@false}{\def\eql@box@colsep{0pt}}},%
-    {\relax{\def\eql@box@colsep{#1}}}}%
+    {{0,\eql@decide@false}{\def\eql@break@col@sep{0pt}}},%
+    {\relax{\def\eql@break@col@sep{#1}}}}%
   \let\eql@colsepmin@val\eql@box@colsep
-  \let\eql@colsepmax@val\eql@box@colsep}
+  \let\eql@colsepmax@val\eql@box@colsep
+  \let\eql@box@colsep\eql@break@col@sep}
+\eql@define@key\eql@keycat{colsep*}{\eql@decide@select{#3}{#2}{#1}{%
+    {{0,\eql@decide@false}{\def\eql@break@col@shortsep{0pt}}},%
+    {\relax{\def\eql@break@col@shortsep{#1}}}}}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11291,7 +11544,7 @@ thanks to Till Bargheer for testing and reports
 %    \begin{macrocode}
 \let\eql@multi@linesfallback\eql@false
 \let\eql@scan@par\eql@false
-\let\eql@single@crerror\eql@false
+\let\eql@single@cr@mode\eql@false
 \let\eql@ampproof@active\eql@false
 %    \end{macrocode}
 %
@@ -11303,12 +11556,15 @@ thanks to Till Bargheer for testing and reports
     {{measure,full,\eql@decide@true}{\let\eql@multi@linesfallback\eql@true}}}}
 \eql@define@key{setup}{ampproof}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@ampproof@active}
-\eql@define@key{setup}{crerror}[true]{%
-  \eql@decide@bool{#3}{#2}{#1}\eql@single@crerror}
+\eql@define@key{equations,setup}{equationcr}{%
+  \eql@decide@select{#3}{#2}{#1}{%
+    {\eql@decide@false{\let\eql@single@cr@mode\eql@false}},%
+    {{\eql@decide@true,break}{\let\eql@single@cr@mode\eql@break@line}},%
+    {{error,verbose}{\let\eql@single@cr@mode\eql@single@cr@error}}}}
 \eql@define@key{setup}{modifierwarning}[true]{%
   \eql@decide@select{#3}{#2}{#1}{%
-    {{\eql@decide@false}{\let\eql@parseopt@warn\@empty}},%
-    {{\eql@decide@true}{\let\eql@parseopt@warn\eql@warn@parseopt}},%
+    {\eql@decide@false{\let\eql@parseopt@warn\@empty}},%
+    {\eql@decide@true{\let\eql@parseopt@warn\eql@warn@parseopt}},%
     {{verbose,+}{\let\eql@parseopt@warn\eql@warn@parseopt@verbose}}}}
 \let\eql@parseopt@warn\eql@warn@parseopt
 \eql@define@key{equations,setup}{rescan}[true]{%
@@ -11425,7 +11681,7 @@ thanks to Till Bargheer for testing and reports
   \eqnlinesset{belowtopskip=0pt}%
   \eqnlinesset{abovetagskip=0pt}%
   \eqnlinesset{belowtagskip=0pt}%
-  \eqnlinesset{crerror=false}%
+  \eqnlinesset{equationcr=off}%
   \eqnlinesset{linesfallback=false}%
 }
 %    \end{macrocode}
@@ -11481,7 +11737,7 @@ thanks to Till Bargheer for testing and reports
     minus 0.25\normalbaselineskip}}%
   \eqnlinesset{belowtagskip={0.25\normalbaselineskip
     minus 0.25\normalbaselineskip}}%
-  \eqnlinesset{crerror=true}%
+  \eqnlinesset{equationcr=break}%
   \eqnlinesset{linesfallback=true}%
 }
 %    \end{macrocode}
@@ -12205,8 +12461,11 @@ thanks to Till Bargheer for testing and reports
 \ifdefined\eql@provide@opt@eqref\eqnlinesprovide{eqref}\fi
 %    \end{macrocode}
 %
-%\iffalse
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \iffalse
 %</package>
-%\fi
+% \fi
 %
 \endinput
