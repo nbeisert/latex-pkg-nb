@@ -3,13 +3,13 @@ all: mpostinl.pdf mpostinl.sty mpinlsmp.pdf
 mpostinl.pdf: mpostinl.dtx
 	pdflatex mpostinl.dtx
 	pdflatex mpostinl.dtx
+	pdflatex mpostinl.dtx
 
-mpostinl.sty: mpostinl.dtx mpostinl.ins
-	latex mpostinl.ins
-mpinlsmp.tex: mpostinl.dtx mpostinl.ins
+mpostinl.sty mpinlsmp.tex: mpostinl.dtx mpostinl.ins
 	latex mpostinl.ins
 
 mpinlsmp.pdf: mpinlsmp.tex mpostinl.sty
+	pdflatex -shell-escape mpinlsmp.tex
 	pdflatex -shell-escape mpinlsmp.tex
 	pdflatex -shell-escape mpinlsmp.tex
 

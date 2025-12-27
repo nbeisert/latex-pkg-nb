@@ -17,7 +17,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{mpostinl}[2025/04/26 v1.5.2 metapost inline figures]
+\ProvidesPackage{mpostinl}[2025/12/27 v1.5.3 metapost inline figures]
 
 \RequirePackage{verbatim}
 \RequirePackage{graphicx}
@@ -26,9 +26,12 @@
 
 \def\mpostfilename{\jobname}
 \def\mpi@nowname{\jobname-tmp}
-\def\mpi@extension{mps}
-\def\mpi@template#1{\mpostfilename-#1%
-  \ifx\mpi@extension\mpi@empty\else.\fi\mpi@extension}
+\def\mpi@dirsep{/}
+\def\mpi@figurepath{}
+\def\mpi@figureprefix{}
+\def\mpi@extension{.mps}
+\def\mpi@template#1{\mpi@figurepath\mpi@figureprefix\mpostfilename-#1%
+  \mpi@extension}
 
 \newcounter{mpi@count}
 \def\thempi@count{\arabic{mpi@count}}
@@ -89,7 +92,11 @@
 \define@key{\mpi@group}{nowall}[true]{\csname mpi@now#1\endcsname}
 \define@key{\mpi@group}{nowkeep}[true]{\csname mpi@nowkeep#1\endcsname}
 \define@key{\mpi@group}{globaldef}[true]{\csname mpi@defglobal#1\endcsname}
-\define@key{\mpi@group}{extension}[]{\def\mpi@extension{#1}}
+\define@key{\mpi@group}{figurepath}[]{\def\mpi@figurepath{#1}%
+  \ifx\mpi@figurepath\mpi@empty\else\def\mpi@figurepath{#1\mpi@dirsep}\fi}
+\define@key{\mpi@group}{figureprefix}[]{\def\mpi@figureprefix{#1}}
+\define@key{\mpi@group}{extension}[]{\def\mpi@extension{#1}%
+  \ifx\mpi@extension\mpi@empty\else\def\mpi@extension{.#1}\fi}
 \define@key{\mpi@group}{template}{\def\mpi@template##1{#1}}
 \define@key{\mpi@group}{numberwithin}{%
   \@addtoreset{mpi@count}{#1}%
