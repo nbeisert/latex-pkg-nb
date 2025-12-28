@@ -24,12 +24,12 @@
 % eqnlines.tex, eqnlines.pdf, eqnlines-src.tex, eqnlines-src.pdf.
 %
 %<package>\NeedsTeXFormat{LaTeX2e}[2020/10/01]
-%<package&!dev>\ProvidesPackage{eqnlines}[2025/12/27 v0.12 Single- and multi-line equations]
-%<package&dev>\ProvidesPackage{eqnlines-dev}[2025/12/27 v0.12 Single- and multi-line equations (development)]
-%<source>\ProvidesFile{eqnlines-src.tex}[2025/12/27 v0.12 eqnlines source code documentation]
-%<manual>\ProvidesFile{eqnlines.tex}[2025/12/27 v0.12 eqnlines reference manual]
+%<package&!dev>\ProvidesPackage{eqnlines}[2025/12/28 v0.12.1 Single- and multi-line equations]
+%<package&dev>\ProvidesPackage{eqnlines-dev}[2025/12/28 v0.12.1 Single- and multi-line equations (development)]
+%<source>\ProvidesFile{eqnlines-src.tex}[2025/12/28 v0.12.1 eqnlines source code documentation]
+%<manual>\ProvidesFile{eqnlines.tex}[2025/12/28 v0.12.1 eqnlines reference manual]
 %<*main|manual|source>
-\def\thedate/{2025/12/27}\def\theversion/{v0.12}
+\def\thedate/{2025/12/28}\def\theversion/{v0.12.1}
 \def\thecopyright/{2024\texorpdfstring{--}{-}2025 Niklas Beisert}
 %<*main>
 \ProvidesFile{eqnlines.dtx}[\thedate/ \theversion/ eqnlines package main file]
@@ -2797,6 +2797,14 @@ change bool registers to |char| 0 and 1 and |\||ifodd|
 \end{itemize}
 
 \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v0.12.1:} 2025/12/28
+
+\begin{itemize}
+\item
+fixed unwanted deferring of numbering when using |\\~| in continuous mode
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v0.12:} 2025/12/27
@@ -6985,7 +6993,7 @@ thanks to Till Bargheer for testing and reports
 %    \begin{macrocode}
 \protected\def\eql@display@cr{\eql@srbgroup
   \eql@ifnextchar@tight~%
-    {\eql@numbernext\let\eql@punct@line\@empty\eql@display@cr@star}%
+    {\numbernext\let\eql@punct@line\@empty\eql@display@cr@star}%
     \eql@display@cr@star
 }
 %    \end{macrocode}

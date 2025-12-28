@@ -21,7 +21,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[2020/10/01]
-\ProvidesPackage{eqnlines}[2025/12/27 v0.12 Single- and multi-line equations]
+\ProvidesPackage{eqnlines}[2025/12/28 v0.12.1 Single- and multi-line equations]
 \let\eql@false\@undefined
 \let\eql@true\@empty
 \def\eql@append#1#2{\edef#1{\unexpanded\expandafter{#1#2}}}
@@ -2239,7 +2239,7 @@
 }
 \protected\def\eql@display@cr{\eql@srbgroup
   \eql@ifnextchar@tight~%
-    {\eql@numbernext\let\eql@punct@line\@empty\eql@display@cr@star}%
+    {\numbernext\let\eql@punct@line\@empty\eql@display@cr@star}%
     \eql@display@cr@star
 }
 \def\eql@display@cr@star{%
