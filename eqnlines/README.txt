@@ -1,5 +1,5 @@
-eqnlines v0.12.1
-Copyright 2024-2025 Niklas Beisert
+eqnlines v0.12.2
+Copyright 2024-2026 Niklas Beisert
 
 Based on the latex package amsmath:
 Copyright (C) 1995, 2000, 2013 American Mathematical Society.

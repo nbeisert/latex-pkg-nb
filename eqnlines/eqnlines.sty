@@ -6,7 +6,7 @@
 %%
 %% eqnlines.dtx  (with options: `package')
 %% 
-%% Copyright (C) 2024-2025 Niklas Beisert
+%% Copyright (C) 2024-2026 Niklas Beisert
 %% 
 %% Based on the latex package amsmath:
 %% Copyright (C) 1995, 2000, 2013 American Mathematical Society.
@@ -21,7 +21,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[2020/10/01]
-\ProvidesPackage{eqnlines}[2025/12/28 v0.12.1 Single- and multi-line equations]
+\ProvidesPackage{eqnlines}[2026/01/13 v0.12.2 Single- and multi-line equations]
 \let\eql@false\@undefined
 \let\eql@true\@empty
 \def\eql@append#1#2{\edef#1{\unexpanded\expandafter{#1#2}}}
@@ -207,24 +207,28 @@
     }%
   }
   \def\eql@tagging@end{}
+  \def\eql@tagging@register@luamml#1{%
+    \AddToHook{package/luamml/after}{%
+      \eql@letcs{c__luamml_label_#1_tl}\@empty}}
   \def\eql@tagging@register@env{\csname math_register_env:n\endcsname}
 \else
-  \def\eql@tagging@mathsave{}
-  \def\eql@tagging@mathaddlast{}
-  \def\eql@tagging@tagbegin{}
-  \def\eql@tagging@tagend{}
-  \def\eql@tagging@tagsave{}
-  \def\eql@tagging@tagaddbox{}
-  \def\eql@tagging@tablesaveinner{}
-  \def\eql@tagging@tableaddinner{}
-  \def\eql@tagging@tablesavelines{}
-  \def\eql@tagging@tablesavealign{}
-  \def\eql@tagging@alignleft{}
-  \def\eql@tagging@aligncenter{}
-  \def\eql@tagging@alignright{}
-  \def\eql@tagging@start{}
-  \def\eql@tagging@end{}
-  \def\eql@tagging@register@env{\@gobble}
+  \let\eql@tagging@mathsave\@empty
+  \let\eql@tagging@mathaddlast\@empty
+  \let\eql@tagging@tagbegin\@empty
+  \let\eql@tagging@tagend\@empty
+  \let\eql@tagging@tagsave\@empty
+  \let\eql@tagging@tagaddbox\@empty
+  \let\eql@tagging@tablesaveinner\@empty
+  \let\eql@tagging@tableaddinner\@empty
+  \let\eql@tagging@tablesavelines\@empty
+  \let\eql@tagging@tablesavealign\@empty
+  \let\eql@tagging@alignleft\@empty
+  \let\eql@tagging@aligncenter\@empty
+  \let\eql@tagging@alignright\@empty
+  \let\eql@tagging@start\@empty
+  \let\eql@tagging@end\@empty
+  \let\eql@tagging@register@luamml\@gobble
+  \let\eql@tagging@register@env\@gobble
 \fi
 \RequirePackage{keyval}
 \def\eql@decide@relax{\eql@tmpb:=\relax}
@@ -2441,6 +2445,9 @@
 \def\eql@markline@amsthm@qed{\eql@teststaropt@tight
   \eql@markline@amsthm@staropt\eql@markline@amsthm@opt{}}
 \def\eql@markline@amsthm@register#1{\eql@letcs{#1@qed}\eql@markline@amsthm@qed}
+\def\eql@markline@amsthm@move#1#2{%
+  \AddToHook{package/amsthm/after}{%
+    \eql@letcs{#1@qed\expandafter}\csname#2@qed\endcsname}}
 \newcount\eql@shape@pos@
 \newdimen\eql@shape@amount@
 \let\eql@shape@lastrow\eql@false
@@ -4538,6 +4545,7 @@
   \ignorespacesafterend
 }
 \eql@markline@amsthm@register{equations}
+\eql@tagging@register@luamml{equations}
 \def\eql@equations@start{%
   \eql@equations@processopt
   \ifdefined\eql@equations@main
@@ -4548,6 +4556,7 @@
 }
 \newenvironment{equations@sqr}{}{}
 \eql@markline@amsthm@register{equations@sqr}
+\eql@tagging@register@luamml{equations@sqr}
 \protected\def\eql@equations@sqr@open{%
   \ifmmode
     \eql@error@mathmode{\string\[...\string\]}%
@@ -4580,6 +4589,7 @@
 \newenvironment{equations@ang}{}{}
 \newenvironment{equationsbox@ang}{}{}
 \eql@markline@amsthm@register{equations@ang}
+\eql@tagging@register@luamml{equations@ang}
 \protected\def\eql@ang@open{%
   \ifmmode
     \expandafter\eqnaddopt\expandafter{\eql@box@ang@opt}%
@@ -5260,19 +5270,12 @@
   \eqnlinesset{linesfallback=true}%
 }
 \def\eql@provide@movecmd#1#2{%
-  \eql@letcs{#1\expandafter}\csname #2\endcsname
+  \eql@letcs{#1\expandafter}\csname#2\endcsname
 }
 \def\eql@provide@moveenv#1#2{%
   \eql@provide@movecmd{#1}{#2}%
-  \eql@markline@amsthm@register{#1}%
   \ifcsname end#2\endcsname
     \eql@provide@movecmd{end#1}{end#2}%
-  \fi
-}
-\def\eql@provide@movestar#1#2{%
-  \eql@provide@moveenv{#1}{#2}%
-  \ifcsname #2*\endcsname
-    \eql@provide@moveenv{#1*}{#2*}%
   \fi
 }
 \def\eql@provide@undefinecmd#1{%
@@ -5290,24 +5293,30 @@
 }
 \def\eql@amsmath@fixends{%
   \eql@amsmath@after{%
+    \eql@amsmath@endfix{flalign}{align}%
+    \eql@amsmath@endfix{alignat}{align}%
+    \eql@amsmath@endfix{xalignat}{align}%
+    \eql@amsmath@endfix{xxalignat}{align}%
     \eql@amsmath@endfix{gather*}{gather}%
     \eql@amsmath@endfix{multline*}{multline}%
     \eql@amsmath@endfix{align*}{align}%
-    \eql@amsmath@endfix{flalign}{align}%
     \eql@amsmath@endfix{flalign*}{align}%
-    \eql@amsmath@endfix{alignat}{align}%
     \eql@amsmath@endfix{alignat*}{align}%
-    \eql@amsmath@endfix{xalignat}{align}%
     \eql@amsmath@endfix{xalignat*}{align}%
-    \eql@amsmath@endfix{xxalignat}{align}%
     \eql@amsmath@endfix{gathered}{aligned}%
     \eql@amsmath@endfix{alignedat}{aligned}%
   }
 }
-\def\eql@provide@backup@amsmath#1{%
+\def\eql@provide@backup@amsenv#1{%
   \eql@amsmath@after{%
     \eql@provide@moveenv{ams#1}{#1}%
-    \AddToHook{package/amsthm/after}{\eql@provide@movecmd{ams#1@qed}{#1@qed}}%
+    \eql@tagging@register@luamml{ams#1}%
+    \eql@markline@amsthm@move{ams#1}{#1}%
+  }%
+}
+\def\eql@provide@backup@amssub#1{%
+  \eql@amsmath@after{%
+    \eql@provide@moveenv{ams#1}{#1}%
   }%
 }
 \def\eql@provide@backup@eqref{%
@@ -5317,42 +5326,40 @@
 }
 \def\eql@provide@backup@multlined{%
   \AddToHook{package/mathtools/after}{%
-    \eql@provide@moveenv{amsmultlined}{multlined}%
-  }%
+    \eql@provide@moveenv{amsmultlined}{multlined}}%
 }
 \def\eql@provide@backup@equation{%
   \eql@amsmath@after{%
     \eql@provide@moveenv{amsequation}{equation}%
-    \eql@tagging@register@env{amsequation}%
     \eql@provide@moveenv{amsequation*}{equation*}%
+    \eql@tagging@register@env{amsequation}%
     \eql@tagging@register@env{amsequation*}%
-    \AddToHook{package/amsthm/after}{%
-      \eql@provide@movecmd{amsequation*@qed}{equation*@qed}}%
+    \eql@tagging@register@luamml{amsequation}%
+    \eql@tagging@register@luamml{amsequation*}%
+    \eql@markline@amsthm@move{amsequation}{equation}%
+    \eql@markline@amsthm@move{amsequation*}{equation*}%
   }%
   \AddToHook{package/hyperref/after}{%
     \@ifpackageloaded{amsmath}{}{%
-      \let\latexequation\H@equation
-      \let\endlatexequation\H@endequation
-      \eql@tagging@register@env{latexequation}%
       \eql@provide@moveenv{hyperrefequation}{equation}%
       \eql@tagging@register@env{hyperrefequation}%
-      \AddToHook{package/amsthm/after}{%
-        \eql@provide@movecmd{latexequation@qed}{equation@qed}%
-        \eql@provide@movecmd{hyperequation@qed}{equation@qed}
-      }%
+      \eql@tagging@register@luamml{hyperrefequation}%
+      \eql@markline@amsthm@move{hyperequation}{equation}%
     }%
   }%
-  \@ifpackageloaded{amsmath}{}{\@ifpackageloaded{hyperref}{}{%
-    \eql@provide@moveenv{latexequation}{equation}%
+  \@ifpackageloaded{amsmath}{}{%
+    \@ifpackageloaded{hyperref}{%
+      \let\latexequation\H@equation
+      \let\endlatexequation\H@endequation
+    }{\eql@provide@moveenv{latexequation}{equation}}%
     \eql@tagging@register@env{latexequation}%
-    \AddToHook{package/amsthm/after}{%
-      \eql@provide@movecmd{latexequation@qed}{equation@qed}}%
-  }}%
+    \eql@tagging@register@luamml{latexequation}%
+    \eql@markline@amsthm@move{latexequation}{equation}%
+  }%
 }
 \def\eql@provide@backup@displaymath{%
   \eql@provide@moveenv{latexdisplaymath}{displaymath}%
-  \AddToHook{package/amsthm/after}{%
-    \eql@provide@movecmd{latexdisplaymath@qed}{displaymath@qed}}%
+  \eql@markline@amsthm@move{latexdisplaymath}{displaymath}%
 }
 \def\eql@provide@backup@subequations{%
   \eql@amsmath@after{%
@@ -5376,25 +5383,22 @@
   \eql@provide@backup@eqref
   \eql@provide@backup@equation
   \eql@provide@backup@displaymath
-  \eql@provide@backup@amsmath{gather}%
-  \eql@provide@backup@amsmath{gather*}%
-  \eql@provide@backup@amsmath{multline}%
-  \eql@provide@backup@amsmath{multline*}%
-  \eql@provide@backup@amsmath{align}%
-  \eql@provide@backup@amsmath{align*}%
-  \eql@provide@backup@amsmath{flalign}%
-  \eql@provide@backup@amsmath{flalign*}%
-  \eql@provide@backup@amsmath{alignat}%
-  \eql@provide@backup@amsmath{alignat*}%
-  \eql@provide@backup@amsmath{xalignat}%
-  \eql@provide@backup@amsmath{xalignat*}%
-  \eql@provide@backup@amsmath{xxalignat}%
-  \eql@provide@backup@amsmath{aligned}%
-  \eql@provide@backup@amsmath{aligned*}%
-  \eql@provide@backup@amsmath{alignedat}%
-  \eql@provide@backup@amsmath{alignedat*}%
-  \eql@provide@backup@amsmath{gathered}%
-  \eql@provide@backup@amsmath{gathered*}%
+  \eql@provide@backup@amsenv{gather}%
+  \eql@provide@backup@amsenv{multline}%
+  \eql@provide@backup@amsenv{align}%
+  \eql@provide@backup@amsenv{flalign}%
+  \eql@provide@backup@amsenv{alignat}%
+  \eql@provide@backup@amsenv{xalignat}%
+  \eql@provide@backup@amsenv{xxalignat}%
+  \eql@provide@backup@amsenv{gather*}%
+  \eql@provide@backup@amsenv{multline*}%
+  \eql@provide@backup@amsenv{align*}%
+  \eql@provide@backup@amsenv{flalign*}%
+  \eql@provide@backup@amsenv{alignat*}%
+  \eql@provide@backup@amsenv{xalignat*}%
+  \eql@provide@backup@amssub{aligned}%
+  \eql@provide@backup@amssub{alignedat}%
+  \eql@provide@backup@amssub{gathered}%
   \eql@provide@backup@multlined
   \eql@provide@backup@subequations
 }
@@ -5491,32 +5495,46 @@
     \eql@amsmath@undefine\eqref
   \fi
 }
-\def\eql@provide@amsmath#1#2{%
+\def\eql@provide@amsenv#1#2{%
   \eql@provide@onlyonce{#1}{#2}%
   \ifdefined\eql@tmp
-    \expandafter\eql@provide@movestar\expandafter{\eql@tmp}{eql@#1}%
+    \eql@provide@moveenv{\eql@tmp}{eql@#1}%
+    \eql@tagging@register@luamml{\eql@tmp}%
+    \eql@markline@amsthm@register{\eql@tmp}%
   \else
     \eql@amsmath@after{%
-      \eql@provide@movestar{#1}{eql@#1}%
+      \eql@provide@moveenv{#1}{eql@#1}%
+      \eql@markline@amsthm@register{#1}%
     }%
     \AddToHook{package/mathtools/after}{%
-      \eql@provide@movestar{#1}{eql@#1}%
+      \eql@provide@moveenv{#1}{eql@#1}%
+      \eql@markline@amsthm@register{#1}%
     }%
-    \eql@provide@movestar{#1}{eql@#1}%
+    \eql@provide@moveenv{#1}{eql@#1}%
+    \eql@markline@amsthm@register{#1}%
     \eql@amsmath@before{\eql@provide@undefineenv{#1}}%
-    \ifcsname eql@#1*\endcsname
-      \eql@amsmath@before{\eql@provide@undefineenv{#1*}}%
-    \fi
+  \fi
+}
+\def\eql@provide@amssub#1#2{%
+  \eql@provide@onlyonce{#1}{#2}%
+  \ifdefined\eql@tmp
+    \eql@provide@moveenv{\eql@tmp}{eql@#1}%
+  \else
+    \eql@amsmath@after{%
+      \eql@provide@moveenv{#1}{eql@#1}}%
+    \AddToHook{package/mathtools/after}{%
+      \eql@provide@moveenv{#1}{eql@#1}}%
+    \eql@provide@moveenv{#1}{eql@#1}%
+    \eql@amsmath@before{\eql@provide@undefineenv{#1}}%
   \fi
 }
 \def\eql@provide@multlined#1{%
   \eql@provide@onlyonce{multlined}{#1}%
   \ifdefined\eql@tmp
-    \expandafter\eql@provide@moveenv\expandafter{\eql@tmp}{eql@multlined}%
+    \eql@provide@moveenv{\eql@tmp}{eql@multlined}%
   \else
     \AddToHook{package/mathtools/after}{%
-      \eql@provide@moveenv{multlined}{eql@multlined}%
-    }%
+      \eql@provide@moveenv{multlined}{eql@multlined}}%
     \eql@provide@moveenv{multlined}{eql@multlined}%
     \@ifpackageloaded{mathtools}{}{\AddToHook{package/mathtools/before}{%
       \eql@provide@undefineenv{multlined}}}%
@@ -5525,21 +5543,48 @@
 \def\eql@provide@equation#1{%
   \eql@provide@onlyonce{equation}{#1}%
   \ifdefined\eql@tmp
-    \expandafter\eql@provide@movestar\expandafter{\eql@tmp}{eql@equation}%
+    \eql@provide@moveenv{\eql@tmp}{eql@equation}%
+    \eql@tagging@register@luamml{\eql@tmp}%
+    \eql@markline@amsthm@register{\eql@tmp}%
   \else
     \eql@amsmath@after{%
-      \eql@provide@movestar{equation}{eql@equation}%
+      \eql@provide@moveenv{equation}{eql@equation}%
+      \eql@markline@amsthm@register{equation}%
     }%
     \AddToHook{package/hyperref/after}{%
       \@ifpackageloaded{amsmath}{}{%
         \eql@provide@moveenv{equation}{eql@equation}%
+        \eql@markline@amsthm@register{equation}%
       }%
     }%
-    \eql@provide@movestar{equation}{eql@equation}%
+    \eql@provide@moveenv{equation}{eql@equation}%
+    \eql@markline@amsthm@register{equation}%
+    \ifdefined\eql@tagging@on
+      \AddToHook{begindocument/end}{%
+        \eql@provide@moveenv{equation}{eql@equation}%
+        \eql@markline@amsthm@register{equation}%
+      }%
+    \fi
+  \fi
+}
+\def\eql@provide@equationstar#1{%
+  \eql@provide@onlyonce{equation*}{#1}%
+  \ifdefined\eql@tmp
+    \eql@provide@moveenv{\eql@tmp}{eql@equation*}%
+    \eql@tagging@register@luamml{\eql@tmp}%
+    \eql@markline@amsthm@register{\eql@tmp}%
+  \else
+    \eql@amsmath@after{%
+      \eql@provide@moveenv{equation*}{eql@equation*}%
+      \eql@markline@amsthm@register{equation*}%
+    }%
+    \eql@provide@moveenv{equation*}{eql@equation*}%
+    \eql@markline@amsthm@register{equation*}%
     \eql@amsmath@before{\eql@provide@undefineenv{equation*}}%
     \ifdefined\eql@tagging@on
       \AddToHook{begindocument/end}{%
-        \eql@provide@movestar{equation}{eql@equation}%
+        \eql@provide@moveenv{equation*}{eql@equation*}%
+        \eql@markline@amsthm@register{equation*}%
       }%
     \fi
   \fi
@@ -5547,21 +5592,22 @@
 \def\eql@provide@displaymath#1{%
   \eql@provide@onlyonce{displaymath}{#1}%
   \ifdefined\eql@tmp
-    \expandafter\eql@provide@moveenv\expandafter{\eql@tmp}{eql@displaymath}%
+    \eql@provide@moveenv{\eql@tmp}{eql@displaymath}%
+    \eql@markline@amsthm@register{\eql@tmp}%
+    \eql@tagging@register@luamml{\eql@tmp}%
   \else
     \eql@provide@moveenv{displaymath}{eql@displaymath}%
+    \eql@markline@amsthm@register{displaymath}%
     \ifdefined\eql@tagging@on
       \AddToHook{begindocument/end}{%
-        \eql@provide@moveenv{displaymath}{eql@displaymath}%
-      }%
+        \eql@provide@moveenv{displaymath}{eql@displaymath}}%
     \fi
   \fi
 }
 \def\eql@provide@subequations#1{%
   \eql@provide@onlyonce{subequations}{#1}%
   \ifdefined\eql@tmp
-    \expandafter\eql@provide@moveenv
-      \expandafter{\eql@tmp}{eql@subequations}%
+    \eql@provide@moveenv{\eql@tmp}{eql@subequations}%
   \else
     \eql@amsmath@after{%
       \eql@provide@moveenv{subequations}{eql@subequations}%
@@ -5572,8 +5618,7 @@
       \RemoveFromHook{cmd/subequations/before}[hyperref]%
       \RemoveFromHook{cmd/subequations/after}[hyperref]%
       \AddToHook{begindocument/end}{%
-        \eql@provide@moveenv{subequations}{eql@subequations}%
-      }%
+        \eql@provide@moveenv{subequations}{eql@subequations}}%
     }%
     \eql@provide@moveenv{subequations}{eql@subequations}%
     \eql@amsmath@before{\eql@provide@undefineenv{subequations}}%
@@ -5598,17 +5643,24 @@
   \let\>\eql@ang@close
 }
 \eql@define@key{provide}{equation}[]{\eql@provide@equation{#1}}
+\eql@define@key{provide}{equation*}[]{\eql@provide@equationstar{#1}}
 \eql@define@key{provide}{displaymath}[]{\eql@provide@displaymath{#1}}
-\eql@define@key{provide}{gather}[]{\eql@provide@amsmath{gather}{#1}}
-\eql@define@key{provide}{multline}[]{\eql@provide@amsmath{multline}{#1}}
-\eql@define@key{provide}{align}[]{\eql@provide@amsmath{align}{#1}}
-\eql@define@key{provide}{flalign}[]{\eql@provide@amsmath{flalign}{#1}}
-\eql@define@key{provide}{alignat}[]{\eql@provide@amsmath{alignat}{#1}}
-\eql@define@key{provide}{xalignat}[]{\eql@provide@amsmath{xalignat}{#1}}
-\eql@define@key{provide}{xxalignat}[]{\eql@provide@amsmath{xxalignat}{#1}}
-\eql@define@key{provide}{aligned}[]{\eql@provide@amsmath{aligned}{#1}}
-\eql@define@key{provide}{alignedat}[]{\eql@provide@amsmath{alignedat}{#1}}
-\eql@define@key{provide}{gathered}[]{\eql@provide@amsmath{gathered}{#1}}
+\eql@define@key{provide}{gather}[]{\eql@provide@amsenv{gather}{#1}}
+\eql@define@key{provide}{multline}[]{\eql@provide@amsenv{multline}{#1}}
+\eql@define@key{provide}{align}[]{\eql@provide@amsenv{align}{#1}}
+\eql@define@key{provide}{flalign}[]{\eql@provide@amsenv{flalign}{#1}}
+\eql@define@key{provide}{alignat}[]{\eql@provide@amsenv{alignat}{#1}}
+\eql@define@key{provide}{xalignat}[]{\eql@provide@amsenv{xalignat}{#1}}
+\eql@define@key{provide}{xxalignat}[]{\eql@provide@amsenv{xxalignat}{#1}}
+\eql@define@key{provide}{aligned}[]{\eql@provide@amssub{aligned}{#1}}
+\eql@define@key{provide}{alignedat}[]{\eql@provide@amssub{alignedat}{#1}}
+\eql@define@key{provide}{gather*}[]{\eql@provide@amsenv{gather*}{#1}}
+\eql@define@key{provide}{multline*}[]{\eql@provide@amsenv{multline*}{#1}}
+\eql@define@key{provide}{align*}[]{\eql@provide@amsenv{align*}{#1}}
+\eql@define@key{provide}{flalign*}[]{\eql@provide@amsenv{flalign*}{#1}}
+\eql@define@key{provide}{alignat*}[]{\eql@provide@amsenv{alignat*}{#1}}
+\eql@define@key{provide}{xalignat*}[]{\eql@provide@amsenv{xalignat*}{#1}}
+\eql@define@key{provide}{gathered}[]{\eql@provide@amssub{gathered}{#1}}
 \eql@define@key{provide}{multlined}[]{\eql@provide@multlined{#1}}
 \eql@define@key{provide}{subequations}[]{\eql@provide@subequations{#1}}
 \eql@define@key{provide}{sqr}[]{\eql@provide@sqr}
@@ -5656,11 +5708,12 @@
 \ifdefined\eql@provide@opt@amsmathends\eql@amsmath@fixends\fi
 \ifdefined\eql@provide@opt@backup\eql@provide@backup\fi
 \ifnum\eql@provide@opt@env>\z@
-  \eqnlinesprovide{equation,sqr,displaymath}
+  \eqnlinesprovide{equation,equation*,sqr,displaymath}
 \fi
 \ifnum\eql@provide@opt@env=\tw@
   \eqnlinesprovide{%
     multline,gather,align,flalign,alignat,xalignat,xxalignat,%
+    multline*,gather*,align*,flalign*,alignat*,xalignat*,%
     multlined,gathered,aligned,alignedat,%
     subequations}
 \fi
