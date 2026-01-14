@@ -20,16 +20,15 @@
 % The Current Maintainer of this work is Niklas Beisert.
 %
 % This work consists of the files eqnlines.dtx and eqnlines.ins
-% and the derived files eqnlines.sty, eqnlines-dev.sty,
+% and the derived files eqnlines.sty,
 % eqnlines.tex, eqnlines.pdf, eqnlines-src.tex, eqnlines-src.pdf.
 %
 %<package>\NeedsTeXFormat{LaTeX2e}[2020/10/01]
-%<package&!dev>\ProvidesPackage{eqnlines}[2026/01/13 v0.12.2 Single- and multi-line equations]
-%<package&dev>\ProvidesPackage{eqnlines-dev}[2026/01/13 v0.12.2 Single- and multi-line equations (development)]
-%<source>\ProvidesFile{eqnlines-src.tex}[2026/01/13 v0.12.2 eqnlines source code documentation]
-%<manual>\ProvidesFile{eqnlines.tex}[2026/01/13 v0.12.2 eqnlines reference manual]
+%<package>\ProvidesPackage{eqnlines}[2026/01/14 v0.13 Single- and multi-line equations]
+%<source>\ProvidesFile{eqnlines-src.tex}[2026/01/14 v0.13 eqnlines source code documentation]
+%<manual>\ProvidesFile{eqnlines.tex}[2026/01/14 v0.13 eqnlines reference manual]
 %<*main|manual|source>
-\def\thedate/{2026/01/13}\def\theversion/{v0.12.2}
+\def\thedate/{2026/01/14}\def\theversion/{v0.13}
 \def\thecopyright/{2024\texorpdfstring{--}{-}2026 Niklas Beisert}
 %<*main>
 \ProvidesFile{eqnlines.dtx}[\thedate/ \theversion/ eqnlines package main file]
@@ -346,23 +345,9 @@ environments can be accessed using the alternate name |equations|.
 
 % \TODO notice regarding development
 \textbf{Notice regarding package version \theversion/:}
-Please note that this package is still in a development and testing stage
-in the present version.
-This mainly applies to the documentation of features and code:
-Currently, the documentation is basic and minimal
-without extensive coverage of all features and settings,
-and it lacks desirable illustrations and examples.
-
-It is likely that some features of the package do not work to full extent,
-and that the package will not cooperate well with other packages.
-Therefore, please report any malfunctions that you may notice.
-
-Therefore, it is likely that internal macros and mechanisms will change,
-It is also conceivable that the public interface
-will change in minor but relevant ways
-in order to accommodate for important adjustments or additional features.
-It is intended that such changes would only require minor adaption
-of document sources that use an early version of this package.
+Please note that this package is still in a development and testing stage.
+The present version serves as a release candidate for v1.0.
+Please report any malfunction that you may notice.
 
 \medskip
 
@@ -396,7 +381,7 @@ accepts a comma-separated list of optional parameters
 \\
 \ldots
 \\
-|\end{equations}|
+|\end{equations}|\texttt{\textvisiblespace}
 \end{tabular}
 \end{center}
 %
@@ -414,7 +399,11 @@ the environment declaration |\begin{equations}|
 without whitespaces.
 Any character without a proper meaning will also start the equation content,
 however, future versions of the package may extend the syntax of modifiers,
-and thus a separation by whitespace is advertised.
+and thus a separation by whitespace is advertised
+(misplaced modifiers produce warning messages).
+Similarly, |\end{equations}| allows trailing modifiers
+and it should be followed by a whitespace
+to avoid undesired effects or warnings.
 
 \DescribeInterfaceMacro{\eqnlinesset}
 Most options, but not all, can be set permanently by the macro:
@@ -506,9 +495,9 @@ name & |single| & |lines| & |columns| \\
 alt.\ names & |equation|, |eq|, |1|
             & |gather|, |ga|, |ln|
             & |align|, |al|, |col| \\
-symbolic   & |\[|\textvisiblespace\,\ldots|\]|
-           & |\<=|\textvisiblespace\,\ldots|\>|
-           & |\<|\textvisiblespace\,\ldots|\>| \\
+symbolic   & |\[|\textvisiblespace\,\ldots|\]|\textvisiblespace
+           & |\<=|\textvisiblespace\,\ldots|\>|\textvisiblespace
+           & |\<|\textvisiblespace\,\ldots|\>|\textvisiblespace \\
 \amsmath/ env. & |equation| & |gather|, |multline| & |align| \\
 \hline
 columns & --- & single & multiple, aligned \\
@@ -1695,18 +1684,53 @@ An empty argument for |punctall| or `|`|' removes all levels of punctuation.
 \showexampleh[0.4]
 \end{example}
 
+The package offers means to conveniently adjust
+a standard punctuation (such as |punctall={,,.}|) to the particular situation:
 \DescribeInterfaceMacro{\\\string~}
-Note that the modified newline command `|\\~|' describes a break
+\DescribeInterfaceMacro{\]}
+\DescribeInterfaceMacro{\>}
+\DescribeEnv{equations}
+%
+\begin{center}
+|\\~|
+\qquad
+|\[...\]|\textit{mod}\texttt{\textvisiblespace}
+\qquad
+|\<...\>|\textit{mod}\texttt{\textvisiblespace}
+\qquad
+|...\end{equations}|\textit{mod}\texttt{\textvisiblespace}
+\end{center}
+%
+The tilded newline command `|\\~|' describes a break
 within a continued equation for which punctuation should be suppressed.
-This option can be used to stack several independent continued equations.
+Furthermore, the |equations| environment as well as the short forms
+|\[...\]| and |\<...\>| allow trailing punctuation modifiers \textit{mod}
+which place the modified punctuation closer to its natural location
+than at the beginning of the block.
+These can take values:
+%
+\begin{center}
+\begin{tabular}{rcccc}
+\textit{mod}: & |~| & |.| & |,| & |`{|\textit{punct}|}|
+\\\hline
+punctuation: & none & dot & comma & \textit{punct}
+\end{tabular}
+\end{center}
+%
+Note that the trailing modifiers only work for scanned environments;
+|equationsbox| and the single-line |equation| with deactivated |scanequation|
+do not accept trailing modifiers.
+These option can be used
+to stack several independent continued equations within a block
+and to adjust the final punctuation to the flow of the surrounding phrase.
 
 \begin{example}
 \begin{scanexample}
-\<`{,.}
-   x &= \cos\phi \\~
+\eqnlinesset{punctall={,.}}
+\< x &= \cos\phi \\~
      &= (z+z^{-1})/2 \\
 \phi &= \arccos x \\~
-     &= -i\log z \>
+     &= -i\log z \>`{\ldots}
 \end{scanexample}
 \showexampleh
 \end{example}
@@ -2130,12 +2154,12 @@ surrounds the equations box by the two commands
 \showexampleh
 
 \begin{scanexample}
-$\Longrightarrow\<=[shape=l,frame]
+$\Longrightarrow \<=[shape=l,frame]
    x = \cos\phi &
 \phi = \arccos x \\
    x = (z+z^{-1})/2 &
 \phi = -i\log z
-\>\Longleftarrow$
+\> \Longleftarrow$
 \end{scanexample}
 \showexampleh
 \end{example}
@@ -2447,6 +2471,9 @@ option & description \\
 |modifierwarning| & invoke a warning for unknown environment modifiers \\
 |scanpar| & allow scanning of |\par| within equation body \\
           & (e.g., for use in nested |\parbox| or |minipage|) \\
+|verbose| & track code location in log file for debugging purposes \\
+|scanequation| & scan single-line environments |equation| and |\[...\]| \\
+|native| & native processing of single-line equations (reduced functionality) \\
 \end{tabular}
 \end{center}
 
@@ -2545,7 +2572,7 @@ This work has the LPPL maintenance status `maintained'.
 The Current Maintainer of this work is Niklas Beisert.
 
 This work consists of the files |README.txt|, |eqnlines.ins| and |eqnlines.dtx|
-as well as the derived files |eqnlines.sty|, |eqnlines-dev.sty|,
+as well as the derived files |eqnlines.sty|,
 |eqnlines.tex|, |eqnlines.pdf|, |eqnlines-src.tex|, |eqnlines-src.pdf|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2611,7 +2638,6 @@ The package consists of the files:
     |eqnlines.ins|     & installation file \\
     |eqnlines.dtx|     & source file \\
     |eqnlines.sty|     & package file \\
-    |eqnlines-dev.sty| & package file (development version) \\
     |eqnlines.pdf|     & manual
 \end{tabular}
 \end{center}
@@ -2624,8 +2650,7 @@ The distribution consists of the files
 Run (pdf)\latex/ on |eqnlines.dtx|
 to compile the manual |eqnlines.pdf| (this file).
 \item
-Run \latex/ on |eqnlines.ins| to create the package |eqnlines.sty|
-and the developers version |eqnlines-dev.sty|.
+Run \latex/ on |eqnlines.ins| to create the package |eqnlines.sty|.
 Copy the file |eqnlines.sty| to an appropriate directory of your \latex/
 distribution, e.g.\ \textit{texmf-root}|/tex/latex/eqnlines|.
 \end{itemize}
@@ -2810,6 +2835,21 @@ change bool registers to |char| 0 and 1 and |\||ifodd|
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v0.13:} 2026/01/14
+
+\begin{itemize}
+\item
+release candidate for v1.0
+\item
+added trailing modifiers to conveniently adjust punctuation
+\item
+added |verbose| mode for debugging purposes,
+removed |eqnlines-dev| package version
+\item
+fixed spacing issues with `|\\~|'
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v0.12.2:} 2026/01/13
 
 \begin{itemize}
@@ -2834,7 +2874,7 @@ fixed unwanted deferring of numbering when using |\\~| in continuous mode
 \item
 split off source code documentation into separate document |eqnlines-src|
 \item
-added modified newline `|\\~|` to indicate continued equation
+added modified newline `|\\~|' to indicate continued equation
 with deferred numbering and punctuation suppressed
 \item
 added |\eqnsep|,  |\eqnbreak|, |\eqnjoin| for single-line compositions,
@@ -3079,23 +3119,34 @@ thanks to Till Bargheer for testing and reports
 % In the following we describe general purpose supporting routines.
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \subsection{Development Messages}
+% \subsection{Debugging Messages}
 %
-% The package offers a version \markpkg{eqnlines-dev}
-% for development and debugging purposes.
+% The package offers a verbose mode for debugging purposes.
 % It outputs extra information on the current location
-% within the code in order to track progress.
-% The extra lines for the development version
-% are indicated as `\textlangle dev\textrangle'
-% in the implementation documentation:
+% within the code in order to track progress:
+% \TODO describe
 %    \begin{macrocode}
-%<dev>\def\eql@dev#1{\PackageInfo{eqnlines-dev}{#1}}
-%<dev>\def\eql@dev@start#1{\eql@dev{starting \string#1}}
-%<dev>\def\eql@dev@enter#1{\eql@dev{entering \string#1}}
-%<dev>\def\eql@dev@leave#1{\eql@dev{ leaving \string#1}}
-%<dev>\def\eql@dev@enterenv{\eql@dev{entering \@currenvir}}
-%<dev>\def\eql@dev@leaveenv{\eql@dev{ leaving \@currenvir}}
-%<dev>\def\eql@dev@in#1#2{\eql@dev{ \space within \string#1 #2}}
+\def\eql@verbose@on{%
+  \def\eql@verbose@info##1{\PackageInfo{eqnlines}{##1}}
+  \def\eql@verbose@infoarg##1##2{\eql@verbose@info{##1##2}}
+}
+\def\eql@verbose@off{%
+  \let\eql@verbose@info\@gobble
+  \let\eql@verbose@infoarg\@gobbletwo
+}
+\eql@verbose@off
+%    \end{macrocode}
+%
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@verbose@msg@enterenv{entering \@currenvir}
+\def\eql@verbose@msg@leaveenv{ leaving \@currenvir}
+\def\eql@verbose@msg@start#1{starting \string#1}
+\def\eql@verbose@msg@end#1{ \space ending \string#1}
+\def\eql@verbose@msg@within#1{ \space within \string#1}
+\def\eql@verbose@msg@enter#1{entering \string#1}
+\def\eql@verbose@msg@leave#1{ leaving \string#1}
+\def\eql@verbose@msg@startline{starting line \the\eql@row@}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3391,9 +3442,9 @@ thanks to Till Bargheer for testing and reports
 %
 %    \begin{macrocode}
 \def\eql@warn@parseopt{%
-  \eql@warning{Unknown modifier token: starting math content}}
+  \eql@warning{Unknown modifier token: modifier parsing stopped}}
 \def\eql@warn@parseopt@verbose{%
-  \eql@warning{Unknown modifier token: \meaning\eql@parseopt@token}}
+  \eql@warning{Unknown modifier token: '\meaning\eql@parseopt@token'}}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3661,7 +3712,6 @@ thanks to Till Bargheer for testing and reports
 %    \begin{macrocode}
 \let\eql@nextopt\@empty
 \def\eql@nextopt@process#1{%
-%<dev>\eql@dev@start\eql@nextopt@process
   \eql@setkeys{#1}\eql@nextopt
   \let\eql@tagging@opt\eql@nextopt
   \global\let\eql@nextopt\@empty
@@ -3684,7 +3734,6 @@ thanks to Till Bargheer for testing and reports
 % including the package options:
 %    \begin{macrocode}
 \newcommand{\eqnlinesset}[1]{%
-%<dev>\eql@dev@start\eqnlinesset
   \eql@setkeys{setup}{#1}%
   \ignorespaces
 }
@@ -6150,7 +6199,6 @@ thanks to Till Bargheer for testing and reports
     \fi
   \fi
   \eql@subequations@close
-  \ignorespacesafterend
 }
 %    \end{macrocode}
 %
@@ -6159,11 +6207,12 @@ thanks to Till Bargheer for testing and reports
 % and passes on to the start and end routines:
 %    \begin{macrocode}
 \newenvironment{eql@subequations}{%
-%<dev>\eql@dev@enterenv
+  \eql@verbose@info\eql@verbose@msg@enterenv
   \eql@subequations@testall\eql@subequations@start%
 }{%
   \eql@subequations@end
-%<dev>\eql@dev@leaveenv
+  \ignorespacesafterend
+  \eql@verbose@info\eql@verbose@msg@leaveenv
 }
 %    \end{macrocode}
 %
@@ -7020,7 +7069,7 @@ thanks to Till Bargheer for testing and reports
 %   \macro{\eql@display@cr}
 %    \begin{macrocode}
 \protected\def\eql@display@cr{\eql@srbgroup
-  \eql@ifnextchar@tight~%
+  \eql@ifnextgobble@tight~%
     {\numbernext\let\eql@punct@line\@empty\eql@display@cr@star}%
     \eql@display@cr@star
 }
@@ -8838,7 +8887,7 @@ thanks to Till Bargheer for testing and reports
   \eql@shape@align@enable
   \let\eql@box@lastcell\eql@box@lastcell@stacked
   \everycr{\noalign{%
-%<dev>\eql@dev{starting line \the\eql@row@}%
+    \eql@verbose@info\eql@verbose@msg@startline
     \global\advance\eql@row@\@ne
   }}%
   \tabskip\z@skip
@@ -8926,12 +8975,13 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 %    \begin{macrocode}
+\def\eql@verbose@msg@startline@aligned{starting new line}
 \def\eql@box@open@aligned{%
 % \TODO templates
   \eql@shape@align@disable
   \let\eql@box@lastcell\@empty
   \everycr{\noalign{%
-%<dev>\eql@dev{starting new line}%
+    \eql@verbose@info\eql@verbose@msg@startline@aligned
   }}%
   \tabskip\z@skip
   \halign\bgroup
@@ -9106,11 +9156,11 @@ thanks to Till Bargheer for testing and reports
 % \environment{equationsbox}
 %    \begin{macrocode}
 \newenvironment{equationsbox}{%
-%<dev>\eql@dev@enterenv
+  \eql@verbose@info\eql@verbose@msg@enterenv
   \eql@ampprotect\eql@box@testall\eql@box@start
 }{%
   \eql@box@end
-%<dev>\eql@dev@leaveenv
+  \eql@verbose@info\eql@verbose@msg@leaveenv
 }
 %    \end{macrocode}
 %
@@ -9312,7 +9362,7 @@ thanks to Till Bargheer for testing and reports
 %
 %    \begin{macrocode}
 \def\eql@lines@measure@line@begin{%
-%<dev>\eql@dev{starting line \the\eql@row@}%
+  \eql@verbose@info\eql@verbose@msg@startline
   \eql@numbering@measure@line@begin
   \eql@hook@linein
 }
@@ -9353,7 +9403,7 @@ thanks to Till Bargheer for testing and reports
 %   \macro{\eql@lines@measure}
 %    \begin{macrocode}
 \def\eql@lines@measure{%
-%<dev>\eql@dev@enter\eql@lines@measure
+  \eql@verbose@infoarg\eql@verbose@msg@enter\eql@lines@measure
   \eql@measure@init\eql@lines@measure@line@begin\eql@lines@measure@line@end
   \eql@totalrows@\@M
   \eql@shape@select
@@ -9420,7 +9470,7 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-%<dev>\eql@dev@leave\eql@lines@measure
+  \eql@verbose@infoarg\eql@verbose@msg@leave\eql@lines@measure
 }
 %    \end{macrocode}
 %
@@ -9445,7 +9495,7 @@ thanks to Till Bargheer for testing and reports
 %   \macro{\eql@lines@print@line@begin}
 %    \begin{macrocode}
 \def\eql@lines@print@line@begin{%
-%<dev>\eql@dev{starting line \the\eql@row@}%
+  \eql@verbose@info\eql@verbose@msg@startline
   \eql@numbering@print@line@begin
   \eql@hook@linein
 }
@@ -9488,7 +9538,7 @@ thanks to Till Bargheer for testing and reports
 % \TODO describe
 %    \begin{macrocode}
 \def\eql@lines@print{%
-%<dev>\eql@dev@enter\eql@lines@print
+  \eql@verbose@infoarg\eql@verbose@msg@enter\eql@lines@print
   \eql@arrange@init
   \eql@display@halign@init\eql@lines@print@line@begin
   \eql@display@halign@letcr\eql@lines@print@line@end
@@ -9536,7 +9586,7 @@ thanks to Till Bargheer for testing and reports
     \noalign{%
       \eql@hook@blockafter
       \eql@display@halign@end
-%<dev>\eql@dev@leave\eql@lines@print
+      \eql@verbose@infoarg\eql@verbose@msg@leave\eql@lines@print
     }%
     \eql@tagging@tablesavelines
   }%
@@ -9586,7 +9636,7 @@ thanks to Till Bargheer for testing and reports
 % \subsection{Transpose}
 %
 % \TODO describe
-
+%
 % \TODO describe
 %    \begin{macrocode}
 \let\eql@transpose@active\eql@false
@@ -9717,7 +9767,7 @@ thanks to Till Bargheer for testing and reports
 %   \macro{\eql@columns@measure@line@begin}
 %    \begin{macrocode}
 \def\eql@columns@measure@line@begin{%
-%<dev>\eql@dev{starting line \the\eql@row@}%
+  \eql@verbose@info\eql@verbose@msg@startline
   \global\eql@column@\z@
   \global\eql@line@height@\z@
   \global\eql@line@depth@\z@
@@ -9784,7 +9834,7 @@ thanks to Till Bargheer for testing and reports
 %   \macro{\eql@columns@measure}
 %    \begin{macrocode}
 \def\eql@columns@measure{%
-%<dev>\eql@dev@enter\eql@columns@measure
+  \eql@verbose@infoarg\eql@verbose@msg@enter\eql@columns@measure
   \eql@totalcolumns@\z@
   \eql@measure@init\eql@columns@measure@line@begin\eql@columns@measure@line@end
 %    \end{macrocode}
@@ -9886,7 +9936,7 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-%<dev>\eql@dev@leave\eql@columns@measure
+  \eql@verbose@infoarg\eql@verbose@msg@leave\eql@columns@measure
 }
 %    \end{macrocode}
 %
@@ -9914,7 +9964,7 @@ thanks to Till Bargheer for testing and reports
 %   \macro{\eql@columns@print@line@begin}
 %    \begin{macrocode}
 \def\eql@columns@print@line@begin{%
-%<dev>\eql@dev{starting line \the\eql@row@}%
+  \eql@verbose@info\eql@verbose@msg@startline
   \global\eql@column@\z@
   \global\eql@line@pos@\eql@marginleft@
   \global\eql@line@width@\z@
@@ -10044,7 +10094,7 @@ thanks to Till Bargheer for testing and reports
 %   \macro{\eql@columns@print}
 %    \begin{macrocode}
 \def\eql@columns@print{%
-%<dev>\eql@dev@enter\eql@columns@print
+  \eql@verbose@infoarg\eql@verbose@msg@enter\eql@columns@print
   \eql@shape@align@disable
   \eql@display@halign@init\eql@columns@print@line@begin
   \eql@display@halign@letcr\eql@columns@print@line@end
@@ -10117,7 +10167,7 @@ thanks to Till Bargheer for testing and reports
     \noalign{%
       \eql@hook@blockafter
       \eql@display@halign@end
-%<dev>\eql@dev@leave\eql@columns@print
+      \eql@verbose@infoarg\eql@verbose@msg@leave\eql@columns@print
     }%
     \eql@tagging@tablesavealign
   }%
@@ -10171,6 +10221,16 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Scan Modifiers at End.}
+%
+%   \macro{\eql@scan@testend}
+% Scan for modifiers following the end of the scanned block:
+%    \begin{macrocode}
+\def\eql@scan@testend{%
+  \eql@ampprotect\eql@equations@testend\eql@scan@end}
+%    \end{macrocode}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Environment Body.}
 %
 % The following mechanism scans the contents of an environment
@@ -10183,7 +10243,7 @@ thanks to Till Bargheer for testing and reports
 % to process the body in |\eql@scan@reg@|:
 %    \begin{macrocode}
 \def\eql@scan@env#1{%
-%<dev>\eql@dev@enter\eql@scan@env
+  \eql@verbose@infoarg\eql@verbose@msg@enter\eql@scan@env
   \def\eql@scan@end{#1\expandafter\end\expandafter{\@currenvir}}%
   \eql@scan@reg@{}\def\eql@scan@stack{b}%
 %    \end{macrocode}
@@ -10226,8 +10286,8 @@ thanks to Till Bargheer for testing and reports
     \@checkend{#2}%
     \eql@scan@addto{#1}%
     \expandafter\let\eql@scan@iterate\eql@scan@env@org
-%<dev>\eql@dev@leave\eql@scan@env
-    \expandafter\eql@scan@end
+    \eql@verbose@infoarg\eql@verbose@msg@leave\eql@scan@env
+    \expandafter\eql@scan@testend
   \else
     \eql@scan@addto{#1\end{#2}}%
     \expandafter\eql@scan@iterate
@@ -10272,7 +10332,7 @@ thanks to Till Bargheer for testing and reports
 % Start scanning for |\]|:
 %    \begin{macrocode}
 \def\eql@scan@sqr#1{%
-%<dev>\eql@dev@enter\eql@scan@sqr
+  \eql@verbose@infoarg\eql@verbose@msg@enter\eql@scan@sqr
   \def\eql@scan@end{#1\]}%
   \eql@scan@reg@{}\def\eql@scan@stack{b}%
   \let\eql@scan@sqr@org\[%\]
@@ -10295,8 +10355,8 @@ thanks to Till Bargheer for testing and reports
   \ifx\@empty\eql@scan@stack
     \let\[\eql@scan@sqr@org%\]
     \eql@scan@addto{#1}%
-%<dev>\eql@dev@leave\eql@scan@sqr
-    \expandafter\eql@scan@end
+    \eql@verbose@infoarg\eql@verbose@msg@leave\eql@scan@sqr
+    \expandafter\eql@scan@testend
   \else
     \eql@scan@addto{#1\]}%
     \expandafter\[%\]
@@ -10336,7 +10396,7 @@ thanks to Till Bargheer for testing and reports
 % Start scanning for |\>|:
 %    \begin{macrocode}
 \def\eql@scan@ang#1{%
-%<dev>\eql@dev@enter\eql@scan@ang
+  \eql@verbose@infoarg\eql@verbose@msg@enter\eql@scan@ang
   \def\eql@scan@end{#1\>}%
   \eql@scan@reg@{}\def\eql@scan@stack{b}%
   \let\eql@scan@ang@org\<%\>
@@ -10358,8 +10418,8 @@ thanks to Till Bargheer for testing and reports
   \ifx\@empty\eql@scan@stack
     \let\<\eql@scan@ang@org%\>
     \eql@scan@addto{#1}%
-%<dev>\eql@dev@leave\eql@scan@ang
-    \expandafter\eql@scan@end
+    \eql@verbose@infoarg\eql@verbose@msg@leave\eql@scan@ang
+    \expandafter\eql@scan@testend
   \else
     \eql@scan@addto{#1\>}%
     \expandafter\<%\>
@@ -10440,6 +10500,26 @@ thanks to Till Bargheer for testing and reports
   \fi
   \ifx\eql@parseopt@token\begin
     \let\eql@parseopt@next\eql@parseopt@end
+  \fi
+}
+%    \end{macrocode}
+%
+%   \macro{\eql@equations@testend}
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@equations@testend{\eql@parseopt\eql@equations@parseend}
+\def\eql@equations@parseend{%
+  \ifx\eql@parseopt@token.%
+    \let\eql@parseopt@next\eql@parseopt@enddot
+  \fi
+  \ifx\eql@parseopt@token,%
+    \let\eql@parseopt@next\eql@parseopt@endcomma
+  \fi
+  \ifx\eql@parseopt@token~%
+    \let\eql@parseopt@next\eql@parseopt@endoff
+  \fi
+  \ifx\eql@parseopt@token`%
+    \let\eql@parseopt@next\eql@parseopt@endpar
   \fi
 }
 %    \end{macrocode}
@@ -10696,7 +10776,7 @@ thanks to Till Bargheer for testing and reports
 % and pass on to |\eql@equations@start|:
 %    \begin{macrocode}
 \newenvironment{equations}{%
-%<dev>\eql@dev@enterenv
+  \eql@verbose@info\eql@verbose@msg@enterenv
   \ifmmode
     \eql@error@mathmode{\string\begin{\@currenvir}}%
     \expandafter\eql@scan@env\expandafter\eql@scan@env@cancel
@@ -10707,7 +10787,7 @@ thanks to Till Bargheer for testing and reports
 }{%
   \eql@equations@end
   \ignorespacesafterend
-%<dev>\eql@dev@leaveenv
+  \eql@verbose@info\eql@verbose@msg@leaveenv
 }
 \eql@markline@amsthm@register{equations}
 \eql@tagging@register@luamml{equations}
@@ -10753,9 +10833,9 @@ thanks to Till Bargheer for testing and reports
     \eql@error@mathmode{\string\[...\string\]}%
     \expandafter\eql@scan@sqr\expandafter\eql@scan@sqrang@cancel
   \else
-%<dev>\eql@dev@enter{\[...\string\]}%
     \expandafter\eqnaddopt\expandafter{\eql@equations@sqr@opt}%
     \begin{equations@sqr}%
+    \eql@verbose@info\eql@verbose@msg@enterenv
     \let\]\eql@equations@sqr@close
     \expandafter\eql@ampprotect\expandafter\eql@equations@testall
       \expandafter\eql@equations@sqr@start
@@ -10779,11 +10859,21 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 %   \macro{\eql@equations@sqr@close}
-% Definition for `|\]|':
+% Definition for `|\]|'.
+% Parse modifiers following `|\]|'
+% and hand on to |\eql@equations@sqr@end|:
 %    \begin{macrocode}
 \protected\def\eql@equations@sqr@close{%
+  \eql@ampprotect\eql@equations@testend\eql@equations@sqr@end}
+%    \end{macrocode}
+%
+%   \macro{\eql@equations@sqr@end}
+% \TODO complete
+% End |\[...\]| block:
+%    \begin{macrocode}
+\def\eql@equations@sqr@end{%
   \eql@equations@end
-%<dev>\eql@dev@leave{\[...\string\]}%
+  \eql@verbose@info\eql@verbose@msg@leaveenv
   \end{equations@sqr}%
   \ignorespaces
 }
@@ -10816,16 +10906,17 @@ thanks to Till Bargheer for testing and reports
 % Forward to |equationsbox| if in math mode, otherwise to |equations|:
 %    \begin{macrocode}
 \protected\def\eql@ang@open{%
-%<dev>\eql@dev@enter{\<...\string\>}%
   \ifmmode
     \expandafter\eqnaddopt\expandafter{\eql@box@ang@opt}%
     \begin{equationsbox@ang}%
+    \eql@verbose@info\eql@verbose@msg@enterenv
     \let\>\eql@box@ang@close
     \expandafter\eql@ampprotect\expandafter\eql@box@testall
       \expandafter\eql@box@start
   \else
     \expandafter\eqnaddopt\expandafter{\eql@equations@ang@opt}%
     \begin{equations@ang}%
+    \eql@verbose@info\eql@verbose@msg@enterenv
     \let\>\eql@equations@ang@close
     \expandafter\eql@ampprotect\expandafter\eql@equations@testall
       \expandafter\eql@equations@ang@start
@@ -10860,9 +10951,16 @@ thanks to Till Bargheer for testing and reports
 % \TODO describe
 %    \begin{macrocode}
 \def\eql@equations@ang@close{%
+  \eql@ampprotect\eql@equations@testend\eql@equations@ang@end}
+%    \end{macrocode}
+%
+%   \macro{\eql@equations@ang@end}
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@equations@ang@end{%
   \eql@equations@end
+  \eql@verbose@info\eql@verbose@msg@leaveenv
   \end{equations@ang}%
-%<dev>\eql@dev@leave{\<...\string\>}%
   \ignorespaces
 }
 %    \end{macrocode}
@@ -10871,9 +10969,16 @@ thanks to Till Bargheer for testing and reports
 % \TODO describe
 %    \begin{macrocode}
 \def\eql@box@ang@close{%
+  \eql@ampprotect\eql@equations@testend\eql@box@ang@end}
+%    \end{macrocode}
+%
+%   \macro{\eql@box@ang@end}
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@box@ang@end{%
   \eql@box@end
+  \eql@verbose@info\eql@verbose@msg@leaveenv
   \end{equationsbox@ang}%
-%<dev>\eql@dev@leave{\<...\string\>}%
   \ignorespaces
 }
 %    \end{macrocode}
@@ -11619,6 +11724,8 @@ thanks to Till Bargheer for testing and reports
   \eql@decide@select{#3}{#2}{#1}{%
     {{classic}{\eql@defaults@classic}},%
     {{eqnlines}{\eql@defaults@eqnlines}}}}
+\eql@define@key{equations,equationsbox,setup}{verbose}[true]{%
+  \eql@decide@if{#3}{#2}{#1}\eql@verbose@on\eql@verbose@off}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11672,6 +11779,18 @@ thanks to Till Bargheer for testing and reports
 \def\eql@parseopt@punctcomma#1{\eqnaddopt{punct={,}}\eql@parseopt@peek}
 \def\eql@parseopt@punctoff#1{\eqnaddopt{punct={}}\eql@parseopt@peek}
 \def\eql@parseopt@punctall#1#2{\eqnaddopt{punctall={#2}}\eql@parseopt@peek}
+%    \end{macrocode}
+%
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@parseopt@enddot#1{%
+  \eql@punct@set\eql@punct@block.\eql@parseopt@peek}
+\def\eql@parseopt@endcomma#1{%
+  \eql@punct@set\eql@punct@block,\eql@parseopt@peek}
+\def\eql@parseopt@endoff#1{%
+  \eql@punct@set\eql@punct@block~\eql@parseopt@peek}
+\def\eql@parseopt@endpar#1#2{%
+  \eql@punct@set\eql@punct@block{#2}\eql@parseopt@peek}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -12446,7 +12565,6 @@ thanks to Till Bargheer for testing and reports
 % Provide an additional environment or macro via key-value interface:
 %    \begin{macrocode}
 \newcommand{\eqnlinesprovide}[1]{%
-%<dev>\eql@dev@start\eqnlinesprovide
   \eql@setkeys{provide}{#1}%
   \ignorespaces
 }

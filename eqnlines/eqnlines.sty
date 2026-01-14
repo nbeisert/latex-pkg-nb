@@ -21,7 +21,24 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[2020/10/01]
-\ProvidesPackage{eqnlines}[2026/01/13 v0.12.2 Single- and multi-line equations]
+\ProvidesPackage{eqnlines}[2026/01/14 v0.13 Single- and multi-line equations]
+\def\eql@verbose@on{%
+  \def\eql@verbose@info##1{\PackageInfo{eqnlines}{##1}}
+  \def\eql@verbose@infoarg##1##2{\eql@verbose@info{##1##2}}
+}
+\def\eql@verbose@off{%
+  \let\eql@verbose@info\@gobble
+  \let\eql@verbose@infoarg\@gobbletwo
+}
+\eql@verbose@off
+\def\eql@verbose@msg@enterenv{entering \@currenvir}
+\def\eql@verbose@msg@leaveenv{ leaving \@currenvir}
+\def\eql@verbose@msg@start#1{starting \string#1}
+\def\eql@verbose@msg@end#1{ \space ending \string#1}
+\def\eql@verbose@msg@within#1{ \space within \string#1}
+\def\eql@verbose@msg@enter#1{entering \string#1}
+\def\eql@verbose@msg@leave#1{ leaving \string#1}
+\def\eql@verbose@msg@startline{starting line \the\eql@row@}
 \let\eql@false\@undefined
 \let\eql@true\@empty
 \def\eql@append#1#2{\edef#1{\unexpanded\expandafter{#1#2}}}
@@ -151,9 +168,9 @@
 \def\eql@warn@ref@multiple{\eql@warn@tags@multiple{tag labels}
     {tag label declaration}{}}
 \def\eql@warn@parseopt{%
-  \eql@warning{Unknown modifier token: starting math content}}
+  \eql@warning{Unknown modifier token: modifier parsing stopped}}
 \def\eql@warn@parseopt@verbose{%
-  \eql@warning{Unknown modifier token: \meaning\eql@parseopt@token}}
+  \eql@warning{Unknown modifier token: '\meaning\eql@parseopt@token'}}
 \def\eql@amsmath@after#1{\AddToHook{package/amsmath/after}{#1}}
 \def\eql@amsmath@before#1{%
   \@ifpackageloaded{amsmath}{}{\AddToHook{package/amsmath/before}{#1}}}
@@ -1647,12 +1664,14 @@
     \fi
   \fi
   \eql@subequations@close
-  \ignorespacesafterend
 }
 \newenvironment{eql@subequations}{%
+  \eql@verbose@info\eql@verbose@msg@enterenv
   \eql@subequations@testall\eql@subequations@start%
 }{%
   \eql@subequations@end
+  \ignorespacesafterend
+  \eql@verbose@info\eql@verbose@msg@leaveenv
 }
 \def\eql@subequations@testall{\eql@parseopt\eql@subequations@parseopt}
 \def\eql@subequations@parseopt{%
@@ -2242,7 +2261,7 @@
   \let\eql@measure@restorestate\@gtempa
 }
 \protected\def\eql@display@cr{\eql@srbgroup
-  \eql@ifnextchar@tight~%
+  \eql@ifnextgobble@tight~%
     {\numbernext\let\eql@punct@line\@empty\eql@display@cr@star}%
     \eql@display@cr@star
 }
@@ -3353,6 +3372,7 @@
   \eql@shape@align@enable
   \let\eql@box@lastcell\eql@box@lastcell@stacked
   \everycr{\noalign{%
+    \eql@verbose@info\eql@verbose@msg@startline
     \global\advance\eql@row@\@ne
   }}%
   \tabskip\z@skip
@@ -3428,10 +3448,12 @@
   &\omit\kern-\eql@colsep@
 }%
 \def\eql@box@lastcell@even{&\omit\kern-\eql@colsep@}
+\def\eql@verbose@msg@startline@aligned{starting new line}
 \def\eql@box@open@aligned{%
   \eql@shape@align@disable
   \let\eql@box@lastcell\@empty
   \everycr{\noalign{%
+    \eql@verbose@info\eql@verbose@msg@startline@aligned
   }}%
   \tabskip\z@skip
   \halign\bgroup
@@ -3569,9 +3591,11 @@
   \fi
 }
 \newenvironment{equationsbox}{%
+  \eql@verbose@info\eql@verbose@msg@enterenv
   \eql@ampprotect\eql@box@testall\eql@box@start
 }{%
   \eql@box@end
+  \eql@verbose@info\eql@verbose@msg@leaveenv
 }
 \def\eql@box@testall{\eql@parseopt\eql@box@parseopt}
 \def\eql@box@parseopt{%
@@ -3698,6 +3722,7 @@
   \eql@display@close
 }
 \def\eql@lines@measure@line@begin{%
+  \eql@verbose@info\eql@verbose@msg@startline
   \eql@numbering@measure@line@begin
   \eql@hook@linein
 }
@@ -3724,6 +3749,7 @@
   \kern\eql@cellwidth@
 }
 \def\eql@lines@measure{%
+  \eql@verbose@infoarg\eql@verbose@msg@enter\eql@lines@measure
   \eql@measure@init\eql@lines@measure@line@begin\eql@lines@measure@line@end
   \eql@totalrows@\@M
   \eql@shape@select
@@ -3775,6 +3801,7 @@
     \global\setbox\@ne\lastbox
   }%
   \eql@totalwidth@\wd\@ne
+  \eql@verbose@infoarg\eql@verbose@msg@leave\eql@lines@measure
 }
 \def\eql@lines@adjust{%
   \eql@tagpos@adjust@eval
@@ -3782,6 +3809,7 @@
   \eql@numbering@best@eval
 }
 \def\eql@lines@print@line@begin{%
+  \eql@verbose@info\eql@verbose@msg@startline
   \eql@numbering@print@line@begin
   \eql@hook@linein
 }
@@ -3812,6 +3840,7 @@
   \eql@tagpos@print@line@end
 }
 \def\eql@lines@print{%
+  \eql@verbose@infoarg\eql@verbose@msg@enter\eql@lines@print
   \eql@arrange@init
   \eql@display@halign@init\eql@lines@print@line@begin
   \eql@display@halign@letcr\eql@lines@print@line@end
@@ -3853,6 +3882,7 @@
     \noalign{%
       \eql@hook@blockafter
       \eql@display@halign@end
+      \eql@verbose@infoarg\eql@verbose@msg@leave\eql@lines@print
     }%
     \eql@tagging@tablesavelines
   }%
@@ -3875,7 +3905,6 @@
     \box\z@
   \fi
 }
-
 \let\eql@transpose@active\eql@false
 \def\eql@transpose@end{\eql@transpose@end}
 \def\eql@transpose@skip{&\eqnpunct{}}
@@ -3959,6 +3988,7 @@
   \fi
 }
 \def\eql@columns@measure@line@begin{%
+  \eql@verbose@info\eql@verbose@msg@startline
   \global\eql@column@\z@
   \global\eql@line@height@\z@
   \global\eql@line@depth@\z@
@@ -4008,6 +4038,7 @@
   \eql@measure@endrow
 }
 \def\eql@columns@measure{%
+  \eql@verbose@infoarg\eql@verbose@msg@enter\eql@columns@measure
   \eql@totalcolumns@\z@
   \eql@measure@init\eql@columns@measure@line@begin\eql@columns@measure@line@end
   \setbox\z@\vbox{\measuring@true\halign{%
@@ -4084,6 +4115,7 @@
   \ifhbox\thr@@
     \eql@colwidth@save{\wd\thr@@}%
   \repeat
+  \eql@verbose@infoarg\eql@verbose@msg@leave\eql@columns@measure
 }
 \def\eql@columns@adjust{%
   \ifodd\eql@totalcolumns@
@@ -4093,6 +4125,7 @@
   \eql@adjust@calc@columns
 }
 \def\eql@columns@print@line@begin{%
+  \eql@verbose@info\eql@verbose@msg@startline
   \global\eql@column@\z@
   \global\eql@line@pos@\eql@marginleft@
   \global\eql@line@width@\z@
@@ -4183,6 +4216,7 @@
   \eql@tagpos@print@line@end
 }
 \def\eql@columns@print{%
+  \eql@verbose@infoarg\eql@verbose@msg@enter\eql@columns@print
   \eql@shape@align@disable
   \eql@display@halign@init\eql@columns@print@line@begin
   \eql@display@halign@letcr\eql@columns@print@line@end
@@ -4249,6 +4283,7 @@
     \noalign{%
       \eql@hook@blockafter
       \eql@display@halign@end
+      \eql@verbose@infoarg\eql@verbose@msg@leave\eql@columns@print
     }%
     \eql@tagging@tablesavealign
   }%
@@ -4259,7 +4294,10 @@
   \expandafter\scantokens\expandafter{\the\eql@scan@reg@}}
 \let\eql@scan@body\eql@scan@body@dump
 \long\def\eql@scan@addto#1{\eql@scan@reg@\expandafter{\the\eql@scan@reg@#1}}
+\def\eql@scan@testend{%
+  \eql@ampprotect\eql@equations@testend\eql@scan@end}
 \def\eql@scan@env#1{%
+  \eql@verbose@infoarg\eql@verbose@msg@enter\eql@scan@env
   \def\eql@scan@end{#1\expandafter\end\expandafter{\@currenvir}}%
   \eql@scan@reg@{}\def\eql@scan@stack{b}%
   \edef\eql@scan@iterate{\expandafter\noexpand\csname\@currenvir\endcsname}%
@@ -4278,7 +4316,8 @@
     \@checkend{#2}%
     \eql@scan@addto{#1}%
     \expandafter\let\eql@scan@iterate\eql@scan@env@org
-    \expandafter\eql@scan@end
+    \eql@verbose@infoarg\eql@verbose@msg@leave\eql@scan@env
+    \expandafter\eql@scan@testend
   \else
     \eql@scan@addto{#1\end{#2}}%
     \expandafter\eql@scan@iterate
@@ -4292,6 +4331,7 @@
   \@namedef{end\@currenvir}{\ignorespacesafterend}%
 }
 \def\eql@scan@sqr#1{%
+  \eql@verbose@infoarg\eql@verbose@msg@enter\eql@scan@sqr
   \def\eql@scan@end{#1\]}%
   \eql@scan@reg@{}\def\eql@scan@stack{b}%
   \let\eql@scan@sqr@org\[%\]
@@ -4308,7 +4348,8 @@
   \ifx\@empty\eql@scan@stack
     \let\[\eql@scan@sqr@org%\]
     \eql@scan@addto{#1}%
-    \expandafter\eql@scan@end
+    \eql@verbose@infoarg\eql@verbose@msg@leave\eql@scan@sqr
+    \expandafter\eql@scan@testend
   \else
     \eql@scan@addto{#1\]}%
     \expandafter\[%\]
@@ -4320,6 +4361,7 @@
 }
 \def\eql@scan@sqrang@cancel{\expandafter\ignorespaces\@gobble}
 \def\eql@scan@ang#1{%
+  \eql@verbose@infoarg\eql@verbose@msg@enter\eql@scan@ang
   \def\eql@scan@end{#1\>}%
   \eql@scan@reg@{}\def\eql@scan@stack{b}%
   \let\eql@scan@ang@org\<%\>
@@ -4336,7 +4378,8 @@
   \ifx\@empty\eql@scan@stack
     \let\<\eql@scan@ang@org%\>
     \eql@scan@addto{#1}%
-    \expandafter\eql@scan@end
+    \eql@verbose@infoarg\eql@verbose@msg@leave\eql@scan@ang
+    \expandafter\eql@scan@testend
   \else
     \eql@scan@addto{#1\>}%
     \expandafter\<%\>
@@ -4392,6 +4435,21 @@
   \fi
   \ifx\eql@parseopt@token\begin
     \let\eql@parseopt@next\eql@parseopt@end
+  \fi
+}
+\def\eql@equations@testend{\eql@parseopt\eql@equations@parseend}
+\def\eql@equations@parseend{%
+  \ifx\eql@parseopt@token.%
+    \let\eql@parseopt@next\eql@parseopt@enddot
+  \fi
+  \ifx\eql@parseopt@token,%
+    \let\eql@parseopt@next\eql@parseopt@endcomma
+  \fi
+  \ifx\eql@parseopt@token~%
+    \let\eql@parseopt@next\eql@parseopt@endoff
+  \fi
+  \ifx\eql@parseopt@token`%
+    \let\eql@parseopt@next\eql@parseopt@endpar
   \fi
 }
 \def\eql@equations@processopt{%
@@ -4533,6 +4591,7 @@
   \let\eql@multi@mode@lines\eql@true
 }
 \newenvironment{equations}{%
+  \eql@verbose@info\eql@verbose@msg@enterenv
   \ifmmode
     \eql@error@mathmode{\string\begin{\@currenvir}}%
     \expandafter\eql@scan@env\expandafter\eql@scan@env@cancel
@@ -4543,6 +4602,7 @@
 }{%
   \eql@equations@end
   \ignorespacesafterend
+  \eql@verbose@info\eql@verbose@msg@leaveenv
 }
 \eql@markline@amsthm@register{equations}
 \eql@tagging@register@luamml{equations}
@@ -4564,6 +4624,7 @@
   \else
     \expandafter\eqnaddopt\expandafter{\eql@equations@sqr@opt}%
     \begin{equations@sqr}%
+    \eql@verbose@info\eql@verbose@msg@enterenv
     \let\]\eql@equations@sqr@close
     \expandafter\eql@ampprotect\expandafter\eql@equations@testall
       \expandafter\eql@equations@sqr@start
@@ -4578,7 +4639,10 @@
   \fi
 }
 \protected\def\eql@equations@sqr@close{%
+  \eql@ampprotect\eql@equations@testend\eql@equations@sqr@end}
+\def\eql@equations@sqr@end{%
   \eql@equations@end
+  \eql@verbose@info\eql@verbose@msg@leaveenv
   \end{equations@sqr}%
   \ignorespaces
 }
@@ -4594,12 +4658,14 @@
   \ifmmode
     \expandafter\eqnaddopt\expandafter{\eql@box@ang@opt}%
     \begin{equationsbox@ang}%
+    \eql@verbose@info\eql@verbose@msg@enterenv
     \let\>\eql@box@ang@close
     \expandafter\eql@ampprotect\expandafter\eql@box@testall
       \expandafter\eql@box@start
   \else
     \expandafter\eqnaddopt\expandafter{\eql@equations@ang@opt}%
     \begin{equations@ang}%
+    \eql@verbose@info\eql@verbose@msg@enterenv
     \let\>\eql@equations@ang@close
     \expandafter\eql@ampprotect\expandafter\eql@equations@testall
       \expandafter\eql@equations@ang@start
@@ -4617,12 +4683,18 @@
   \fi
 }
 \def\eql@equations@ang@close{%
+  \eql@ampprotect\eql@equations@testend\eql@equations@ang@end}
+\def\eql@equations@ang@end{%
   \eql@equations@end
+  \eql@verbose@info\eql@verbose@msg@leaveenv
   \end{equations@ang}%
   \ignorespaces
 }
 \def\eql@box@ang@close{%
+  \eql@ampprotect\eql@equations@testend\eql@box@ang@end}
+\def\eql@box@ang@end{%
   \eql@box@end
+  \eql@verbose@info\eql@verbose@msg@leaveenv
   \end{equationsbox@ang}%
   \ignorespaces
 }
@@ -5156,6 +5228,8 @@
   \eql@decide@select{#3}{#2}{#1}{%
     {{classic}{\eql@defaults@classic}},%
     {{eqnlines}{\eql@defaults@eqnlines}}}}
+\eql@define@key{equations,equationsbox,setup}{verbose}[true]{%
+  \eql@decide@if{#3}{#2}{#1}\eql@verbose@on\eql@verbose@off}
 \let\eql@provide@opt@env\tw@
 \let\eql@provide@opt@amsmathends\eql@true
 \let\eql@provide@opt@backup\eql@false
@@ -5191,6 +5265,14 @@
 \def\eql@parseopt@punctcomma#1{\eqnaddopt{punct={,}}\eql@parseopt@peek}
 \def\eql@parseopt@punctoff#1{\eqnaddopt{punct={}}\eql@parseopt@peek}
 \def\eql@parseopt@punctall#1#2{\eqnaddopt{punctall={#2}}\eql@parseopt@peek}
+\def\eql@parseopt@enddot#1{%
+  \eql@punct@set\eql@punct@block.\eql@parseopt@peek}
+\def\eql@parseopt@endcomma#1{%
+  \eql@punct@set\eql@punct@block,\eql@parseopt@peek}
+\def\eql@parseopt@endoff#1{%
+  \eql@punct@set\eql@punct@block~\eql@parseopt@peek}
+\def\eql@parseopt@endpar#1#2{%
+  \eql@punct@set\eql@punct@block{#2}\eql@parseopt@peek}
 \def\eql@defaults@classic{%
   \eqnlinesset{numberline=all}%
   \eqnlinesset{mintagsep={.5\fontdimen6\textfont2}}%

@@ -1,4 +1,4 @@
-all: eqnlines.pdf eqnlines-src.pdf eqnlines.sty eqnlines-dev.sty
+all: eqnlines.pdf eqnlines-src.pdf eqnlines.sty
 
 eqnlines.pdf: eqnlines.tex eqnlines.sty
 	pdflatex eqnlines.tex
@@ -10,8 +10,7 @@ eqnlines-src.pdf: eqnlines-src.tex eqnlines.sty
 	pdflatex eqnlines-src.tex
 	pdflatex eqnlines-src.tex
 
-eqnlines.sty eqnlines-dev.sty \
-eqnlines.tex eqnlines-src.tex: eqnlines.dtx eqnlines.ins
+eqnlines.sty eqnlines.tex eqnlines-src.tex: eqnlines.dtx eqnlines.ins
 	latex eqnlines.ins
 
 touch:
@@ -24,11 +23,11 @@ clean:
 	rm -f eqnlines-src.toc eqnlines-src.hd
 
 clean-all: clean
-	rm -f eqnlines.sty eqnlines-dev.sty eqnlines.tex eqnlines-src.tex
+	rm -f eqnlines.sty eqnlines.tex eqnlines-src.tex
 	rm -f eqnlines.pdf eqnlines-src.pdf
 
 clean-bak: clean-all
 	rm -f eqnlines.dtx.bak eqnlines.ins.bak README.txt.bak Makefile.bak
 	rm -f eqnlines.dtx~ eqnlines.ins~ README.txt~ Makefile~
-	rm -f eqnlines.sty.bak eqnlines-dev.sty.bak eqnlines.tex.bak
-	rm -f eqnlines.sty~ eqnlines-dev.sty~ eqnlines.tex~
+	rm -f eqnlines.sty.bak eqnlines.tex.bak
+	rm -f eqnlines.sty~ eqnlines.tex~

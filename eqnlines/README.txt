@@ -1,4 +1,4 @@
-eqnlines v0.12.2
+eqnlines v0.13
 Copyright 2024-2026 Niklas Beisert
 
 Based on the latex package amsmath:
@@ -21,7 +21,6 @@ The package consists of the files
     eqnlines.ins      installation file
     eqnlines.dtx      source file
     eqnlines.sty      package file
-    eqnlines-dev.sty  package file (development version)
     eqnlines.tex      reference manual file
     eqnlines-src.tex  source code documentation file
 
@@ -29,7 +28,7 @@ The distribution consists of the files
 README.txt, eqnlines.ins and eqnlines.dtx.
 
 Run "latex eqnlines.ins" to create the package eqnlines.sty
-and auxiliary files eqnlines-dev.sty, eqnlines.tex and eqnlines-src.tex.
+and auxiliary files eqnlines.tex and eqnlines-src.tex.
 Copy the file eqnlines.sty to an appropriate directory
 of your LaTeX distribution, e.g. texmf-root/tex/latex/eqnlines.
 
