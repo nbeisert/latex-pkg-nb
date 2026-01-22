@@ -1,5 +1,5 @@
-exframe v3.5.1
-Copyright 2011-2025 Niklas Beisert
+exframe v3.5.2
+Copyright 2011-2026 Niklas Beisert
 
 exframe is a LaTeX2e package which provides a general purpose
 framework to describe and typeset exercises and exam questions

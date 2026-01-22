@@ -1,7 +1,7 @@
 %
 % \iffalse meta-comment
 %
-% exframe.dtx Copyright (C) 2011-2025 Niklas Beisert
+% exframe.dtx Copyright (C) 2011-2026 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -21,12 +21,17 @@
 % exfserpe.tex, exfserpf.tex, exfsermk.sh, exfsermk.mak.
 %
 %<package|samplesingle|samplemultimain>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{exframe}[2025/03/25 v3.5.1 Framework for Exercise Problems]
-%<samplesingle>\ProvidesFile{exfsamp.tex}[2025/03/25 v3.5.1 standalone sample for exframe]
-%<samplemultimain>\ProvidesFile{exfserm.tex}[2025/03/25 v3.5.1 multipart sample for exframe]
-%<*driver>
-\def\thedate#1{2025/03/25}\def\theversion#1{v3.5.1}
-\ProvidesFile{exframe.dtx}[\thedate{} \theversion{} exframe reference manual file]
+%<package>\ProvidesPackage{exframe}[2026/01/22 v3.5.2 Framework for Exercise Problems]
+%<samplesingle>\ProvidesFile{exfsamp.tex}[2026/01/22 v3.5.2 standalone sample for exframe]
+%<samplemultimain>\ProvidesFile{exfserm.tex}[2026/01/22 v3.5.2 multipart sample for exframe]
+%<source>\ProvidesFile{exframe-src.tex}[2026/01/22 v3.5.2 exframe source code documentation]
+%<manual>\ProvidesFile{exframe.tex}[2026/01/22 v3.5.2 exframe reference manual]
+%<*main|manual|source>
+\def\thedate/{2026/01/22}\def\theversion/{v3.5.2}
+\def\thecopyright/{2011\texorpdfstring{--}{-}2026 Niklas Beisert}
+%<*main>
+\ProvidesFile{exframe.dtx}[\thedate/ \theversion/ exframe reference manual file]
+%</main>
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -35,15 +40,30 @@
 \usepackage{hyperxmp}
 \usepackage[usenames]{color}
 
-\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
-\hypersetup{urlbordercolor={.5 1 1}}
-\hypersetup{linkbordercolor={1 .7 .7}}
-\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
-\hypersetup{keeppdfinfo=true}
-\hypersetup{pdfsource={}}
+%<*main>
+\title{The \markpkg{exframe} Package}
+\hypersetup{pdftitle={Documentation for the LaTeX2e Package exframe}}
+%</main>
+%<manual>\title{The \markpkg{exframe} Package\\Reference Manual}
+%<manual>\hypersetup{pdftitle={The exframe Package -- Reference Manual}}
+%<manual>\hypersetup{pdfsubject={Reference Manual for the LaTeX2e Package exframe}}
+%<source>\title{The \markpkg{exframe} Package\\Source Code Documentation}
+%<source>\hypersetup{pdftitle={The exframe Package -- Source Code Documentation}}
+%<source>\hypersetup{pdfsubject={Documented Source for the LaTeX2e Package exframe}}
+\author{Niklas Beisert\\[2ex]
+  Institut f\"ur Theoretische Physik\\
+  Eidgen\"ossische Technische Hochschule Z\"urich\\
+  Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
+  \href{mailto:nbeisert@itp.phys.ethz.ch}
+  {\texttt{nbeisert@itp.phys.ethz.ch}}}
+\hypersetup{pdfauthor={Niklas Beisert}}
+\date{\thedate/, \theversion/\\[1ex]
+\url{https://ctan.org/pkg/exframe}\\[0.5ex]
+\url{https://github.com/nbeisert/latex-pkg-nb}}
+
 \hypersetup{pdflang={en-UK}}
 \hypersetup{pdfurl={https://ctan.org/pkg/exframe}}
-\hypersetup{pdfcopyright={Copyright 2010-2025 Niklas Beisert.
+\hypersetup{pdfcopyright={Copyright \thecopyright/.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
@@ -56,6 +76,17 @@
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
 \hypersetup{pdfcontacturl={https://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
+\hypersetup{keeppdfinfo=true}
+\hypersetup{pdfsource={}}
+\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
+\hypersetup{urlbordercolor={.5 1 1}}
+\hypersetup{linkbordercolor={1 .7 .7}}
+\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
+
+\parskip1ex
+\parindent0pt
+\edef\itemize{\unexpanded\expandafter{\itemize}\parskip0pt}
+
 \newcommand{\markpkg}[1]{\textsf{#1}}
 \newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
 \newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
@@ -63,25 +94,11 @@
 
 \def\textvert{\texttt{\char"7C}}
 
-\parskip1ex
-\parindent0pt
-\let\olditemize\itemize
-\def\itemize{\olditemize\parskip0pt}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
-\title{The \markpkg{exframe} Package}
-\hypersetup{pdftitle={The exframe Package}}
-\author{Niklas Beisert\\[2ex]
-  Institut f\"ur Theoretische Physik\\
-  Eidgen\"ossische Technische Hochschule Z\"urich\\
-  Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
-  \href{mailto:nbeisert@itp.phys.ethz.ch}
-  {\texttt{nbeisert@itp.phys.ethz.ch}}}
-\hypersetup{pdfauthor={Niklas Beisert}}
-\hypersetup{pdfsubject={Manual for the LaTeX2e Package exframe}}
-\date{\thedate{}, \theversion{}\\[1ex]
-\url{https://ctan.org/pkg/exframe}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -103,6 +120,8 @@ the formatting, layout and representation of the exercise content.
 \tableofcontents
 \endgroup
 
+
+%<*main|manual>
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
@@ -1947,7 +1966,7 @@ to the package \ctanpkg{marginnote}:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-Copyright \copyright{} 2011--2025 Niklas Beisert
+Copyright \copyright{} 2011--2026 Niklas Beisert
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
@@ -2162,6 +2181,15 @@ then read solutions from different document.
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v3.5.2:} 2026/01/22
+
+\begin{itemize}
+\item
+distinguish between problem, subproblem and solutions
+for display of points in margin
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v3.5.1:} 2025/03/25
 
 \begin{itemize}
@@ -2371,26 +2399,40 @@ first version as |problems.cls|
 dedicated layout and macros for author's exercise sheets
 \end{itemize}
 
+%</main|manual>
+%<*main>
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\appendix
 
+\appendix
+%</main>
+%<*main|source>
+\raggedright
 \settowidth\MacroIndent{\rmfamily\scriptsize 0000\ }
 
- \DocInput{exframe.dtx}
+\DocInput{exframe.dtx}
+%</main|source>
 
 \end{document}
-%</driver>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%</main|manual|source>
 % \fi
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Standalone Sample}
 % \label{sec:samplesingle}
-%\iffalse
+% \iffalse
 %<*samplesingle>
-%\fi
+% \fi
 %
 % This section provides an example of how to use
 % some of the \ctanpkg{exframe} features.
@@ -2861,9 +2903,9 @@ value
 %    \begin{macrocode}
 \end{document}
 %    \end{macrocode}
-%\iffalse
+% \iffalse
 %</samplesingle>
-%\fi
+% \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2880,9 +2922,9 @@ value
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Main File}
 % \label{sec:samplemultimain}
-%\iffalse
+% \iffalse
 %<*samplemultimain>
-%\fi
+% \fi
 %
 % The main source file is called |exfserm.tex|.
 % It is referenced at several places within the setup,
@@ -3139,7 +3181,7 @@ enddef;
 \metaset{author}{Niklas Beisert, \metapick[#1]{institution}}
 \metaset{institution}{exframe academy}
 \metaset{period}{spring 2019}
-\metaset{copyrightdate}{2019--2025}
+\metaset{copyrightdate}{2019--2026}
 %    \end{macrocode}
 
 % For child documents declare part of:
@@ -3286,17 +3328,17 @@ enddef;
 \end{document}
 %    \end{macrocode}
 %
-%\iffalse
+% \iffalse
 %</samplemultimain>
-%\fi
+% \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Sheet File}
 % \label{sec:samplemultisheets}
-%\iffalse
+% \iffalse
 %<*samplemultisheet1|samplemultisheet2|samplemultisheet3|samplemultisheeta>
-%\fi
+% \fi
 %
 % Provide some source files
 % |exfser01.tex|, |exfser02.tex|, |exfser03.tex|, |exfseraa.tex|
@@ -3312,13 +3354,13 @@ enddef;
 \input{childdoc.def}
 \childdocof{exfserm}
 %    \end{macrocode}
-%\iffalse
+% \iffalse
 %</samplemultisheet1|samplemultisheet2|samplemultisheet3|samplemultisheeta>
 %<samplemultiprobleme|samplemultiproblemf>%%\providecommand{\printsol}{n}
 %<samplemultiprobleme|samplemultiproblemf>\input{childdoc.def}
 %<samplemultiprobleme|samplemultiproblemf>\childdocby{exfserm}
 %<*samplemultisheet1>
-%\fi
+% \fi
 % The parameter of |\childdocof| must match the main file name |exfserm|.
 % Uncommenting the commented line suppressed printing of the solution.
 
@@ -3332,13 +3374,13 @@ enddef;
 % Adjust due date for each sheet.
 % For sheet containing unused problems |exfseraa.tex|,
 % declare a sheet |title={unused problems}| instead of due date.
-%\iffalse
+% \iffalse
 %</samplemultisheet1>
 %<samplemultisheet2>\begin{sheet}[due={2019-05-06}]
 %<samplemultisheet3>\begin{sheet}[due={2019-05-13}, title={last sheet}]
 %<samplemultisheeta>\begin{sheet}[title={unused problems}]
 %<*samplemultisheet1>
-%\fi
+% \fi
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Problems.}
@@ -3348,14 +3390,14 @@ enddef;
 \begin{problem}[title={Sample A}]
 %    \end{macrocode}
 %
-%\iffalse
+% \iffalse
 %</samplemultisheet1>
 %<samplemultisheet2>\begin{problem}[title={Sample C}]
 %<samplemultisheet3>\input{exfserpe}
 %<samplemultisheeta>\begin{problem}[title={Sample X}]
 %<samplemultiprobleme>\begin{problem}[title={Sample E}]
 %<*samplemultisheet1|samplemultisheet2|samplemultisheeta|samplemultiprobleme>
-%\fi
+% \fi
 
 % Let us declare a figure using \ctanpkg{mpostinl} (if available).
 % Denote it by the label \textit{tag}|-fig|,
@@ -3428,33 +3470,33 @@ fillshape(paths[3], 0.7white) pensize(1pt);
 %    \begin{macrocode}
 \end{problem}
 %    \end{macrocode}
-%\iffalse
+% \iffalse
 %</samplemultisheet1|samplemultisheet2|samplemultisheeta|samplemultiprobleme>
 %<*samplemultisheet1|samplemultisheet2|samplemultisheet3|samplemultisheeta>
-%\fi
+% \fi
 
 % Start new page:
 %    \begin{macrocode}
 \turnover
 %    \end{macrocode}
 
-%\iffalse
+% \iffalse
 %</samplemultisheet1|samplemultisheet2|samplemultisheet3|samplemultisheeta>
 %<*samplemultisheet1>
-%\fi
+% \fi
 % Write a second problem to accompany the first one:
 %    \begin{macrocode}
 \begin{problem}
 %    \end{macrocode}
 %
-%\iffalse
+% \iffalse
 %</samplemultisheet1>
 %<samplemultisheet2>\begin{problem}[title={Sample D}]
 %<samplemultisheet3>\input{exfserpf}
 %<samplemultisheeta>\begin{problem}[title={Sample Y}]
 %<samplemultiproblemf>\begin{problem}[title={Sample F}]
 %<*samplemultisheet1|samplemultisheet2|samplemultisheeta|samplemultiproblemf>
-%\fi
+% \fi
 
 % Problem body without a figure;
 % this time the |solution| environments are
@@ -3484,26 +3526,26 @@ fillshape(paths[3], 0.7white) pensize(1pt);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{End Sheet.}
-%\iffalse
+% \iffalse
 %</samplemultisheet1|samplemultisheet2|samplemultisheeta|samplemultiproblemf>
 %<*samplemultisheet1|samplemultisheet2|samplemultisheet3|samplemultisheeta>
-%\fi
+% \fi
 % End the sheet:
 %    \begin{macrocode}
 \end{sheet}
 %    \end{macrocode}
 
-%\iffalse
+% \iffalse
 %</samplemultisheet1|samplemultisheet2|samplemultisheet3|samplemultisheeta>
-%\fi
+% \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Individual Problem Files}
 % \label{sec:samplemultisheet3}
-%\iffalse
+% \iffalse
 %<*discard>
-%\fi
+% \fi
 %
 % It may be more convenient to define each problem in an individual file,
 % so that a sheet can be composed by including the appropriate
@@ -3527,17 +3569,17 @@ fillshape(paths[3], 0.7white) pensize(1pt);
 % In the example, a sheet file |exfser03.tex|
 % includes two problem files |exfserpe.tex| and |exfserpf.tex|.
 %
-%\iffalse
+% \iffalse
 %</discard>
-%\fi
+% \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Make Scripts}
 % \label{sec:samplemultimake}
-%\iffalse
+% \iffalse
 %<*samplemultiscript>
-%\fi
+% \fi
 %
 % The setup allows the compilation in various modes for editing purposes.
 % In order to generate and update a complete set of documents for distribution
@@ -3585,7 +3627,7 @@ then
   exit 1
 fi
 %    \end{macrocode}
-%\iffalse$\fi
+% \iffalse$\fi
 
 % Configure and declare variables with default values.
 % |num| takes the sheet number;
@@ -3597,7 +3639,7 @@ nl=$'\n'
 secokay=""
 make=".pdf"
 %    \end{macrocode}
-%\iffalse$\fi
+% \iffalse$\fi
 
 % Check if the parameter matches any of the acceptable output file names:
 %    \begin{macrocode}
@@ -3612,7 +3654,7 @@ do
   fi
 done
 %    \end{macrocode}
-%\iffalse$\fi
+% \iffalse$\fi
 
 % Ensure that |num| is a two-digit number, prepend `0' otherwise:
 %    \begin{macrocode}
@@ -3637,13 +3679,13 @@ then
   exit 1
 fi
 %    \end{macrocode}
-%\iffalse$\fi
+% \iffalse$\fi
 
 % Disable newline character for command line tex code:
 %    \begin{macrocode}
 if [[ "$make" == ".pdf" ]]; then nl=""; fi
 %    \end{macrocode}
-%\iffalse$\fi
+% \iffalse$\fi
 
 % Function to compile a component.
 % Set up \ctanpkg{childdoc} mechanism according to desired component.
@@ -3677,7 +3719,7 @@ function docompile
   grep -E "^! |Warning|Error|Undefined|Overfull|Underfull" "$trg.log"
 }
 %    \end{macrocode}
-%\iffalse$\fi
+% \iffalse$\fi
 
 % Function to generate a \ctanpkg{childdoc} compile file with specific options:
 %    \begin{macrocode}
@@ -3693,7 +3735,7 @@ function writesource
   echo "$body" > $trg.tex
 }
 %    \end{macrocode}
-%\iffalse$\fi
+% \iffalse$\fi
 
 % Translate versions to parameter values,
 % configure variables and select appropriate function for intended task:
@@ -3710,20 +3752,20 @@ do
   fi
 done
 %    \end{macrocode}
-%\iffalse$\fi
+% \iffalse$\fi
 
 % Finish with blank line:
 %    \begin{macrocode}
 echo
 %    \end{macrocode}
 %
-%\iffalse
+% \iffalse
 %</samplemultiscript>
-%\fi
+% \fi
 %
-%\iffalse
+% \iffalse
 %<*samplemultimake>
-%\fi
+% \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Makefile.}
@@ -3755,7 +3797,7 @@ GENFILES = $(foreach trg,$(TRGLIST),$(trg).tex $(SECNUM:%=$(trg)%.tex))
 BAKFILES = $(PREREQS) $(SRCSECFILES) $(GENFILES)\
            $(MAKEFILE) $(SCRIPT) $(SRCPRB)*
 %    \end{macrocode}
-%\iffalse$\fi
+% \iffalse$\fi
 
 % Define some abstract targets;
 % |default| is the default target when no parameters are given:
@@ -3767,7 +3809,7 @@ sheet%: $(foreach trg,$(TRGLIST),$(trg)%.pdf) ;
 all: main sheets ;
 sources: $(GENFILES) ;
 %    \end{macrocode}
-%\iffalse$\fi
+% \iffalse$\fi
 
 % Compile particular files via |exfsermk.sh| bash script.
 % Note that command lines have to start with a tab character
@@ -3782,14 +3824,14 @@ $(word 2,$(TRGLIST))%.pdf: $(SRCSEC)%.tex $(PREREQS)
 $(GENFILES):
 	bash ./$(SCRIPT) $@
 %    \end{macrocode}
-%\iffalse$\fi
+% \iffalse$\fi
 
 % Touch main file for recompile:
 %    \begin{macrocode}
 touch:
 	touch $(SRCMAIN).tex
 %    \end{macrocode}
-%\iffalse$\fi
+% \iffalse$\fi
 % Define |clean| target to remove all intermediate compilation files:
 %    \begin{macrocode}
 clean:
@@ -3816,20 +3858,20 @@ clean-all:  clean
 	rm -f $(SECNUM:%=$(SRCSEC)%.pdf) $(SRCMAIN).pdf
 	rm -f $(SRCPRB)*.pdf
 %    \end{macrocode}
-%\iffalse$\fi
+% \iffalse$\fi
 % \catcode9=9
 %
-%\iffalse
+% \iffalse
 %</samplemultimake>
-%\fi
+% \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Implementation}
 % \label{sec:implementation}
-%\iffalse
+% \iffalse
 %<*package>
-%\fi
+% \fi
 %
 % This section describes the package |exframe.sty|.
 
@@ -3857,12 +3899,6 @@ clean-all:  clean
 % Define an empty macro for comparison by |\ifx|:
 %    \begin{macrocode}
 \def\exf@empty{}
-%    \end{macrocode}
-
-% \macro{\exf@tmpdim}
-% Define a length for temporary storage:
-%    \begin{macrocode}
-\newlength\exf@tmpdim
 %    \end{macrocode}
 
 % \macro{\exf@exptwo}
@@ -4677,11 +4713,23 @@ clean-all:  clean
   \getexerciseconfig{composepointspairstart}{#1}{#2}}
 \exerciseconfig{composepointspairstartsolution}[2]{%
   \getexerciseconfig{composepointspairstart}{#1}{#2}}
+\exerciseconfig{composepointspairmarginproblem}[2]{%
+  \getexerciseconfig{composepointspairmargin}{#1}{#2}}
+\exerciseconfig{composepointspairmarginsubproblem}[2]{%
+  \getexerciseconfig{composepointspairmargin}{#1}{#2}}
+\exerciseconfig{composepointspairmarginsolution}[2]{%
+  \getexerciseconfig{composepointspairmargin}{#1}{#2}}
 %    \end{macrocode}
 
 % Display points in the margin:
 %    \begin{macrocode}
 \exerciseconfig{insertpointsmargin}[1]{\marginpar{\footnotesize #1}}
+\exerciseconfig{insertpointsmarginproblem}[1]{%
+  \getexerciseconfig{insertpointsmargin}{#1}}
+\exerciseconfig{insertpointsmarginsubproblem}[1]{%
+  \getexerciseconfig{insertpointsmargin}{#1}}
+\exerciseconfig{insertpointsmarginsolution}[1]{%
+  \getexerciseconfig{insertpointsmargin}{#1}}
 %    \end{macrocode}
 
 % Display warning about points mismatch:
@@ -5137,7 +5185,7 @@ clean-all:  clean
 % \macro{\exf@addmargin}
 % Define a length for environment margin:
 %    \begin{macrocode}
-\newlength\exf@addmargin
+\newskip\exf@addmargin
 %    \end{macrocode}
 
 % \macro{\exf@section}
@@ -5148,8 +5196,8 @@ clean-all:  clean
 % (because it will be held until text is output
 % and some definitions may become invalid):
 %    \begin{macrocode}
-\newcommand{\exf@section}[2]{\setlength\exf@tmpdim{#1}%
-  \ifdim\exf@tmpdim<0pt%
+\newcommand{\exf@section}[2]{%
+  \ifdim\glueexpr#1\relax<0pt%
    \protected@edef\exf@tmp{#2}%
   \else%
    \def\exf@tmp{#2}%
@@ -5592,12 +5640,12 @@ clean-all:  clean
 %    \begin{macrocode}
 \newcommand{\exf@addtopoints}[3]{%
   \ifdefined#1\else\def#1{{0}{0}}\fi%
-  \setlength\exf@tmpdim{\expandafter\@firstoftwo#1pt}%
-  \addtolength\exf@tmpdim{#2pt}%
-  \edef\exf@tmp{\strip@pt\exf@tmpdim}%
-  \setlength\exf@tmpdim{\expandafter\@secondoftwo#1pt}%
-  \addtolength\exf@tmpdim{#3pt}%
-  \xdef#1{{\exf@tmp}{\strip@pt\exf@tmpdim}}}
+  \dimen@\dimexpr\expandafter\@firstoftwo#1pt\relax%
+  \advance\dimen@\dimexpr#2pt\relax%
+  \edef\exf@tmp{\strip@pt\dimen@}%
+  \dimen@\dimexpr\expandafter\@secondoftwo#1pt\relax%
+  \advance\dimen@\dimexpr#3pt%
+  \xdef#1{{\exf@tmp}{\strip@pt\dimen@}}}
 %    \end{macrocode}
 %
 % \macro{\exf@pointsmismatch}
@@ -5668,11 +5716,20 @@ clean-all:  clean
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Tools.}
 %
-% \macro{\exf@makepointsmargin}
+% \macro{\exf@makepointsmarginproblem}
+% \macro{\exf@makepointsmarginsubproblem}
+% \macro{\exf@makepointsmarginsolution}
 % Combination to typeset points in margin:
 %    \begin{macrocode}
-\newcommand{\exf@makepointsmargin}[2]{%
-  \exf@config@insertpointsmargin{\exf@config@composepointspairmargin{#1}{#2}}}
+\newcommand{\exf@makepointsmarginproblem}[2]{%
+  \exf@config@insertpointsmarginproblem{%
+    \exf@config@composepointspairmarginproblem{#1}{#2}}}
+\newcommand{\exf@makepointsmarginsubproblem}[2]{%
+  \exf@config@insertpointsmarginsubproblem{%
+    \exf@config@composepointspairmarginsubproblem{#1}{#2}}}
+\newcommand{\exf@makepointsmarginsolution}[2]{%
+  \exf@config@insertpointsmarginsolution{%
+    \exf@config@composepointspairmarginsolution{#1}{#2}}}
 %    \end{macrocode}
 
 % \macro{\exf@warnmismatch}
@@ -6223,7 +6280,8 @@ clean-all:  clean
 %    \end{macrocode}
 % Write title without item:
 %    \begin{macrocode}
-  \ifdim\exf@config@skipproblemitem=0pt%
+  \exf@addmargin\glueexpr\exf@config@skipproblemitem\relax%
+  \ifdim\exf@addmargin=0pt%
    \exf@prepend@intro{{%
     \exf@config@styletitle\exf@config@styletitleproblem%
     \exf@config@composetitleproblem{\csname the\exf@problemcounter\endcsname}%
@@ -6232,9 +6290,7 @@ clean-all:  clean
 % Write item with fixed total width or item width plus space:
 %    \begin{macrocode}
   \else%
-   \ifdim\exf@config@skipproblemitem>0pt%
-    \setlength\exf@addmargin{\exf@config@skipproblemitem}%
-   \else%
+   \ifdim\exf@addmargin<0pt%
     \settowidth\exf@addmargin{%
      \exf@config@styletitle\exf@config@styletitleproblem%
      \exf@config@composeitemproblem{\exf@config@counterproblemmax}%
@@ -6262,7 +6318,7 @@ clean-all:  clean
 %    \begin{macrocode}
   \exf@ifis\exf@pointsat{margin}{%
    \exf@outpoints{\exf@prepend@def\exf@introitem}%
-   {\exf@makepointsmargin}{\exf@problem@points@show}}%
+   {\exf@makepointsmarginproblem}{\exf@problem@points@show}}%
 %    \end{macrocode}
 % Write out opening line:
 %    \begin{macrocode}
@@ -6646,7 +6702,8 @@ clean-all:  clean
 %    \end{macrocode}
 % Write opening line without item:
 %    \begin{macrocode}
-  \ifdim\exf@config@skipsubproblemitem=0pt%
+  \exf@addmargin\glueexpr\exf@config@skipsubproblemitem\relax%
+  \ifdim\exf@addmargin=0pt%
    \exf@prepend@intro{{%
     \exf@config@styletitle\exf@config@styletitlesubproblem%
     \exf@config@composetitlesubproblem{%
@@ -6655,9 +6712,7 @@ clean-all:  clean
 % Write item with fixed total width or item width plus space:
 %    \begin{macrocode}
   \else%
-   \ifdim\exf@config@skipsubproblemitem>0pt%
-    \setlength\exf@addmargin{\exf@config@skipsubproblemitem}%
-   \else%
+   \ifdim\exf@addmargin<0pt%
     \settowidth\exf@addmargin{%
      \exf@config@styletitle\exf@config@styletitlesubproblem%
      \exf@config@composeitemsubproblem{\exf@config@countersubproblemmax}%
@@ -6678,7 +6733,7 @@ clean-all:  clean
 %    \begin{macrocode}
   \exf@ifis\exf@subpointsat{margin}{%
    \exf@outpoints{\exf@prepend@def\exf@introitem}%
-   {\exf@makepointsmargin}{\exf@subproblem@points@show}}%
+   {\exf@makepointsmarginsubproblem}{\exf@subproblem@points@show}}%
 %    \end{macrocode}
 % Write out opening line:
 %    \begin{macrocode}
@@ -6895,15 +6950,12 @@ clean-all:  clean
 %    \end{macrocode}
 % Determine solution for problem or subproblem:
 %    \begin{macrocode}
-  \ifx\exf@solsubprob\exf@empty%
-   \let\exf@tmp\exf@config@skipsolutionitem%
-  \else%
-   \let\exf@tmp\exf@config@skipsolutionitemsub%
-  \fi%
+  \exf@addmargin\glueexpr\ifx\exf@solsubprob\exf@empty%
+   \exf@config@skipsolutionitem\else\exf@config@skipsolutionitemsub\fi\relax%
 %    \end{macrocode}
 % Write title without item:
 %    \begin{macrocode}
-  \ifdim\exf@tmp=0pt%
+  \ifdim\exf@addmargin=0pt%
    \protected@edef\exf@solution@title{%
     \exf@composetitle{\exf@solprob}{\exf@solsubprob}}%
    \ifx\exf@solsubprob\exf@empty\ifdefined\exf@solfirst\else%
@@ -6918,9 +6970,7 @@ clean-all:  clean
 % Write item with fixed total width or item width plus space:
 %    \begin{macrocode}
   \else%
-   \ifdim\exf@tmp>0pt%
-    \setlength\exf@addmargin{\exf@tmp}%
-   \else%
+   \ifdim\exf@addmargin<0pt%
     \settowidth\exf@addmargin{%
      \exf@config@styletitle\exf@config@styletitlesolution%
      \ifx\exf@solsubprob\exf@empty%
@@ -6956,7 +7006,7 @@ clean-all:  clean
 %    \begin{macrocode}
   \exf@ifis\exf@solpointsat{margin}{%
    \exf@outpoints{\exf@prepend@def\exf@introitem}%
-   {\exf@makepointsmargin}{\exf@solution@points@show}}%
+   {\exf@makepointsmarginsolution}{\exf@solution@points@show}}%
 %    \end{macrocode}
 % Write out opening line:
 %    \begin{macrocode}
@@ -7519,8 +7569,10 @@ clean-all:  clean
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\iffalse
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \iffalse
 %</package>
-%\fi
+% \fi
 %
 \endinput

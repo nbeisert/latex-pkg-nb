@@ -1,5 +1,5 @@
 LaTeX Package Releases by Niklas Beisert  
-Copyright 2003-2025 Niklas Beisert
+Copyright 2003-2026 Niklas Beisert
 
 <https://github.com/nbeisert/latex-pkg-nb>
 

@@ -4,13 +4,7 @@ exframe.pdf: exframe.dtx
 	pdflatex exframe.dtx
 	pdflatex exframe.dtx
 
-exframe.sty: exframe.dtx exframe.ins
-	latex exframe.ins
-exfsamp.tex: exframe.dtx exframe.ins
-	latex exframe.ins
-exfserm.tex: exframe.dtx exframe.ins
-	latex exframe.ins
-exfsermk.mak: exframe.dtx exframe.ins
+exframe.sty exfsamp.tex exfserm.tex exfsermk.mak: exframe.dtx exframe.ins
 	latex exframe.ins
 
 exfsamp.pdf: exfsamp.tex exframe.sty

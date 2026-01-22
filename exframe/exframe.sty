@@ -6,7 +6,7 @@
 %%
 %% exframe.dtx  (with options: `package')
 %% 
-%% Copyright (C) 2011-2025 Niklas Beisert
+%% Copyright (C) 2011-2026 Niklas Beisert
 %% 
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either version 1.3
@@ -17,14 +17,12 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesPackage{exframe}[2025/03/25 v3.5.1 Framework for Exercise Problems]
+\ProvidesPackage{exframe}[2026/01/22 v3.5.2 Framework for Exercise Problems]
 
 \RequirePackage{verbatim}
 \RequirePackage{xkeyval}
 
 \def\exf@empty{}
-
-\newlength\exf@tmpdim
 
 \def\exf@exptwo#1{\expandafter#1\expandafter}
 \long\def\exf@expswitch#1#2{#2{#1}}
@@ -332,8 +330,20 @@
   \getexerciseconfig{composepointspairstart}{#1}{#2}}
 \exerciseconfig{composepointspairstartsolution}[2]{%
   \getexerciseconfig{composepointspairstart}{#1}{#2}}
+\exerciseconfig{composepointspairmarginproblem}[2]{%
+  \getexerciseconfig{composepointspairmargin}{#1}{#2}}
+\exerciseconfig{composepointspairmarginsubproblem}[2]{%
+  \getexerciseconfig{composepointspairmargin}{#1}{#2}}
+\exerciseconfig{composepointspairmarginsolution}[2]{%
+  \getexerciseconfig{composepointspairmargin}{#1}{#2}}
 
 \exerciseconfig{insertpointsmargin}[1]{\marginpar{\footnotesize #1}}
+\exerciseconfig{insertpointsmarginproblem}[1]{%
+  \getexerciseconfig{insertpointsmargin}{#1}}
+\exerciseconfig{insertpointsmarginsubproblem}[1]{%
+  \getexerciseconfig{insertpointsmargin}{#1}}
+\exerciseconfig{insertpointsmarginsolution}[1]{%
+  \getexerciseconfig{insertpointsmargin}{#1}}
 
 \exerciseconfig{insertwarnpoints}[3]%
   {\textbf{points mismatch for #1 (#2 determined vs.\ #3 given)}}
@@ -527,10 +537,10 @@
 \def\exf@data@problem@title{\exf@config@composetitleproblem{%
  \csname the\exf@problemcounter\endcsname}{\exf@data@problem@rawtitle}}%
 
-\newlength\exf@addmargin
+\newskip\exf@addmargin
 
-\newcommand{\exf@section}[2]{\setlength\exf@tmpdim{#1}%
-  \ifdim\exf@tmpdim<0pt%
+\newcommand{\exf@section}[2]{%
+  \ifdim\glueexpr#1\relax<0pt%
    \protected@edef\exf@tmp{#2}%
   \else%
    \def\exf@tmp{#2}%
@@ -751,12 +761,12 @@
 
 \newcommand{\exf@addtopoints}[3]{%
   \ifdefined#1\else\def#1{{0}{0}}\fi%
-  \setlength\exf@tmpdim{\expandafter\@firstoftwo#1pt}%
-  \addtolength\exf@tmpdim{#2pt}%
-  \edef\exf@tmp{\strip@pt\exf@tmpdim}%
-  \setlength\exf@tmpdim{\expandafter\@secondoftwo#1pt}%
-  \addtolength\exf@tmpdim{#3pt}%
-  \xdef#1{{\exf@tmp}{\strip@pt\exf@tmpdim}}}
+  \dimen@\dimexpr\expandafter\@firstoftwo#1pt\relax%
+  \advance\dimen@\dimexpr#2pt\relax%
+  \edef\exf@tmp{\strip@pt\dimen@}%
+  \dimen@\dimexpr\expandafter\@secondoftwo#1pt\relax%
+  \advance\dimen@\dimexpr#3pt%
+  \xdef#1{{\exf@tmp}{\strip@pt\dimen@}}}
 \newcommand{\exf@pointsmismatch}[3]{%
   \let\exf@tmp\@undefined%
   \ifdim\expandafter\@firstoftwo#1pt=\expandafter\@firstoftwo#2pt\else%
@@ -791,8 +801,15 @@
   \else\ifdim#1pt=0pt\def\exf@tmp##1##2{#4}%
    \else\def\exf@tmp##1##2{#5}\fi\fi\exf@tmp{#1}{#2}}
 
-\newcommand{\exf@makepointsmargin}[2]{%
-  \exf@config@insertpointsmargin{\exf@config@composepointspairmargin{#1}{#2}}}
+\newcommand{\exf@makepointsmarginproblem}[2]{%
+  \exf@config@insertpointsmarginproblem{%
+    \exf@config@composepointspairmarginproblem{#1}{#2}}}
+\newcommand{\exf@makepointsmarginsubproblem}[2]{%
+  \exf@config@insertpointsmarginsubproblem{%
+    \exf@config@composepointspairmarginsubproblem{#1}{#2}}}
+\newcommand{\exf@makepointsmarginsolution}[2]{%
+  \exf@config@insertpointsmarginsolution{%
+    \exf@config@composepointspairmarginsolution{#1}{#2}}}
 
 \newcommand{\exf@warnmismatch}[4]{%
   \ifdefined#4\ifdefined#3\exf@pointsmismatch#3#4{%
@@ -1065,15 +1082,14 @@
    {\exf@config@composepointspairstartproblem}{\exf@problem@points@show}}%
   \exf@config@insertprobleminfo%
   \exf@config@styletextproblem%
-  \ifdim\exf@config@skipproblemitem=0pt%
+  \exf@addmargin\glueexpr\exf@config@skipproblemitem\relax%
+  \ifdim\exf@addmargin=0pt%
    \exf@prepend@intro{{%
     \exf@config@styletitle\exf@config@styletitleproblem%
     \exf@config@composetitleproblem{\csname the\exf@problemcounter\endcsname}%
      {\exf@data@problem@rawtitle}}}%
   \else%
-   \ifdim\exf@config@skipproblemitem>0pt%
-    \setlength\exf@addmargin{\exf@config@skipproblemitem}%
-   \else%
+   \ifdim\exf@addmargin<0pt%
     \settowidth\exf@addmargin{%
      \exf@config@styletitle\exf@config@styletitleproblem%
      \exf@config@composeitemproblem{\exf@config@counterproblemmax}%
@@ -1091,7 +1107,7 @@
   \fi%
   \exf@ifis\exf@pointsat{margin}{%
    \exf@outpoints{\exf@prepend@def\exf@introitem}%
-   {\exf@makepointsmargin}{\exf@problem@points@show}}%
+   {\exf@makepointsmarginproblem}{\exf@problem@points@show}}%
   \exf@open@block{\exf@config@skipproblemtitle}%
   \exf@addcontentsline{\exf@config@toclevelproblem}%
    {\exf@config@composetocproblem{\csname the\exf@problemcounter\endcsname}%
@@ -1254,15 +1270,14 @@
   \exf@ifis\exf@subpointsat{start*}{\exf@outpoints{\exf@prepend@intro}%
    {\exf@config@composepointspairstartsubproblem}{\exf@subproblem@points@show}}%
   \exf@config@insertsubprobleminfo%
-  \ifdim\exf@config@skipsubproblemitem=0pt%
+  \exf@addmargin\glueexpr\exf@config@skipsubproblemitem\relax%
+  \ifdim\exf@addmargin=0pt%
    \exf@prepend@intro{{%
     \exf@config@styletitle\exf@config@styletitlesubproblem%
     \exf@config@composetitlesubproblem{%
      \csname the\exf@subproblemcounter\endcsname}}}%
   \else%
-   \ifdim\exf@config@skipsubproblemitem>0pt%
-    \setlength\exf@addmargin{\exf@config@skipsubproblemitem}%
-   \else%
+   \ifdim\exf@addmargin<0pt%
     \settowidth\exf@addmargin{%
      \exf@config@styletitle\exf@config@styletitlesubproblem%
      \exf@config@composeitemsubproblem{\exf@config@countersubproblemmax}%
@@ -1276,7 +1291,7 @@
   \fi%
   \exf@ifis\exf@subpointsat{margin}{%
    \exf@outpoints{\exf@prepend@def\exf@introitem}%
-   {\exf@makepointsmargin}{\exf@subproblem@points@show}}%
+   {\exf@makepointsmarginsubproblem}{\exf@subproblem@points@show}}%
   \exf@open@block{\exf@config@skipsubproblemtitle}%
   \@afterindentfalse}%
  {\exf@ifis\exf@subpointsat{end}{\showpoints}%
@@ -1372,12 +1387,9 @@
    {\exf@config@composepointspairstartsolution}{\exf@solution@points@show}}%
   \exf@config@insertsolutioninfo%
   \exf@config@styletext\exf@config@styletextsolution%
-  \ifx\exf@solsubprob\exf@empty%
-   \let\exf@tmp\exf@config@skipsolutionitem%
-  \else%
-   \let\exf@tmp\exf@config@skipsolutionitemsub%
-  \fi%
-  \ifdim\exf@tmp=0pt%
+  \exf@addmargin\glueexpr\ifx\exf@solsubprob\exf@empty%
+   \exf@config@skipsolutionitem\else\exf@config@skipsolutionitemsub\fi\relax%
+  \ifdim\exf@addmargin=0pt%
    \protected@edef\exf@solution@title{%
     \exf@composetitle{\exf@solprob}{\exf@solsubprob}}%
    \ifx\exf@solsubprob\exf@empty\ifdefined\exf@solfirst\else%
@@ -1389,9 +1401,7 @@
       {\exf@solution@title}\else\exf@solution@title\fi}}%
    \fi%
   \else%
-   \ifdim\exf@tmp>0pt%
-    \setlength\exf@addmargin{\exf@tmp}%
-   \else%
+   \ifdim\exf@addmargin<0pt%
     \settowidth\exf@addmargin{%
      \exf@config@styletitle\exf@config@styletitlesolution%
      \ifx\exf@solsubprob\exf@empty%
@@ -1417,7 +1427,7 @@
   \fi%
   \exf@ifis\exf@solpointsat{margin}{%
    \exf@outpoints{\exf@prepend@def\exf@introitem}%
-   {\exf@makepointsmargin}{\exf@solution@points@show}}%
+   {\exf@makepointsmarginsolution}{\exf@solution@points@show}}%
   \exf@open@block{\exf@config@skipsolutiontitle}%
   \@afterindentfalse}%
  {\exf@ifis\exf@solpointsat{end}{\showpoints}%
