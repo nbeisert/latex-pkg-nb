@@ -24,11 +24,11 @@
 % eqnlines.tex, eqnlines.pdf, eqnlines-src.tex, eqnlines-src.pdf.
 %
 %<package>\NeedsTeXFormat{LaTeX2e}[2020/10/01]
-%<package>\ProvidesPackage{eqnlines}[2026/01/14 v0.13 Single- and multi-line equations]
-%<source>\ProvidesFile{eqnlines-src.tex}[2026/01/14 v0.13 eqnlines source code documentation]
-%<manual>\ProvidesFile{eqnlines.tex}[2026/01/14 v0.13 eqnlines reference manual]
+%<package>\ProvidesPackage{eqnlines}[2026/01/28 v0.14 Single- and multi-line equations]
+%<source>\ProvidesFile{eqnlines-src.tex}[2026/01/28 v0.14 eqnlines source code documentation]
+%<manual>\ProvidesFile{eqnlines.tex}[2026/01/28 v0.14 eqnlines reference manual]
 %<*main|manual|source>
-\def\thedate/{2026/01/14}\def\theversion/{v0.13}
+\def\thedate/{2026/01/28}\def\theversion/{v0.14}
 \def\thecopyright/{2024\texorpdfstring{--}{-}2026 Niklas Beisert}
 %<*main>
 \ProvidesFile{eqnlines.dtx}[\thedate/ \theversion/ eqnlines package main file]
@@ -44,7 +44,7 @@
 %<*main>
 \title{The \markpkg{eqnlines} Package}
 \hypersetup{pdftitle={The eqnlines Package}}
-\hypersetup{pdfsubject={Main file for the LaTeX2e Package eqnlines}}
+\hypersetup{pdfsubject={Documentation for the LaTeX2e Package eqnlines}}
 %</main>
 %<manual>\title{The \markpkg{eqnlines} Package\\Reference Manual}
 %<manual>\hypersetup{pdftitle={The eqnlines Package -- Reference Manual}}
@@ -94,7 +94,7 @@
 \newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
 \newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\markpkg{#1}}}
 
-\def\textvert{\texttt{\char"7C}}
+\def\verbbar{\texttt{\char"7C}}
 
 \newcommand{\TODO}{\textbf{\textcolor{red}{TODO:}} }
 
@@ -412,6 +412,13 @@ Most options, but not all, can be set permanently by the macro:
 |\eqnlinesset{|\textit{opts}|}|
 \end{center}
 %
+\DescribeInterfaceMacro{\eqnaddopt}
+Options for the following equations block are set by the macro:
+%
+\begin{center}
+|\eqnaddopt{|\textit{opts}|}|
+\end{center}
+%
 \DescribeInterfaceMacro{\eqncontrol}
 Several options can be controlled
 for individual lines or cells within the equations block by the macro:
@@ -437,7 +444,7 @@ The package supplies a main maths environment called |equations|
 which has three principal modes of operation.
 It can display a single-line equation
 just as the \latex/ environment |equation| or
-the symbolic shortcut |\[...\]|:
+the symbolic shortcut |\[|\,\ldots|\]|:
 %
 \[
 \framebox[8cm]{\pstrut single line}
@@ -557,7 +564,7 @@ The combination |[|\textit{skip}|]| introduces
 additional glue between the lines;
 the modifier `|*|' inhibits a page break,
 and `|~|' indicates a continued equation
-which suppresses punctuation (see \secref{sec:puctuation})
+which suppresses punctuation (see \secref{sec:punctuation})
 and defers numbering (see \secref{sec:numbering}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -566,16 +573,16 @@ and defers numbering (see \secref{sec:numbering}).
 \DescribeInterfaceMacro{\[...\string\]}
 \DescribeInterfaceMacro{\<...\string\>}
 The package offers several alternative names for the same mode as well as
-a symbolic short form |\<|\ldots|\>| extending the \latex/
-display equation form |\[|\ldots|\]| to multi-line equations.
+a symbolic short form |\<|\,\ldots|\>| extending the \latex/
+display equation form |\[|\,\ldots|\]| to multi-line equations.
 \DescribeKey{=}
 \DescribeKey{-}
-\DescribeKey{\textvert}
+\DescribeKey{\verbbar}
 An additional equal sign `|=|' in |\<=|\textvisiblespace\,\ldots|\>|
 serves as a modifier character
 which acts as a short form for the optional argument |lines|
 selecting the lines mode.
-Similarly, the modifiers minus `|-|' and bar `\textvert'
+Similarly, the modifiers minus `|-|' and bar `\verbbar'
 select single-line and columns mode, respectively.
 \DescribeKey{sqropt}
 \DescribeKey{angopt}
@@ -1392,8 +1399,8 @@ The alignment preset can be adjusted for individual lines by the controls:
 %
 \begin{center}
 \begin{tabular}{l}
-|\eqncontrol{align=left|\textvert|center|\textvert|right}|\\
-|\eqncontrol{shiftto|\textvert|shiftby=|\textit{dimen}|}|
+|\eqncontrol{align=left|\textbar|center|\textbar|right}|\\
+|\eqncontrol{shiftto|\textbar|shiftby=|\textit{dimen}|}|
 \end{tabular}
 \end{center}
 %
@@ -1403,8 +1410,8 @@ The alignment preset can be adjusted for individual lines by the controls:
 or by the macros:
 %
 \begin{center}
-|\shoveleft|\textvert|\shovecenter|\textvert|\shoveright|%
-[|*|\textvert|!|\textvert|[|\textit{dimen}|]|],
+|\shoveleft|\textbar|\shovecenter|\textbar|\shoveright|%
+[|*|\textbar|!|\textbar|[|\textit{dimen}|]|],
 \end{center}
 %
 In contradistinction to \amsmath/,
@@ -1437,7 +1444,7 @@ The left and right reference positions are given
 by the ends of the widest line placed centrally.
 The latter can be adjusted by adding
 some padding around the widest line via the optional argument
-|padding|\textvert|padleft|\textvert|padright|[|={|\textit{dimen}|}|]
+|padding|\textbar|padleft|\textbar|padright|[|={|\textit{dimen}|}|]
 while preserving the central default position.
 The value `|indent|' sets the padding to the default indentation amount
 and `|max|' extends the padding to all available space.
@@ -1578,7 +1585,7 @@ x+x+x+x+x+x+x+x
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Punctuation}
-\label{sec:puctuation}
+\label{sec:punctuation}
 
 Extending proper punctuation across equations is a delicate matter,
 and maintaining it while redacting the text
@@ -1644,6 +1651,7 @@ where we assume
 In situations, where the punctuation must appear before the end
 of the block, e.g.\ before a ``QED'',
 it can be invoked manually by |\eqnpunctapply|.
+Further automatic punctuation is suppressed within the current display.
 
 \DescribeKey{punctsep}
 For convenience, one may also specify a desired space
@@ -1684,27 +1692,28 @@ An empty argument for |punctall| or `|`|' removes all levels of punctuation.
 \showexampleh[0.4]
 \end{example}
 
-The package offers means to conveniently adjust
+The package offers means to adjust
 a standard punctuation (such as |punctall={,,.}|) to the particular situation:
-\DescribeInterfaceMacro{\\\string~}
+\DescribeInterfaceMacro{\\}
 \DescribeInterfaceMacro{\]}
 \DescribeInterfaceMacro{\>}
 \DescribeEnv{equations}
 %
 \begin{center}
-|\\~|
+|\\|\textit{mod}\texttt{\textvisiblespace}
 \qquad
-|\[...\]|\textit{mod}\texttt{\textvisiblespace}
+|\[|\,\ldots|\]|\textit{mod}\texttt{\textvisiblespace}
 \qquad
-|\<...\>|\textit{mod}\texttt{\textvisiblespace}
+|\<|\,\ldots|\>|\textit{mod}\texttt{\textvisiblespace}
 \qquad
-|...\end{equations}|\textit{mod}\texttt{\textvisiblespace}
+\ldots|\end{equations}|\textit{mod}\texttt{\textvisiblespace}
 \end{center}
 %
-The tilded newline command `|\\~|' describes a break
+The newline command with tilde `|\\~|' describes a break
 within a continued equation for which punctuation should be suppressed.
-Furthermore, the |equations| environment as well as the short forms
-|\[...\]| and |\<...\>| allow trailing punctuation modifiers \textit{mod}
+Furthermore, the |equations| and |equationsbox| environments
+as well as the short forms |\[|\,\ldots|\]| and |\<|\,\ldots|\>|
+allow trailing punctuation modifiers \textit{mod}
 which place the modified punctuation closer to its natural location
 than at the beginning of the block.
 These can take values:
@@ -1756,19 +1765,19 @@ is broken before the equals relation as |a&=b+c|,
 and also if an equation sequence continues on the next line as |\\&=d-e|.
 However, it is difficult to achieve the right spacing
 if the right-hand side is to be broken into several lines:
-For instance, |\\&|\textvisiblespace|+f|
+For instance, |\\&+f|
 aligns the subordinate binary operation with the equals sign
 (which may be undesirable).
 Instead placing a phantom equals sign is an effort
-that somewhat disrupts the readability of the code.
+that somewhat disrupts source readability.
 
 \DescribeKey{class}
-\DescribeKey{ampeq}
-\DescribeKey{eqamp}
+\DescribeKey{ampeq <}
+\DescribeKey{eqamp >}
 The package implements a more flexible assignment of math classes
 at the alignment. The above default behaviour is invoked by
-the optional argument |class=ampeq| (or |ampeq| for short).
-The optional argument |class=eqamp| (or |eqamp| for short)
+the optional argument |class=ampeq| (|ampeq| for short or `|<|' as modifier).
+The optional argument |class=eqamp| (|eqamp| for short or `|>|' as modifier)
 imposes math classes at the alignment
 such that an equation sign should be placed just before the alignment.
 Concretely, it inserts |\mathrel{}| classes just before and after
@@ -1779,19 +1788,15 @@ For example, the following two expressions produce (almost) identical output:
 
 \begin{example}
 \begin{scanexample}
-\<[class=ampeq]
-a &= b+c \\
-  &= d-e \\
-  &\mathrel{}\phantom{=} +f
-\>
+\<< a &= b+c \\
+      &= d-e \\
+      &\mathrel{}\phantom{=} +f \>
 \end{scanexample}
 \showexampleh
 \begin{scanexample}
-\<[class=eqamp]
-a =& b+c \\
-  =& d-e \\
-   & +f
-\>
+\<> a =& b+c \\
+      =& d-e \\
+       & +f \>
 \end{scanexample}
 \showexampleh
 \end{example}
@@ -2028,8 +2033,8 @@ In the following example,
 \DescribeKey{...space}
 Variable amounts of skip can be set via
 |aboveskip| and |belowskip| or |skip| for both simultaneously.
-In addition, the package extends the |\vspace| mechanism
-of \latex/ to equation bodies where it adds vertical space
+In addition, the package extends the \latex/ |\vspace| mechanism
+to equation bodies where it adds vertical space
 below the next equation line or below the equation environment.
 Additional glue can be added above or below equation environments
 by means of the options |abovespace| and |belowspace|.
@@ -2117,7 +2122,7 @@ It works analogously to |equations| including optional arguments
 and modifiers, but it offers a reduced range of functionality
 such as (evidently) no numbering
 (yet, the |lines| mode accepts multiple columns here).
-It can also be invoked by the symbolic short form |\<...\>|
+It can also be invoked by the symbolic short form |\<|\,\ldots|\>|
 when called within math mode.
 
 \DescribeKey{top,t}
@@ -2160,6 +2165,101 @@ $\Longrightarrow \<=[shape=l,frame]
    x = (z+z^{-1})/2 &
 \phi = -i\log z
 \> \Longleftarrow$
+\end{scanexample}
+\showexampleh
+\end{example}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Cases and Matrix Environments.}
+
+\DescribeEnv{cases}
+\DescribeKey{cases}
+\DescribeKey{condsep}
+The |cases| environment is reimplemented
+using the special mode |cases| of |equationsbox|
+with two left-aligned cells
+whose separation may be adjusted by the option |condsep|.
+\DescribeKey{braces}
+The equations box is wrapped by a left brace by default;
+this behaviour may be adjusted by the option |braces|
+taking the values |off|, |l|, |r|, |lr|.
+\DescribeKey{intro}
+\DescribeKey{introtext}
+Furthermore, a common intro \textit{text} for all conditions
+may be added by the option |intro={|\textit{text}|}|;
+|introtext| sets \textit{text} in text mode with a trailing space.
+\DescribeKey{textcond}
+Finally, the option |textcond| determines that right cells are given in mode.
+All features of |equationsbox|, such as punctuation,
+are equally available for |cases|.
+
+\begin{example}
+\begin{scanexample}
+\[ x = \begin{cases}[introtext={if},braces=lr]
+1 & \phi = 0 \\
+0 & \phi = \pi/2
+\end{cases} \]
+\end{scanexample}
+\showexampleh[0.7]
+\begin{scanexample}
+\[`{,.} x = \<[cases,textcond]
+\cos\phi & one way \\
+(z+z^{-1})/2 & or the other
+\eqnpunctapply \> \]
+\end{scanexample}
+\showexampleh[0.6]
+\end{example}
+
+\DescribeEnv{?matrix}
+The set of |matrix| environments are reimplemented
+using particular combinations of options for |equationsbox|:
+The matrix is arranged in |lines| mode
+with centred cells |shape=center|.
+\DescribeKey{spread*}
+The line spread is reset by |spread*|.
+Punctuation is turned off by |punctall={}|.
+\DescribeKey{style}
+The cells are rendered in |\textstyle|
+using the option |style=text|.
+\DescribeKey{colsep*}
+A small column separation |colsep*|
+is selected by |colsep=short|.
+\DescribeKey{delim}
+Finally, the equations box is wrapped by a pair of delimiters
+\textit{l} and \textit{r}
+using the option |delim={|\textit{l}\textit{r}|}|.
+Again, all features of |equationsbox|, such as punctuation,
+are equally available for the |matrix| environments.
+\DescribeKey{matrix}
+Altogether, the combination is achieved by the shortcut option
+|matrix={|\textit{l}\textit{r}|}|,
+where \textit{l}\textit{r} may take the following abbreviations:
+%
+\begin{center}
+\begin{tabular}{cccccccc}
+\textit{lr} & `|.|' & |r| & |s| & |a| & |c| & |v| & |d|
+\\\hline
+brackets & none & round & square & angle & curly & bars & double bars
+\\\hline
+result & $\ldots$ & $(\ldots)$ & $[\ldots]$ & $\langle\ldots\rangle$
+& $\lbrace\ldots\rbrace$ & $\vert\ldots\vert$ & $\Vert\ldots\Vert$
+\end{tabular}
+\end{center}
+
+\begin{example}
+\begin{scanexample}
+\[ \begin{pmatrix}
+\cos\phi & -\sin\phi \\
+\sin\phi & \cos\phi
+\end{pmatrix} \]
+\end{scanexample}
+\showexampleh
+\begin{scanexample}
+\[ \<[matrix=v,shape=r]
+\cos\phi & -\sin\phi &  0 \\
+\sin\phi &  \cos\phi &  0 \\
+0        &  0        & -1
+\> \]
 \end{scanexample}
 \showexampleh
 \end{example}
@@ -2307,7 +2407,7 @@ it must be a macro which accepts one argument
 (or a command sequence which ends with a macro accepting one argument).
 Note:
 Any semi-automatic punctuation is included within the frame,
-see \secref{sec:puctuation}.
+see \secref{sec:punctuation}.
 Parts of a cell can be framed by the \amsmath/ macro |\boxed|,
 which will not include semi-automatic punctuation.
 Furthermore, the height and depth of the box are bounded from below
@@ -2351,11 +2451,11 @@ Several short pieces of math content
 may well fit within a single equation line,
 typically separated by some amount of space like |\qquad| or |\qquad|.
 The package provides several context-aware commands for this purpose:
-the commands |\eqncol| and |\eqnbreak| insert some horizontal glue,
+the commands |\eqnsep| and |\eqnbreak| insert some horizontal glue,
 whereas |\eqnjoin| joins two parts of an equation with some conjunction.
 The glue typically includes some amount of shrink
 in order to accommodate the content when space is sparse.
-Furthermore, |\eqncol| and |\eqnbreak| also automatically insert
+Furthermore, |\eqnsep| and |\eqnbreak| also automatically insert
 the punctuation for columns and lines, respectively.
 For convenience,
 the newline command `|\\|' maps to |\eqnbreak|
@@ -2375,7 +2475,7 @@ whereas the optional argument \textit{skip}
 specifies the amount of glue explicitly.
 \DescribeKey{linesep}
 \DescribeKey{colsep}
-The default amounts of glue for |\eqnbreak| or `|\\|' and |\eqncol|
+The default amounts of glue for |\eqnbreak| or `|\\|' and |\eqnsep|
 are determined by the settings |linesep| and |colsep|, respectively.
 The starred variants |linesep*| and |colsep*|
 determine the short amount of glue.
@@ -2472,7 +2572,7 @@ option & description \\
 |scanpar| & allow scanning of |\par| within equation body \\
           & (e.g., for use in nested |\parbox| or |minipage|) \\
 |verbose| & track code location in log file for debugging purposes \\
-|scanequation| & scan single-line environments |equation| and |\[...\]| \\
+|scanequation| & scan single-line environments |equation| and |\[|\,\ldots|\]| \\
 |native| & native processing of single-line equations (reduced functionality) \\
 \end{tabular}
 \end{center}
@@ -2490,15 +2590,17 @@ option & description \\
 \hline
 |env=none| & provide only |equations| and |equationsbox| environments \\
 |env=equation| & provide/overwrite |equation|,
-                 |displaymath| and |\[|\ldots|\]| \\
+                 |displaymath| and |\[|\,\ldots|\]| \\
 |env=amsmath| & provide/overwrite \amsmath/ environments
                 (including |equation|) \\
 |amsmathends|=\textit{bool}  & patch \amsmath/ environments
                    with individual endings \\
 |backup|=\textit{bool}  & backup original \amsmath/ environments
                    as |ams...| \\
-|ang|=\textit{bool} & provide |\<|\ldots|\>| \\
+|ang|=\textit{bool} & provide |\<|\,\ldots|\>| \\
 |eqref|=\textit{bool} & provide |\eqref| \\
+|matrix|=\textit{bool} & provide \amsmath/ |?matrix|
+                         and |cases| environments \\
 \end{tabular}
 \end{center}
 
@@ -2525,22 +2627,21 @@ feature & description \\
 & |multlined|, |gathered|, |aligned| \\
 \textit{env}|=|\textit{name} &
    provide environment \textit{env} as \textit{name} \\
-|sqr| & provide |\[|\ldots|\]| \\
-|ang| & provide |\<|\ldots|\>| \\
+|sqr| & provide |\[|\,\ldots|\]| \\
+|ang| & provide |\<|\,\ldots|\>| \\
 |eqref| & provide/overwrite macro |eqref| \\
 |tagform| & provide/overwrite macro |\tagform@|\\
 |maketag| & provide/overwrite macro |\maketag@@@|\\
 \end{tabular}
 \end{center}
 
-\iffalse
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\iffalse
 \TODO
-\subsection{List of Options}
-\label{sec:options}
+\section{List of Options}
+\label{sec:lists}
 
-list:
-EBSIGP (equations, box, subequations, intertext, global, package)
 \fi
 
 
@@ -2691,6 +2792,12 @@ is loaded before or after \ctanpkg{mathtools}.
 Some features like emphasising equations via \ctanpkg{empheq}
 do not (yet) work.
 \item
+This package has several overlapping goals and considerations
+with the package \ctanpkg{breqn} in handling
+long equations more conveniently.
+However, the approach is very different from \ctanpkg{breqn}
+which mainly aims at automation.
+\item
 This package cooperates with the package \ctanpkg{hyperref}
 to create anchors and references within the electronic document.
 Compatibility with the \ctanpkg{hyperref} package
@@ -2738,12 +2845,15 @@ has been tested with v0.5.1 (2024/11/28).
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\iffalse
 \subsection{Feature Suggestions}
 
 The following is a list of features for consideration
 towards future versions of this package.
 Their potential use may range between useful and niche;
-and their difficulty between easy and impossible:
+and their difficulty between easy and impossible.
+
+Documentation:
 %
 \begin{itemize}
 \item
@@ -2754,7 +2864,6 @@ list of all option keys with scope, defaults and special values
 %
 \end{itemize}
 
-\iffalse
 Additional functionality:
 %
 \begin{itemize}
@@ -2783,7 +2892,7 @@ Fix or complete functionality:
 %
 \begin{itemize}
 \item
-|\vspace| for |equationsbox|?
+|\vspace| for |equationsbox| (required line contained)
 %
 \item
 adjust PDF tagging with development in kernel,
@@ -2804,14 +2913,8 @@ test files
 check documentation for all features
 %
 \item
-|\eqnpunct| for odd fields in align?!
-%
-\item
 change |\@ifpackageloaded| to |\IfPackageLoaded...|
 when command is less recent.
-%
-\item
-simplify |\advance| using |\dimexpr|, |\glueexpr|, |\numexpr|
 %
 \item
 change bool registers to |char| 0 and 1 and |\||ifodd|
@@ -2833,6 +2936,31 @@ change bool registers to |char| 0 and 1 and |\||ifodd|
 \end{itemize}
 
 \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v0.14:} 2026/01/28
+
+\begin{itemize}
+\item
+second release candidate for v1.0
+\item
+added |cases| and |matrix| environments
+\item
+added punctuation modifiers `|.|' and `|,|'
+to |\eqnsep|, |\eqnbreak|, |\\| and |equationsbox|
+\item
+made |\eqnpunctapply| work within cells and embedded groups
+\item
+made |\eqnpunct| work for left cells in a column
+\item
+added modifiers `|<|' and `|>|' for class options |ampeq| and |eqamp|
+\item
+added option |delim| for delimiter selection
+\item
+added option |style| for text and display math styles
+\item
+added option |spread*| to reduce line spread
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v0.13:} 2026/01/14
@@ -2962,7 +3090,7 @@ added framed cells (|\framecell|)
 added automatic best line selection for tag placement
 (|best| and |evadetag|)
 \item
-symbolic environment |\<...\>| forwards to |equationsbox| in math mode
+symbolic environment |\<|\,\ldots|\>| forwards to |equationsbox| in math mode
 \item
 added wrapping for |equationsbox| (|frame|, |wrap|)
 \item
@@ -3199,7 +3327,7 @@ thanks to Till Bargheer for testing and reports
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Look-Ahead in Alignment}
 %
-% Scanning for optional arguments |[|\ldots|]| or modifiers such as `|*|'
+% Scanning for optional arguments |[|\,\ldots|]| or modifiers such as `|*|'
 % using the \latex/ |\@ifnextchar| mechanism
 % has two challenges within aligned equations:
 % a square bracket or star may well be part of
@@ -3291,6 +3419,20 @@ thanks to Till Bargheer for testing and reports
 %
 % \TODO describe
 %    \begin{macrocode}
+\let\eql@parseopt@warn@main\@empty
+\let\eql@parseopt@warn@aux\@empty
+%    \end{macrocode}
+%
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@parseopt@main{%
+  \let\eql@parseopt@warn\eql@parseopt@warn@main\eql@parseopt}
+\def\eql@parseopt@aux{%
+  \let\eql@parseopt@warn\eql@parseopt@warn@aux\eql@parseopt}
+%    \end{macrocode}
+%
+% \TODO describe
+%    \begin{macrocode}
 \def\eql@parseopt#1#2{%
   \def\eql@parseopt@case{#1}%
   \def\eql@parseopt@end{#2}%
@@ -3308,7 +3450,6 @@ thanks to Till Bargheer for testing and reports
   \eql@parseopt@next
 }
 \def\eql@parseopt@other{\eql@parseopt@warn\eql@parseopt@end}
-\let\eql@parseopt@warn\@empty
 \def\eql@parseopt@gobble#1{\eql@parseopt@peek}
 %    \end{macrocode}
 %
@@ -3441,10 +3582,10 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\def\eql@warn@parseopt{%
-  \eql@warning{Unknown modifier token: modifier parsing stopped}}
-\def\eql@warn@parseopt@verbose{%
-  \eql@warning{Unknown modifier token: '\meaning\eql@parseopt@token'}}
+\def\eql@warn@parseopt{\eql@warning{Unknown modifier token:
+    modifier parsing stopped}}
+\def\eql@warn@parseopt@verbose{\eql@warning{Unknown modifier token:
+    '\meaning\eql@parseopt@token'}}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3532,7 +3673,7 @@ thanks to Till Bargheer for testing and reports
 %   \macro{\eql@tagging@start}
 %   \macro{\eql@tagging@end}
 % We need to activate tagging for display equations
-% for environments and for enclosures |\[...\]| and |\<...\>|.
+% for environments and for enclosures |\[|\,\ldots|\]| and |\<|\,\ldots|\>|.
 % The tagging interface registration macro |\RegisterMathEnvironment|
 % will work only partially for our cases, hence we
 % replicate code from |\math_register_halign_env:nn|.
@@ -3800,6 +3941,13 @@ thanks to Till Bargheer for testing and reports
 \def\eql@layoutleftmarginmin{\z@}
 %    \end{macrocode}
 %
+%   \macro{\eql@mathstyle}
+% The math style to be used within cells
+% is specified by |\eql@mathstyle|:
+%    \begin{macrocode}
+\let\eql@mathstyle\displaystyle
+%    \end{macrocode}
+%
 %   \ldimen{\eql@tagmargin@}
 %   \ldimen{\eql@tagmargin@ratio@}
 %   \macro{\eql@tagmargin@val}
@@ -3854,10 +4002,15 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 %   \macro{\eql@box@colsep}
+%   \macro{\eql@box@shortsep}
+%   \macro{\eql@box@condsep}
 % The macro |\eql@box@colsep| specifies the intercolumn separation
 % for equation boxes:
+% \TODO describe
 %    \begin{macrocode}
 \def\eql@box@colsep{2em}
+\def\eql@box@shortsep{1em}
+\def\eql@box@condsep{\eql@box@shortsep}
 %    \end{macrocode}
 %
 %   \macro{\eql@break@line@sep}
@@ -3875,6 +4028,7 @@ thanks to Till Bargheer for testing and reports
 %   \macro{\eql@spread@val}
 % The extra spread of equation lines is specified by |\eql@spread@val|:
 %    \begin{macrocode}
+\let\eql@spread@reset\eql@false
 \def\eql@spread@val{\jot}
 \newdimen\eql@spread@
 %    \end{macrocode}
@@ -4017,7 +4171,8 @@ thanks to Till Bargheer for testing and reports
 %   \macro{\eql@equations@sqr@opt}
 %   \macro{\eql@equations@ang@opt}
 %   \macro{\eql@box@ang@opt}
-% Store the default arguments for |\[...\]| and |\<...\>|, respectively:
+% Store the default arguments for |\[|\,\ldots|\]| and |\<|\,\ldots|\>|,
+% respectively:
 %    \begin{macrocode}
 \def\eql@equations@sqr@opt{equation,nonumber}
 \def\eql@equations@ang@opt{align,nonumber}
@@ -4256,22 +4411,37 @@ thanks to Till Bargheer for testing and reports
 %   \macro{\eql@punct@col}
 %   \macro{\eql@punct@line}
 %   \macro{\eql@punct@block}
+%   \macro{\eql@punct@next}
+%   \macro{\eql@punct@term}
+%   \macro{\eql@punct@main}
 % These macros store the punctuation character for columns, lines and blocks.
-% A value |\relax| indicates that the punctuation should be handed
+% An undefined value indicates that the punctuation should be handed
 % down to the next lower level:
 % \TODO update
 %    \begin{macrocode}
 \let\eql@punct@col\@empty
-\let\eql@punct@line\relax
-\let\eql@punct@block\relax
-\let\eql@punct@main\relax
+\let\eql@punct@line\@undefined
+\let\eql@punct@block\@undefined
+\let\eql@punct@next\@undefined
+\let\eql@punct@term\@undefined
+\let\eql@punct@main\@undefined
 %    \end{macrocode}
 %
 %   \macro{\eql@punct@sep}
 % This macro stores the separation to be applied
 % before the punctuation (unless it is empty):
 %    \begin{macrocode}
-\let\eql@punct@sep\relax
+\let\eql@punct@sep\@empty
+%    \end{macrocode}
+%
+%   \macro{\eql@punct@term@set}
+%   \macro{\eql@punct@term@stop}
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@punct@term@set{%
+  \let\eql@punct@term\eql@punct@block}
+\def\eql@punct@term@stop{%
+  \global\let\eql@punct@term\relax}
 %    \end{macrocode}
 %
 %   \macro{\eql@punct@set}
@@ -4282,11 +4452,16 @@ thanks to Till Bargheer for testing and reports
 \def\eql@punct@set#1#2{%
   \def#1{#2}%
   \ifx#1\eql@punct@relax
-    \let#1\relax
+    \let#1\@undefined
   \fi
   \ifx#1\eql@punct@tilde
     \let#1\@empty
   \fi
+}
+\def\eql@punct@clear{%
+  \let\eql@punct@col\@empty
+  \let\eql@punct@line\@empty
+  \let\eql@punct@main\@empty
 }
 %    \end{macrocode}
 %
@@ -4295,106 +4470,131 @@ thanks to Till Bargheer for testing and reports
 % Note that the macro |\eqnpunct| sets the punctuation for the
 % following equation block or for the current cell.
 % Starred versions clear the punctuation for the respectively levels:
+%\TODO check operation of starred form, also for control
 %    \begin{macrocode}
-\def\eqnpunct{%
+\newcommand{\eqnpunct}{%
   \eql@ifstar@tight\eql@punct@next@setrelax\eql@punct@next@set}
 \def\eql@punct@next@set#1{%
   \ifmmode
-    \eql@punct@set\eql@punct@col{#1}%
-    \eql@punct@set\eql@punct@line{#1}%
-    \eql@punct@set\eql@punct@block{#1}%
+    \eql@punct@set\eql@punct@next{#1}%
   \else
     \eqnaddopt{punct={#1}}%
   \fi
   \ignorespaces}
 \def\eql@punct@next@setrelax{%
   \ifmmode
-    \let\eql@punct@block\relax
+    \let\eql@punct@block\@undefined
   \else
     \eqnaddopt{punct*}%
   \fi
   \ignorespaces}
 %    \end{macrocode}
 %
-%   \macro{\eql@punct@print@col}
-% Output the punctuation for the present column.
+%   \macro{\eql@punct@fill@next}
+% Fill the next punctuation:
+%    \begin{macrocode}
+\def\eql@punct@fill@next#1{%
+  \ifdefined\eql@punct@next\else
+    \ifx\eql@punct@term\relax\else
+      \let\eql@punct@next#1%
+    \fi
+  \fi
+}
+%    \end{macrocode}
+%
+%   \macro{\eql@punct@output@next}
+% Output the next punctuation.
 % If non-empty, prepend some separation:
 %    \begin{macrocode}
-\def\eql@punct@print@col{%
-  \ifx\eql@punct@col\@empty\else
+\def\eql@punct@output@next{%
+  \ifx\eql@punct@next\@empty\else
     \eql@punct@sep
-    \eql@punct@col
+    \eql@punct@next
   \fi
+  \let\eql@punct@next\@undefined
+}
+%    \end{macrocode}
+%
+%   \macro{\eql@punct@print@next}
+% Print the next punctuation if available:
+%    \begin{macrocode}
+\def\eql@punct@print@next{%
+  \ifdefined\eql@punct@next
+    \eql@punct@output@next
+  \fi
+}
+%    \end{macrocode}
+%
+%   \macro{\eql@punct@apply@next}
+% Print the next punctuation if available.
+% Stop further punctuation within the current group:
+%    \begin{macrocode}
+\def\eql@punct@apply@next{%
+  \ifdefined\eql@punct@next
+    \eql@punct@output@next
+    \let\eql@punct@term\relax
+  \fi
+}
+%    \end{macrocode}
+%
+%   \macro{\eql@punct@print@col}
+% Print the punctuation for the present column:
+%    \begin{macrocode}
+\def\eql@punct@print@col{%
+  \eql@punct@fill@next\eql@punct@col
+  \eql@punct@print@next
 }
 %    \end{macrocode}
 %
 %   \macro{\eql@punct@apply@col}
 % Output the punctuation for the present column.
-% Clear the punctuation so that no further
-% column punctuation is output within the current group:
+% Stop further punctuation within the current group:
 %    \begin{macrocode}
 \def\eql@punct@apply@col{%
-  \eql@punct@print@col
-  \let\eql@punct@col\@empty
+  \eql@punct@fill@next\eql@punct@col
+  \eql@punct@apply@next
 }
 %    \end{macrocode}
 %
-% Output the punctuation currently set for lines unless disabled:
+% Output the punctuation for the present line unless disabled:
 %   \macro{\eql@punct@print@line}
 %    \begin{macrocode}
 \def\eql@punct@print@line{%
-  \ifx\eql@punct@line\relax
-    \eql@punct@print@col
-  \else
-    \ifx\eql@punct@line\@empty\else
-      \eql@punct@sep
-      \eql@punct@line
-    \fi
-  \fi
+  \eql@punct@fill@next\eql@punct@line
+  \eql@punct@print@next
 }
 %    \end{macrocode}
 %
-% Output the punctuation currently set for lines unless disabled.
-% Alike |\eql@punct@apply@col| prevent further output
-% of punctuations for lines and columns within the current group:
+% Output the punctuation for the present line unless disabled.
+% Stop further punctuation within the current group:
 %   \macro{\eql@punct@apply@line}
 %    \begin{macrocode}
 \def\eql@punct@apply@line{%
-  \ifx\eql@punct@line\relax
-% \TODO hand down immediately?
-  \else
-    \ifx\eql@punct@line\@empty\else
-      \eql@punct@sep
-      \eql@punct@line
-    \fi
-    \let\eql@punct@line\relax
-    \let\eql@punct@col\@empty
-  \fi
+  \eql@punct@fill@next\eql@punct@line
+  \eql@punct@apply@next
 }
 %    \end{macrocode}
 %
 %   \macro{\eql@punct@apply@block}
-%   \imacro{\eqnpunctapply}
-% Outputs the punctuation for the current equation block unless disabled
-% in analogy to |\eql@punct@apply@line|:
+% Output the punctuation for the present block unless disabled.
+% Stop further punctuation within the current group:
 %    \begin{macrocode}
 \def\eql@punct@apply@block{%
-  \ifx\eql@punct@block\relax
-% \TODO hand down immediately?
-  \else
-    \ifx\eql@punct@block\@empty\else
-      \eql@punct@sep
-      \eql@punct@block
-    \fi
-    \let\eql@punct@block\relax
-    \let\eql@punct@line\relax
-    \let\eql@punct@col\@empty
-  \fi
+  \eql@punct@fill@next\eql@punct@block
+  \eql@punct@apply@next
 }
 %    \end{macrocode}
 %
+%   \imacro{\eqnpunctapply}
+% Output the terminal punctuation unless disabled.
+% Stop further punctuation globally:
 %    \begin{macrocode}
-\let\eqnpunctapply\eql@punct@apply@block
+\newcommand{\eqnpunctapply}{%
+  \ifmmode\else\unskip\fi
+  \eql@punct@fill@next\eql@punct@term
+  \eql@punct@print@next
+  \global\let\eql@punct@term\relax
+}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4493,30 +4693,55 @@ thanks to Till Bargheer for testing and reports
 % \TODO describe
 %
 %   \macro{\eql@break@line}
-%    \begin{macrocode}
-\def\eql@break@line{\eql@srbgroup
-  \eql@ifnextgobble@tight~\eql@break@line@star
-    {\eql@punct@print@line\eql@break@line@star}}
-\def\eql@break@line@star{%
-  \eql@ifstar@tight
-    {\eql@break@opt[\eql@break@line@shortsep]}%
-    {\eql@testopt@tight\eql@break@opt\eql@break@line@sep}}
-%    \end{macrocode}
-%
 %   \macro{\eql@break@col}
 %    \begin{macrocode}
-\def\eql@break@col{\eql@srbgroup
-  \eql@ifnextgobble@tight~\eql@break@col@star
-    {\eql@punct@print@col\eql@break@col@star}}
-\def\eql@break@col@star{%
-  \eql@ifstar@tight
-    {\eql@break@opt[\eql@break@col@shortsep]}%
-    {\eql@testopt@tight\eql@break@opt\eql@break@col@sep}}
+\def\eql@break@line{%
+  \let\eql@break@sep\eql@break@line@sep
+  \let\eql@break@shortsep\eql@break@line@shortsep
+  \let\eql@break@print\eql@punct@print@line
+  \eql@ampprotect\eql@break@testall\eql@break@process}
+\def\eql@break@col{%
+  \let\eql@break@sep\eql@break@col@sep
+  \let\eql@break@shortsep\eql@break@col@shortsep
+  \let\eql@break@print\eql@punct@print@col
+  \eql@ampprotect\eql@break@testall\eql@break@process}
 %    \end{macrocode}
 %
-%   \macro{\eql@break@opt}
+%   \macro{\eql@break@testall}
+%   \macro{\eql@break@parse}
+% \TODO describe
 %    \begin{macrocode}
-\def\eql@break@opt[#1]{\eql@sregroup\hspace{\glueexpr#1\relax}}
+\def\eql@break@testall{\eql@parseopt@aux\eql@break@parse}
+\def\eql@break@parse{%
+  \ifx\eql@parseopt@token[%
+    \let\eql@parseopt@next\eql@break@parse@val
+  \fi
+  \ifx\eql@parseopt@token*%
+    \let\eql@parseopt@next\eql@break@parse@star
+  \fi
+  \ifx\eql@parseopt@token.%
+    \let\eql@parseopt@next\eql@parseopt@punctpass
+  \fi
+  \ifx\eql@parseopt@token,%
+    \let\eql@parseopt@next\eql@parseopt@punctpass
+  \fi
+  \ifx\eql@parseopt@token~%
+    \let\eql@parseopt@next\eql@parseopt@punctpass
+  \fi
+  \ifx\eql@parseopt@token`%
+    \let\eql@parseopt@next\eql@parseopt@punctnext
+  \fi
+}
+\def\eql@break@parse@val[#1]{\def\eql@break@sep{#1}\eql@parseopt@peek}
+\def\eql@break@parse@star#1{%
+  \let\eql@break@sep\eql@break@shortsep\eql@parseopt@peek}
+%    \end{macrocode}
+%
+%   \macro{\eql@break@process}
+%    \begin{macrocode}
+\def\eql@break@process{%
+  \eql@break@print
+  \hspace{\glueexpr\eql@break@sep\relax}}
 %    \end{macrocode}
 %
 %   \macro{\eql@break@join}
@@ -4534,9 +4759,9 @@ thanks to Till Bargheer for testing and reports
 %   \macro{\eqnjoin}
 % \TODO expand to lines and columns mode
 %    \begin{macrocode}
-\def\eqnsep{\eql@break@col}
-\def\eqnbreak{\eql@break@line}
-\def\eqnjoin{\eql@break@join}
+\newcommand{\eqnsep}{\eql@break@col}
+\newcommand{\eqnbreak}{\eql@break@line}
+\newcommand{\eqnjoin}{\eql@break@join}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -6218,8 +6443,8 @@ thanks to Till Bargheer for testing and reports
 %
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@subequations@testall{\eql@parseopt\eql@subequations@parseopt}
-\def\eql@subequations@parseopt{%
+\def\eql@subequations@testall{\eql@parseopt@main\eql@subequations@parse}
+\def\eql@subequations@parse{%
   \ifx\eql@parseopt@token[%]
     \let\eql@parseopt@next\eql@parseopt@opt
   \fi
@@ -6505,8 +6730,14 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 % \TODO describe
+% \TODO uses amsmath |\spread@equation|
 %    \begin{macrocode}
 \def\eql@spread@set{%
+  \ifdefined\eql@spread@reset
+    \lineskip\normallineskip
+    \lineskiplimit\normallineskiplimit
+    \baselineskip\normalbaselineskip
+  \fi
   \eql@spread@\dimexpr\glueexpr\eql@spread@val\relax
       +\normalbaselineskip-\baselineskip\relax
   \ifdim\eql@spread@>\z@
@@ -6599,6 +6830,7 @@ thanks to Till Bargheer for testing and reports
   \eql@display@firstavail@\z@
   \eql@display@aboveextend@\z@
   \eql@display@belowextend@\z@
+  \eql@punct@term@set
   \global\let\eql@interline@container\eql@interline@container@clear
 }
 %    \end{macrocode}
@@ -6971,6 +7203,7 @@ thanks to Till Bargheer for testing and reports
     \global\advance\eql@row@\@ne
     #1%
   }}%
+  \eql@punct@term@set
   \global\let\eql@interline@container\eql@interline@container@clear
   \eql@measure@savestate
   \eql@display@halign@letcr{#2}%
@@ -7068,26 +7301,46 @@ thanks to Till Bargheer for testing and reports
 %
 %   \macro{\eql@display@cr}
 %    \begin{macrocode}
-\protected\def\eql@display@cr{\eql@srbgroup
-  \eql@ifnextgobble@tight~%
-    {\numbernext\let\eql@punct@line\@empty\eql@display@cr@star}%
-    \eql@display@cr@star
-}
+\def\eql@display@cr{%
+  \eql@ampprotect\eql@display@cr@testall\eql@display@cr@process}
 %    \end{macrocode}
 %
-%   \macro{\eql@display@cr@star}
+%   \macro{\eql@display@cr@testall}
+%   \macro{\eql@display@cr@parse}
+% \TODO describe
 %    \begin{macrocode}
-\def\eql@display@cr@star{%
-  \eql@teststaropt@tight{%
-      \global\eql@append\eql@interline@container{\eql@displaybreak@pen@\@M}%
-      \eql@display@cr@opt}%
-    \eql@display@cr@opt\z@skip
+\def\eql@display@cr@testall{\eql@parseopt@aux\eql@display@cr@parse}
+\def\eql@display@cr@parse{%
+  \ifx\eql@parseopt@token[%
+    \let\eql@parseopt@next\eql@display@cr@parse@vspace
+  \fi
+  \ifx\eql@parseopt@token*%
+    \let\eql@parseopt@next\eql@display@cr@parse@star
+  \fi
+  \ifx\eql@parseopt@token.%
+    \let\eql@parseopt@next\eql@parseopt@punctpass
+  \fi
+  \ifx\eql@parseopt@token,%
+    \let\eql@parseopt@next\eql@parseopt@punctpass
+  \fi
+  \ifx\eql@parseopt@token~%
+    \let\eql@parseopt@next\eql@display@cr@parse@cont
+  \fi
+  \ifx\eql@parseopt@token`%
+    \let\eql@parseopt@next\eql@parseopt@punctnext
+  \fi
+  \ifx\eql@parseopt@token&%
+    \let\eql@parseopt@next\eql@parseopt@end
+  \fi
 }
+\def\eql@display@cr@parse@vspace[#1]{\eql@vspace@add{#1}\eql@parseopt@peek}
+\def\eql@display@cr@parse@star#1{\eql@displaybreak@star\@M\eql@parseopt@peek}
+\def\eql@display@cr@parse@cont#1{\numbernext\eqnpunct~\eql@parseopt@peek}
 %    \end{macrocode}
 %
-%   \macro{\eql@display@cr@opt}
+%   \macro{\eql@display@cr@process}
 %    \begin{macrocode}
-\def\eql@display@cr@opt[#1]{\eql@sregroup
+\def\eql@display@cr@process{%
   \eql@display@endline
   \cr
 %    \end{macrocode}
@@ -7101,7 +7354,6 @@ thanks to Till Bargheer for testing and reports
     \else
       \penalty\eql@displaybreak@pen@
     \fi
-    \advance\eql@vspaceskip@\glueexpr#1\relax
     \vskip\eql@vspaceskip@
     \global\advance\eql@line@interline@\eql@vspaceskip@
     \eql@display@injectafter
@@ -8852,25 +9104,70 @@ thanks to Till Bargheer for testing and reports
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Line Breaks}
 %
+% \TODO describe
+%
 %   \macro{\eql@box@cr}
 %    \begin{macrocode}
-\protected\def\eql@box@cr{\eql@srbgroup%
-  \eql@ifnextgobble@tight~%
-    {\let\eql@punct@line\@empty\eql@box@cr@opt}%
-    \eql@box@cr@opt}
-\def\eql@box@cr@opt{\eql@ifnextchar@tight[\eql@box@cr@skip\eql@box@cr@plain}
-\def\eql@box@cr@plain{\eql@sregroup\eql@box@cr@}
-\def\eql@box@cr@skip[#1]{\eql@sregroup
-  \eql@box@cr@
-  \noalign{%
-    \vskip\glueexpr#1\relax
-  }%
+\def\eql@box@cr{%
+  \ifmmode\else\unskip\fi
+  \eql@vspaceskip@\z@skip
+  \eql@ampprotect\eql@box@cr@testall\eql@box@cr@process}
+%    \end{macrocode}
+%
+%   \macro{\eql@box@cr@testall}
+%   \macro{\eql@box@cr@parse}
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@box@cr@testall{\eql@parseopt@aux\eql@box@cr@parse}
+\def\eql@box@cr@parse{%
+  \ifx\eql@parseopt@token[%
+    \let\eql@parseopt@next\eql@parseopt@vspace
+  \fi
+  \ifx\eql@parseopt@token*%
+    \let\eql@parseopt@next\eql@parseopt@gobble
+  \fi
+  \ifx\eql@parseopt@token.%
+    \let\eql@parseopt@next\eql@parseopt@punctpass
+  \fi
+  \ifx\eql@parseopt@token,%
+    \let\eql@parseopt@next\eql@parseopt@punctpass
+  \fi
+  \ifx\eql@parseopt@token~%
+    \let\eql@parseopt@next\eql@parseopt@punctpass
+  \fi
+  \ifx\eql@parseopt@token`%
+    \let\eql@parseopt@next\eql@parseopt@punctnext
+  \fi
+  \ifx\eql@parseopt@token&%
+    \let\eql@parseopt@next\eql@parseopt@end
+  \fi
 }
-\def\eql@box@cr@{%
+%    \end{macrocode}
+%
+%   \macro{\eql@box@cr@process}
+%    \begin{macrocode}
+\def\eql@box@cr@process{%
+  \eql@box@endline
+  \expandafter\eql@box@cr@vskip\expandafter{\the\eql@vspaceskip@}%
+}
+%    \end{macrocode}
+%
+%   \macro{\eql@box@endline}
+%    \begin{macrocode}
+\def\eql@box@endline{%
   \eql@punct@apply@line
   \eql@hook@lineout
+}
+%    \end{macrocode}
+%
+%   \macro{\eql@box@cr@vskip}
+%    \begin{macrocode}
+\def\eql@box@cr@vskip#1{%
   \eql@box@lastcell
   \cr
+  \noalign{%
+    \vskip#1\relax
+  }%
 }
 %    \end{macrocode}
 %
@@ -8897,7 +9194,7 @@ thanks to Till Bargheer for testing and reports
       \setbox\eql@cellbox@\hbox{%
         \eql@strut@cell
         \@lign
-        $\m@th\displaystyle
+        $\m@th\eql@mathstyle
           \eql@hook@colin
           ##%
           \eql@punct@apply@col
@@ -8991,9 +9288,10 @@ thanks to Till Bargheer for testing and reports
       \global\setbox\eql@cellbox@\hbox{%
         \eql@strut@cell
         \@lign
-        $\m@th\displaystyle
+        $\m@th\eql@mathstyle
           \eql@hook@colin
           ##%
+          \eql@punct@apply@next
           \eql@class@innerleft
           \eql@hook@innerleft
           \eql@tagging@mathsave
@@ -9018,7 +9316,7 @@ thanks to Till Bargheer for testing and reports
         \unhbox\eql@cellbox@
         \eql@strut@cell
         \@lign
-        $\m@th\displaystyle
+        $\m@th\eql@mathstyle
           \eql@hook@innerright
           \eql@class@innerright@sel
           ##%
@@ -9051,6 +9349,87 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Cases Mode}
+%
+% \TODO describe
+%
+% \TODO how to get proper height in tagging (and avoid nulldelimiterspace)
+% \TODO add alignment?
+%
+%    \begin{macrocode}
+\def\eql@box@lastcell@cases{&}%
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\let\eql@box@cases@condtext\eql@false
+\let\eql@box@cases@condintro\@empty
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\eql@verbose@msg@startline@cases{starting new line}
+\def\eql@box@open@cases{%
+  \eql@shape@align@disable
+  \let\eql@box@lastcell\@empty
+  \everycr{\noalign{%
+    \eql@verbose@info\eql@verbose@msg@startline@cases
+  }}%
+  \tabskip\z@skip
+  \halign\bgroup
+      \let\eql@box@lastcell\eql@box@lastcell@cases
+      \global\let\eql@cell@container\@empty
+      \global\setbox\eql@cellbox@\hbox{%
+        \eql@strut@cell
+        \@lign
+        $\m@th\eql@mathstyle
+          \eql@hook@colin
+          ##%
+          \eql@punct@apply@next
+          \eql@tagging@mathsave
+        $%
+        \eql@tagging@mathaddlast
+      }%
+      \eql@cell@container
+      \unhbox\eql@cellbox@
+      \hfil
+      \eql@tagging@alignleft
+      \tabskip\eql@colsep@\relax
+    &%
+      \let\eql@box@lastcell\@empty
+      \global\let\eql@cell@container\@empty
+      \setbox\eql@cellbox@\hbox{%
+        \unhbox\eql@cellbox@
+        \eql@strut@cell
+        \@lign
+        $\m@th\eql@mathstyle
+          \ifdefined\eql@box@cases@condtext
+            \expandafter\hbox\else\expandafter\@firstofone\fi\bgroup
+          \eql@box@cases@condintro
+          ##%
+          \eql@punct@apply@col
+          \egroup
+          \eql@hook@colout
+          \eql@tagging@mathsave
+        $%
+        \eql@tagging@mathaddlast
+      }%
+      \eql@cell@container
+      \unhbox\eql@cellbox@
+      \hfil
+      \eql@tagging@alignleft
+      \tabskip\z@skip
+    \crcr
+    \noalign{%
+      \eql@hook@blockbefore
+    }%
+    \eql@hook@blockin
+}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\eql@mode@cases{\let\eql@box@open\eql@box@open@cases}
+%    \end{macrocode}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Main}
 %
 %    \begin{macrocode}
@@ -9058,6 +9437,17 @@ thanks to Till Bargheer for testing and reports
 \let\eql@box@open\@undefined
 \let\eql@box@frame\@firstofone
 \def\eql@box@wrap#1#2{\def\eql@box@frame##1{#1##1#2}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\eql@box@delim#1#2{\def\eql@box@frame##1{\mathinner{\left#1##1\right#2}}}
+\def\eql@box@getdim{\setbox\@ne\null\ht\@ne\ht\z@\dp\@ne\dp\z@}
+\def\eql@box@deldim#1{\hbox{$\m@th\nulldelimiterspace\z@\left#1
+  \ifx\eql@box@box\vcenter\vcenter{\box\@ne}\else\box\@ne\fi\right.$}}
+\def\eql@box@ldelim#1{%
+  \def\eql@box@frame##1{\mathinner{\eql@box@getdim\eql@box@deldim#1##1}}}
+\def\eql@box@rdelim#1{%
+  \def\eql@box@frame##1{\mathinner{\eql@box@getdim##1\eql@box@deldim#1}}}
 %    \end{macrocode}
 %
 % \TODO can we avoid setting |\eql@totalrows@| globally here?
@@ -9069,9 +9459,12 @@ thanks to Till Bargheer for testing and reports
 %    \begin{macrocode}
 \def\eql@box@close{%
     \ifvmode\else
+      \ifmmode\else\unskip\fi
       \global\let\eql@shape@lastrow\eql@true
       \eql@punct@apply@block
-      \eql@box@cr@
+      \eql@box@endline
+      \eql@box@lastcell
+      \cr
     \fi
     \noalign{%
       \eql@hook@blockafter
@@ -9165,10 +9558,22 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\def\eql@box@testall{\eql@parseopt\eql@box@parseopt}
-\def\eql@box@parseopt{%
+\def\eql@box@testall{\eql@parseopt@main\eql@box@parse}
+\def\eql@box@parse{%
   \ifx\eql@parseopt@token[%]
     \let\eql@parseopt@next\eql@parseopt@opt
+  \fi
+  \ifx\eql@parseopt@token.%
+    \let\eql@parseopt@next\eql@parseopt@punctpass
+  \fi
+  \ifx\eql@parseopt@token,%
+    \let\eql@parseopt@next\eql@parseopt@punctpass
+  \fi
+  \ifx\eql@parseopt@token~%
+    \let\eql@parseopt@next\eql@parseopt@punctpass
+  \fi
+  \ifx\eql@parseopt@token`%
+    \let\eql@parseopt@next\eql@parseopt@punctopt
   \fi
   \ifx\eql@parseopt@token=%
     \let\eql@parseopt@next\eql@parseopt@lines
@@ -9176,8 +9581,11 @@ thanks to Till Bargheer for testing and reports
   \ifx\eql@parseopt@token|%
     \let\eql@parseopt@next\eql@parseopt@columns
   \fi
-  \ifx\eql@parseopt@token`%
-    \let\eql@parseopt@next\eql@parseopt@punctall
+  \ifx\eql@parseopt@token<%
+    \let\eql@parseopt@next\eql@parseopt@ampeq
+  \fi
+  \ifx\eql@parseopt@token>%
+    \let\eql@parseopt@next\eql@parseopt@eqamp
   \fi
 }
 %    \end{macrocode}
@@ -9191,7 +9599,7 @@ thanks to Till Bargheer for testing and reports
   \let\eql@display@marginright\@undefined
   \eql@nextopt@process{equationsbox}%
   \let\eql@punct@block\eql@punct@main
-  \let\eql@punct@main\relax
+  \let\eql@punct@main\@undefined
   \eql@colsep@\glueexpr\eql@box@colsep\relax
   \ifdefined\eql@paddingleft@val
     \eql@paddingleft@\glueexpr\eql@paddingleft@val\relax
@@ -9272,7 +9680,7 @@ thanks to Till Bargheer for testing and reports
   \setbox\eql@cellbox@\hbox\bgroup
     \eql@restore@hfuzz
     \eql@strut@cell
-    $\m@th\displaystyle%$
+    $\m@th\eql@mathstyle%$
       \eql@hook@eqin
 }
 %    \end{macrocode}
@@ -9415,7 +9823,7 @@ thanks to Till Bargheer for testing and reports
       \setbox\eql@cellbox@\hbox{%
         \eql@strut@cell
         \@lign
-        $\m@th\displaystyle
+        $\m@th\eql@mathstyle
           \eql@hook@colin
           ##%
           \eql@punct@apply@col
@@ -9552,7 +9960,7 @@ thanks to Till Bargheer for testing and reports
         \eql@restore@hfuzz
         \eql@strut@cell
         \@lign
-        $\m@th\displaystyle
+        $\m@th\eql@mathstyle
           \eql@hook@colin
           ##%
           \eql@punct@apply@col
@@ -9847,9 +10255,10 @@ thanks to Till Bargheer for testing and reports
       \global\setbox\eql@cellbox@\hbox{%
         \eql@strut@cell
         \@lign
-        $\m@th\displaystyle
+        $\m@th\eql@mathstyle
           \eql@hook@colin
           ##%
+          \eql@punct@apply@next
           \eql@class@innerleft
           \eql@hook@innerleft
         $%
@@ -9866,7 +10275,7 @@ thanks to Till Bargheer for testing and reports
       \setbox\eql@cellbox@\hbox{%
         \eql@strut@cell
         \@lign
-        $\m@th\displaystyle
+        $\m@th\eql@mathstyle
           \eql@hook@innerright
           \eql@class@innerright@sel
           ##%
@@ -10109,9 +10518,10 @@ thanks to Till Bargheer for testing and reports
       \global\setbox\eql@cellbox@\hbox{%
         \eql@strut@cell
         \@lign
-        $\m@th\displaystyle
+        $\m@th\eql@mathstyle
           \eql@hook@colin
           ##%
+          \eql@punct@apply@next
           \eql@class@innerleft
           \eql@hook@innerleft
           \eql@tagging@mathsave
@@ -10132,7 +10542,7 @@ thanks to Till Bargheer for testing and reports
         \unhbox\eql@cellbox@
         \eql@strut@cell
         \@lign
-        $\m@th\displaystyle
+        $\m@th\eql@mathstyle
           \eql@hook@innerright
           \eql@class@innerright@sel
           ##%
@@ -10227,7 +10637,7 @@ thanks to Till Bargheer for testing and reports
 % Scan for modifiers following the end of the scanned block:
 %    \begin{macrocode}
 \def\eql@scan@testend{%
-  \eql@ampprotect\eql@equations@testend\eql@scan@end}
+  \eql@ampprotect\eql@end@testall\eql@scan@end}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10324,7 +10734,7 @@ thanks to Till Bargheer for testing and reports
 % \paragraph{Square Brackets.}
 %
 % The following is a version of the above mechanism
-% that scans for an equation body enclosed by |\[...\]|
+% that scans for an equation body enclosed by |\[|\,\ldots|\]|
 % paying attention to potential further instances of the square bracket
 % enclosures contained in the body.
 %
@@ -10390,7 +10800,7 @@ thanks to Till Bargheer for testing and reports
 % \paragraph{Angle Brackets.}
 %
 % The following is another version of the mechanism
-% which scans for an equation body enclosed by |\<...\>|.
+% which scans for an equation body enclosed by |\<|\,\ldots|\>|.
 %
 %   \macro{\eql@scan@ang}
 % Start scanning for |\>|:
@@ -10454,8 +10864,8 @@ thanks to Till Bargheer for testing and reports
 % cannot interfere:
 % \TODO update
 %    \begin{macrocode}
-\def\eql@equations@testall{\eql@parseopt\eql@equations@parseopt}
-\def\eql@equations@parseopt{%
+\def\eql@equations@testall{\eql@parseopt@main\eql@equations@parse}
+\def\eql@equations@parse{%
   \ifx\eql@parseopt@token*%
     \let\eql@parseopt@next\eql@parseopt@nonumber
   \fi
@@ -10475,16 +10885,16 @@ thanks to Till Bargheer for testing and reports
     \let\eql@parseopt@next\eql@parseopt@label
   \fi
   \ifx\eql@parseopt@token.%
-    \let\eql@parseopt@next\eql@parseopt@punctdot
+    \let\eql@parseopt@next\eql@parseopt@punctpass
   \fi
   \ifx\eql@parseopt@token,%
-    \let\eql@parseopt@next\eql@parseopt@punctcomma
+    \let\eql@parseopt@next\eql@parseopt@punctpass
   \fi
   \ifx\eql@parseopt@token~%
-    \let\eql@parseopt@next\eql@parseopt@punctoff
+    \let\eql@parseopt@next\eql@parseopt@punctpass
   \fi
   \ifx\eql@parseopt@token`%
-    \let\eql@parseopt@next\eql@parseopt@punctall
+    \let\eql@parseopt@next\eql@parseopt@punctopt
   \fi
   \ifx\eql@parseopt@token-%
     \let\eql@parseopt@next\eql@parseopt@single
@@ -10495,6 +10905,12 @@ thanks to Till Bargheer for testing and reports
   \ifx\eql@parseopt@token|%
     \let\eql@parseopt@next\eql@parseopt@columns
   \fi
+  \ifx\eql@parseopt@token<%
+    \let\eql@parseopt@next\eql@parseopt@ampeq
+  \fi
+  \ifx\eql@parseopt@token>%
+    \let\eql@parseopt@next\eql@parseopt@eqamp
+  \fi
   \ifx\eql@parseopt@token\label
     \let\eql@parseopt@next\eql@parseopt@end
   \fi
@@ -10504,22 +10920,22 @@ thanks to Till Bargheer for testing and reports
 }
 %    \end{macrocode}
 %
-%   \macro{\eql@equations@testend}
+%   \macro{\eql@end@testall}
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@equations@testend{\eql@parseopt\eql@equations@parseend}
-\def\eql@equations@parseend{%
+\def\eql@end@testall{\eql@parseopt@main\eql@end@parse}
+\def\eql@end@parse{%
   \ifx\eql@parseopt@token.%
-    \let\eql@parseopt@next\eql@parseopt@enddot
+    \let\eql@parseopt@next\eql@parseopt@punctpass
   \fi
   \ifx\eql@parseopt@token,%
-    \let\eql@parseopt@next\eql@parseopt@endcomma
+    \let\eql@parseopt@next\eql@parseopt@punctpass
   \fi
   \ifx\eql@parseopt@token~%
-    \let\eql@parseopt@next\eql@parseopt@endoff
+    \let\eql@parseopt@next\eql@parseopt@punctpass
   \fi
   \ifx\eql@parseopt@token`%
-    \let\eql@parseopt@next\eql@parseopt@endpar
+    \let\eql@parseopt@next\eql@parseopt@punctblock
   \fi
 }
 %    \end{macrocode}
@@ -10548,7 +10964,7 @@ thanks to Till Bargheer for testing and reports
   \eql@displaybreak@postpen@\@MM
   \eql@nextopt@process{equations}%
   \let\eql@punct@block\eql@punct@main
-  \let\eql@punct@main\relax
+  \let\eql@punct@main\@undefined
   \eql@indent@\glueexpr\eql@indent@val\relax
   \eql@tagsepmin@\glueexpr\eql@tagsepmin@val\relax
 }
@@ -10586,6 +11002,7 @@ thanks to Till Bargheer for testing and reports
   \eql@numbering@init
   \eql@stack@save@equations
   \eql@numbering@single@init
+  \eql@punct@term@set
   \ifdefined\eql@single@cr@mode
     \let\\\eql@single@cr@mode
   \fi
@@ -10864,12 +11281,12 @@ thanks to Till Bargheer for testing and reports
 % and hand on to |\eql@equations@sqr@end|:
 %    \begin{macrocode}
 \protected\def\eql@equations@sqr@close{%
-  \eql@ampprotect\eql@equations@testend\eql@equations@sqr@end}
+  \eql@ampprotect\eql@end@testall\eql@equations@sqr@end}
 %    \end{macrocode}
 %
 %   \macro{\eql@equations@sqr@end}
 % \TODO complete
-% End |\[...\]| block:
+% End |\[|\,\ldots|\]| block:
 %    \begin{macrocode}
 \def\eql@equations@sqr@end{%
   \eql@equations@end
@@ -10951,7 +11368,7 @@ thanks to Till Bargheer for testing and reports
 % \TODO describe
 %    \begin{macrocode}
 \def\eql@equations@ang@close{%
-  \eql@ampprotect\eql@equations@testend\eql@equations@ang@end}
+  \eql@ampprotect\eql@end@testall\eql@equations@ang@end}
 %    \end{macrocode}
 %
 %   \macro{\eql@equations@ang@end}
@@ -10969,7 +11386,7 @@ thanks to Till Bargheer for testing and reports
 % \TODO describe
 %    \begin{macrocode}
 \def\eql@box@ang@close{%
-  \eql@ampprotect\eql@equations@testend\eql@box@ang@end}
+  \eql@ampprotect\eql@end@testall\eql@box@ang@end}
 %    \end{macrocode}
 %
 %   \macro{\eql@box@ang@end}
@@ -10997,7 +11414,7 @@ thanks to Till Bargheer for testing and reports
 %    \begin{macrocode}
 \def\eql@decide@abovebelow#1#2#3#4#5{%
   \eql@decide@select{#1}{#2}{#3}{%
-    {,abovebelow,both,tb}{#4#5},%
+    {abovebelow,both,tb}{#4#5},%
     {above,top,t}{#4},%
     {below,bottom,b}{#5}}}
 %    \end{macrocode}
@@ -11017,6 +11434,21 @@ thanks to Till Bargheer for testing and reports
     {{medskip}{\def#4{6}}}}}
 %    \end{macrocode}
 %
+%   \macro{\eql@decide@delim}
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@decide@delim#1#2#3{%
+  \eql@decide@select{#1}{#2}{#3}{%
+    {{,.,\eql@decide@false}{\eql@box@wrap{}{}}},%
+    {{\eql@decide@true,r,round}{\eql@box@delim()}},%
+    {{s,sqr,square}{\eql@box@delim[]}},%
+    {{c,curly,braces}{\eql@box@delim\lbrace\rbrace}},%
+    {{a,ang,angle}{\eql@box@delim\langle\rangle}},%
+    {{v,vert}{\eql@box@delim\vert\vert}},%
+    {{d,dvert}{\eql@box@delim\Vert\Vert}},%
+    {\relax{\eql@box@delim#3}}}}%
+%    \end{macrocode}
+%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Options Declarations}
 %
@@ -11033,9 +11465,27 @@ thanks to Till Bargheer for testing and reports
   \eql@mode@stacked}
 \eql@define@key{equationsbox}{aligned,align,al,columns,col}[]{%
   \eql@mode@aligned}
+\eql@define@key{equationsbox}{cases}[]{%
+  \eql@mode@cases\eql@box@ldelim\lbrace%
+  \def\eql@box@colsep{\eql@box@condsep}}
+\eql@define@key{equationsbox}{matrix}[r]{%
+  \eql@mode@stacked\eql@shape@set{center}%
+  \let\eql@spread@reset\eql@true\def\eql@spread@val{\z@}%
+  \def\eql@box@colsep{\eql@box@shortsep}%
+  \let\eql@mathstyle\@empty\eql@punct@clear
+  \eql@decide@delim{#3}{#2}{#1}}
 \eql@define@key{equationsbox}{top,t}[]{\let\eql@box@box\vtop}
 \eql@define@key{equationsbox}{center,c}[]{\let\eql@box@box\vcenter}
 \eql@define@key{equationsbox}{bottom,b}[]{\let\eql@box@box\vbox}
+\eql@define@key{equationsbox}{intro}{%
+  \def\eql@box@cases@condintro{#1}}
+\eql@define@key{equationsbox}{introtext}{%
+  \def\eql@box@cases@condintro{%
+    \ifmmode\expandafter\hbox\else\expandafter\@firstofone\fi{#1 }}}
+\eql@define@key{equationsbox}{textcond}[true]{%
+  \eql@decide@select{#3}{#2}{#1}{%`
+    {{\eql@decide@true,text}{\let\eql@box@cases@condtext\eql@true}},%
+    {{\eql@decide@false,math}{\let\eql@box@cases@condtext\eql@false}}}}
 \eql@define@key{setup}{boxangopt}[]{%
   \def\eql@box@ang@opt{columns,#1}}
 %    \end{macrocode}
@@ -11075,7 +11525,10 @@ thanks to Till Bargheer for testing and reports
 % \TODO set at end of env only!
 %    \begin{macrocode}
 \def\eql@keycat{equations,equationsbox,setup}
-\eql@define@key\eql@keycat{spread}{\def\eql@spread@val{#1}}
+\eql@define@key\eql@keycat{spread}{%
+  \let\eql@spread@reset\eql@false\def\eql@spread@val{#1}}
+\eql@define@key\eql@keycat{spread*}[0pt]{%
+  \let\eql@spread@reset\eql@true\def\eql@spread@val{#1}}
 \eql@define@key\eql@keycat{strut}[true]{\eql@decide@select{#3}{#2}{#1}{%
     {\eql@decide@false{\let\eql@strut@cell\relax\let\eql@strut@tag\relax}},%
     {{cell}{\let\eql@strut@cell\eql@strut\let\eql@strut@tag\relax}},%
@@ -11083,6 +11536,20 @@ thanks to Till Bargheer for testing and reports
     {\eql@decide@true
       {\let\eql@strut@cell\eql@strut\let\eql@strut@tag\eql@strut}}}}
 \eql@define@key{setup}{strutdepth}{\def\eql@strut@depth{#1}}
+%    \end{macrocode}
+%
+% Settings to specify the apparent height and depth of equations:
+%    \begin{macrocode}
+\eql@define@key\eql@keycat{displayheight}[strut]{%
+  \eql@decide@select{#3}{#2}{#1}{%
+    {\eql@decide@false{\let\eql@display@height\@undefined}},%
+    {{strut}{\def\eql@display@height{\ht\eql@strutbox@}}},%
+    {\relax{\def\eql@display@height{#1}}}}}
+\eql@define@key\eql@keycat{displaydepth}[strut]{%
+  \eql@decide@select{#3}{#2}{#1}{%
+    {\eql@decide@false{\let\eql@display@depth\@undefined}},%
+    {{strut}{\def\eql@display@depth{\dp\eql@strutbox@}}},%
+    {\relax{\def\eql@display@depth{#1}}}}}
 %    \end{macrocode}
 %
 % Settings concerning page breaks:
@@ -11125,24 +11592,10 @@ thanks to Till Bargheer for testing and reports
 \eql@define@key{control}{penalty}[]{\eql@displaybreak@star{#1}}
 %    \end{macrocode}
 %
-% Settings to specify the apparent height and depth of equations:
-%    \begin{macrocode}
-\eql@define@key\eql@keycat{displayheight}[strut]{%
-  \eql@decide@select{#3}{#2}{#1}{%
-    {\eql@decide@false{\let\eql@display@height\@undefined}},%
-    {{strut}{\def\eql@display@height{\ht\eql@strutbox@}}},%
-    {\relax{\def\eql@display@height{#1}}}}}
-\eql@define@key\eql@keycat{displaydepth}[strut]{%
-  \eql@decide@select{#3}{#2}{#1}{%
-    {\eql@decide@false{\let\eql@display@depth\@undefined}},%
-    {{strut}{\def\eql@display@depth{\dp\eql@strutbox@}}},%
-    {\relax{\def\eql@display@depth{#1}}}}}
-%    \end{macrocode}
-%
 % Override vertical spacing situation:
 % \TODO short should just apply to above?! or as far as short would apply...
 %    \begin{macrocode}
-\eql@define@key{equations}{noskip}[]{%
+\eql@define@key{equations}{noskip}[both]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
     {\def\eql@skip@force@above{5}}%
     {\def\eql@skip@force@below{5}}}
@@ -11150,17 +11603,17 @@ thanks to Till Bargheer for testing and reports
   \eql@decide@abovebelow{#3}{#2}{#1}%
     {\def\eql@skip@force@above{1}}%
     {\def\eql@skip@force@below{1}}}
-\eql@define@key{equations}{long}[]{%
+\eql@define@key{equations}{long}[both]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
     {\def\eql@skip@force@above{0}}%
     {\def\eql@skip@force@below{0}}}
-\eql@define@key{equations}{medskip}[]{%
+\eql@define@key{equations}{medskip}[both]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
     {\def\eql@skip@force@above{6}}%
     {\def\eql@skip@force@below{6}}}
 \eql@define@key{equations}{par}[par]{%
   \eql@decide@select{#3}{#2}{#1}{%
-    {{default,}{\let\eql@skip@force@leave\@undefined}},%
+    {{default,\eql@decide@false}{\let\eql@skip@force@leave\@undefined}},%
     {{cont,hmode}{\let\eql@skip@force@leave\z@}},%
     {{par,vmode}{\let\eql@skip@force@leave\@ne
       \ifdefined\eql@skip@force@below\else
@@ -11204,19 +11657,19 @@ thanks to Till Bargheer for testing and reports
 \eql@define@key{intertext}{belowskip}{%
   \def\eql@skip@force@above{7}%
   \def\eql@skip@custom@above{#1}}
-\eql@define@key{intertext}{noskip}[]{%
+\eql@define@key{intertext}{noskip}[both]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
     {\def\eql@skip@force@below{5}}%
     {\def\eql@skip@force@above{5}}}
-\eql@define@key{intertext}{short}[]{%
+\eql@define@key{intertext}{short}[both]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
     {\def\eql@skip@force@below{1}}%
     {\def\eql@skip@force@above{1}}}
-\eql@define@key{intertext}{long}[]{%
+\eql@define@key{intertext}{long}[both]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
     {\def\eql@skip@force@below{0}}%
     {\def\eql@skip@force@above{0}}}
-\eql@define@key{intertext}{medskip}[]{%
+\eql@define@key{intertext}{medskip}[both]{%
   \eql@decide@abovebelow{#3}{#2}{#1}%
     {\def\eql@skip@force@below{6}}%
     {\def\eql@skip@force@above{6}}}
@@ -11271,8 +11724,8 @@ thanks to Till Bargheer for testing and reports
   \def\eql@skip@cont@below{#1}}
 \eql@define@key{setup}{shortmode}{%
   \eql@decide@select{#3}{#2}{#1}{%
-    {{off,never,no}{\def\eql@skip@mode@short{0}}},%
-    {{above,neverbelow,notbelow,belowoff}{\def\eql@skip@mode@short{1}}},%
+    {{\eql@decide@false,never}{\def\eql@skip@mode@short{0}}},%
+    {{above,neverbelow,belowoff}{\def\eql@skip@mode@short{1}}},%
     {{belowone,belowsingle}{\def\eql@skip@mode@short{2}}},%
     {{belowall,always,on}{\def\eql@skip@mode@short{3}}}}}
 \eql@define@key{setup}{abovecontmode}{%
@@ -11482,6 +11935,7 @@ thanks to Till Bargheer for testing and reports
   \eql@decide@bool{#3}{#2}{#1}\eql@columns@fulllength}
 %    \end{macrocode}
 %
+% \TODO is boxcolsep vs breakcolsep okay??!
 %    \begin{macrocode}
 \eql@define@key\eql@keycat{linesep}{\eql@decide@select{#3}{#2}{#1}{%
     {{0,\eql@decide@false}{\def\eql@break@line@sep{0pt}}},%
@@ -11491,8 +11945,9 @@ thanks to Till Bargheer for testing and reports
     {\relax{\def\eql@break@line@shortsep{#1}}}}}
 \eql@define@key{equationsbox,setup}{colsep}{\eql@decide@select{#3}{#2}{#1}{%
     {{0,\eql@decide@false}{\def\eql@box@colsep{0pt}}},%
-    {\relax{\def\eql@break@col@sep{#1}}}}%
-  \let\eql@box@colsep\eql@break@col@sep}
+    {{short}{\def\eql@box@colsep{\eql@box@shortsep}}},%
+    {\relax{\def\eql@box@colsep{#1}}}}%
+  \let\eql@break@col@sep\eql@box@colsep}
 \eql@define@key{equations}{colsep}{\eql@decide@select{#3}{#2}{#1}{%
     {{0,\eql@decide@false}{\def\eql@break@col@sep{0pt}}},%
     {\relax{\def\eql@break@col@sep{#1}}}}%
@@ -11502,6 +11957,12 @@ thanks to Till Bargheer for testing and reports
 \eql@define@key\eql@keycat{colsep*}{\eql@decide@select{#3}{#2}{#1}{%
     {{0,\eql@decide@false}{\def\eql@break@col@shortsep{0pt}}},%
     {\relax{\def\eql@break@col@shortsep{#1}}}}}
+\eql@define@key{equationsbox,setup}{colsep*}{\eql@decide@select{#3}{#2}{#1}{%
+    {{0,\eql@decide@false}{\def\eql@box@shortsep{0pt}}},%
+    {\relax{\def\eql@box@shortsep{#1}}}}}
+\eql@define@key{equationsbox,setup}{condsep}{\eql@decide@select{#3}{#2}{#1}{%
+    {{0,\eql@decide@false}{\def\eql@box@condsep{0pt}}},%
+    {\relax{\def\eql@box@condsep{#1}}}}}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11566,6 +12027,17 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Math Styles.}
+%
+% Configure math classes at alignment marker:
+%    \begin{macrocode}
+\eql@define@key\eql@keycat{style}[display]{%
+  \eql@decide@select{#3}{#2}{#1}{%
+    {{text,\eql@decide@false}{\let\eql@mathstyle\@empty}},%
+    {{display,\eql@decide@true}{\let\eql@mathstyle\displaystyle}}}}
+%    \end{macrocode}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Punctuation.}
 %
 % Configure punctuation defaults:
@@ -11584,9 +12056,7 @@ thanks to Till Bargheer for testing and reports
     \else\ifnum#5=11\relax
       \eql@punct@set\eql@punct@main{#1}%
     \else
-      \let\eql@punct@col\@empty
-      \let\eql@punct@line\@empty
-      \let\eql@punct@main\@empty
+      \eql@punct@clear
     \fi\fi\fi
   \else
     \eql@error{Too many arguments to punctall}%
@@ -11599,20 +12069,19 @@ thanks to Till Bargheer for testing and reports
 \def\eql@keycat{equations,equationsbox,setup}
 \eql@define@key\eql@keycat{punctsep}[\,]{\def\eql@punct@sep{#1}}
 \eql@define@key\eql@keycat{punct}[.]{\eql@punct@set\eql@punct@main{#1}}
-\eql@define@key\eql@keycat{punct*}[]{\let\eql@punct@main\relax}
+\eql@define@key\eql@keycat{punct*}[]{\eql@punct@set\eql@punct@main\relax}
 \eql@define@key\eql@keycat{punctline}[,]{\eql@punct@set\eql@punct@line{#1}}
-\eql@define@key\eql@keycat{punctline*}[]{\let\eql@punct@line\relax}
+\eql@define@key\eql@keycat{punctline*}[]{\eql@punct@set\eql@punct@line\relax}
 \eql@define@key\eql@keycat{punctcol}[,]{\eql@punct@set\eql@punct@col{#1}}
-\eql@define@key\eql@keycat{punctcol*}[]{\let\eql@punct@col\relax}
+\eql@define@key\eql@keycat{punctcol*}[]{\eql@punct@set\eql@punct@col\relax}
 \eql@define@key\eql@keycat{punctall}[,,.]{\eql@punct@all#111111\eql@punct@end}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
 \eql@define@key{control}{punctsep}[\,]{\def\eql@punct@sep{#1}}
-\eql@define@key{control}{punct}[.]{\eql@punct@set\eql@punct@block{#1}%
-  \eql@punct@set\eql@punct@line{#1}\eql@punct@set\eql@punct@col{#1}}
-\eql@define@key{control}{punct*}[]{\let\eql@punct@block\relax}
-\eql@define@key{control}{punctapply}[]{\eql@punct@apply@block}
+\eql@define@key{control}{punct}[.]{\eql@punct@set\eql@punct@next{#1}}
+\eql@define@key{control}{punct*}[]{\eql@punct@set\eql@punct@block\relax}
+\eql@define@key{control}{punctapply}[]{\eqnpunctapply}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11623,7 +12092,19 @@ thanks to Till Bargheer for testing and reports
 \eql@define@key{equationsbox}{frame}[\fbox]{%
   \def\eql@box@frame{#1}%
   \ifx\eql@box@frame\@empty\let\eql@box@frame\@firstofone\fi}
-\eql@define@key{equationsbox}{wrap}[]{\eql@box@wrap#1}
+\eql@define@key{equationsbox}{wrap}{\eql@box@wrap#1}
+\eql@define@key{equationsbox}{delim}[r]{\eql@decide@delim{#3}{#2}{#1}}
+\eql@define@key{equationsbox}{ldelim}{\eql@box@ldelim#1}
+\eql@define@key{equationsbox}{rdelim}{\eql@box@rdelim#1}
+\eql@define@key{equationsbox}{lbrace}[]{\eql@box@ldelim\lbrace}
+\eql@define@key{equationsbox}{rbrace}[]{\eql@box@rdelim\rbrace}
+\eql@define@key{equationsbox}{lrbrace,lrbraces}[]{\eql@box@delim\lbrace\rbrace}
+\eql@define@key\eql@keycat{braces}[lr]{%
+  \eql@decide@select{#3}{#2}{#1}{%
+    {{\eql@decide@false}{\eql@box@wrap{}{}}},%
+    {{l,left}{\eql@box@ldelim\lbrace}},%
+    {{r,right}{\eql@box@rdelim\rbrace}},%
+    {{\eql@decide@true,lr,both}{\eql@box@delim\lbrace\rbrace}}}}
 %    \end{macrocode}
 %
 % \TODO describe
@@ -11693,6 +12174,8 @@ thanks to Till Bargheer for testing and reports
 \let\eql@scan@par\eql@false
 \let\eql@single@cr@mode\eql@false
 \let\eql@ampproof@active\eql@false
+\let\eql@parseopt@warn@main\eql@warn@parseopt
+\let\eql@parseopt@warn@aux\@empty
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -11710,10 +12193,14 @@ thanks to Till Bargheer for testing and reports
     {{error,verbose}{\let\eql@single@cr@mode\eql@single@cr@error}}}}
 \eql@define@key{setup}{modifierwarning}[true]{%
   \eql@decide@select{#3}{#2}{#1}{%
-    {\eql@decide@false{\let\eql@parseopt@warn\@empty}},%
-    {\eql@decide@true{\let\eql@parseopt@warn\eql@warn@parseopt}},%
-    {{verbose,+}{\let\eql@parseopt@warn\eql@warn@parseopt@verbose}}}}
-\let\eql@parseopt@warn\eql@warn@parseopt
+    {\eql@decide@false{\let\eql@parseopt@warn@main\@empty
+      \let\eql@parseopt@warn@aux\@empty}},%
+    {{-}{\let\eql@parseopt@warn@main\eql@warn@parseopt
+      \let\eql@parseopt@warn@aux\@empty}},%
+    {\eql@decide@true{\let\eql@parseopt@warn@main\eql@warn@parseopt
+      \let\eql@parseopt@warn@aux\eql@warn@parseopt}},%
+    {{verbose,+}{\let\eql@parseopt@warn@main\eql@warn@parseopt@verbose
+      \let\eql@parseopt@warn@aux\eql@warn@parseopt@verbose}}}}
 \eql@define@key{equations,setup}{rescan}[true]{%
   \eql@decide@if{#3}{#2}{#1}%
     {\let\eql@scan@body\eql@scan@body@rescan}%
@@ -11735,16 +12222,17 @@ thanks to Till Bargheer for testing and reports
 % \TODO adjust
 %    \begin{macrocode}
 \let\eql@provide@opt@env\tw@
-\let\eql@provide@opt@amsmathends\eql@true
+\let\eql@provide@opt@amsmathpatch\eql@false
 \let\eql@provide@opt@backup\eql@false
 \let\eql@provide@opt@ang\eql@true
 \let\eql@provide@opt@eqref\eql@true
+\let\eql@provide@opt@matrix\eql@true
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\eql@define@key{setup}{amsmathends}[true]{%
+\eql@define@key{setup}{amsmathends,amsmathpatch}[true]{%
   \eql@error@packageoption{#2}%
-  \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@amsmathends}
+  \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@amsmathpatch}
 \eql@define@key{setup}{backup}[true]{%
   \eql@error@packageoption{#2}%
   \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@backup}
@@ -11760,6 +12248,9 @@ thanks to Till Bargheer for testing and reports
 \eql@define@key{setup}{eqref}[true]{%
   \eql@error@packageoption{#2}%
   \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@eqref}
+\eql@define@key{setup}{matrix}[true]{%
+  \eql@error@packageoption{#2}%
+  \eql@decide@bool{#3}{#2}{#1}\eql@provide@opt@matrix}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11771,26 +12262,20 @@ thanks to Till Bargheer for testing and reports
 \def\eql@parseopt@donumber#1{\eqnaddopt{donumber}\eql@parseopt@peek}
 \def\eql@parseopt@single#1{\eqnaddopt{single}\eql@parseopt@peek}
 \def\eql@parseopt@lines#1{\eqnaddopt{lines}\eql@parseopt@peek}
+\def\eql@parseopt@eqamp#1{\eqnaddopt{eqamp}\eql@parseopt@peek}
+\def\eql@parseopt@ampeq#1{\eqnaddopt{ampeq}\eql@parseopt@peek}
 \def\eql@parseopt@columns#1{\eqnaddopt{columns}\eql@parseopt@peek}
 \def\eql@parseopt@transpose#1{\eqnaddopt{columns,transpose}\eql@parseopt@peek}
 \def\eql@parseopt@opt[#1]{\eqnaddopt{#1}\eql@parseopt@peek}
 \def\eql@parseopt@label#1#2{\eqnaddopt{label={#2}}\eql@parseopt@peek}
-\def\eql@parseopt@punctdot#1{\eqnaddopt{punct={.}}\eql@parseopt@peek}
-\def\eql@parseopt@punctcomma#1{\eqnaddopt{punct={,}}\eql@parseopt@peek}
-\def\eql@parseopt@punctoff#1{\eqnaddopt{punct={}}\eql@parseopt@peek}
-\def\eql@parseopt@punctall#1#2{\eqnaddopt{punctall={#2}}\eql@parseopt@peek}
-%    \end{macrocode}
-%
-% \TODO describe
-%    \begin{macrocode}
-\def\eql@parseopt@enddot#1{%
-  \eql@punct@set\eql@punct@block.\eql@parseopt@peek}
-\def\eql@parseopt@endcomma#1{%
-  \eql@punct@set\eql@punct@block,\eql@parseopt@peek}
-\def\eql@parseopt@endoff#1{%
-  \eql@punct@set\eql@punct@block~\eql@parseopt@peek}
-\def\eql@parseopt@endpar#1#2{%
+\def\eql@parseopt@punctpass{\eql@parseopt@peek`}
+\def\eql@parseopt@punctopt#1#2{\eqnaddopt{punctall={#2}}\eql@parseopt@peek}
+\def\eql@parseopt@punctnext#1#2{%
+  \eql@punct@set\eql@punct@next{#2}\eql@parseopt@peek}
+\def\eql@parseopt@punctblock#1#2{%
   \eql@punct@set\eql@punct@block{#2}\eql@parseopt@peek}
+\def\eql@parseopt@vspace[#1]{%
+  \advance\eql@vspaceskip@\glueexpr#1\relax\eql@parseopt@peek}
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -11963,6 +12448,31 @@ thanks to Till Bargheer for testing and reports
 }
 %    \end{macrocode}
 %
+%   \macro{\eql@amsmath@fixmatrix}
+%   \macro{\eql@amsmath@fixmatrixend}
+% \TODO describe
+%    \begin{macrocode}
+\def\eql@amsmath@fixmatrix#1{%
+  \expandafter\let\expandafter\eql@tmp\csname#1\endcsname
+  \begingroup
+    \let\matrix@check\@gobble
+    \def\env@matrix{\noexpand\env@matrix}%
+    \def\env@cases{\noexpand\env@cases}%
+    \global\edef\eql@tmp{\eql@tmp}%
+  \endgroup
+  \eql@letcs{#1}\eql@tmp
+}
+\def\eql@amsmath@fixmatrixend#1{%
+  \expandafter\let\expandafter\eql@tmp\csname end#1\endcsname
+  \begingroup
+    \expandafter\def\expandafter\endmatrix\expandafter{%
+      \expandafter\unexpanded\expandafter{\endmatrix}}%
+    \global\long\edef\eql@tmp{\eql@tmp}%
+  \endgroup
+  \eql@letcs{end#1}\eql@tmp
+}
+%    \end{macrocode}
+%
 %   \macro{\eql@amsmath@fixends}
 % Perform the replacement for all \amsmath/ environments
 % whenever \amsmath/ is loaded:
@@ -11981,6 +12491,24 @@ thanks to Till Bargheer for testing and reports
     \eql@amsmath@endfix{xalignat*}{align}%
     \eql@amsmath@endfix{gathered}{aligned}%
     \eql@amsmath@endfix{alignedat}{aligned}%
+  }
+}
+%    \end{macrocode}
+%
+%   \macro{\eql@amsmath@fixmatrices}
+% Perform the replacement for all \amsmath/ environments
+% whenever \amsmath/ is loaded:
+%    \begin{macrocode}
+\def\eql@amsmath@fixmatrices{%
+  \eql@amsmath@after{%
+    \eql@amsmath@fixmatrix{cases}%
+    \eql@amsmath@fixmatrix{matrix}%
+    \eql@amsmath@fixmatrix{pmatrix}%
+    \eql@amsmath@fixmatrixend{pmatrix}%
+    \eql@amsmath@fixmatrixend{bmatrix}%
+    \eql@amsmath@fixmatrixend{Bmatrix}%
+    \eql@amsmath@fixmatrixend{vmatrix}%
+    \eql@amsmath@fixmatrixend{Vmatrix}%
   }
 }
 %    \end{macrocode}
@@ -12005,10 +12533,10 @@ thanks to Till Bargheer for testing and reports
 }
 %    \end{macrocode}
 %
-%   \macro{\eql@provide@backup@amssub}
+%   \macro{\eql@provide@backup@amsbox}
 % \TODO describe
 %    \begin{macrocode}
-\def\eql@provide@backup@amssub#1{%
+\def\eql@provide@backup@amsbox#1{%
   \eql@amsmath@after{%
     \eql@provide@moveenv{ams#1}{#1}%
   }%
@@ -12137,10 +12665,17 @@ thanks to Till Bargheer for testing and reports
   \eql@provide@backup@amsenv{flalign*}%
   \eql@provide@backup@amsenv{alignat*}%
   \eql@provide@backup@amsenv{xalignat*}%
-  \eql@provide@backup@amssub{aligned}%
-  \eql@provide@backup@amssub{alignedat}%
-  \eql@provide@backup@amssub{gathered}%
+  \eql@provide@backup@amsbox{gathered}%
   \eql@provide@backup@multlined
+  \eql@provide@backup@amsbox{aligned}%
+  \eql@provide@backup@amsbox{alignedat}%
+  \eql@provide@backup@amsbox{cases}%
+  \eql@provide@backup@amsbox{matrix}%
+  \eql@provide@backup@amsbox{pmatrix}%
+  \eql@provide@backup@amsbox{bmatrix}%
+  \eql@provide@backup@amsbox{Bmatrix}%
+  \eql@provide@backup@amsbox{vmatrix}%
+  \eql@provide@backup@amsbox{Vmatrix}%
   \eql@provide@backup@subequations
 }
 %    \end{macrocode}
@@ -12171,6 +12706,20 @@ thanks to Till Bargheer for testing and reports
 \newenvironment{eql@alignedat}
   {\eqnaddopt{columns,colsep=off}\eql@alignat@gobblecol\equationsbox}
   {\endequationsbox}
+\newenvironment{eql@cases}
+  {\eqnaddopt{cases}\equationsbox}{\endequationsbox}
+\newenvironment{eql@matrix}
+  {\eqnaddopt{matrix=.}\equationsbox}{\endequationsbox}
+\newenvironment{eql@pmatrix}
+  {\eqnaddopt{matrix=r}\equationsbox}{\endequationsbox}
+\newenvironment{eql@bmatrix}
+  {\eqnaddopt{matrix=s}\equationsbox}{\endequationsbox}
+\newenvironment{eql@Bmatrix}
+  {\eqnaddopt{matrix=c}\equationsbox}{\endequationsbox}
+\newenvironment{eql@vmatrix}
+  {\eqnaddopt{matrix=v}\equationsbox}{\endequationsbox}
+\newenvironment{eql@Vmatrix}
+  {\eqnaddopt{matrix=d}\equationsbox}{\endequationsbox}
 %    \end{macrocode}
 %
 %   \environment{eql@equation}
@@ -12325,13 +12874,13 @@ thanks to Till Bargheer for testing and reports
 }
 %    \end{macrocode}
 %
-%   \macro{\eql@provide@amssub}
+%   \macro{\eql@provide@amsbox}
 % Provide one of the \amsmath/ subequation structures.
 % Copy into place, and copy again when \amsmath/ is loaded.
 % Remove definition before \amsmath/ is loaded in the future
 % to avoid an error:
 %    \begin{macrocode}
-\def\eql@provide@amssub#1#2{%
+\def\eql@provide@amsbox#1#2{%
   \eql@provide@onlyonce{#1}{#2}%
   \ifdefined\eql@tmp
     \eql@provide@moveenv{\eql@tmp}{eql@#1}%
@@ -12362,6 +12911,25 @@ thanks to Till Bargheer for testing and reports
     \eql@provide@moveenv{multlined}{eql@multlined}%
     \@ifpackageloaded{mathtools}{}{\AddToHook{package/mathtools/before}{%
       \eql@provide@undefineenv{multlined}}}%
+  \fi
+}
+%    \end{macrocode}
+%
+%   \macro{\eql@provide@matrix}
+% Provide the |cases| and |matrix| environments.
+% Copy into place, and copy again when \amsmath/ is loaded:
+%    \begin{macrocode}
+\def\eql@provide@matrix#1#2#3{%
+  \eql@provide@onlyonce{#1}{#3}%
+  \ifdefined\eql@tmp
+    \eql@provide@moveenv{\eql@tmp}{eql@#1}%
+    \eql@tagging@register@luamml{\eql@tmp}%
+  \else
+    \eql@amsmath@after{%
+      \eql@provide@moveenv{#1}{eql@#1}%
+    }%
+    \eql@provide@moveenv{#1}{eql@#1}%
+    \ifdefined#2\eql@amsmath@before{\eql@provide@undefineenv{#1}}\fi%
   \fi
 }
 %    \end{macrocode}
@@ -12493,7 +13061,7 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 %   \macro{\eql@provide@sqr}
-% Provide the symbolic environment |\[...\]|.
+% Provide the symbolic environment |\[|\,\ldots|\]|.
 % Copy into place, and copy again when \amsmath/ is loaded.
 % If PDF tagging is active, some undesired modifications
 % happen at |\begin{document}|, so copy again afterwards:
@@ -12515,7 +13083,7 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 %   \macro{\eql@provide@ang}
-% Provide the symbolic environment |\<...\>|.
+% Provide the symbolic environment |\<|\,\ldots|\>|.
 % This is easy because none of the other packages uses this structure:
 %    \begin{macrocode}
 \def\eql@provide@ang{%
@@ -12541,16 +13109,23 @@ thanks to Till Bargheer for testing and reports
 \eql@define@key{provide}{alignat}[]{\eql@provide@amsenv{alignat}{#1}}
 \eql@define@key{provide}{xalignat}[]{\eql@provide@amsenv{xalignat}{#1}}
 \eql@define@key{provide}{xxalignat}[]{\eql@provide@amsenv{xxalignat}{#1}}
-\eql@define@key{provide}{aligned}[]{\eql@provide@amssub{aligned}{#1}}
-\eql@define@key{provide}{alignedat}[]{\eql@provide@amssub{alignedat}{#1}}
 \eql@define@key{provide}{gather*}[]{\eql@provide@amsenv{gather*}{#1}}
 \eql@define@key{provide}{multline*}[]{\eql@provide@amsenv{multline*}{#1}}
 \eql@define@key{provide}{align*}[]{\eql@provide@amsenv{align*}{#1}}
 \eql@define@key{provide}{flalign*}[]{\eql@provide@amsenv{flalign*}{#1}}
 \eql@define@key{provide}{alignat*}[]{\eql@provide@amsenv{alignat*}{#1}}
 \eql@define@key{provide}{xalignat*}[]{\eql@provide@amsenv{xalignat*}{#1}}
-\eql@define@key{provide}{gathered}[]{\eql@provide@amssub{gathered}{#1}}
+\eql@define@key{provide}{gathered}[]{\eql@provide@amsbox{gathered}{#1}}
 \eql@define@key{provide}{multlined}[]{\eql@provide@multlined{#1}}
+\eql@define@key{provide}{aligned}[]{\eql@provide@amsbox{aligned}{#1}}
+\eql@define@key{provide}{alignedat}[]{\eql@provide@amsbox{alignedat}{#1}}
+\eql@define@key{provide}{cases}[]{\eql@provide@matrix{cases}\eql@false{#1}}
+\eql@define@key{provide}{matrix}[]{\eql@provide@matrix{matrix}\eql@false{#1}}
+\eql@define@key{provide}{pmatrix}[]{\eql@provide@matrix{pmatrix}\eql@false{#1}}
+\eql@define@key{provide}{bmatrix}[]{\eql@provide@matrix{bmatrix}\eql@true{#1}}
+\eql@define@key{provide}{Bmatrix}[]{\eql@provide@matrix{Bmatrix}\eql@true{#1}}
+\eql@define@key{provide}{vmatrix}[]{\eql@provide@matrix{vmatrix}\eql@true{#1}}
+\eql@define@key{provide}{Vmatrix}[]{\eql@provide@matrix{Vmatrix}\eql@true{#1}}
 \eql@define@key{provide}{subequations}[]{\eql@provide@subequations{#1}}
 \eql@define@key{provide}{sqr}[]{\eql@provide@sqr}
 \eql@define@key{provide}{ang}[]{\eql@provide@ang}
@@ -12646,7 +13221,17 @@ thanks to Till Bargheer for testing and reports
 % Make the ending statements for \amsmath/ environments independent
 % if desired, so that they may be overwritten individually:
 %    \begin{macrocode}
-\ifdefined\eql@provide@opt@amsmathends\eql@amsmath@fixends\fi
+\ifnum\eql@provide@opt@env=\tw@
+\ifdefined\eql@provide@opt@matrix
+  \let\eql@provide@opt@amsmathpatch\eql@false
+\fi\fi
+\ifdefined\eql@provide@opt@backup
+  \let\eql@provide@opt@amsmathpatch\eql@true
+\fi
+\ifdefined\eql@provide@opt@amsmathpatch
+  \eql@amsmath@fixends
+  \eql@amsmath@fixmatrices
+\fi
 %    \end{macrocode}
 %
 % Backup all \amsmath/ environments that may be overwritten to |ams...|.
@@ -12656,7 +13241,7 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 % Provide native \latex/ environment |equation|
-% and symbolic shortcut |\[...\]| if desired:
+% and symbolic shortcut |\[|\,\ldots|\]| if desired:
 %    \begin{macrocode}
 \ifnum\eql@provide@opt@env>\z@
   \eqnlinesprovide{equation,equation*,sqr,displaymath}
@@ -12674,7 +13259,7 @@ thanks to Till Bargheer for testing and reports
 \fi
 %    \end{macrocode}
 %
-% Provide symbolic shortcut |\<...\>| if desired:
+% Provide symbolic shortcut |\<|\,\ldots|\>| if desired:
 %    \begin{macrocode}
 \ifdefined\eql@provide@opt@ang\eqnlinesprovide{ang}\fi
 %    \end{macrocode}
@@ -12682,6 +13267,13 @@ thanks to Till Bargheer for testing and reports
 % Provide equation reference |\eqref| if desired:
 %    \begin{macrocode}
 \ifdefined\eql@provide@opt@eqref\eqnlinesprovide{eqref}\fi
+%    \end{macrocode}
+%
+% Provide |cases| and |matrix| environments if desired:
+%    \begin{macrocode}
+\ifdefined\eql@provide@opt@matrix
+  \eqnlinesprovide{cases,matrix,pmatrix,bmatrix,Bmatrix,vmatrix,Vmatrix}
+\fi
 %    \end{macrocode}
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
