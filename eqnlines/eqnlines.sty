@@ -21,7 +21,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[2020/10/01]
-\ProvidesPackage{eqnlines}[2026/02/07 v0.15 Single- and multi-line equations]
+\ProvidesPackage{eqnlines}[2026/02/12 v0.15.1 Single- and multi-line equations]
 \def\eql@verbose@on{%
   \def\eql@verbose@info##1{\PackageInfo{eqnlines}{##1}}
   \def\eql@verbose@infoarg##1##2{\eql@verbose@info{##1##2}}
@@ -533,8 +533,8 @@
 \newdimen\eql@tagsepmin@
 \def\eql@tagsepmin@val{.5\fontdimen6\textfont\tw@}
 \def\eql@equations@sqr@opt{equation}
-\def\eql@equations@ang@opt{align}
-\def\eql@box@ang@opt{align}
+\def\eql@equations@ang@opt{columns}
+\def\eql@box@ang@opt{columns}
 \let\eql@columns@fulllength\eql@false
 \newcount\eql@count@
 \newdimen\eql@dimen@
@@ -725,6 +725,7 @@
 \def\eql@class@rel@amp{&}
 \def\eql@class@rel@amprelax{&\relax}
 \def\eql@class@rel@relaxamp{\relax&}
+\def\eql@class@rel@ordamp{{}&}
 \def\eql@class@rel@make#1{%
   \ifdefined\eql@class@rel@after
     \def\eql@tmp{&#1}%
@@ -736,7 +737,10 @@
   \else
     \def\eql@tmp{#1&}%
     \ifx\eql@tmp\eql@class@rel@relaxamp
-      \def\eql@tmp{\hskip1sp&}%
+      \def\eql@tmp{&\mathclose{}\mathopen{}\mathrel{}}%
+    \fi
+    \ifx\eql@tmp\eql@class@rel@ordamp
+      \def\eql@tmp{&\mathclose{}{}}%
     \fi
   \fi
   \eql@tmp
@@ -747,7 +751,7 @@
   \let\eql@class@rel@after\eql@true
 }
 \def\eql@class@eqamp{%
-  \eql@class@innerleft@set{\mathrel{}}%
+  \eql@class@innerleft@set{}%
   \eql@class@innerright@set{\mathrel{}}%
   \eql@class@innerlead@set{{}}%
   \let\eql@class@rel@after\eql@false
@@ -859,6 +863,9 @@
     \let\eql@parseopt@next\eql@parseopt@relstart
   \fi
   \ifx\eql@parseopt@token|%
+    \let\eql@parseopt@next\eql@parseopt@relord
+  \fi
+  \ifx\eql@parseopt@token?%
     \let\eql@parseopt@next\eql@break@parse@rel
   \fi
 }
@@ -894,7 +901,7 @@
 \let\eql@tagpos@doconvert\eql@false
 \def\eql@tagpos@snap{4pt}
 \let\eql@numbering@mode\@undefined
-\let\eql@numbering@active\eql@true
+\let\eql@numbering@active\eql@false
 \let\eql@numbering@multi\eql@true
 \let\eql@tags@container\@undefined
 \def\eql@tags@container@clear{%
@@ -2589,6 +2596,9 @@
     \let\eql@parseopt@next\eql@parseopt@relstart
   \fi
   \ifx\eql@parseopt@token|%
+    \let\eql@parseopt@next\eql@parseopt@relord
+  \fi
+  \ifx\eql@parseopt@token?%
     \let\eql@parseopt@next\eql@multi@cr@parse@rel
   \fi
   \ifx\eql@parseopt@token&%
@@ -3750,6 +3760,9 @@
     \let\eql@parseopt@next\eql@parseopt@relstart
   \fi
   \ifx\eql@parseopt@token|%
+    \let\eql@parseopt@next\eql@parseopt@relord
+  \fi
+  \ifx\eql@parseopt@token?%
     \let\eql@parseopt@next\eql@box@cr@parse@rel
   \fi
   \ifx\eql@parseopt@token&%
@@ -3834,6 +3847,9 @@
     \let\eql@parseopt@next\eql@parseopt@relstart
   \fi
   \ifx\eql@parseopt@token|%
+    \let\eql@parseopt@next\eql@parseopt@relord
+  \fi
+  \ifx\eql@parseopt@token?%
     \let\eql@parseopt@next\eql@box@amp@parse@rel
   \fi
   \ifx\eql@parseopt@token&%
@@ -4649,6 +4665,9 @@
     \let\eql@parseopt@next\eql@parseopt@relstart
   \fi
   \ifx\eql@parseopt@token|%
+    \let\eql@parseopt@next\eql@parseopt@relord
+  \fi
+  \ifx\eql@parseopt@token?%
     \let\eql@parseopt@next\eql@columns@amp@parse@rel
   \fi
   \ifx\eql@parseopt@token&%
@@ -5428,9 +5447,10 @@
     {{v,vert}{\eql@box@delim\vert\vert}},%
     {{d,dvert}{\eql@box@delim\Vert\Vert}},%
     {\relax{\eql@box@delim#3}}}}%
-\eql@define@key{box}{gathered,gather,ga,lines,ln}[]{%
+\def\eql@keyall{equations,box,setup}
+\eql@define@key{box}{lines,ln,gathered,gather,ga}[]{%
   \eql@box@lines@set}
-\eql@define@key{box}{aligned,align,al,columns,col}[]{%
+\eql@define@key{box}{columns,col,aligned,align,al}[]{%
   \eql@box@columns@set}
 \eql@define@key{box}{cases}[]{%
   \eql@box@cases@set\eql@box@ldelim\lbrace%
@@ -5464,10 +5484,10 @@
 \eql@define@key{setup}{boxangopt}[]{%
   \def\eql@box@ang@opt{columns,#1}}
 \let\eql@box@doscan\eqn@false
-\eql@define@key{equations}{equation,eq,single,1}[]{\eql@equations@single@set}
-\eql@define@key{equations}{gathered,gather,ga,lines,ln}[]{%
+\eql@define@key{equations}{single,1,equation,eq}[]{\eql@equations@single@set}
+\eql@define@key{equations}{lines,ln,gathered,gather,ga}[]{%
   \eql@equations@lines@set}
-\eql@define@key{equations}{aligned,align,al,columns,col}[]{%
+\eql@define@key{equations}{columns,col,aligned,align,al}[]{%
   \eql@equations@columns@set}
 \eql@define@key{equations,setup}{transpose}[true]{%
   \eql@decide@select{#3}{#2}{#1}{%
@@ -5624,24 +5644,23 @@
   \eql@decide@if{#3}{#2}{#1}\eql@box@cr@test@setall\eql@box@cr@test@setopt}
 \eql@define@key{box}{modifieramp}[true]{%
   \eql@decide@if{#3}{#2}{#1}\eql@box@amp@test@setall\eql@box@amp@test@setopt}
-\def\eql@keycat{equations,box,setup}
-\eql@define@key\eql@keycat{spread}{%
+\eql@define@key\eql@keyall{spread}{%
   \let\eql@spread@reset\eql@false\def\eql@spread@val{#1}}
-\eql@define@key\eql@keycat{spread*}[0pt]{%
+\eql@define@key\eql@keyall{spread*}[0pt]{%
   \let\eql@spread@reset\eql@true\def\eql@spread@val{#1}}
-\eql@define@key\eql@keycat{strut}[true]{\eql@decide@select{#3}{#2}{#1}{%
+\eql@define@key\eql@keyall{strut}[true]{\eql@decide@select{#3}{#2}{#1}{%
     {\eql@decide@false{\let\eql@strut@cell\relax\let\eql@strut@tag\relax}},%
     {{cell}{\let\eql@strut@cell\eql@strut\let\eql@strut@tag\relax}},%
     {{tag}{\let\eql@strut@cell\relax\let\eql@strut@tag\eql@strut}},%
     {\eql@decide@true
       {\let\eql@strut@cell\eql@strut\let\eql@strut@tag\eql@strut}}}}
 \eql@define@key{setup}{strutdepth}{\def\eql@strut@depth{#1}}
-\eql@define@key\eql@keycat{displayheight}[strut]{%
+\eql@define@key\eql@keyall{displayheight}[strut]{%
   \eql@decide@select{#3}{#2}{#1}{%
     {\eql@decide@false{\let\eql@display@height\@undefined}},%
     {{strut}{\def\eql@display@height{\ht\eql@strutbox@}}},%
     {\relax{\def\eql@display@height{#1}}}}}
-\eql@define@key\eql@keycat{displaydepth}[strut]{%
+\eql@define@key\eql@keyall{displaydepth}[strut]{%
   \eql@decide@select{#3}{#2}{#1}{%
     {\eql@decide@false{\let\eql@display@depth\@undefined}},%
     {{strut}{\def\eql@display@depth{\dp\eql@strutbox@}}},%
@@ -5811,13 +5830,12 @@
   \eql@decide@situation{#3}{#2}{#1}\eql@skip@mode@top@above}
 \eql@define@key{setup}{belowtopmode}{%
   \eql@decide@situation{#3}{#2}{#1}\eql@skip@mode@top@below}
-\def\eql@keycat{equations,subequations}
-\eql@define@key\eql@keycat{label}{\eql@tags@addblock@label{#1}}
-\eql@define@key\eql@keycat{labelname}{\eql@tags@addblock@name{#1}}
-\eql@define@key\eql@keycat{tag}{\eql@tags@addblock@tag{#1}}
-\eql@define@key\eql@keycat{tag*}{%
+\eql@define@key{equations,subequations}{label}{\eql@tags@addblock@label{#1}}
+\eql@define@key{equations,subequations}{labelname}{\eql@tags@addblock@name{#1}}
+\eql@define@key{equations,subequations}{tag}{\eql@tags@addblock@tag{#1}}
+\eql@define@key{equations,subequations}{tag*}{%
   \eql@tags@addblock@tagform@off\eql@tags@addblock@tag{#1}}
-\eql@define@key\eql@keycat{taglabel}{\eql@tags@addblock@ref{#1}}
+\eql@define@key{equations,subequations}{taglabel}{\eql@tags@addblock@ref{#1}}
 \eql@define@key{control}{label}{\eql@tags@add@label{#1}}
 \eql@define@key{control}{labelname}{\eql@tags@add@name{#1}}
 \eql@define@key{control}{tag}{\eql@tags@add@tag{#1}}
@@ -5831,35 +5849,34 @@
   \eql@decide@bool{#3}{#2}{#1}\eql@tags@autolabel}
 \eql@define@key{setup}{autotag}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@tags@autotag}
-\def\eql@keycat{equations,setup}
-\eql@define@key\eql@keycat{tagmargin}[auto]{%
+\eql@define@key{equations,setup}{tagmargin}[auto]{%
   \eql@decide@select{#3}{#2}{#1}{%
     {{auto,\eql@decide@false}{\let\eql@tagmargin@val\@undefined}},%
     {\relax{\def\eql@tagmargin@val{#1}}}}}
-\eql@define@key\eql@keycat{tagmargin*}{%
+\eql@define@key{equations,setup}{tagmargin*}{%
   \settowidth\dimen@{#1}\edef\eql@tagmargin@val{\the\dimen@}}
-\eql@define@key\eql@keycat{tagmarginratio}{%
+\eql@define@key{equations,setup}{tagmarginratio}{%
   \eql@tagmargin@ratio@\dimexpr#1pt\relax}
-\eql@define@key\eql@keycat{tagmarginthreshold}{%
+\eql@define@key{equations,setup}{tagmarginthreshold}{%
   \def\eql@tagmargin@threshold{#1}}
-\eql@define@key\eql@keycat{mintagsep}{\def\eql@tagsepmin@val{#1}}
-\eql@define@key\eql@keycat{mintagwidth}{%
+\eql@define@key{equations,setup}{mintagsep}{\def\eql@tagsepmin@val{#1}}
+\eql@define@key{equations,setup}{mintagwidth}{%
   \settowidth\dimen@{#1}\edef\eql@tagsepmin@val{\the\dimen@}}
-\eql@define@key\eql@keycat{mintagwidth*}{\settowidth\eql@tagwidthmin@{#1}}
-\eql@define@key\eql@keycat{tagsnap}{%
+\eql@define@key{equations,setup}{mintagwidth*}{%
+  \settowidth\eql@tagwidthmin@{#1}}
+\eql@define@key{equations,setup}{tagsnap}{%
   \eql@decide@select{#3}{#2}{#1}{%
     {\eql@decide@false{\let\eql@tagpos@snap\z@}},%
     {\relax{\def\eql@tagpos@snap{#1}}}}}
-\def\eql@keycat{equations,setup}
-\eql@define@key\eql@keycat{tagbox,taglayout}{%
+\eql@define@key{equations,setup}{tagbox,taglayout}{%
   \eql@tags@taglayout@set{#1}}
-\eql@define@key\eql@keycat{tagbox*,taglayout*}{%
+\eql@define@key{equations,setup}{tagbox*,taglayout*}{%
   \eql@tags@taglayout@set@direct{#1}}
-\eql@define@key\eql@keycat{tagform}{%
+\eql@define@key{equations,setup}{tagform}{%
   \eql@tags@tagform@set#1}
-\eql@define@key\eql@keycat{tagform*}{%
+\eql@define@key{equations,setup}{tagform*}{%
   \eql@tags@tagform@set@direct{#1}}
-\eql@define@key\eql@keycat{subeqtemplate}{%
+\eql@define@key{equations,setup}{subeqtemplate}{%
   \def\eql@subequations@template####1####2{#1}%
   \eql@append\eql@subequations@template{\theparentequation{equation}}}
 \eql@define@key{control}{tagbox,taglayout}{%
@@ -5870,8 +5887,7 @@
   \global\eql@append\eql@tags@container{\eql@tags@tagform@set#1}}
 \eql@define@key{control}{tagform*}[{####1}]{%
   \global\eql@append\eql@tags@container{\eql@tags@tagform@set@direct{#1}}}
-\def\eql@keycat{equations,setup}
-\eql@define@key\eql@keycat{numberline,number,num,numline,n}[all]{%
+\eql@define@key{equations,setup}{numberline,number,num,numline,n}[all]{%
   \eql@decide@select{#3}{#2}{#1}{%
     {{\eql@decide@false,0,*}{\let\eql@numbering@active\eql@false}},%
     {{\eql@decide@true,!}{\let\eql@numbering@active\eql@true}},%
@@ -5882,72 +5898,75 @@
     {{multi,@}{\let\eql@numbering@mode\eql@numbering@mode@multi
         \let\eql@numbering@active\eql@true}},%
     {\relax{\eql@numbering@set{#1}}}}}
-\eql@define@key\eql@keycat{nonumber,nn,*}[]{%
+\eql@define@key{equations,setup}{nonumber,nn,*}[]{%
   \let\eql@numbering@active\eql@false}
-\eql@define@key\eql@keycat{donumber,dn,!}[]{%
+\eql@define@key{equations,setup}{donumber,dn,!}[]{%
   \let\eql@numbering@active\eql@true}
-\eql@define@key\eql@keycat{tagsleft,leqno}[]{\let\eql@tagsleft\eql@true}
-\eql@define@key\eql@keycat{tagsright,reqno}[]{\let\eql@tagsleft\eql@false}
-\eql@define@key\eql@keycat{tags,eqno}{%
+\eql@define@key{equations,setup}{tagsleft,leqno}[]{%
+  \let\eql@tagsleft\eql@true}
+\eql@define@key{equations,setup}{tagsright,reqno}[]{%
+  \let\eql@tagsleft\eql@false}
+\eql@define@key{equations,setup}{tags,eqno}{%
   \eql@decide@select{#3}{#2}{#1}{%
     {{right,r}{\let\eql@tagsleft\eql@false}},%
     {{left,l}{\let\eql@tagsleft\eql@true}}}}
-\eql@define@key\eql@keycat{evadetag,avoidtag}[true]{%
+\eql@define@key{equations,setup}{evadetag,avoidtag}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@numbering@best@auto}
-\eql@define@key\eql@keycat{tagbetween}[true]{%
+\eql@define@key{equations,setup}{tagbetween}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@tagpos@doconvert}
 \eql@define@key{control}{nonumber,nn,*}[]{\global\@eqnswfalse}
 \eql@define@key{control}{donumber,dn,!}[]{\global\@eqnswtrue}
 \eql@define@key{control}{numberhere}[]{\eql@numberhere}
 \eql@define@key{control}{numbernext}[]{\eql@numbernext}
-\def\eql@keycat{equations,setup}
-\eql@define@key\eql@keycat{layout}{\eql@decide@select{#3}{#2}{#1}{%
+\eql@define@key{equations,setup}{layout}{\eql@decide@select{#3}{#2}{#1}{%
   {{center,c}{\let\eql@layoutleft\eql@false}},%
   {{left,l}{\let\eql@layoutleft\eql@true}}}}
-\eql@define@key\eql@keycat{center}[]{\let\eql@layoutleft\eql@false}
-\eql@define@key\eql@keycat{flushleft,left}[]{\let\eql@layoutleft\eql@true}
-\eql@define@key\eql@keycat{leftmargin}{\def\eql@layoutleftmargin{#1}}
-\eql@define@key\eql@keycat{leftmargin*}{%
+\eql@define@key{equations,setup}{center}[]{%
+  \let\eql@layoutleft\eql@false}
+\eql@define@key{equations,setup}{flushleft,left}[]{%
+  \let\eql@layoutleft\eql@true}
+\eql@define@key{equations,setup}{leftmargin}{\def\eql@layoutleftmargin{#1}}
+\eql@define@key{equations,setup}{leftmargin*}{%
   \settowidth\dimen@{#1}\edef\eql@layoutleftmargin{\the\dimen@}}
-\eql@define@key\eql@keycat{minleftmargin}{%
+\eql@define@key{equations,setup}{minleftmargin}{%
   \def\eql@layoutleftmarginmin{#1}}
-\eql@define@key\eql@keycat{maxleftmargin}{%
+\eql@define@key{equations,setup}{maxleftmargin}{%
   \eql@decide@select{#3}{#2}{#1}{%
     {\eql@decide@false{\def\eql@layoutleftmarginmax{.5\maxdimen}}},%
     {\relax{\def\eql@layoutleftmarginmax{#1}}}}}
-\def\eql@keycat{equations,box}
-\eql@define@key\eql@keycat{margin}{%
+\eql@define@key{equations,box}{margin}{%
   \def\eql@display@marginleft{#1}\def\eql@display@marginright{#1}}
-\eql@define@key\eql@keycat{marginleft}{\def\eql@display@marginleft{#1}}
-\eql@define@key\eql@keycat{marginright}{\def\eql@display@marginright{#1}}
+\eql@define@key{equations,box}{marginleft}{\def\eql@display@marginleft{#1}}
+\eql@define@key{equations,box}{marginright}{\def\eql@display@marginright{#1}}
 \eql@define@key{equations}{linewidth,width}{\def\eql@display@linewidth{#1}}
-\def\eql@keycat{equations,setup}
-\eql@define@key\eql@keycat{alignshrink}{\eql@decide@select{#3}{#2}{#1}{%
+\eql@define@key{equations,setup}{alignshrink}{\eql@decide@select{#3}{#2}{#1}{%
     {{max,full,4}{\eql@alignbadness@\inf@bad}},%
     {{high,3}{\eql@alignbadness@54\relax}},%
     {{med,medium,2}{\eql@alignbadness@18\relax}},%
     {{low,1}{\eql@alignbadness@6\relax}},%
     {{0,\eql@decide@false}{\eql@alignbadness@\z@}}}}
-\eql@define@key\eql@keycat{tagshrink}{\eql@decide@select{#3}{#2}{#1}{%
+\eql@define@key{equations,setup}{tagshrink}{\eql@decide@select{#3}{#2}{#1}{%
     {{max,full,4}{\eql@tagbadness@\inf@bad}},%
     {{high,3}{\eql@tagbadness@54\relax}},%
     {{med,medium,2}{\eql@tagbadness@18\relax}},%
     {{low,1}{\eql@tagbadness@6\relax}},%
     {{0,\eql@decide@false}{\eql@tagbadness@\z@}}}}
-\eql@define@key\eql@keycat{alignbadness}{\eql@alignbadness@\numexpr#1\relax}
-\eql@define@key\eql@keycat{tagbadness}{\eql@tagbadness@\numexpr#1\relax}
-\eql@define@key\eql@keycat{mincolsep}{\eql@decide@select{#3}{#2}{#1}{%
+\eql@define@key{equations,setup}{alignbadness}{%
+  \eql@alignbadness@\numexpr#1\relax}
+\eql@define@key{equations,setup}{tagbadness}{%
+  \eql@tagbadness@\numexpr#1\relax}
+\eql@define@key{equations,setup}{mincolsep}{\eql@decide@select{#3}{#2}{#1}{%
     {{0,\eql@decide@false}{\def\eql@colsepmin@val{0pt}}},%
     {\relax{\def\eql@colsepmin@val{#1}}}}}
-\eql@define@key\eql@keycat{maxcolsep}{\eql@decide@select{#3}{#2}{#1}{%
+\eql@define@key{equations,setup}{maxcolsep}{\eql@decide@select{#3}{#2}{#1}{%
     {\eql@decide@false{\def\eql@colsepmax@val{.5\maxdimen}}},%
     {\relax{\def\eql@colsepmax@val{#1}}}}}
-\eql@define@key\eql@keycat{fulllength}[true]{%
+\eql@define@key{equations,setup}{fulllength}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@columns@fulllength}
-\eql@define@key\eql@keycat{linesep}{\eql@decide@select{#3}{#2}{#1}{%
+\eql@define@key{equations,setup}{linesep}{\eql@decide@select{#3}{#2}{#1}{%
     {{0,\eql@decide@false}{\def\eql@break@line@sep{0pt}}},%
     {\relax{\def\eql@break@line@sep{#1}}}}}
-\eql@define@key\eql@keycat{linesep*}{\eql@decide@select{#3}{#2}{#1}{%
+\eql@define@key{equations,setup}{linesep*}{\eql@decide@select{#3}{#2}{#1}{%
     {{0,\eql@decide@false}{\def\eql@break@line@shortsep{0pt}}},%
     {\relax{\def\eql@break@line@shortsep{#1}}}}}
 \eql@define@key{box,setup}{colsep}{\eql@decide@select{#3}{#2}{#1}{%
@@ -5961,7 +5980,7 @@
   \let\eql@colsepmin@val\eql@box@colsep
   \let\eql@colsepmax@val\eql@box@colsep
   \let\eql@box@colsep\eql@break@col@sep}
-\eql@define@key\eql@keycat{colsep*}{\eql@decide@select{#3}{#2}{#1}{%
+\eql@define@key{equations,setup}{colsep*}{\eql@decide@select{#3}{#2}{#1}{%
     {{0,\eql@decide@false}{\def\eql@break@col@shortsep{0pt}}},%
     {\relax{\def\eql@break@col@shortsep{#1}}}}}
 \eql@define@key{box,setup}{colsep*}{\eql@decide@select{#3}{#2}{#1}{%
@@ -5970,33 +5989,32 @@
 \eql@define@key{box,setup}{condsep}{\eql@decide@select{#3}{#2}{#1}{%
     {{0,\eql@decide@false}{\def\eql@box@condsep{0pt}}},%
     {\relax{\def\eql@box@condsep{#1}}}}}
-\def\eql@keycat{equations,box,setup}
-\eql@define@key\eql@keycat{shape}[default]{\eql@shape@set{#1}}
-\eql@define@key\eql@keycat{padding,pad}[indent]{%
+\eql@define@key\eql@keyall{shape}[default]{\eql@shape@set{#1}}
+\eql@define@key\eql@keyall{padding,pad}[indent]{%
   \eql@decide@select{#3}{#2}{#1}{%
     {{max}{\let\eql@paddingleft@val\@undefined}},%
     {{indent}{\def\eql@paddingleft@val{\eql@indent@val}}},%
     {{0,\eql@decide@false}{\def\eql@paddingleft@val{0pt}}},%
     {\relax{\def\eql@paddingleft@val{#1}}}}%
   \let\eql@paddingright@val\eql@paddingleft@val}
-\eql@define@key\eql@keycat{padleft}[indent]{%
+\eql@define@key\eql@keyall{padleft}[indent]{%
   \eql@decide@select{#3}{#2}{#1}{%
     {{max}{\let\eql@paddingleft@val\@undefined}},%
     {{indent}{\def\eql@paddingleft@val{\eql@indent@val}}},%
     {{0,\eql@decide@false}{\def\eql@paddingleft@val{0pt}}},%
     {\relax{\def\eql@paddingleft@val{#1}}}}}
-\eql@define@key\eql@keycat{padright}[indent]{%
+\eql@define@key\eql@keyall{padright}[indent]{%
   \eql@decide@select{#3}{#2}{#1}{%
     {{max}{\let\eql@paddingright@val\@undefined}},%
     {{indent}{\def\eql@paddingright@val{\eql@indent@val}}},%
     {{0,\eql@decide@false}{\def\eql@paddingright@val{0pt}}},%
     {\relax{\def\eql@paddingright@val{#1}}}}}
-\eql@define@key\eql@keycat{indent}[2em]{%
+\eql@define@key\eql@keyall{indent}[2em]{%
   \def\eql@indent@val{#1}}
 \def\eql@shape@rel{\eqncontrol{align=left}}
 \def\eql@shape@cont{\eqncontrol{align=left,shift=*}}
-\eql@define@key\eql@keycat{shaperel}[]{\def\eql@shape@rel{#1}}
-\eql@define@key\eql@keycat{shapecont}[]{\def\eql@shape@cont{#1}}
+\eql@define@key\eql@keyall{shaperel}[]{\def\eql@shape@rel{#1}}
+\eql@define@key\eql@keyall{shapecont}[]{\def\eql@shape@cont{#1}}
 \eql@define@key{control}{align}[]{%
   \eql@decide@select{#3}{#2}{#1}{%
     {{l,left}{\global\eql@append\eql@cell@container{\eql@shape@pos@\z@}}},%
@@ -6008,25 +6026,24 @@
     {{!,outdent}{\eql@shape@alignamount@set{-\eql@indent@}}},%
     {\relax{\eql@shape@alignamount@set{#1}}}}}
 \eql@define@key{control}{shift*,shiftby}[]{\eql@shape@alignamount@add{#1}}
-\def\eql@keycat{equations,box,setup}
-\eql@define@key\eql@keycat{classout}{\eql@class@innerleft@set{#1}}
-\eql@define@key\eql@keycat{classin}{\eql@class@innerright@set{#1}}
-\eql@define@key\eql@keycat{classlead,classin*}{\eql@class@innerlead@set{#1}}
-\eql@define@key\eql@keycat{rel}{\def\eql@class@rel@symb{#1}}
-\eql@define@key\eql@keycat{classcont}{\def\eql@class@rel@cont##1{#1}}
-\eql@define@key\eql@keycat{classstart}{\def\eql@class@rel@start##1{#1}}
+\eql@define@key\eql@keyall{classout}{\eql@class@innerleft@set{#1}}
+\eql@define@key\eql@keyall{classin}{\eql@class@innerright@set{#1}}
+\eql@define@key\eql@keyall{classlead,classin*}{\eql@class@innerlead@set{#1}}
+\eql@define@key\eql@keyall{rel}{\def\eql@class@rel@symb{#1}}
+\eql@define@key\eql@keyall{classcont}{\def\eql@class@rel@cont##1{#1}}
+\eql@define@key\eql@keyall{classstart}{\def\eql@class@rel@start##1{#1}}
 \eql@define@key{control}{rel}[\eql@class@rel@symb]{\eql@class@rel@make{#1}}
 \eql@define@key{control}{rel;}[]{\eql@class@rel@make{}}
 \eql@define@key{control}{rel*}[]{\eql@class@rel@make{}}
-\eql@define@key\eql@keycat{ampeq}[]{\eql@class@ampeq}
-\eql@define@key\eql@keycat{eqamp}[]{\eql@class@eqamp}
-\eql@define@key\eql@keycat{class}{\eql@decide@select{#3}{#2}{#1}{%
+\eql@define@key\eql@keyall{ampeq}[]{\eql@class@ampeq}
+\eql@define@key\eql@keyall{eqamp}[]{\eql@class@eqamp}
+\eql@define@key\eql@keyall{class}{\eql@decide@select{#3}{#2}{#1}{%
   {{ampeq,amprel,eqafter,beforerel}\eql@class@ampeq},%
   {{eqamp,relamp,eqbefore,afterrel}\eql@class@eqamp}}}
-\eql@define@key\eql@keycat{style}[display]{%
+\eql@define@key\eql@keyall{style}[display]{%
   \eql@decide@select{#3}{#2}{#1}{%
-    {text{\let\eql@mathstyle\@empty}},%
-    {display{\let\eql@mathstyle\displaystyle}}}}
+    {{text}{\let\eql@mathstyle\@empty}},%
+    {{display}{\let\eql@mathstyle\displaystyle}}}}
 \eql@define@key{setup}{casesstyle}[display]{%
   \eql@decide@select{#3}{#2}{#1}{%
     {\eql@decide@false{\let\eql@cases@mathstyle\eql@false}},%
@@ -6051,16 +6068,15 @@
     \eql@error{Too many arguments to punctall}%
   \fi
 }
-\def\eql@keycat{equations,box,setup}
-\eql@define@key\eql@keycat{punctsep}[\,]{\def\eql@punct@sep{#1}}
-\eql@define@key\eql@keycat{punctclass}[\mathclose{}]{\def\eql@punct@class{#1}}
-\eql@define@key\eql@keycat{punct}[.]{\eql@punct@set\eql@punct@block{#1}}
-\eql@define@key\eql@keycat{punct*}[]{\eql@punct@set\eql@punct@block\relax}
-\eql@define@key\eql@keycat{punctline}[,]{\eql@punct@set\eql@punct@line{#1}}
-\eql@define@key\eql@keycat{punctline*}[]{\eql@punct@set\eql@punct@line\relax}
-\eql@define@key\eql@keycat{punctcol}[,]{\eql@punct@set\eql@punct@col{#1}}
-\eql@define@key\eql@keycat{punctcol*}[]{\eql@punct@set\eql@punct@col\relax}
-\eql@define@key\eql@keycat{punctall}[,,.]{\eql@punct@all#111111\eql@punct@end}
+\eql@define@key\eql@keyall{punctsep}[\,]{\def\eql@punct@sep{#1}}
+\eql@define@key\eql@keyall{punctclass}[\mathclose{}]{\def\eql@punct@class{#1}}
+\eql@define@key\eql@keyall{punct}[.]{\eql@punct@set\eql@punct@block{#1}}
+\eql@define@key\eql@keyall{punct*}[]{\eql@punct@set\eql@punct@block\relax}
+\eql@define@key\eql@keyall{punctline}[,]{\eql@punct@set\eql@punct@line{#1}}
+\eql@define@key\eql@keyall{punctline*}[]{\eql@punct@set\eql@punct@line\relax}
+\eql@define@key\eql@keyall{punctcol}[,]{\eql@punct@set\eql@punct@col{#1}}
+\eql@define@key\eql@keyall{punctcol*}[]{\eql@punct@set\eql@punct@col\relax}
+\eql@define@key\eql@keyall{punctall}[,,.]{\eql@punct@all#111111\eql@punct@end}
 \eql@define@key{box}{punctterm}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@box@punct@term}
 \eql@define@key{control}{punctsep}[\,]{\def\eql@punct@sep{#1}}
@@ -6081,7 +6097,7 @@
 \eql@define@key{box}{lbrace}[]{\eql@box@ldelim\lbrace}
 \eql@define@key{box}{rbrace}[]{\eql@box@rdelim\rbrace}
 \eql@define@key{box}{lrbrace,lrbraces}[]{\eql@box@delim\lbrace\rbrace}
-\eql@define@key\eql@keycat{braces}[lr]{%
+\eql@define@key{box}{braces}[lr]{%
   \eql@decide@select{#3}{#2}{#1}{%
     {{\eql@decide@false}{\eql@box@wrap{}{}}},%
     {{l,left}{\eql@box@ldelim\lbrace}},%
@@ -6142,19 +6158,19 @@
     {\eql@decide@false{\let\eql@single@cr@mode\eql@false}},%
     {{\eql@decide@true,break}{\let\eql@single@cr@mode\eql@break@cr}},%
     {{error,verbose}{\let\eql@single@cr@mode\eql@single@cr@error}}}}
-\eql@define@key{equations,box,setup}{amp}[true]{%
+\eql@define@key\eql@keyall{amp}[true]{%
   \eql@decide@bool{#3}{#2}{#1}{\eql@amp@mode}}
-\eql@define@key{equations,box,setup}{rescan}[true]{%
+\eql@define@key\eql@keyall{rescan}[true]{%
   \eql@decide@if{#3}{#2}{#1}%
     {\let\eql@scan@body\eql@scan@body@rescan}%
     {\let\eql@scan@body\eql@scan@body@dump}}
-\eql@define@key{equations,box,setup}{scanpar}[true]{%
+\eql@define@key\eql@keyall{scanpar}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@scan@par}
 \eql@define@key{setup}{defaults}{%
   \eql@decide@select{#3}{#2}{#1}{%
     {{classic}{\eql@defaults@classic}},%
     {{eqnlines}{\eql@defaults@eqnlines}}}}
-\eql@define@key{equations,box,setup}{verbose}[true]{%
+\eql@define@key\eql@keyall{verbose}[true]{%
   \eql@decide@if{#3}{#2}{#1}\eql@verbose@on\eql@verbose@off}
 \let\eql@provide@opt@env\tw@
 \let\eql@provide@opt@amsmathpatch\eql@false
@@ -6201,9 +6217,10 @@
 \def\eql@parseopt@punctblock#1#2{%
   \eql@punct@set\eql@punct@block{#2}\eql@parseopt@peek}
 \def\eql@parseopt@punctterm#1{\let\eql@punct@term\eql@true\eql@parseopt@peek}
-\def\eql@parseopt@relsymb#1{\eql@parseopt@peek|\eql@class@rel@symb}
-\def\eql@parseopt@relcont#1{\eql@parseopt@peek|{}}
-\def\eql@parseopt@relstart#1{\eql@parseopt@peek|\relax}
+\def\eql@parseopt@relsymb#1{\eql@parseopt@peek?\eql@class@rel@symb}
+\def\eql@parseopt@relcont#1{\eql@parseopt@peek?{}}
+\def\eql@parseopt@relstart#1{\eql@parseopt@peek?\relax}
+\def\eql@parseopt@relord#1{\eql@parseopt@peek?{{}}}
 \def\eql@parseopt@vspace[#1]{%
   \advance\eql@vspaceskip@\glueexpr#1\relax\eql@parseopt@peek}
 \def\eql@defaults@classic{%
@@ -6290,7 +6307,7 @@
   \eqnlinesset{allowbreaks=3}%
   \eqnlinesset{equationcr=break}%
   \eqnlinesset{amp=on}%
-  \eqnlinesset{modifier=on,modifierenv=off,modifierbreak=off}%
+  \eqnlinesset{modifier=on,modifierenv=off}%
   \eqnlinesset{linesfallback=true}%
   \eqnlinesset{casesstyle=false}%
   \eqnlinesset{sqropt=}%
@@ -6499,38 +6516,44 @@
   {\eqnlinesset{modifierboxenv=false}\eqnaddopt{matrix=d}\equationsbox}
   {\endequationsbox}
 \newenvironment{eql@equation}
-  {\eqnaddopt{equation}\equations}{\endequations}
+  {\eqnaddopt{equation,donumber}\equations}{\endequations}
+\newenvironment{eql@equation*}
+  {\eqnaddopt{equation,nonumber}\equations}{\endequations}
 \newenvironment{eql@displaymath}
   {\eqnaddopt{equation,nonumber}\equations}{\endequations}
 \newenvironment{eql@gather}
-  {\eqnaddopt{lines}\equations}{\endequations}
-\newenvironment{eql@multline}
-  {\eqnaddopt{lines,padding=max,shape=steps,numberline=out}\equations}
-  {\endequations}
-\newenvironment{eql@align}
-  {\eqnaddopt{columns}\equations}{\endequations}
-\newenvironment{eql@flalign}
-  {\eqnaddopt{fulllength}\eql@align}{\endequations}
-\newenvironment{eql@alignat}
-  {\eqnaddopt{colsep=off}\eql@xalignat}{\endequations}
-\newenvironment{eql@xalignat}
-  {\eql@alignat@gobblecol\eql@align}{\endequations}
-\newenvironment{eql@xxalignat}
-  {\eqnaddopt{fulllength}\eql@xalignat}{\endequations}
-\newenvironment{eql@equation*}
-  {\eqnaddopt{nonumber}\eql@equation}{\endequations}
+  {\eqnaddopt{lines,donumber}\equations}{\endequations}
 \newenvironment{eql@gather*}
-  {\eqnaddopt{nonumber}\eql@gather}{\endequations}
+  {\eqnaddopt{lines,nonumber}\equations}{\endequations}
+\newenvironment{eql@multline}
+  {\eqnaddopt{lines,padding=max,shape=steps,numberline=out,donumber}%
+   \equations}{\endequations}
 \newenvironment{eql@multline*}
-  {\eqnaddopt{nonumber}\eql@multline}{\endequations}
+  {\eqnaddopt{lines,padding=max,shape=steps,numberline=out,nonumber}%
+   \equations}{\endequations}
+\newenvironment{eql@align}
+  {\eqnaddopt{columns,donumber}\equations}{\endequations}
 \newenvironment{eql@align*}
-  {\eqnaddopt{nonumber}\eql@align}{\endequations}
+  {\eqnaddopt{columns,nonumber}\equations}{\endequations}
+\newenvironment{eql@flalign}
+  {\eqnaddopt{columns,fulllength,donumber}\equations}{\endequations}
 \newenvironment{eql@flalign*}
-  {\eqnaddopt{nonumber}\eql@flalign}{\endequations}
+  {\eqnaddopt{columns,fulllength,nonumber}\equations}{\endequations}
+\newenvironment{eql@alignat}
+  {\eqnaddopt{columns,colsep=off,donumber}%
+   \eql@alignat@gobblecol\equations}{\endequations}
+\newenvironment{eql@xalignat}
+  {\eqnaddopt{columns,donumber}%
+   \eql@alignat@gobblecol\equations}{\endequations}
+\newenvironment{eql@xxalignat}
+  {\eqnaddopt{columns,fulllength,donumber}%
+   \eql@alignat@gobblecol\equations}{\endequations}
 \newenvironment{eql@alignat*}
-  {\eqnaddopt{nonumber}\eql@alignat}{\endequations}
+  {\eqnaddopt{columns,colsep=off,nonumber}%
+   \eql@alignat@gobblecol\equations}{\endequations}
 \newenvironment{eql@xalignat*}
-  {\eqnaddopt{nonumber}\eql@xalignat}{\endequations}
+  {\eqnaddopt{columns,nonumber}%
+   \eql@alignat@gobblecol\equations}{\endequations}
 \def\eql@provide@onlyonce#1#2{%
   \def\eql@tmp{#2}\def\eql@tmpa{#1}%
   \ifx\eql@tmp\eql@tmpa
