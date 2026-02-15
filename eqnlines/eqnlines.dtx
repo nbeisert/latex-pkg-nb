@@ -23,12 +23,12 @@
 % and the derived files eqnlines.sty,
 % eqnlines.tex, eqnlines.pdf, eqnlines-src.tex, eqnlines-src.pdf.
 %
-%<package>\NeedsTeXFormat{LaTeX2e}[2020/10/01]
-%<package>\ProvidesPackage{eqnlines}[2026/02/15 v0.15.2 Single- and multi-line equations]
-%<source>\ProvidesFile{eqnlines-src.tex}[2026/02/15 v0.15.2 eqnlines source code documentation]
-%<manual>\ProvidesFile{eqnlines.tex}[2026/02/15 v0.15.2 eqnlines reference manual]
+%<package>\NeedsTeXFormat{LaTeX2e}[2020-10-01]
+%<package>\ProvidesPackage{eqnlines}[2026-02-15 v1.0 Single- and multi-line equations]
+%<source>\ProvidesFile{eqnlines-src.tex}[2026-02-15 v1.0 eqnlines source code documentation]
+%<manual>\ProvidesFile{eqnlines.tex}[2026-02-15 v1.0 eqnlines reference manual]
 %<*main|manual|source>
-\def\thedate/{2026/02/15}\def\theversion/{v0.15.2}
+\def\thedate/{2026-02-15}\def\theversion/{v1.0}
 \def\thecopyright/{2024\texorpdfstring{--}{-}2026 Niklas Beisert}
 %<*main>
 \ProvidesFile{eqnlines.dtx}[\thedate/ \theversion/ eqnlines package main file]
@@ -60,7 +60,7 @@
   \href{mailto:nbeisert@itp.phys.ethz.ch}
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
-\date{\thedate/, \theversion/\\[1ex]
+\date{\theversion/: \markdate{\thedate/}\\[1ex]
 \url{https://ctan.org/pkg/eqnlines}\\[0.5ex]
 \url{https://github.com/nbeisert/latex-pkg-nb}}
 
@@ -91,6 +91,7 @@
 \edef\itemize{\unexpanded\expandafter{\itemize}\parskip0pt}
 
 \newcommand{\markpkg}[1]{\textsf{#1}}
+\newcommand{\markdate}[1]{\textsf{#1}}
 \newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
 \newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
 \newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\markpkg{#1}}}
@@ -367,14 +368,6 @@ environments can be accessed using the alternate name |equations|.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Usage}
 \label{sec:usage}
-
-% \TODO notice regarding development
-\textbf{Notice regarding package version \theversion/:}
-Please note that this package is still in a development and testing stage.
-The present version serves as a release candidate for v1.0.
-Please report any malfunction that you may notice.
-
-\medskip
 
 To use the \ctanpkg{eqnlines} package add the command
 %
@@ -3135,11 +3128,11 @@ The package is related to other packages available at CTAN:
 This package uses the package \ctanpkg{keyval}
 to process the options for the package, environments and macros.
 Compatibility with the \ctanpkg{keyval} package
-has been tested with v1.15 (2022/05/29).
+has been tested with v1.15 (\markdate{2022-05-29}).
 \item
 This package reproduces the math environments functionality
 of the package \amsmath/.
-The present code is based on \amsmath/ v2.17t (2024/11/05).
+The present code is based on \amsmath/ v2.17t (\markdate{2024-11-05}).
 Compatibility with the \amsmath/ package is maintained
 whether \ctanpkg{eqnlines} is loaded before or after \amsmath/.
 By default, \ctanpkg{eqnlines} overwrites
@@ -3155,7 +3148,7 @@ is a popular extension of the \amsmath/ package.
 This package incorporates some of the features and improvements
 provided by the \ctanpkg{mathtools} package.
 Compatibility with the \ctanpkg{mathtools} package
-has been tested with v1.31 (2024/10/04),
+has been tested with v1.31 (\markdate{2024-10-04}),
 and it is maintained whether \ctanpkg{eqnlines}
 is loaded before or after \ctanpkg{mathtools}.
 Some features like emphasising equations via \ctanpkg{empheq}
@@ -3170,22 +3163,22 @@ which mainly aims at automation.
 This package cooperates with the package \ctanpkg{hyperref}
 to create anchors and references within the electronic document.
 Compatibility with the \ctanpkg{hyperref} package
-has been tested with v7.01l (2024/11/05).
+has been tested with v7.01l (\markdate{2024-11-05}).
 \item
 This package cooperates with the package \ctanpkg{beamer}
 in assigning default colours for math content.
 Compatibility with the \ctanpkg{beamer} package
-has been tested with v3.74 (2025/06/15).
+has been tested with v3.74 (\markdate{2025-06-15}).
 \item
 This package supports the display of labels and references
 through the package \ctanpkg{showkeys}.
 Compatibility with the \ctanpkg{showkeys} package
-has been tested with v3.21 (2024/05/23).
+has been tested with v3.21 (\markdate{2024-05-23}).
 \item
 This package supports placement of QED symbols within |proof|s
 through the |\qedhere| interface of the package \ctanpkg{amsthm}.
 Compatibility with the \ctanpkg{amsthm} package
-has been tested with v2.20.6 (2020/05/29).
+has been tested with v2.20.6 (\markdate{2020-05-29}).
 \item
 This package supports PDF tagging
 using the framework defined in \ctanpkg{tagpdf} and \ctanpkg{luamml}
@@ -3193,9 +3186,9 @@ using the framework defined in \ctanpkg{tagpdf} and \ctanpkg{luamml}
 It uses and adjusts some methods from
 the development framework \ctanpkg{latex-lab} (|math| and |amsmath| modules).
 Compatibility has been tested with the package versions
-\ctanpkg{tagpdf} v0.99w (2025/10/31),
-\ctanpkg{luamml} v0.7.0 (2025-10-20) and
-\ctanpkg{latex-lab} (2025/11/01).
+\ctanpkg{tagpdf} v0.99w (\markdate{2025-10-31}),
+\ctanpkg{luamml} v0.7.0 (\markdate{2025-10-20}) and
+\ctanpkg{latex-lab} (\markdate{2025-11-01}).
 Support for PDF tagging is preliminary, partial and fragile;
 it may break due to future developments of the PDF tagging framework.
 \item
@@ -3208,9 +3201,9 @@ Further features of either package and/or/in combination with \amsmath/
 may fail due to the patching by the package.
 The alternative package \ctanpkg{zref-clever} appears to work as intended.
 Incompatibility with the \ctanpkg{cleveref} package
-has been observed for v0.21.4 (2018/03/27).
+has been observed for v0.21.4 (\markdate{2018-03-27}).
 Compatibility with the \ctanpkg{zref-clever} package
-has been tested with v0.5.1 (2024/11/28).
+has been tested with v0.5.1 (\markdate{2024-11-28}).
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3317,7 +3310,7 @@ change bool registers to |char| 0 and 1 and |\||ifodd|
 \iffalse
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{vN.N.N+:} 20YY/MM/NN
+\paragraph{vN.N.N+:} \markdate{20YY-MM-NN}
 
 \begin{itemize}
 \item
@@ -3327,7 +3320,15 @@ change bool registers to |char| 0 and 1 and |\||ifodd|
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.15.2:} 2026/02/15
+\paragraph{v1.0:} \markdate{2026-02-15}
+
+\begin{itemize}
+\item
+stable release
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v0.15.2:} \markdate{2026-02-15}
 
 \begin{itemize}
 \item
@@ -3340,7 +3341,7 @@ added glue adjustment |classbreakskip| (muskip) for continued equation |\&;|
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.15.1:} 2026/02/12
+\paragraph{v0.15.1:} \markdate{2026-02-12}
 
 \begin{itemize}
 \item
@@ -3356,7 +3357,7 @@ added alignment modifier `\verbbar' for within terms
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.15:} 2026/02/07
+\paragraph{v0.15:} \markdate{2026-02-07}
 
 \begin{itemize}
 \item
@@ -3380,7 +3381,7 @@ added and adjusted options and controls for punctuation and equality relations
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.14.1:} 2026/01/30
+\paragraph{v0.14.1:} \markdate{2026-01-30}
 
 \begin{itemize}
 \item
@@ -3395,11 +3396,9 @@ and enable trailing modifiers
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.14:} 2026/01/28
+\paragraph{v0.14:} \markdate{2026-01-28}
 
 \begin{itemize}
-\item
-second release candidate for v1.0
 \item
 added |cases| and |matrix| environments
 \item
@@ -3420,11 +3419,9 @@ added option |spread*| to reduce line spread
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.13:} 2026/01/14
+\paragraph{v0.13:} \markdate{2026-01-14}
 
 \begin{itemize}
-\item
-release candidate for v1.0
 \item
 added trailing modifiers to conveniently adjust punctuation
 \item
@@ -3435,7 +3432,7 @@ fixed spacing issues with `|\\~|'
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.12.2:} 2026/01/13
+\paragraph{v0.12.2:} \markdate{2026-01-13}
 
 \begin{itemize}
 \item
@@ -3445,7 +3442,7 @@ use |\eqnlinesprovide| for starred variants separately
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.12.1:} 2025/12/28
+\paragraph{v0.12.1:} \markdate{2025-12-28}
 
 \begin{itemize}
 \item
@@ -3453,7 +3450,7 @@ fixed unwanted deferring of numbering when using |\\~| in continuous mode
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.12:} 2025/12/27
+\paragraph{v0.12:} \markdate{2025-12-27}
 
 \begin{itemize}
 \item
@@ -3471,7 +3468,7 @@ removed faulty option |crerror|
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.11:} 2025/10/25
+\paragraph{v0.11:} \markdate{2025-10-25}
 
 \begin{itemize}
 \item
@@ -3480,7 +3477,7 @@ to specify several levels of punctuation at once
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.10.1:} 2025/06/23
+\paragraph{v0.10.1:} \markdate{2025-06-23}
 
 \begin{itemize}
 \item
@@ -3488,7 +3485,7 @@ fix for setting default colours (|math text|) in \ctanpkg{beamer}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.10:} 2025/05/29
+\paragraph{v0.10:} \markdate{2025-05-29}
 
 \begin{itemize}
 \item
@@ -3512,7 +3509,7 @@ internal structure and minor interface changes
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.9:} 2025/05/18
+\paragraph{v0.9:} \markdate{2025-05-18}
 
 \begin{itemize}
 \item
@@ -3538,7 +3535,7 @@ thanks to Jon\'a\v s Dujava for various reports and suggestions
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.8:} 2025/04/30
+\paragraph{v0.8:} \markdate{2025-04-30}
 
 \begin{itemize}
 \item
@@ -3574,7 +3571,7 @@ several issues fixed
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.7.1:} 2025/04/09
+\paragraph{v0.7.1:} \markdate{2025-04-09}
 
 \begin{itemize}
 \item
@@ -3584,7 +3581,7 @@ backup all available math environments at the start using |backup| switch
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.7:} 2025/04/03
+\paragraph{v0.7:} \markdate{2025-04-03}
 
 \begin{itemize}
 \item
@@ -3600,7 +3597,7 @@ internal rearrangements
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.6.1:} 2025/03/27
+\paragraph{v0.6.1:} \markdate{2025-03-27}
 
 \begin{itemize}
 \item
@@ -3615,7 +3612,7 @@ padding now applies to single-line equations as well
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.6:} 2025/03/11
+\paragraph{v0.6:} \markdate{2025-03-11}
 
 \begin{itemize}
 \item
@@ -3636,7 +3633,7 @@ internal reorganisations
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.5:} 2025/02/25
+\paragraph{v0.5:} \markdate{2025-02-25}
 
 \begin{itemize}
 \item
@@ -3684,7 +3681,7 @@ thanks to Till Bargheer for testing and reports
 %
 % The code for the package is based on the \amsmath/ package,
 % see the reference manual for details.
-% It was forked at version v2.17t dated 2024/11/05.
+% It was forked at version v2.17t dated \markdate{2024-11-05}.
 % Most of the code was substantially redesigned
 % (macros renamed, reshuffled, enhanced),
 % but many of the underlying mechanisms were preserved.

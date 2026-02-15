@@ -1,4 +1,4 @@
-eqnlines v0.15.2
+eqnlines v1.0: 2026-02-15
 Copyright 2024-2026 Niklas Beisert
 
 Based on the latex package amsmath:
