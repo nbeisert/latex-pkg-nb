@@ -3,8 +3,8 @@
 
 #include relevant files
 !/.gitignore
-!/sesstime.dtx
-!/sesstime.ins
 !/Makefile
 !/README.txt
 !/sesstime.sty
+!/sesstime.dtx
+!/sesstime.ins

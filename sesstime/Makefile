@@ -1,35 +1,32 @@
-all: sesstime.pdf sesstime.sty stimsamp.pdf
+PKG = sesstime
+SAMP = $(PKG)-samp
 
-sesstime.pdf: sesstime.dtx
-	pdflatex sesstime.dtx
-	pdflatex sesstime.dtx
+all: $(PKG).sty $(PKG).pdf $(SAMP).pdf
 
-sesstime.sty: sesstime.dtx sesstime.ins
-	latex sesstime.ins
-stimsamp.tex: sesstime.dtx sesstime.ins
-	latex sesstime.ins
-stimsmp3.tex: sesstime.dtx sesstime.ins
-	latex sesstime.ins
-stimsmp4.tex: sesstime.dtx sesstime.ins
-	latex sesstime.ins
+$(PKG).sty $(SAMP).tex $(SAMP)-3.tex $(SAMP)-4.tex: $(PKG).dtx $(PKG).ins
+	latex $(PKG).ins
 
-stimsamp.pdf: stimsamp.tex sesstime.sty
-	pdflatex stimsamp.tex
-	pdflatex stimsamp.tex
+$(PKG).pdf: $(PKG).dtx $(PKG).sty
+	pdflatex $(PKG).dtx
+	pdflatex $(PKG).dtx
+
+$(SAMP).pdf: $(SAMP).tex $(PKG).sty
+	pdflatex $(SAMP).tex
+	pdflatex $(SAMP).tex
 
 touch:
-	touch sesstime.dtx
+	touch $(PKG).dtx
 
 clean:
-	rm -f stimsamp.aux stimsmp3.aux stimsmp4.aux stimsamp.los stimsamp.log
-	rm -f sesstime.aux sesstime.log	sesstime.out sesstime.toc sesstime.hd
+	rm -f $(PKG).aux $(PKG).log $(PKG).out $(PKG).toc $(PKG).hd
+	rm -f $(SAMP).aux $(SAMP)-3.aux $(SAMP)-4.aux $(SAMP).los $(SAMP).log $(SAMP).out
 
 clean-all: clean
-	rm -f sesstime.sty stimsamp.tex stimsmp3.tex stimsmp4.tex
-	rm -f stimsamp.pdf sesstime.pdf
+	rm -f $(PKG).sty
+	rm -f $(PKG).pdf
+	rm -f $(SAMP).tex $(SAMP)-3.tex $(SAMP)-4.tex $(SAMP).pdf
 
 clean-bak: clean-all
-	rm -f sesstime.dtx.bak sesstime.sty.bak sesstime.ins.bak
-	rm -f sesstime.dtx~ sesstime.sty~ sesstime.ins~
-	rm -f README.txt.bak Makefile.bak
-	rm -f README.txt~ Makefile~
+	rm -f $(PKG).dtx.bak $(PKG).sty.bak $(PKG).ins.bak
+	rm -f $(PKG).dtx~ $(PKG).sty~ $(PKG).ins~
+	rm -f README.txt.bak README.txt~ Makefile.bak Makefile~

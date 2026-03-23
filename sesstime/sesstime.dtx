@@ -1,7 +1,7 @@
 %
 % \iffalse meta-comment
 %
-% sesstime.dtx Copyright (C) 2016-2025 Niklas Beisert
+% sesstime.dtx Copyright (C) 2016-2026 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -16,15 +16,20 @@
 % The Current Maintainer of this work is Niklas Beisert.
 %
 % This work consists of the files sesstime.dtx and sesstime.ins
-% and the derived files sesstime.sty and stimsamp.tex
-% with stimsmp3.tex and stimsmp4.tex.
+% and the derived files sesstime.sty and sesstime-samp.tex
+% with sesstime-samp-3.tex and sesstime-samp-4.tex.
 %
-%<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{sesstime}[2025/03/25 v1.1.3 session timing marks]
-%<sample>\ProvidesFile{stimsamp.tex}[2025/03/25 v1.1.3 sample for sesstime]
-%<*driver>
-\def\thedate#1{2025/03/25}\def\theversion#1{v1.1.3}
-\ProvidesFile{sesstime.dtx}[\thedate{} \theversion{} sesstime reference manual file]
+%<package|sample>\NeedsTeXFormat{LaTeX2e}[1996-12-01]
+%<package>\ProvidesPackage{sesstime}[2026-03-23 v1.1.4 session timing marks]
+%<sample>\ProvidesFile{sesstime-samp.tex}[2026-03-23 v1.1.4 sample for sesstime]
+%<source>\ProvidesFile{sesstime-src.tex}[2026-03-23 v1.1.4 sesstime source code documentation]
+%<manual>\ProvidesFile{sesstime.tex}[2026-03-23 v1.1.4 sesstime reference manual]
+%<*main|manual|source>
+\def\thepkg/{sesstime}\def\thedate/{2026-03-23}\def\theversion/{v1.1.4}
+\def\thecopyright/{2016\texorpdfstring{--}{-}2026 Niklas Beisert}
+%<*main>
+\ProvidesFile{\thepkg/.dtx}[\thedate/ \theversion/ \thepkg/ package main file]
+%</main>
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -32,16 +37,33 @@
 \usepackage[hyperindex=false]{hyperref}
 \usepackage{hyperxmp}
 \usepackage[usenames]{color}
+\usepackage{longtable}
 
-\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
-\hypersetup{urlbordercolor={.5 1 1}}
-\hypersetup{linkbordercolor={1 .7 .7}}
-\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
-\hypersetup{keeppdfinfo=true}
-\hypersetup{pdfsource={}}
+%<*main>
+\title{The \markpkg{\thepkg/} Package}
+\hypersetup{pdftitle={The \thepkg/ Package}}
+\hypersetup{pdfsubject={Documentation for the LaTeX2e Package \thepkg/}}
+%</main>
+%<manual>\title{The \markpkg{\thepkg/} Package\\Reference Manual}
+%<manual>\hypersetup{pdftitle={The \thepkg/ Package -- Reference Manual}}
+%<manual>\hypersetup{pdfsubject={Reference Manual for the LaTeX2e Package \thepkg/}}
+%<source>\title{The \markpkg{\thepkg/} Package\\Source Code Documentation}
+%<source>\hypersetup{pdftitle={The \thepkg/ Package -- Source Code Documentation}}
+%<source>\hypersetup{pdfsubject={Documented Source for the LaTeX2e Package \thepkg/}}
+\author{Niklas Beisert\\[2ex]
+  Institut f\"ur Theoretische Physik\\
+  Eidgen\"ossische Technische Hochschule Z\"urich\\
+  Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
+  \href{mailto:nbeisert@itp.phys.ethz.ch}
+  {\texttt{nbeisert@itp.phys.ethz.ch}}}
+\hypersetup{pdfauthor={Niklas Beisert}}
+\date{\theversion/: \markdate{\thedate/}\\[1ex]
+\url{https://ctan.org/pkg/\thepkg/}\\[0.5ex]
+\url{https://github.com/nbeisert/latex-pkg-nb}}
+
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfurl={https://ctan.org/pkg/sesstime}}
-\hypersetup{pdfcopyright={Copyright 2016-2025 Niklas Beisert.
+\hypersetup{pdfurl={https://ctan.org/pkg/\thepkg/}}
+\hypersetup{pdfcopyright={Copyright \thecopyright/.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
@@ -54,32 +76,56 @@
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
 \hypersetup{pdfcontacturl={https://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
+\hypersetup{keeppdfinfo=true}
+\hypersetup{pdfsource={}}
+\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
+\hypersetup{urlbordercolor={.5 1 1}}
+\hypersetup{linkbordercolor={1 .7 .7}}
+\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
+
+\parskip1ex
+\parindent0pt
+\edef\itemize{\unexpanded\expandafter{\itemize}\parskip0pt}
+
 \newcommand{\markpkg}[1]{\textsf{#1}}
+\newcommand{\markdate}[1]{\textsf{#1}}
 \newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
 \newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
 \newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\markpkg{#1}}}
 
-\def\textvert{\texttt{\char"7C}}
+\def\verbbar{\texttt{\char"7C}}
+\def\verbpkg{\texttt{\thepkg/}}
+\def\thepkgctan/{\ctanpkg{\thepkg/}}
 
-\parskip1ex
-\parindent0pt
-\let\olditemize\itemize
-\def\itemize{\olditemize\parskip0pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\makeatletter
+\newcommand{\timingprint}[2][l]{%
+  \ifhmode\par\fi
+  \ifvmode
+    \@bsphack
+    \dimen@\prevdepth
+    \nointerlineskip
+    \if r#1%
+      \hbox{\smash{\rlap{\hspace{\textwidth}\parbox[t]{1cm}%
+        {\raggedright\renewcommand{\bfdefault}{b}#2}}}}%
+    \else
+      \hbox{\smash{\llap{\parbox[t]{1cm}%
+        {\raggedleft\renewcommand{\bfdefault}{b}#2}}}}%
+    \fi
+    \prevdepth\dimen@
+    \@esphack
+  \fi}
+\newcommand{\printmark}[1]{\timingprint{\footnotesize#1}}
+\newcommand{\printremark}[1]{%
+  \timingprint[r]{\tiny\sffamily\hrule#1\hrule}}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
-\title{The \markpkg{sesstime} Package}
-\hypersetup{pdftitle={The sesstime Package}}
-\author{Niklas Beisert\\[2ex]
-  Institut f\"ur Theoretische Physik\\
-  Eidgen\"ossische Technische Hochschule Z\"urich\\
-  Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
-  \href{mailto:nbeisert@itp.phys.ethz.ch}
-  {\texttt{nbeisert@itp.phys.ethz.ch}}}
-\hypersetup{pdfauthor={Niklas Beisert}}
-\hypersetup{pdfsubject={Manual for the LaTeX2e Package sesstime}}
-\date{\thedate{}, \theversion{}\\[1ex]
-\url{https://ctan.org/pkg/sesstime}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -96,31 +142,8 @@ estimate the progress throughout the course.
 \tableofcontents
 \endgroup
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\makeatletter
-\newcommand{\timingprint}[2][l]{%
-  \ifhmode\par\fi%
-  \ifvmode%
-    \@bsphack%
-    \dimen@\prevdepth%
-    \nointerlineskip%
-    \if r#1%
-      \hbox{\smash{\rlap{\hspace{\textwidth}\parbox[t]{1cm}%
-        {\raggedright\renewcommand{\bfdefault}{b}#2}}}}%
-    \else%
-      \hbox{\smash{\llap{\parbox[t]{1cm}%
-        {\raggedleft\renewcommand{\bfdefault}{b}#2}}}}%
-    \fi%
-    \prevdepth\dimen@%
-    \@esphack%
-  \fi}
-\newcommand{\printmark}[1]{\timingprint{\footnotesize#1}}
-\newcommand{\printremark}[1]{%
-  \timingprint[r]{\tiny\sffamily\hrule#1\hrule}}
-\makeatother
-
+%<*main|manual>
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
@@ -802,27 +825,27 @@ or&|\timingconfigure[|\textit{cond}|]{|\textit{opts}|}|
 Below we provide a complete list of available options:
 %
 \begin{itemize}
-\item |print|[|=true|\textvert|false|]
+\item |print|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable printing all timing marks.
 
-\item |block|[|=true|\textvert|false|]
+\item |block|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable printing block marks.
 
-\item |chapter|[|=true|\textvert|false|]
+\item |chapter|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable printing chapter marks.
 
-\item |session|[|=true|\textvert|false|]
+\item |session|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable printing session marks.
 
-\item |comment|[|=true|\textvert|false|]
+\item |comment|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable printing comments.
 
-\item |warning|[|=true|\textvert|false|]
+\item |warning|[|=true|\textbar|false|]
 (no value implies |true|, initially set to |true|) --
 Enable/disable printing warnings.
 
@@ -878,7 +901,7 @@ conditionally turn on automatic determination of sessions.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-Copyright \copyright{} 2016--2025 Niklas Beisert
+Copyright \copyright{} \thecopyright/
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
@@ -892,41 +915,41 @@ This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainer of this work is Niklas Beisert.
 
-This work consists of the files |README.txt|, |sesstime.ins| and |sesstime.dtx|
-as well as the derived files |sesstime.sty|, |stimsamp.tex|
-with |stimsmp3.tex|, |stimsmp4.tex| and |sesstime.pdf|.
+This work consists of the files
+|README.txt|, \verbpkg|.ins| and \verbpkg|.dtx|
+as well as the derived files listed below.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Files and Installation}
 
 The package consists of the files:
 %
-\begin{center}
-\begin{tabular}{ll}
+\begin{longtable}{ll}
     |README.txt|   & readme file \\
-    |sesstime.ins| & installation file \\
-    |sesstime.dtx| & source file \\
-    |sesstime.sty| & package file \\
-    |stimsamp.tex| & sample file \\
-    |stimsmp3.tex| & sample include file \\
-    |stimsmp4.tex| & sample include file \\
-    |sesstime.pdf| & manual
-\end{tabular}
-\end{center}
+    \verbpkg|.ins| & installation file \\
+    \verbpkg|.dtx| & source file \\
+    \verbpkg|.sty| & package file \\
+    \verbpkg|-samp.tex| & sample file \\
+    \verbpkg|-samp-3.tex| & sample include file \\
+    \verbpkg|-samp-4.tex| & sample include file \\
+    \verbpkg|.pdf| & documentation \\
+\end{longtable}
 %
 The distribution consists of the files
-|README.txt|, |sesstime.ins| and |sesstime.dtx|.
+|README.txt|, \verbpkg|.ins| and \verbpkg|.dtx|.
 %
 \begin{itemize}
 \item
-Run (pdf)\LaTeX{} on |sesstime.dtx|
-to compile the manual |sesstime.pdf| (this file).
+Run \LaTeX{} on \verbpkg|.ins| to create the package \verbpkg|.sty|
+and further documentation files.
 \item
-Run \LaTeX{} on |sesstime.ins| to create the package |sesstime.sty|
-and the samples |stimsamp.tex| with include files
-|stimsmp3.tex| and |stimsmp4.tex|.
-Copy the file |sesstime.sty| to an appropriate directory of your \LaTeX{}
-distribution, e.g.\ \textit{texmf-root}|/tex/latex/sesstime|.
+Copy the file \verbpkg|.sty| to an appropriate directory of your \LaTeX{}
+distribution, e.g.\ \textit{texmf-root}|/tex/latex/|\verbpkg.
+\item
+Alternatively, you may copy \verbpkg|.sty| to your project directory.
+\item
+Run (pdf)\LaTeX{} on \verbpkg|.dtx|
+to compile the documentation \verbpkg|.pdf| (this file).
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -939,7 +962,7 @@ This package uses the package \ctanpkg{keyval}
 from the \ctanpkg{graphics} bundle
 to process the options for the package, environments and macros.
 Compatibility with the \ctanpkg{keyval} package
-has been tested with v1.15 (2014/10/28).
+has been tested with v1.15 (\markdate{2014-10-28}).
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -972,18 +995,30 @@ Ignore leading and trailing spaces in the list of flags.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \iffalse
-\paragraph{vN.N.N+:} 20YY/MM/NN
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{vN.N.N+:} \markdate{20YY-MM-DD}
 
 \begin{itemize}
 \item
 \ldots
 \end{itemize}
+
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.1.3:} 2025/03/25
+\paragraph{v1.1.4:} \markdate{2026-03-23}
+
+\begin{itemize}
+\item
+use elementary register manipulations
+\item
+package maintenance
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1.3:} \markdate{2025-03-25}
 
 \begin{itemize}
 \item
@@ -991,16 +1026,16 @@ maintenance and manual update
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.12:} 2019/01/17
+\paragraph{v1.12:} \markdate{2019-01-17}
 
 \begin{itemize}
 \item
-bugfix for changed behaviour of |\smash| in \LaTeXe{} 2018/12/01
+bugfix for changed behaviour of |\smash| in \LaTeXe{} \markdate{2018-12-01}
 %https://github.com/latex3/latex2e/issues/108
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.11:} 2018/01/17
+\paragraph{v1.11:} \markdate{2018-01-17}
 
 \begin{itemize}
 \item
@@ -1008,7 +1043,7 @@ bugfix for section titles including |\texorpdfstring|
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.1:} 2018/01/06
+\paragraph{v1.1:} \markdate{2018-01-06}
 
 \begin{itemize}
 \item
@@ -1019,7 +1054,7 @@ adjust depth in list of sessions
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.0:} 2017/05/01
+\paragraph{v1.0:} \markdate{2017-05-01}
 
 \begin{itemize}
 \item
@@ -1039,7 +1074,7 @@ conditional depending on flags
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.7:} 2017/04/17
+\paragraph{v0.7:} \markdate{2017-04-17}
 
 \begin{itemize}
 \item
@@ -1055,7 +1090,7 @@ public interface streamlined
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.55 / v0.6:} 2017/04/01
+\paragraph{v0.55 / v0.6:} \markdate{2017-04-01}
 
 \begin{itemize}
 \item
@@ -1067,33 +1102,47 @@ block start/split/stop/next uniformised; lapse added
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.5:} 2016/11/03
+\paragraph{v0.5:} \markdate{2016-11-03}
 
 \begin{itemize}
 \item
 basic functionality
 \end{itemize}
 
+%</main|manual>
+%<*main>
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\appendix
 
+\appendix
+%</main>
+%<*main|source>
+\raggedright
 \settowidth\MacroIndent{\rmfamily\scriptsize 000\ }
 
- \DocInput{sesstime.dtx}
+\DocInput{\thepkg/.dtx}
+%</main|source>
 
 \end{document}
-%</driver>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%</main|manual|source>
 % \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Sample File}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Sample}
 % \label{sec:sample}
-%\iffalse
+% \iffalse
 %<*sample>
-%\fi
+% \fi
 %
 % In this section we provide an example of how to use
 % some of the \ctanpkg{sesstime} features.
@@ -1264,8 +1313,8 @@ by inactive timing mark\par
 %
 % Test of interoperability with |\include| mechanism:
 %    \begin{macrocode}
-\include{stimsmp3}
-\include{stimsmp4}
+\include{\jobname-3}
+\include{\jobname-4}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1357,17 +1406,17 @@ the list of sessions
 %    \begin{macrocode}
 \end{document}
 %    \end{macrocode}
-%\iffalse
+% \iffalse
 %</sample>
-%\fi
+% \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Chapters 3 and 4 Include Files.}
 %
-% A standard chapter in an included file |stimsmp3.tex|:
-%\iffalse
+% A standard chapter in an included file \verbpkg|-samp-3.tex|:
+% \iffalse
 %<*sample3>
-%\fi
+% \fi
 %    \begin{macrocode}
 \section{three}
 \timingchapter
@@ -1384,15 +1433,15 @@ the list of sessions
 \timingstop{60}
 \timingchapterend
 %    \end{macrocode}
-%\iffalse
+% \iffalse
 %</sample3>
-%\fi
+% \fi
 %
-% Another chapter in an included file |stimsmp4.tex|.
+% Another chapter in an included file \verbpkg|-samp-4.tex|.
 % Test a very long interval to let automatic session generation overflow:
-%\iffalse
+% \iffalse
 %<*sample4>
-%\fi
+% \fi
 %    \begin{macrocode}
 \section{four}
 \timingchapter
@@ -1410,19 +1459,19 @@ the list of sessions
 \timingstop{60}
 \timingchapterend
 %    \end{macrocode}
-%\iffalse
+% \iffalse
 %</sample4>
-%\fi
+% \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Implementation}
 % \label{sec:implementation}
-%\iffalse
+% \iffalse
 %<*package>
-%\fi
+% \fi
 %
-% In this section we describe the package |sesstime.sty|.
+% In this section we describe the package \verbpkg|.sty|.
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Required Packages.}
@@ -1441,8 +1490,8 @@ the list of sessions
 % The following code compares flags for a command
 % against a global list of flags for optional processing of the command.
 %
-% \begin{macro}{\sti@processflags}
-% \begin{macro}{\ifsti@flag}
+% \macro{\sti@processflags}
+% \macro{\ifsti@flag}
 % Declare variables for processing.
 % |\sti@flags| stores the list of selected flags.
 % |\ifsti@flag| is set by |\sti@processflags|.
@@ -1457,28 +1506,25 @@ the list of sessions
 % First key sets default to opposite of specified condition:
 %    \begin{macrocode}
 \define@key{sti@flag}{if}{%
-  \ifsti@flaginit\else\sti@flagfalse\fi\sti@flaginittrue%
+  \ifsti@flaginit\else\sti@flagfalse\fi\sti@flaginittrue
   \def\sti@tmpa{#1}%
   \@for\sti@tmpb:=\sti@flags\do{\ifx\sti@tmpb\sti@tmpa\sti@flagtrue\fi}}
 \define@key{sti@flag}{not}{%
-  \ifsti@flaginit\else\sti@flagtrue\fi\sti@flaginittrue%
+  \ifsti@flaginit\else\sti@flagtrue\fi\sti@flaginittrue
   \def\sti@tmpa{#1}%
   \@for\sti@tmpb:=\sti@flags\do{\ifx\sti@tmpb\sti@tmpa\sti@flagfalse\fi}}
 %    \end{macrocode}
 % Initialise and process keys:
 %    \begin{macrocode}
-\newcommand{\sti@processflags}[1]{\sti@flagtrue\sti@flaginitfalse%
+\newcommand{\sti@processflags}[1]{\sti@flagtrue\sti@flaginitfalse
   \setkeys{sti@flag}{#1}}
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\timingif}
+% \macro{\timingif}
 % Conditional processing:
 %    \begin{macrocode}
 \newcommand{\timingif}[2][]{\sti@processflags{#1}\ifsti@flag#2\fi}
 %    \end{macrocode}
-% \end{macro}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Internal Definitions.}
@@ -1498,8 +1544,8 @@ the list of sessions
 \newif\ifsti@printchapter\sti@printchaptertrue
 \newif\ifsti@printwarning\sti@printwarningtrue
 \newif\ifsti@printcomment\sti@printcommenttrue
-\newdimen\sti@widthl\setlength{\sti@widthl}{1cm}
-\newdimen\sti@widthr\setlength{\sti@widthr}{1cm}
+\newdimen\sti@widthl\sti@widthl1cm\relax
+\newdimen\sti@widthr\sti@widthr1cm\relax
 \newcounter{sti@autosession}
 \def\sti@depthsec{3}
 \def\sti@depthpar{5}
@@ -1516,26 +1562,24 @@ the list of sessions
 \define@key{sti@}{session}[true]{\csname sti@printsession#1\endcsname}
 \define@key{sti@}{warning}[true]{\csname sti@printwarning#1\endcsname}
 \define@key{sti@}{comment}[true]{\csname sti@printcomment#1\endcsname}
-\define@key{sti@}{width}{\setlength{\sti@widthl}{#1}%
-  \setlength{\sti@widthr}{#1}}
-\define@key{sti@}{widthl}{\setlength{\sti@widthl}{#1}}
-\define@key{sti@}{widthr}{\setlength{\sti@widthr}{#1}}
-\define@key{sti@}{autosession}{\setcounter{sti@autosession}{#1}}
+\define@key{sti@}{width}{\sti@widthl\dimexpr#1\relax\sti@widthl\sti@widthr}
+\define@key{sti@}{widthl}{\sti@widthl\dimexpr#1\relax}
+\define@key{sti@}{widthr}{\sti@widthr\dimexpr#1\relax}
+\define@key{sti@}{autosession}{\c@sti@autosession\numexpr#1\relax}
 \define@key{sti@}{flags}{\def\sti@flags{#1}}
 \define@key{sti@}{depthsec}{\def\sti@depthsec{#1}}
 \define@key{sti@}{depthpar}{\def\sti@depthpar{#1}}
 %    \end{macrocode}
 
-% \begin{macro}{\timingconfigure}
+% \macro{\timingconfigure}
 % Configure package options:
 %    \begin{macrocode}
 \newcommand{\timingconfigure}[2][]{%
   \sti@processflags{#1}%
-  \ifsti@flag%
+  \ifsti@flag
     \setkeys{sti@}{#2}%
   \fi}
 %    \end{macrocode}
-% \end{macro}
 
 % Pass undeclared options on to \ctanpkg{keyval} processing:
 %    \begin{macrocode}
@@ -1576,41 +1620,40 @@ the list of sessions
 %    \end{macrocode}
 % Temporary counter:
 %    \begin{macrocode}
-\newcount\c@sti@tmp
+\newcount\sti@delta
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Print Marks.}
 %
-% \begin{macro}{\timingprint}
+% \macro{\timingprint}
 % Print a timing mark into left or right margin.
 % Leave horizontal mode and print only in vertical mode:
 %    \begin{macrocode}
 \newcommand{\timingprint}[2][l]{%
-  \ifsti@print%
-    \ifhmode\par\fi%
-    \ifvmode%
-      \@bsphack%
-      \dimen@\prevdepth%
-      \nointerlineskip%
+  \ifsti@print
+    \ifhmode\par\fi
+    \ifvmode
+      \@bsphack
+      \dimen@\prevdepth
+      \nointerlineskip
       \if r#1%
         \hbox{\smash{\rlap{\hspace{\textwidth}\parbox[t]{\sti@widthr}%
           {\raggedright\renewcommand{\bfdefault}{b}#2}}}}%
-      \else%
+      \else
         \hbox{\smash{\llap{\parbox[t]{\sti@widthl}%
           {\raggedleft\renewcommand{\bfdefault}{b}#2}}}}%
-      \fi%
-      \prevdepth\dimen@%
-      \@esphack%
-    \fi%
-  \else%
-    \ignorespaces%
+      \fi
+      \prevdepth\dimen@
+      \@esphack
+    \fi
+  \else
+    \ignorespaces
   \fi}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timingprintmark}
-% \begin{macro}{\timingprintremark}
+% \macro{\timingprintmark}
+% \macro{\timingprintremark}
 % Print a timing mark or a remark:
 %    \begin{macrocode}
 \providecommand{\timingprintmark}[1]{%
@@ -1618,36 +1661,32 @@ the list of sessions
 \providecommand{\timingprintremark}[1]{%
   \timingprint[r]{\tiny\sffamily\hrule#1\hrule}}
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\sti@warn}
+% \macro{\sti@warn}
 % Print a warning message:
 %    \begin{macrocode}
-\newcommand{\sti@warn}[2][l]{\ifsti@printwarning%
+\newcommand{\sti@warn}[2][l]{\ifsti@printwarning
   \timingprint[#1]{\scriptsize\textbf{warn}\\#2}\fi}
 %    \end{macrocode}
-% \end{macro}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Comments.}
 %
-% \begin{macro}{\timingprintcomment}
+% \macro{\timingprintcomment}
 % Print a comment:
 %    \begin{macrocode}
 \newcommand{\timingcomment}[2][]{%
   \sti@processflags{#1}%
-  \ifsti@flag%
-    \ifsti@printcomment\timingprintremark{#2}\fi%
+  \ifsti@flag
+    \ifsti@printcomment\timingprintremark{#2}\fi
   \fi}
 %    \end{macrocode}
-% \end{macro}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Sessions.}
 %
-% \begin{macro}{\sti@notesessiontotal}
-% \begin{macro}{\sti@writesessiontotal}
+% \macro{\sti@notesessiontotal}
+% \macro{\sti@writesessiontotal}
 % The following code remembers the duration of sessions.
 % The duration is stored in the macro |\sti@sessiontotal@|\textit{session}:
 %    \begin{macrocode}
@@ -1664,53 +1703,46 @@ the list of sessions
 % Writes the duration of the current session to the |.aux| file:
 %    \begin{macrocode}
 \newcommand{\sti@writesessiontotal}[1]
-  {\immediate\write\@auxout{\string\sti@notesessiontotal%
-    {\arabic{sti@session}}{#1}}}
+  {\immediate\write\@auxout{\string\sti@notesessiontotal
+    {\thesti@session}{#1}}}
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\timingsessiontotal}
+% \macro{\timingsessiontotal}
 % Save the duration of session number in the argument into |\timingreturn|.
 % Return the optional argument if the duration is unavailable:
 %    \begin{macrocode}
-\newcommand\timingsessiontotal[2][??]{%
-  \expandafter\let\expandafter\timingreturn%
-    \csname sti@sessiontotal@#2\endcsname%
+\newcommand{\timingsessiontotal}[2][??]{%
+  \expandafter\let\expandafter\timingreturn
+    \csname sti@sessiontotal@#2\endcsname
   \ifx\timingreturn\relax\def\timingreturn{#1}\fi}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\sti@recordtitle}
-% \begin{macro}{\sti@secnum}
-% \begin{macro}{\sti@sectitle}
-% \begin{macro}{\sti@partitle}
+% \macro{\sti@recordtitle}
+% \macro{\sti@secnum}
+% \macro{\sti@sectitle}
+% \macro{\sti@partitle}
 % Record the present sectioning title and number
 % for usage in the list of sessions.
 % The depth in the first parameter in comparison to
 % |\sti@depthsec| and |\sti@depthpar| determines
 % whether the information is stored as section or paragraph:
 %    \begin{macrocode}
-\newcommand{\sti@recordtitle}[4]{\ifnum#2>\sti@depthpar\else%
-  \ifnum#2>\sti@depthsec%
+\newcommand{\sti@recordtitle}[4]{\ifnum#2>\sti@depthpar\else
+  \ifnum#2>\sti@depthsec
     \gdef\sti@partitle{#4}%
-  \else%
+  \else
     \xdef\sti@secnum{#3}%
     \gdef\sti@sectitle{#4}%
     \gdef\sti@partitle{}%
   \fi\fi}
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\@startsection}
+% \macro{\@startsection}
 % The following code hooks into the definition
 % of |\@startsection| to record titles and numbers:
 %    \begin{macrocode}
-\let\sti@old@startsection\@startsection%
-\def\@startsection#1#2#3#4#5#6{\@ifstar%
+\let\sti@old@startsection\@startsection
+\def\@startsection#1#2#3#4#5#6{\@ifstar
     {\sti@ssect{#1}{#2}{#3}{#4}{#5}{#6}}%
     {\@dblarg{\sti@sect{#1}{#2}{#3}{#4}{#5}{#6}}}}
 \def\sti@ssect#1#2#3#4#5#6#7{\sti@recordtitle{#1}{#2}{}{#7}%
@@ -1719,9 +1751,8 @@ the list of sessions
   \sti@recordtitle{#1}{#2}{\csname the#1\endcsname}{#7}}%
   \sti@old@startsection{#1}{#2}{#3}{#4}{#5}{#6}[#7]{#8}}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\chapter}
+% \macro{\chapter}
 % The following code similarly hooks into the definitions
 % of |\chapter| (if defined):
 %    \begin{macrocode}
@@ -1733,9 +1764,8 @@ the list of sessions
   \sti@recordtitle{chapter}{0}{\thechapter}{#1}}\sti@old@chapter[#1]{#2}}
 \fi
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timingprintsession}
+% \macro{\timingprintsession}
 % Print the mark for the current session.
 % Indicate the number and duration of the session as well as
 % the time into the session at which the label is printed (if applicable).
@@ -1745,26 +1775,33 @@ the list of sessions
 %    \begin{macrocode}
 \providecommand{\timingprintsession}[2]{\timingprintremark{%
   session #1%
-  \timingsessiontotal[0]{#1}\ifnum\timingreturn>0%
+  \timingsessiontotal[0]{#1}\ifnum\timingreturn>\z@
   \\(\timingreturn\ min)%
-  \ifnum #2>0\\at #2 min\fi\fi\vphantom{g}}}
+  \ifnum #2>\z@\\at #2 min\fi\fi\vphantom{g}}}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\sti@startsession}
+% \macro{\sti@startsession}
 % Initialise a new session:
 %    \begin{macrocode}
 \newcommand{\sti@startsession}{%
-  \setcounter{sti@insession}{1}%
-  \stepcounter{sti@session}%
-  \ifsti@printsession%
-    \timingprintsession{\arabic{sti@session}}{\arabic{sti@sessiontime}}%
-  \fi%
+  \c@sti@insession\@ne
+  \advance\c@sti@session\@ne
+  \ifsti@printsession
+    \timingprintsession\thesti@session\thesti@sessiontime
+  \fi
   \sti@addsessionline}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\sti@checksession}
+% \macro{\sti@endsession}
+% Close a session:
+%    \begin{macrocode}
+\newcommand{\sti@endsession}[1]{%
+  \sti@writesessiontotal{#1}%
+  \c@sti@insession\z@
+}
+%    \end{macrocode}
+
+% \macro{\sti@checksession}
 % Check whether a new session should be started in autosession mode
 % based on the time elapsed since the start of the present session.
 % Assumes that the session has a fixed duration so that the
@@ -1774,61 +1811,59 @@ the list of sessions
 % Recurse if necessary:
 %    \begin{macrocode}
 \newcommand{\sti@checksession}{%
-  \ifnum\value{sti@autosession}>0%
-    \ifnum\value{sti@insession}=0%
-      \setcounter{sti@sessiontime}{0}%
-      \timingsession%
-    \else%
-      \ifnum\value{sti@sessiontime}<\value{sti@autosession}\else%
-        \sti@writesessiontotal{\arabic{sti@autosession}}%
-        \addtocounter{sti@sessiontime}{-\value{sti@autosession}}%
-        \sti@startsession%
-        \sti@checksession%
-      \fi%
-    \fi%
+  \ifnum\c@sti@autosession>\z@
+    \ifodd\c@sti@insession
+      \ifnum\c@sti@sessiontime<\c@sti@autosession\else
+        \sti@endsession\thesti@autosession
+        \advance\c@sti@sessiontime-\c@sti@autosession
+        \sti@startsession
+        \sti@checksession
+      \fi
+    \else
+      \c@sti@sessiontime\z@
+      \sti@startsession
+    \fi
   \fi}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timingsession}
+% \macro{\timingsession}
 % Start a new session. End old session if necessary:
 %    \begin{macrocode}
 \newcommand{\timingsession}[1][]{%
-  \timingsessionend[#1]%
   \sti@processflags{#1}%
-  \ifsti@flag%
-    \setcounter{sti@sessiontime}{0}%
-    \sti@startsession%
+  \ifsti@flag
+    \ifodd\c@sti@insession
+      \sti@endsession\thesti@sessiontime
+    \fi
+    \c@sti@sessiontime\z@
+    \sti@startsession
   \fi\ignorespaces}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timingsessionend}
+% \macro{\timingsessionend}
 % End the session (if started).
 % Remember session duration:
 %    \begin{macrocode}
 \newcommand{\timingsessionend}[1][]{%
   \sti@processflags{#1}%
-  \ifsti@flag%
-    \ifnum\value{sti@insession}=1%
-      \sti@writesessiontotal{\thesti@sessiontime}%
-      \setcounter{sti@insession}{0}%
-      \setcounter{sti@sessiontime}{0}%
-    \fi%
+  \ifsti@flag
+    \ifodd\c@sti@insession
+      \sti@endsession\thesti@sessiontime
+      \c@sti@sessiontime\z@
+    \fi
   \fi\ignorespaces}
 %    \end{macrocode}
 % End the session at the end of the document:
 %    \begin{macrocode}
 \AtEndDocument{\timingsessionend}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timinglistofsessions}
-% \begin{macro}{\timingsessionline}
-% \begin{macro}{\sti@addsessionline}
+% \macro{\timinglistofsessions}
+% \macro{\timingsessionline}
+% \macro{\sti@addsessionline}
 % Display the list of sessions (without a section title):
 %    \begin{macrocode}
-\newcommand\timinglistofsessions{\@starttoc{los}}
+\newcommand{\timinglistofsessions}{\@starttoc{los}}
 %    \end{macrocode}
 % Display one line within the list of session.
 % The arguments are
@@ -1840,26 +1875,23 @@ the list of sessions
 %    \begin{macrocode}
 \providecommand{\timingsessionline}[5]{\ \\%
   \makebox[3em][r]{#1: }\makebox[2.5em][r]{#3. }%
-  \def\sti@tmp{#5}\ifx\sti@tmp\@empty #4\else\S\ #5\fi%
-  \timingsessiontotal[0]{#1}\ifnum\timingreturn>0%
-  \ [\timingreturn\ min\ifnum #2>0; #2 min into\fi]\fi}
+  \def\sti@tmp{#5}\ifx\sti@tmp\@empty #4\else\S\ #5\fi
+  \timingsessiontotal[0]{#1}\ifnum\timingreturn>\z@
+  \ [\timingreturn\ min\ifnum #2>\z@; #2 min into\fi]\fi}
 %    \end{macrocode}
 % Add a line to the list of sessions:
 %    \begin{macrocode}
 \newcommand{\sti@addsessionline}{%
-  \addtocontents{los}{\protect\timingsessionline%
+  \addtocontents{los}{\protect\timingsessionline
     {\thesti@session}{\thesti@sessiontime}%
     {\sti@secnum}{\sti@sectitle}{\sti@partitle}}}%
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
-% \end{macro}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Chapters.}
 %
-% \begin{macro}{\sti@notechaptertotal}
-% \begin{macro}{\sti@writechaptertotal}
+% \macro{\sti@notechaptertotal}
+% \macro{\sti@writechaptertotal}
 % The following code remembers the duration of chapters.
 % Store the duration in the macro
 % |\sti@chaptertotal@|\textit{chapter}:
@@ -1876,15 +1908,13 @@ the list of sessions
 %    \end{macrocode}
 % Write the duration of the current chapter to the |.aux| file:
 %    \begin{macrocode}
-\newcommand{\sti@writechaptertotal}
-  {\immediate\write\@auxout{\string\sti@notechaptertotal%
-    {\arabic{sti@chapter}}{\thesti@chaptertime}}}
+\newcommand{\sti@writechaptertotal}{%
+  \immediate\write\@auxout{\string\sti@notechaptertotal
+    {\thesti@chapter}{\thesti@chaptertime}}}
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\timingchapterlabel}
-% \begin{macro}{\sti@notechapterlabel}
+% \macro{\timingchapterlabel}
+% \macro{\sti@notechapterlabel}
 % The following code remembers labels for chapters.
 % Store the chapter number in the macro
 % |\sti@chapterlabel@|\textit{label}:
@@ -1901,99 +1931,94 @@ the list of sessions
 %    \end{macrocode}
 % Write a label for the current chapter to the |.aux| file:
 %    \begin{macrocode}
-\newcommand{\timingchapterlabel}[1]
-  {\immediate\write\@auxout{\string\sti@notechapterlabel%
-    {#1}{\arabic{sti@chapter}}}}
+\newcommand{\timingchapterlabel}[1]{%
+  \immediate\write\@auxout{\string\sti@notechapterlabel
+    {#1}{\thesti@chapter}}}
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\timingchaptertotal}
+% \macro{\timingchaptertotal}
 % Save the total duration of a chapter into the macro |\timingreturn|.
 % Return the optional argument if unavailable.
 % Version specifying the chapter by its number:
 %    \begin{macrocode}
-\newcommand\sti@chaptertotalnumber[2][??]{%
-  \expandafter\let\expandafter\timingreturn%
-    \csname sti@chaptertotal@#2\endcsname%
+\newcommand{\sti@chaptertotalnumber}[2][??]{%
+  \expandafter\let\expandafter\timingreturn
+    \csname sti@chaptertotal@#2\endcsname
   \ifx\timingreturn\relax\def\timingreturn{#1}\fi}
 %    \end{macrocode}
 % Version specifying the chapter by its label:
 %    \begin{macrocode}
-\newcommand\sti@chaptertotallabel[2][??]{%
-  \expandafter\let\expandafter\timingreturn%
-    \csname sti@chapterlabel@#2\endcsname%
-  \ifx\timingreturn\relax\else%
-    \expandafter\let\expandafter\timingreturn%
-      \csname sti@chaptertotal@\timingreturn\endcsname\fi%
+\newcommand{\sti@chaptertotallabel}[2][??]{%
+  \expandafter\let\expandafter\timingreturn
+    \csname sti@chapterlabel@#2\endcsname
+  \ifx\timingreturn\relax\else
+    \expandafter\let\expandafter\timingreturn
+      \csname sti@chaptertotal@\timingreturn\endcsname\fi
   \ifx\timingreturn\relax\def\timingreturn{#1}\fi}
 %    \end{macrocode}
 % Version selection:
 %    \begin{macrocode}
-\newcommand\timingchaptertotal{%
-  \@ifstar{\sti@chaptertotalnumber}{\sti@chaptertotallabel}}
+\newcommand{\timingchaptertotal}{%
+  \@ifstar\sti@chaptertotalnumber\sti@chaptertotallabel}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timingprintchapter}
+% \macro{\timingprintchapter}
 % Print the mark for the present chapter:
 %    \begin{macrocode}
 \providecommand\timingprintchapter[1]{\timingprintmark{\raisebox{2.8ex}{%
   \textbf{\timingchaptertotal*{#1}\timingreturn}%
   \rlap{\kern0.4em$\star$}\kern1.2em}}}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timingchapter}
+% \macro{\timingchapter}
 % Start a new chapter. End old chapter if necessary:
 %    \begin{macrocode}
 \newcommand{\timingchapter}[1][]{%
   \sti@processflags{#1}%
-  \ifsti@flag%
-    \ifnum\value{sti@inblock}=1%
+  \ifsti@flag
+    \ifodd\c@sti@inblock
       \PackageWarning{sesstime}{chapter: still in block; stopped}%
       \sti@warn{chap}%
-      \sti@blockstopby{0}%
-    \fi%
-    \timingchapterend%
-    \setcounter{sti@inchapter}{1}%
-    \setcounter{sti@chaptertime}{0}%
-    \stepcounter{sti@chapter}%
-    \ifsti@printchapter\timingprintchapter{\arabic{sti@chapter}}\fi%
+      \sti@blockstop{}{}{0}%
+    \fi
+    \timingchapterend
+    \c@sti@inchapter\@ne
+    \c@sti@chaptertime\z@
+    \advance\c@sti@chapter\@ne
+    \c@sti@block\z@
+    \ifsti@printchapter\timingprintchapter\thesti@chapter\fi
   \fi\ignorespaces}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timingchapterend}
+% \macro{\timingchapterend}
 % End the chapter (if started).
 % Remember chapter duration:
 %    \begin{macrocode}
 \newcommand{\timingchapterend}[1][]{%
   \sti@processflags{#1}%
-  \ifsti@flag%
-    \ifnum\value{sti@inblock}=1%
+  \ifsti@flag
+    \ifodd\c@sti@inblock
       \PackageWarning{sesstime}{chapterend: still in block; stopped}%
       \sti@warn{chap}%
-      \sti@blockstopby{0}%
-    \fi%
-    \ifnum\value{sti@inchapter}=1%
-      \sti@writechaptertotal%
-      \setcounter{sti@inchapter}{0}%
-      \setcounter{sti@chaptertime}{0}%
-    \fi%
+      \sti@blockstop{}{}{0}%
+    \fi
+    \ifodd\c@sti@inchapter
+      \sti@writechaptertotal
+      \c@sti@inchapter\z@
+      \c@sti@chaptertime\z@
+    \fi
   \fi\ignorespaces}
 %    \end{macrocode}
 % End the chapter at the end of document:
 %    \begin{macrocode}
 \AtEndDocument{\timingchapterend}
 %    \end{macrocode}
-% \end{macro}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Blocks.}
 %
-% \begin{macro}{\sti@writeblocktotal}
-% \begin{macro}{\sti@noteblocktotal}
+% \macro{\sti@writeblocktotal}
+% \macro{\sti@noteblocktotal}
 % The following code remembers the duration of blocks.
 % Store the duration in the macro
 % |\sti@blocktotal@|\textit{chapter}|@|\textit{block}:
@@ -2005,271 +2030,249 @@ the list of sessions
 % to the |.aux| file to avoid compile errors
 % in case the package is removed:
 %    \begin{macrocode}
-\AtBeginDocument{\immediate\write\@auxout%
+\AtBeginDocument{\immediate\write\@auxout
   {\string\providecommand{\string\sti@noteblocktotal}[3]{}}}
 %    \end{macrocode}
 % Write the duration of the current block to the |.aux| file:
 %    \begin{macrocode}
-\newcommand{\sti@writeblocktotal}
-  {\immediate\write\@auxout{\string\sti@noteblocktotal%
-    {\arabic{sti@chapter}}{\arabic{sti@block}}{\thesti@blocktime}}}
+\newcommand{\sti@writeblocktotal}{%
+  \immediate\write\@auxout{\string\sti@noteblocktotal
+    {\thesti@chapter}{\thesti@block}{\thesti@blocktime}}}
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
 
-% \begin{macro}{\timingblocktotal}
+% \macro{\timingblocktotal}
 % Save the duration of the current block
 % (in starred form: subsequent block) into the macro |\timingreturn|.
 % Return optional argument if the duration is unavailable.
 % Version for current block:
 %    \begin{macrocode}
-\newcommand\sti@blocktotalcurrent[1][??]{%
-  \expandafter\let\expandafter\timingreturn%
-    \csname sti@blocktotal@\arabic{sti@chapter}@\arabic{sti@block}\endcsname%
+\newcommand{\sti@blocktotalcurrent}[1][??]{%
+  \expandafter\let\expandafter\timingreturn
+    \csname sti@blocktotal@\thesti@chapter @\thesti@block\endcsname
   \ifx\timingreturn\relax\def\timingreturn{#1}\fi}
 %    \end{macrocode}
 % Version for subsequent block:
 %    \begin{macrocode}
-\newcommand\sti@blocktotalnext[1][??]{%
-  \setcounter{sti@tmp}{\arabic{sti@block}}\stepcounter{sti@tmp}%
-  \expandafter\let\expandafter\timingreturn%
-    \csname sti@blocktotal@\arabic{sti@chapter}@\arabic{sti@tmp}\endcsname%
+\newcommand{\sti@blocktotalnext}[1][??]{%
+  \expandafter\let\expandafter\timingreturn
+    \csname sti@blocktotal@\thesti@chapter
+      @\the\numexpr\c@sti@block+1\relax\endcsname
   \ifx\timingreturn\relax\def\timingreturn{#1}\fi}
 %    \end{macrocode}
 % Version selection:
 %    \begin{macrocode}
-\newcommand\timingblocktotal{\@ifstar%
-  {\sti@blocktotalnext}{\sti@blocktotalcurrent}}
+\newcommand{\timingblocktotal}{%
+  \@ifstar\sti@blocktotalnext\sti@blocktotalcurrent}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timingprintblock}
+% \macro{\timingprintblock}
 % Print block timing mark:
 %    \begin{macrocode}
 \newcommand{\timingprintblock}[3]{\timingprintmark{%
-  \def\sti@tmp{#2}\ifx\sti@tmp\@empty%
+  \def\sti@tmp{#2}\ifx\sti@tmp\@empty
     \raisebox{-1ex}{#1\rlap{\kern0.4em$\Updownarrow$}}\kern1.2em%
-  \else%
-    \def\sti@tmp{#1}\ifx\sti@tmp\@empty\else%
+  \else
+    \def\sti@tmp{#1}\ifx\sti@tmp\@empty\else
       #1\rlap{\kern0.4em$\Uparrow$%
-      \vphantom{$\Updownarrow$}}\kern1.2em\hrule\fi%
+      \vphantom{$\Updownarrow$}}\kern1.2em\hrule\fi
     \textbf{#2}\rlap{\vphantom{$\Updownarrow$}}\kern1.2em%
-    \def\sti@tmp{#3}\ifx\sti@tmp\@empty\else%
+    \def\sti@tmp{#3}\ifx\sti@tmp\@empty\else
       \hrule#3\rlap{\kern0.4em$\Downarrow$%
-      \vphantom{$\Updownarrow$}}\kern1.2em\fi%
+      \vphantom{$\Updownarrow$}}\kern1.2em\fi
   \fi}}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\sti@advanceby}
+% \macro{\sti@advance}
 % Advance all running clocks by some amount of time:
 %    \begin{macrocode}
-\newcommand{\sti@advanceby}[1]{%
-  \ifnum\value{sti@inblock}=1\addtocounter{sti@blocktime}{#1}\fi%
-  \ifnum\value{sti@inchapter}=1\addtocounter{sti@chaptertime}{#1}\fi%
-  \ifnum\value{sti@insession}=1\addtocounter{sti@sessiontime}{#1}\fi}
+\newcommand{\sti@advance}{%
+  \ifodd\c@sti@inblock\advance\c@sti@blocktime\sti@delta\fi
+  \ifodd\c@sti@inchapter\advance\c@sti@chaptertime\sti@delta\fi
+  \ifodd\c@sti@insession\advance\c@sti@sessiontime\sti@delta\fi}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\sti@hoursminutes}
+% \macro{\sti@hoursminutes}
 % Convert hours:minutes format to minutes:
 %    \begin{macrocode}
-\def\sti@hoursminutes#1:#2!{%
-  \multiply\value{sti@tmp}60\addtocounter{sti@tmp}{#1}%
-  \def\sti@tmp{#2}\ifx\sti@tmp\@empty\else\sti@hoursminutes#2!\fi}
+\def\sti@hoursminutes#1:#2:#3!{%
+  \sti@delta\numexpr#1\relax
+  \if!#3!\else
+    \sti@delta\numexpr60*\sti@delta+#2\relax
+  \fi}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\sti@computedelta}
+% \macro{\sti@computedelta}
 % Convert an absolute time to a relative time:
 %    \begin{macrocode}
-\newcommand{\sti@computedelta}[1]{%
-  \setcounter{sti@tmp}{0}%
-  \sti@hoursminutes#1:!%
-  \addtocounter{sti@tmp}{-\value{sti@blockgauge}}%
-  \addtocounter{sti@tmp}{-\value{sti@blocktime}}}
+\newcommand{\sti@computedelta}{%
+  \advance\sti@delta\numexpr-\c@sti@blockgauge-\c@sti@blocktime\relax}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\sti@warnneg}
+% \macro{\sti@warnneg}
 % Warn if negative time elapsed:
 %    \begin{macrocode}
-\newcommand{\sti@warnneg}[1]{%
-  \ifnum #1<0%
+\newcommand{\sti@warnneg}{%
+  \ifnum\sti@delta<\z@
     \PackageWarning{sesstime}{block: negative time elapsed}%
     \sti@warn{neg}%
   \fi}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timingstart}
-% Start new block.
-% Version specifying the absolute time:
+% \macro{\timingstart}
+% Start new block:
 %    \begin{macrocode}
-\newcommand{\sti@blockstartat}[2][]{%
-  \sti@computedelta{#2}%
-  \sti@blockstartby[#1]{\value{sti@tmp}}}
-%    \end{macrocode}
-% Version specifying the relative time:
-%    \begin{macrocode}
-\newcommand{\sti@blockstartby}[2][]{%
+\newcommand{\sti@blockstart}[3]{%
   \sti@processflags{#1}%
-  \ifsti@flag%
-    \ifnum\value{sti@inblock}=1%
+  \ifsti@flag
+    \ifodd\c@sti@inblock
       \PackageWarning{sesstime}{already in block}%
-      \sti@warn{block}%
-    \else%
-      \setcounter{sti@inblock}{1}%
-      \addtocounter{sti@blockgauge}{\arabic{sti@blocktime}}%
-      \addtocounter{sti@blockgauge}{#2}%
-      \setcounter{sti@blocktime}{0}%
-      \stepcounter{sti@block}%
-      \sti@checksession%
-      \ifsti@printblock\timingblocktotal%
-        \timingprintblock{}{\thesti@chaptertime}{\timingreturn}%
-      \fi%
-    \fi%
+      \sti@warn{block}
+    \else
+      \sti@hoursminutes#3::!%
+      #2%
+      \c@sti@inblock\@ne
+      \advance\c@sti@blockgauge\numexpr\c@sti@blocktime+\sti@delta\relax
+      \c@sti@blocktime\z@
+      \advance\c@sti@block\@ne
+      \sti@checksession
+      \ifsti@printblock
+        \sti@blocktotalcurrent
+        \timingprintblock{}\thesti@chaptertime\timingreturn
+      \fi
+    \fi
   \fi\nopagebreak}
 %    \end{macrocode}
 % Version selection:
 %    \begin{macrocode}
-\newcommand{\timingstart}{\@ifstar{\sti@blockstartby}{\sti@blockstartat}}
+\newcommand{\sti@blockstartat}[1][]{\sti@blockstart{#1}\sti@computedelta}
+\newcommand{\sti@blockstartby}[1][]{\sti@blockstart{#1}{}}
+\newcommand{\timingstart}{\@ifstar\sti@blockstartby\sti@blockstartat}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timingsplit}
-% Split current block.
-% Version specifying the absolute time:
+% \macro{\timingsplit}
+% Split current block:
 %    \begin{macrocode}
-\newcommand{\sti@blocksplitat}[2][]{%
-  \sti@computedelta{#2}%
-  \sti@blocksplitby[#1]{\value{sti@tmp}}}
-%    \end{macrocode}
-% Version specifying the relative time:
-%    \begin{macrocode}
-\newcommand{\sti@blocksplitby}[2][]{%
+\newcommand{\sti@blocksplit}[3]{%
   \sti@processflags{#1}%
-  \ifsti@flag%
-    \ifnum\value{sti@inblock}=0%
+  \ifsti@flag
+    \ifodd\c@sti@inblock
+      \sti@hoursminutes#3::!%
+      #2%
+      \sti@warnneg
+      \sti@advance
+      \sti@checksession
+      \ifsti@printblock
+        \timingprintblock\thesti@blocktime{}{}%
+      \fi
+    \else
       \PackageWarning{sesstime}{not in block}%
       \sti@warn{block}%
-    \else%
-      \sti@warnneg{#2}%
-      \sti@advanceby{#2}%
-      \sti@checksession%
-      \ifsti@printblock%
-        \timingprintblock{\thesti@blocktime}{}{}%
-      \fi%
-    \fi%
+    \fi
   \fi}
 %    \end{macrocode}
 % Version selection:
 %    \begin{macrocode}
-\newcommand{\timingsplit}{\@ifstar{\sti@blocksplitby}{\sti@blocksplitat}}
+\newcommand{\sti@blocksplitat}[1][]{\sti@blocksplit{#1}\sti@computedelta}
+\newcommand{\sti@blocksplitby}[1][]{\sti@blocksplit{#1}{}}
+\newcommand{\timingsplit}{\@ifstar\sti@blocksplitby\sti@blocksplitat}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timingstop}
-% Stop current block.
-% Version specifying the absolute time:
+% \macro{\timingstop}
+% Stop current block:
 %    \begin{macrocode}
-\newcommand{\sti@blockstopat}[2][]{%
-  \sti@computedelta{#2}%
-  \sti@blockstopby[#1]{\value{sti@tmp}}}
-%    \end{macrocode}
-% Version specifying the relative time:
-%    \begin{macrocode}
-\newcommand{\sti@blockstopby}[2][]{%
+\newcommand{\sti@blockstop}[3]{%
   \sti@processflags{#1}%
-  \ifsti@flag%
-    \ifnum\value{sti@inblock}=0%
+  \ifsti@flag
+    \ifodd\c@sti@inblock
+      \sti@hoursminutes#3::!%
+      #2%
+      \sti@warnneg
+      \sti@advance
+      \sti@writeblocktotal
+      \ifsti@printblock
+        \timingprintblock\thesti@blocktime\thesti@chaptertime{}%
+      \fi
+      \c@sti@inblock\z@
+      \c@sti@blocktime\z@
+    \else
       \PackageWarning{sesstime}{not in block}%
       \sti@warn{block}%
-    \else%
-      \sti@warnneg{#2}%
-      \sti@advanceby{#2}%
-      \sti@writeblocktotal%
-      \ifsti@printblock%
-        \timingprintblock{\thesti@blocktime}{\thesti@chaptertime}{}%
-      \fi%
-      \setcounter{sti@inblock}{0}%
-      \setcounter{sti@blocktime}{0}%
-    \fi%
+    \fi
   \fi}
 %    \end{macrocode}
 % Version selection:
 %    \begin{macrocode}
-\newcommand{\timingstop}{\@ifstar{\sti@blockstopby}{\sti@blockstopat}}
+\newcommand{\sti@blockstopat}[1][]{\sti@blockstop{#1}\sti@computedelta}
+\newcommand{\sti@blockstopby}[1][]{\sti@blockstop{#1}{}}
+\newcommand{\timingstop}{\@ifstar\sti@blockstopby\sti@blockstopat}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timingnext}
-% Stop current block and start next block.
-% Version specifying the absolute time:
+% \macro{\timingnext}
+% Stop current block and start next block:
 %    \begin{macrocode}
-\newcommand{\sti@blocknextat}[2][]{%
-  \sti@computedelta{#2}%
-  \sti@blocknextby[#1]{\value{sti@tmp}}}
-%    \end{macrocode}
-% Version specifying the relative time:
-%    \begin{macrocode}
-\newcommand{\sti@blocknextby}[2][]{%
+\newcommand{\sti@blocknext}[3]{%
   \sti@processflags{#1}%
-  \ifsti@flag%
-    \ifnum\value{sti@inblock}=0%
+  \ifsti@flag
+    \ifodd\c@sti@inblock
+      \sti@hoursminutes#3::!%
+      #2%
+      \sti@warnneg
+      \sti@advance
+      \sti@writeblocktotal
+      \advance\c@sti@block\@ne
+      \ifsti@printblock
+        \sti@blocktotalcurrent
+        \timingprintblock\thesti@blocktime\thesti@chaptertime\timingreturn
+      \fi
+      \advance\c@sti@blockgauge\c@sti@blocktime
+      \c@sti@blocktime\z@
+      \sti@checksession
+    \else
       \PackageWarning{sesstime}{not in block}%
       \sti@warn{block}%
-    \else%
-      \sti@warnneg{#2}%
-      \sti@advanceby{#2}%
-      \sti@writeblocktotal%
-      \stepcounter{sti@block}%
-      \ifsti@printblock\timingblocktotal%
-        \timingprintblock{\thesti@blocktime}%
-          {\thesti@chaptertime}{\timingreturn}%
-      \fi%
-      \addtocounter{sti@blockgauge}{\arabic{sti@blocktime}}%
-      \setcounter{sti@blocktime}{0}%
-      \sti@checksession%
-    \fi%
+    \fi
   \fi}
 %    \end{macrocode}
 % Version selection:
 %    \begin{macrocode}
-\newcommand{\timingnext}{\@ifstar{\sti@blocknextby}{\sti@blocknextat}}
+\newcommand{\sti@blocknextat}[1][]{\sti@blocknext{#1}\sti@computedelta}
+\newcommand{\sti@blocknextby}[1][]{\sti@blocknext{#1}{}}
+\newcommand{\timingnext}{\@ifstar\sti@blocknextby\sti@blocknextat}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timinglapse}
+% \macro{\timinglapse}
 % Insert some time to the current block
 % without changing the current absolute time:
 %    \begin{macrocode}
 \newcommand{\timinglapse}[2][]{%
   \sti@processflags{#1}%
-  \ifsti@flag%
-    \ifnum\value{sti@inblock}=1%
-      \addtocounter{sti@blockgauge}{-#2}%
-    \fi%
-    \sti@advanceby{#2}%
+  \ifsti@flag
+    \sti@hoursminutes#2::!%
+    \ifodd\c@sti@inblock
+      \advance\c@sti@blockgauge-\sti@delta
+    \fi
+    \sti@advance
   \fi}
 %    \end{macrocode}
-% \end{macro}
 
-% \begin{macro}{\timinggauge}
+% \macro{\timinggauge}
 % Change the current absolute time
 % without advancing any timers:
 %    \begin{macrocode}
 \newcommand{\timinggauge}[2][]{%
   \sti@processflags{#1}%
-  \ifsti@flag%
-    \sti@computedelta{#2}%
-    \addtocounter{sti@blockgauge}{\value{sti@tmp}}%
+  \ifsti@flag
+    \sti@hoursminutes#2::!%
+    \sti@computedelta
+    \advance\c@sti@blockgauge\sti@delta
   \fi}
 %    \end{macrocode}
-% \end{macro}
 
-%\iffalse
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \iffalse
 %</package>
-%\fi
+% \fi
 %
 \endinput
