@@ -24,14 +24,14 @@
 % eqnlines.tex, eqnlines.pdf, eqnlines-src.tex, eqnlines-src.pdf.
 %
 %<package>\NeedsTeXFormat{LaTeX2e}[2020-10-01]
-%<package>\ProvidesPackage{eqnlines}[2026-02-15 v1.0 Single- and multi-line equations]
-%<source>\ProvidesFile{eqnlines-src.tex}[2026-02-15 v1.0 eqnlines source code documentation]
-%<manual>\ProvidesFile{eqnlines.tex}[2026-02-15 v1.0 eqnlines reference manual]
+%<package>\ProvidesPackage{eqnlines}[2026-03-23 v1.0.1 Single- and multi-line equations]
+%<source>\ProvidesFile{eqnlines-src.tex}[2026-03-23 v1.0.1 eqnlines source code documentation]
+%<manual>\ProvidesFile{eqnlines.tex}[2026-03-23 v1.0.1 eqnlines reference manual]
 %<*main|manual|source>
-\def\thedate/{2026-02-15}\def\theversion/{v1.0}
+\def\thepkg/{eqnlines}\def\thedate/{2026-03-23}\def\theversion/{v1.0.1}
 \def\thecopyright/{2024\texorpdfstring{--}{-}2026 Niklas Beisert}
 %<*main>
-\ProvidesFile{eqnlines.dtx}[\thedate/ \theversion/ eqnlines package main file]
+\ProvidesFile{\thepkg/.dtx}[\thedate/ \theversion/ \thepkg/ package main file]
 %</main>
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -43,16 +43,16 @@
 \usepackage{longtable}
 
 %<*main>
-\title{The \markpkg{eqnlines} Package}
-\hypersetup{pdftitle={The eqnlines Package}}
-\hypersetup{pdfsubject={Documentation for the LaTeX2e Package eqnlines}}
+\title{The \markpkg{\thepkg/} Package}
+\hypersetup{pdftitle={The \thepkg/ Package}}
+\hypersetup{pdfsubject={Documentation for the LaTeX2e Package \thepkg/}}
 %</main>
-%<manual>\title{The \markpkg{eqnlines} Package\\Reference Manual}
-%<manual>\hypersetup{pdftitle={The eqnlines Package -- Reference Manual}}
-%<manual>\hypersetup{pdfsubject={Reference Manual for the LaTeX2e Package eqnlines}}
-%<source>\title{The \markpkg{eqnlines} Package\\Source Code Documentation}
-%<source>\hypersetup{pdftitle={The eqnlines Package -- Source Code Documentation}}
-%<source>\hypersetup{pdfsubject={Documented Source for the LaTeX2e Package eqnlines}}
+%<manual>\title{The \markpkg{\thepkg/} Package\\Reference Manual}
+%<manual>\hypersetup{pdftitle={The \thepkg/ Package -- Reference Manual}}
+%<manual>\hypersetup{pdfsubject={Reference Manual for the LaTeX2e Package \thepkg/}}
+%<source>\title{The \markpkg{\thepkg/} Package\\Source Code Documentation}
+%<source>\hypersetup{pdftitle={The \thepkg/ Package -- Source Code Documentation}}
+%<source>\hypersetup{pdfsubject={Documented Source for the LaTeX2e Package \thepkg/}}
 \author{Niklas Beisert\\[2ex]
   Institut f\"ur Theoretische Physik\\
   Eidgen\"ossische Technische Hochschule Z\"urich\\
@@ -61,11 +61,11 @@
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
 \date{\theversion/: \markdate{\thedate/}\\[1ex]
-\url{https://ctan.org/pkg/eqnlines}\\[0.5ex]
+\url{https://ctan.org/pkg/\thepkg/}\\[0.5ex]
 \url{https://github.com/nbeisert/latex-pkg-nb}}
 
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfurl={https://ctan.org/pkg/eqnlines}}
+\hypersetup{pdfurl={https://ctan.org/pkg/\thepkg/}}
 \hypersetup{pdfcopyright={Copyright \thecopyright/.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
@@ -97,12 +97,10 @@
 \newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\markpkg{#1}}}
 
 \def\verbbar{\texttt{\char"7C}}
+\def\verbpkg{\texttt{\thepkg/}}
+\def\thepkgctan/{\ctanpkg{\thepkg/}}
 
-\newcommand{\TODO}{\textbf{\textcolor{red}{TODO:}} }
-
-\def\tex/{\TeX}
-\def\latex/{\LaTeX}
-\def\amsmath/{\ctanpkg{amsmath}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \RenewDocElement[macrolike = true ,
   toplevel = false,
@@ -201,6 +199,8 @@
   printtype = \textit{bool}
   ]{LaTeXConditional}{lcond}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \usepackage{verbatim}
 \makeatletter
 \def\example@addline#1{%
@@ -237,6 +237,14 @@
   {\parskip\z@skip\par\medskip\hrule\medskip}
   {\par\hrule\par\medskip}
 \makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\TODO}{\textbf{\textcolor{red}{TODO:}} }
+
+\def\tex/{\TeX}
+\def\latex/{\LaTeX}
+\def\amsmath/{\ctanpkg{amsmath}}
 
 \usepackage{eqnlines}
 \eqnlinesset{belowtopmode=top,belowtopskip=0pt}
@@ -807,7 +815,7 @@ The modes are selected by an optional argument
 |numberline=|\textit{mode} (alternatively |nline| or just |n|)
 as follows:
 %
-\begin{longtable}[c]{llll}
+\begin{longtable}{llll}
 name     & alt. & description & preset \\
 \hline
 |all|    & |a|  & individual & all lines \\
@@ -1851,10 +1859,10 @@ display the adjusted punctuation right where it is declared.
 \DescribeMod{.}
 \DescribeMod{,}
 \DescribeMod{\string~}
-\DescribeMod{/}
+\DescribeMod{`}
 The modifiers dot `|.|', comma `|,|' and tilde `|~|'
 are short forms for using a dot, a comma or disabling punctuation.
-A custom punctuation can be set by the modifier `|`{|\textit{punct}|}|.
+A custom punctuation can be set by the modifier `|`{|\textit{punct}|}|'.
 %
 \begin{center}
 \begin{tabular}{rccccc}
@@ -2911,7 +2919,7 @@ or&|\eqnlinesset{|\textit{opts}|}|
 \textit{opts} is a comma-separated list of options.
 
 The package supplies the following general settings:
-\begin{longtable}[c]{ll}
+\begin{longtable}{ll}
 option & description \\
 \hline
 |defaults=classic|
@@ -2950,7 +2958,7 @@ option & description \\
 The following few settings can only be specified when loading the package,
 not via |\eqnlinesset|:
 %
-\begin{longtable}[c]{ll}
+\begin{longtable}{ll}
 option & description \\
 \hline
 |env=none| & provide only |equations| and |equationsbox| environments \\
@@ -2980,7 +2988,7 @@ can be activated by the command:
 %
 \textit{features} is a comma-separated list of features:
 %
-\begin{longtable}[c]{ll}
+\begin{longtable}{ll}
 feature & description \\
 \hline
 \textit{env} & provide/overwrite environment \textit{env}:\\
@@ -3034,9 +3042,9 @@ This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainer of this work is Niklas Beisert.
 
-This work consists of the files |README.txt|, |eqnlines.ins| and |eqnlines.dtx|
-as well as the derived files |eqnlines.sty|,
-|eqnlines.tex|, |eqnlines.pdf|, |eqnlines-src.tex|, |eqnlines-src.pdf|.
+This work consists of the files
+|README.txt|, \verbpkg|.ins| and \verbpkg|.dtx|
+as well as the derived files listed in \secref{sec:installation}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Credits}
@@ -3092,30 +3100,39 @@ and \amsmath/ has been included into the package.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Files and Installation}
+\label{sec:installation}
 
 The package consists of the files:
 %
-\begin{center}
-\begin{tabular}{ll}
-    |README.txt|       & readme file \\
-    |eqnlines.ins|     & installation file \\
-    |eqnlines.dtx|     & source file \\
-    |eqnlines.sty|     & package file \\
-    |eqnlines.pdf|     & manual
-\end{tabular}
-\end{center}
+\begin{longtable}{ll}
+    |README.txt|   & readme file \\
+    \verbpkg|.ins| & installation file \\
+    \verbpkg|.dtx| & source file \\
+    \verbpkg|.sty| & package file \\
+    \verbpkg|.tex| & reference manual file \\
+    \verbpkg|.pdf| & reference manual \\
+    \verbpkg|-src.tex| & source code documentation file \\
+    \verbpkg|-src.pdf| & source code documentation \\
+\end{longtable}
 %
 The distribution consists of the files
-|README.txt|, |eqnlines.ins| and |eqnlines.dtx|.
+|README.txt|, \verbpkg|.ins| and \verbpkg|.dtx|.
 %
 \begin{itemize}
 \item
-Run (pdf)\latex/ on |eqnlines.dtx|
-to compile the manual |eqnlines.pdf| (this file).
+Run \latex/ on \verbpkg|.ins| to create the package \verbpkg|.sty|
+and further documentation files.
 \item
-Run \latex/ on |eqnlines.ins| to create the package |eqnlines.sty|.
-Copy the file |eqnlines.sty| to an appropriate directory of your \latex/
-distribution, e.g.\ \textit{texmf-root}|/tex/latex/eqnlines|.
+Copy the file \verbpkg|.sty| to an appropriate directory of your \latex/
+distribution, e.g.\ \textit{texmf-root}|/tex/latex/|\verbpkg.
+\item
+Alternatively, you may copy \verbpkg|.sty| to your project directory.
+\item
+Run (pdf)\latex/ on \verbpkg|.tex|
+to compile the manual \verbpkg|.pdf| (this file).
+\item
+Run (pdf)\latex/ on \verbpkg|-src.tex|
+to compile the source code documentation \verbpkg|-src.pdf|.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3302,6 +3319,7 @@ when command is less recent.
 change bool registers to |char| 0 and 1 and |\||ifodd|
 %
 \end{itemize}
+
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3310,7 +3328,7 @@ change bool registers to |char| 0 and 1 and |\||ifodd|
 \iffalse
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{vN.N.N+:} \markdate{20YY-MM-NN}
+\paragraph{vN.N.N+:} \markdate{20YY-MM-DD}
 
 \begin{itemize}
 \item
@@ -3318,6 +3336,22 @@ change bool registers to |char| 0 and 1 and |\||ifodd|
 \end{itemize}
 
 \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.0.1:} \markdate{2026-03-23}
+
+\begin{itemize}
+\item
+fix for not applying |math text| colour for boxes in \ctanpkg{beamer}
+\item
+traditional alias values |p|, |b|, |B|, |V| for |matrix| option in boxes
+\item
+suppress modifier warning for combination `|\>$|' ending a box%$
+\item
+minor setting adjustments
+\item
+package maintenance
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.0:} \markdate{2026-02-15}
@@ -3454,7 +3488,7 @@ fixed unwanted deferring of numbering when using |\\~| in continuous mode
 
 \begin{itemize}
 \item
-split off source code documentation into separate document |eqnlines-src|
+split off source code documentation into separate document \verbpkg|-src|
 \item
 added modified newline `|\\~|' to indicate continued equation
 with deferred numbering and punctuation suppressed
@@ -3654,7 +3688,7 @@ thanks to Till Bargheer for testing and reports
 \raggedright
 \settowidth\MacroIndent{\rmfamily\scriptsize 0000\ }
 
-\DocInput{eqnlines.dtx}
+\DocInput{\thepkg/.dtx}
 %</main|source>
 
 \end{document}
@@ -7665,13 +7699,15 @@ thanks to Till Bargheer for testing and reports
 % \TODO describe
 %
 %    \begin{macrocode}
-\let\eql@beamerbasecolor@fix\@empty
+\let\eql@beamerbasecolor@apply\@empty
+\let\eql@beamerbasecolor@avoid\@empty
 \AddToHook{package/beamerbasecolor/after}{%
-  \def\eql@beamerbasecolor@fix{%
+  \def\eql@beamerbasecolor@apply{%
     \donotcolorouterdisplaymaths
     \donotcoloroutermaths
     \beamer@setdisplaymathcolor
   }%
+  \def\eql@beamerbasecolor@avoid{\donotcoloroutermaths}%
 }
 %    \end{macrocode}
 %
@@ -7693,7 +7729,7 @@ thanks to Till Bargheer for testing and reports
   \else
     \eql@prevdepth@\maxdimen
   \fi
-  \eql@beamerbasecolor@fix
+  \eql@beamerbasecolor@apply
 }
 %    \end{macrocode}
 %
@@ -10658,6 +10694,7 @@ thanks to Till Bargheer for testing and reports
     \let\eql@box@endmath\eql@true
     \expandafter$%$
   \fi
+  \eql@beamerbasecolor@avoid
   \eql@stack@save@box
   \let\eql@frame@cmd\@undefined
   \let\eql@layoutleft\eql@false
@@ -10789,6 +10826,9 @@ thanks to Till Bargheer for testing and reports
   \fi
   \ifx\eql@parseopt@token!%
     \let\eql@parseopt@next\eql@box@end@parse@punctterm
+  \fi
+  \ifx\eql@parseopt@token$%$
+    \let\eql@parseopt@next\eql@parseopt@end
   \fi
 }
 \def\eql@box@end@parse@punctterm#1{%
@@ -12618,12 +12658,12 @@ thanks to Till Bargheer for testing and reports
 \def\eql@decide@delim#1#2#3{%
   \eql@decide@select{#1}{#2}{#3}{%
     {{,.,\eql@decide@false}{\eql@box@wrap{}{}}},%
-    {{\eql@decide@true,r,round}{\eql@box@delim()}},%
-    {{s,sqr,square}{\eql@box@delim[]}},%
-    {{c,curly,braces}{\eql@box@delim\lbrace\rbrace}},%
+    {{\eql@decide@true,r,p,round,parentheses}{\eql@box@delim()}},%
+    {{s,b,sqr,square}{\eql@box@delim[]}},%
+    {{c,B,curly,braces}{\eql@box@delim\lbrace\rbrace}},%
     {{a,ang,angle}{\eql@box@delim\langle\rangle}},%
     {{v,vert}{\eql@box@delim\vert\vert}},%
-    {{d,dvert}{\eql@box@delim\Vert\Vert}},%
+    {{d,V,dvert}{\eql@box@delim\Vert\Vert}},%
     {\relax{\eql@box@delim#3}}}}%
 %    \end{macrocode}
 %
@@ -13290,6 +13330,7 @@ thanks to Till Bargheer for testing and reports
     {\relax{\def\eql@colsepmin@val{#1}}}}}
 \eql@define@key{equations,setup}{maxcolsep}{\eql@decide@select{#3}{#2}{#1}{%
     {\eql@decide@false{\def\eql@colsepmax@val{.5\maxdimen}}},%
+    {0{\def\eql@colsepmax@val{0pt}}},%
     {\relax{\def\eql@colsepmax@val{#1}}}}}
 \eql@define@key{equations,setup}{fulllength}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@columns@fulllength}
@@ -13461,6 +13502,8 @@ thanks to Till Bargheer for testing and reports
 \eql@define@key\eql@keyall{punctline*}[]{\eql@punct@set\eql@punct@line\relax}
 \eql@define@key\eql@keyall{punctcol}[,]{\eql@punct@set\eql@punct@col{#1}}
 \eql@define@key\eql@keyall{punctcol*}[]{\eql@punct@set\eql@punct@col\relax}
+\eql@define@key{box}{punctcases}[,]{\eql@punct@set\eql@punct@col{#1}}
+\eql@define@key{box}{punctcases*}[]{\eql@punct@set\eql@punct@col\relax}
 \eql@define@key{setup}{punctcases}[,]{\eql@punct@set\eql@punct@cases{#1}}
 \eql@define@key{setup}{punctcases*}[]{\eql@punct@set\eql@punct@cases\relax}
 \eql@define@key\eql@keyall{punctall}[,,.]{\eql@punct@all#111111\eql@punct@end}

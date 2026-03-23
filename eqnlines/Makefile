@@ -1,33 +1,36 @@
-all: eqnlines.pdf eqnlines-src.pdf eqnlines.sty
+PKG = eqnlines
+SRC = $(PKG)-src
 
-eqnlines.pdf: eqnlines.tex eqnlines.sty
-	pdflatex eqnlines.tex
-	pdflatex eqnlines.tex
-	pdflatex eqnlines.tex
+all: $(PKG).sty $(PKG).pdf $(SRC).pdf
 
-eqnlines-src.pdf: eqnlines-src.tex eqnlines.sty
-	pdflatex eqnlines-src.tex
-	pdflatex eqnlines-src.tex
-	pdflatex eqnlines-src.tex
+$(PKG).sty $(PKG).tex $(SRC).tex: $(PKG).dtx $(PKG).ins
+	latex $(PKG).ins
 
-eqnlines.sty eqnlines.tex eqnlines-src.tex: eqnlines.dtx eqnlines.ins
-	latex eqnlines.ins
+$(PKG).pdf: $(PKG).tex $(PKG).sty
+	pdflatex $(PKG).tex
+	pdflatex $(PKG).tex
+	pdflatex $(PKG).tex
+
+$(SRC).pdf: $(SRC).tex $(PKG).sty
+	pdflatex $(SRC).tex
+	pdflatex $(SRC).tex
+	pdflatex $(SRC).tex
 
 touch:
-	touch eqnlines.dtx
+	touch $(PKG).dtx
 
 clean:
-	rm -f eqnlines.aux eqnlines.log eqnlines.out
-	rm -f eqnlines.toc eqnlines.hd
-	rm -f eqnlines-src.aux eqnlines-src.log eqnlines-src.out
-	rm -f eqnlines-src.toc eqnlines-src.hd
+	rm -f $(PKG).aux $(PKG).log $(PKG).out $(PKG).toc $(PKG).hd
+	rm -f $(SRC).aux $(SRC).log $(SRC).out $(SRC).toc $(SRC).hd
 
 clean-all: clean
-	rm -f eqnlines.sty eqnlines.tex eqnlines-src.tex
-	rm -f eqnlines.pdf eqnlines-src.pdf
+	rm -f $(PKG).sty
+	rm -f $(PKG).tex $(PKG).pdf
+	rm -f $(SRC).tex $(SRC).pdf
 
 clean-bak: clean-all
-	rm -f eqnlines.dtx.bak eqnlines.ins.bak README.txt.bak Makefile.bak
-	rm -f eqnlines.dtx~ eqnlines.ins~ README.txt~ Makefile~
-	rm -f eqnlines.sty.bak eqnlines.tex.bak
-	rm -f eqnlines.sty~ eqnlines.tex~
+	rm -f $(PKG).dtx.bak $(PKG).sty.bak $(PKG).ins.bak
+	rm -f $(PKG).dtx~ $(PKG).sty~ $(PKG).ins~
+	rm -f $(PKG).tex.bak $(PKG).tex~
+	rm -f $(SRC).tex.bak $(SRC).tex~
+	rm -f README.txt.bak README.txt~ Makefile.bak Makefile~

@@ -21,7 +21,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[2020-10-01]
-\ProvidesPackage{eqnlines}[2026-02-15 v1.0 Single- and multi-line equations]
+\ProvidesPackage{eqnlines}[2026-03-23 v1.0.1 Single- and multi-line equations]
 \def\eql@verbose@on{%
   \def\eql@verbose@info##1{\PackageInfo{eqnlines}{##1}}%
   \def\eql@verbose@infoarg##1##2{\eql@verbose@info{##1##2}}%
@@ -2148,13 +2148,15 @@
     \fi
   \fi
 }
-\let\eql@beamerbasecolor@fix\@empty
+\let\eql@beamerbasecolor@apply\@empty
+\let\eql@beamerbasecolor@avoid\@empty
 \AddToHook{package/beamerbasecolor/after}{%
-  \def\eql@beamerbasecolor@fix{%
+  \def\eql@beamerbasecolor@apply{%
     \donotcolorouterdisplaymaths
     \donotcoloroutermaths
     \beamer@setdisplaymathcolor
   }%
+  \def\eql@beamerbasecolor@avoid{\donotcoloroutermaths}%
 }
 \newskip\eql@abovespace@
 \newskip\eql@belowspace@
@@ -2167,7 +2169,7 @@
   \else
     \eql@prevdepth@\maxdimen
   \fi
-  \eql@beamerbasecolor@fix
+  \eql@beamerbasecolor@apply
 }
 \def\eql@display@adjust{%
   \ifdefined\eql@display@linewidth
@@ -4161,6 +4163,7 @@
     \let\eql@box@endmath\eql@true
     \expandafter$%$
   \fi
+  \eql@beamerbasecolor@avoid
   \eql@stack@save@box
   \let\eql@frame@cmd\@undefined
   \let\eql@layoutleft\eql@false
@@ -4263,6 +4266,9 @@
   \fi
   \ifx\eql@parseopt@token!%
     \let\eql@parseopt@next\eql@box@end@parse@punctterm
+  \fi
+  \ifx\eql@parseopt@token$%$
+    \let\eql@parseopt@next\eql@parseopt@end
   \fi
 }
 \def\eql@box@end@parse@punctterm#1{%
@@ -5455,12 +5461,12 @@
 \def\eql@decide@delim#1#2#3{%
   \eql@decide@select{#1}{#2}{#3}{%
     {{,.,\eql@decide@false}{\eql@box@wrap{}{}}},%
-    {{\eql@decide@true,r,round}{\eql@box@delim()}},%
-    {{s,sqr,square}{\eql@box@delim[]}},%
-    {{c,curly,braces}{\eql@box@delim\lbrace\rbrace}},%
+    {{\eql@decide@true,r,p,round,parentheses}{\eql@box@delim()}},%
+    {{s,b,sqr,square}{\eql@box@delim[]}},%
+    {{c,B,curly,braces}{\eql@box@delim\lbrace\rbrace}},%
     {{a,ang,angle}{\eql@box@delim\langle\rangle}},%
     {{v,vert}{\eql@box@delim\vert\vert}},%
-    {{d,dvert}{\eql@box@delim\Vert\Vert}},%
+    {{d,V,dvert}{\eql@box@delim\Vert\Vert}},%
     {\relax{\eql@box@delim#3}}}}%
 \def\eql@keyall{equations,box,setup}
 \eql@define@key{box}{lines,ln,gathered,gather,ga}[]{%
@@ -5974,6 +5980,7 @@
     {\relax{\def\eql@colsepmin@val{#1}}}}}
 \eql@define@key{equations,setup}{maxcolsep}{\eql@decide@select{#3}{#2}{#1}{%
     {\eql@decide@false{\def\eql@colsepmax@val{.5\maxdimen}}},%
+    {0{\def\eql@colsepmax@val{0pt}}},%
     {\relax{\def\eql@colsepmax@val{#1}}}}}
 \eql@define@key{equations,setup}{fulllength}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@columns@fulllength}
@@ -6100,6 +6107,8 @@
 \eql@define@key\eql@keyall{punctline*}[]{\eql@punct@set\eql@punct@line\relax}
 \eql@define@key\eql@keyall{punctcol}[,]{\eql@punct@set\eql@punct@col{#1}}
 \eql@define@key\eql@keyall{punctcol*}[]{\eql@punct@set\eql@punct@col\relax}
+\eql@define@key{box}{punctcases}[,]{\eql@punct@set\eql@punct@col{#1}}
+\eql@define@key{box}{punctcases*}[]{\eql@punct@set\eql@punct@col\relax}
 \eql@define@key{setup}{punctcases}[,]{\eql@punct@set\eql@punct@cases{#1}}
 \eql@define@key{setup}{punctcases*}[]{\eql@punct@set\eql@punct@cases\relax}
 \eql@define@key\eql@keyall{punctall}[,,.]{\eql@punct@all#111111\eql@punct@end}
