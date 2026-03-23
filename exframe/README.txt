@@ -1,4 +1,4 @@
-exframe v3.5.2
+exframe v3.5.3: 2026-03-23
 Copyright 2011-2026 Niklas Beisert
 
 exframe is a LaTeX2e package which provides a general purpose
@@ -12,33 +12,36 @@ formatting, layout and representation of the exercise content.
 
 The package consists of the files
 
-    README.txt   readme file
-    exframe.ins  installation file
-    exframe.dtx  source file
-    exframe.sty  package file
-    exfsamp.tex  standalone sample latex file
-    exfserm.tex  multipart sample main file
-    exfser01.tex multipart sample sheet 1
-    exfser02.tex multipart sample sheet 2
-    exfser03.tex multipart sample sheet 3
-    exfseraa.tex multipart sample unused problems
-    exfserpe.tex multipart sample problem E
-    exfserpf.tex multipart sample problem F
-    exfsermk.sh  multipart sample compile script
-    exfsermk.mak multipart sample makefile
-    exframe.pdf  manual
+    README.txt          readme file
+    exframe.ins         installation file
+    exframe.dtx         source file
+    exframe.sty         package file
+    exframe.tex         reference manual file
+    exframe.pdf         reference manual
+    exframe-samp.tex    standalone sample latex file
+    exframe-ser.tex     multipart sample main file
+    exframe-ser-01.tex  multipart sample sheet 1
+    exframe-ser-02.tex  multipart sample sheet 2
+    exframe-ser-03.tex  multipart sample sheet 3
+    exframe-ser-aa.tex  multipart sample unused problems
+    exframe-ser-pe.tex  multipart sample problem E
+    exframe-ser-pf.tex  multipart sample problem F
+    exframe-ser.sh      multipart sample compile script
+    exframe-ser.mak     multipart sample makefile
+    exframe-src.tex     source code documentation file
+    exframe-src.pdf     source code documentation
 
 The distribution consists of the files
 README.txt, exframe.ins and exframe.dtx.
 
-Run "(pdf)latex exframe.dtx" to compile the manual exframe.pdf.
-
 Run "latex exframe.ins" to create the package exframe.sty
-and the samples consisting of exfsamp.tex, exfserm.tex,
-exfser01.tex, exfser02.tex, exfser03.tex, exfseraa.tex,
-exfserpe.tex, exfserpf.tex, exfsermk.sh, exfsermk.mak.
+and further documentation files.
+
 Copy the file exframe.sty to an appropriate directory
 of your LaTeX distribution, e.g. texmf-root/tex/latex/exframe.
+Alternatively, you may copy exframe.sty to your project directory.
+
+Run "pdflatex exframe.dtx" to compile the documentation exframe.pdf.
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3

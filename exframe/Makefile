@@ -1,37 +1,50 @@
-all: exframe.pdf exframe.sty exfsamp.pdf Problems.pdf
+PKG = exframe
+SRC = $(PKG)-src
+SAMP = $(PKG)-samp
+SER = $(PKG)-ser
 
-exframe.pdf: exframe.dtx
-	pdflatex exframe.dtx
-	pdflatex exframe.dtx
+all: $(PKG).sty $(PKG).pdf $(SRC).pdf $(SAMP).pdf Problems.pdf
 
-exframe.sty exfsamp.tex exfserm.tex exfsermk.mak: exframe.dtx exframe.ins
-	latex exframe.ins
+$(PKG).sty $(PKG).tex $(SRC).tex $(SAMP).tex $(SER).tex $(SER).mak: $(PKG).dtx $(PKG).ins
+	latex $(PKG).ins
 
-exfsamp.pdf: exfsamp.tex exframe.sty
-	pdflatex exfsamp.tex
-	pdflatex exfsamp.tex
+$(PKG).pdf: $(PKG).tex $(PKG).sty
+	pdflatex $(PKG).tex
+	pdflatex $(PKG).tex
 
-Problems.pdf: exfserm.tex exframe.sty exfsermk.mak
-	make -f exfsermk.mak
+$(SRC).pdf: $(SRC).tex $(PKG).sty
+	pdflatex $(SRC).tex
+	pdflatex $(SRC).tex
+
+$(SAMP).pdf: $(SAMP).tex $(PKG).sty
+	pdflatex $(SAMP).tex
+	pdflatex $(SAMP).tex
+
+Problems.pdf: $(SER).tex $(PKG).sty $(SER).mak
+	make -f $(SER).mak
 
 touch:
-	touch exframe.dtx
+	touch $(PKG).dtx
 
-clean: exfsermk.mak
-	make -f exfsermk.mak clean
-	rm -f exfsamp.aux exfsamp.log exfsamp.out
-	rm -f exframe.aux exframe.log exframe.out exframe.toc exframe.hd
+clean: $(SER).mak
+	make -f $(SER).mak clean
+	rm -f $(SRC).aux $(SRC).log $(SRC).out $(SRC).toc $(SRC).hd
+	rm -f $(PKG).aux $(PKG).log $(PKG).out $(PKG).toc $(PKG).hd
+	rm -f $(SAMP).aux $(SAMP).log $(SAMP).out
 
-clean-all: clean exfsermk.mak
-	make -f exfsermk.mak clean-all
-	rm -f exframe.sty exfsamp.tex
-	rm -f exfserm.tex exfser01.tex exfser02.tex exfser03.tex exfser03.tex exfseraa.tex
-	rm -f exfserpe.tex exfserpf.tex exfsermk.sh exfsermk.mak
-	rm -f exfsamp.pdf exframe.pdf
+clean-all: clean $(SER).mak
+	make -f $(SER).mak clean-all
+	rm -f $(PKG).sty
+	rm -f $(PKG).tex $(PKG).pdf
+	rm -f $(SRC).tex $(SRC).pdf
+	rm -f $(SAMP).tex $(SAMP).pdf
+	rm -f $(SER).tex $(SER)-01.tex $(SER)-02.tex $(SER)-03.tex $(SER)-03.tex $(SER)-aa.tex
+	rm -f $(SER)-pe.tex $(SER)-pf.tex $(SER).sh $(SER).mak
 
-clean-bak: exfsermk.mak
-	make -f exfsermk.mak clean-bak
-	rm -f exframe.dtx.bak exframe.sty.bak exframe.ins.bak
-	rm -f exframe.dtx~ exframe.sty~ exframe.ins~
-	rm -f README.txt.bak Makefile.bak
-	rm -f README.txt~ Makefile~
+clean-bak: clean-all $(SER).mak
+	make -f $(SER).mak clean-bak
+	rm -f $(PKG).dtx.bak $(PKG).sty.bak $(PKG).ins.bak
+	rm -f $(PKG).dtx~ $(PKG).sty~ $(PKG).ins~
+	rm -f $(PKG).tex.bak $(PKG).tex~
+	rm -f $(SRC).tex.bak $(SRC).tex~
+	rm -f README.txt.bak README.txt~ Makefile.bak Makefile~

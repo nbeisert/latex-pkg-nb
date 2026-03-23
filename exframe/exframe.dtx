@@ -16,21 +16,22 @@
 % The Current Maintainer of this work is Niklas Beisert.
 %
 % This work consists of the files exframe.dtx and exframe.ins
-% and the derived files exframe.sty and exfsamp.tex, exfserm.tex,
-% exfser01.tex, exfser02.tex, exfser03.tex, exfseraa.tex,
-% exfserpe.tex, exfserpf.tex, exfsermk.sh, exfsermk.mak.
+% and the derived files exframe.sty and exframe-samp.tex,
+% exframe-ser.tex, exframe-ser-01.tex, exframe-ser-02.tex, exframe-ser-03.tex,
+% exframe-ser-aa.tex, exframe-ser-pe.tex, exframe-ser-pf.tex,
+% exframe-ser.sh, exframe-ser.mak.
 %
-%<package|samplesingle|samplemultimain>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{exframe}[2026/01/22 v3.5.2 Framework for Exercise Problems]
-%<samplesingle>\ProvidesFile{exfsamp.tex}[2026/01/22 v3.5.2 standalone sample for exframe]
-%<samplemultimain>\ProvidesFile{exfserm.tex}[2026/01/22 v3.5.2 multipart sample for exframe]
-%<source>\ProvidesFile{exframe-src.tex}[2026/01/22 v3.5.2 exframe source code documentation]
-%<manual>\ProvidesFile{exframe.tex}[2026/01/22 v3.5.2 exframe reference manual]
+%<package|samplesingle|samplemultimain>\NeedsTeXFormat{LaTeX2e}[1996-12-01]
+%<package>\ProvidesPackage{exframe}[2026-03-23 v3.5.3 Framework for Exercise Problems]
+%<samplesingle>\ProvidesFile{exframe-samp.tex}[2026-03-23 v3.5.3 standalone sample for exframe]
+%<samplemultimain>\ProvidesFile{exframe-ser.tex}[2026-03-23 v3.5.3 multipart sample for exframe]
+%<source>\ProvidesFile{exframe-src.tex}[2026-03-23 v3.5.3 exframe source code documentation]
+%<manual>\ProvidesFile{exframe.tex}[2026-03-23 v3.5.3 exframe reference manual]
 %<*main|manual|source>
-\def\thedate/{2026/01/22}\def\theversion/{v3.5.2}
+\def\thepkg/{exframe}\def\thedate/{2026-03-23}\def\theversion/{v3.5.3}
 \def\thecopyright/{2011\texorpdfstring{--}{-}2026 Niklas Beisert}
 %<*main>
-\ProvidesFile{exframe.dtx}[\thedate/ \theversion/ exframe reference manual file]
+\ProvidesFile{\thepkg/.dtx}[\thedate/ \theversion/ \thepkg/ package main file]
 %</main>
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
@@ -39,17 +40,19 @@
 \usepackage[hyperindex=false]{hyperref}
 \usepackage{hyperxmp}
 \usepackage[usenames]{color}
+\usepackage{longtable}
 
 %<*main>
-\title{The \markpkg{exframe} Package}
-\hypersetup{pdftitle={Documentation for the LaTeX2e Package exframe}}
+\title{The \markpkg{\thepkg/} Package}
+\hypersetup{pdftitle={The \thepkg/ Package}}
+\hypersetup{pdfsubject={Documentation for the LaTeX2e Package \thepkg/}}
 %</main>
-%<manual>\title{The \markpkg{exframe} Package\\Reference Manual}
-%<manual>\hypersetup{pdftitle={The exframe Package -- Reference Manual}}
-%<manual>\hypersetup{pdfsubject={Reference Manual for the LaTeX2e Package exframe}}
-%<source>\title{The \markpkg{exframe} Package\\Source Code Documentation}
-%<source>\hypersetup{pdftitle={The exframe Package -- Source Code Documentation}}
-%<source>\hypersetup{pdfsubject={Documented Source for the LaTeX2e Package exframe}}
+%<manual>\title{The \markpkg{\thepkg/} Package\\Reference Manual}
+%<manual>\hypersetup{pdftitle={The \thepkg/ Package -- Reference Manual}}
+%<manual>\hypersetup{pdfsubject={Reference Manual for the LaTeX2e Package \thepkg/}}
+%<source>\title{The \markpkg{\thepkg/} Package\\Source Code Documentation}
+%<source>\hypersetup{pdftitle={The \thepkg/ Package -- Source Code Documentation}}
+%<source>\hypersetup{pdfsubject={Documented Source for the LaTeX2e Package \thepkg/}}
 \author{Niklas Beisert\\[2ex]
   Institut f\"ur Theoretische Physik\\
   Eidgen\"ossische Technische Hochschule Z\"urich\\
@@ -57,12 +60,12 @@
   \href{mailto:nbeisert@itp.phys.ethz.ch}
   {\texttt{nbeisert@itp.phys.ethz.ch}}}
 \hypersetup{pdfauthor={Niklas Beisert}}
-\date{\thedate/, \theversion/\\[1ex]
-\url{https://ctan.org/pkg/exframe}\\[0.5ex]
+\date{\theversion/: \markdate{\thedate/}\\[1ex]
+\url{https://ctan.org/pkg/\thepkg/}\\[0.5ex]
 \url{https://github.com/nbeisert/latex-pkg-nb}}
 
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfurl={https://ctan.org/pkg/exframe}}
+\hypersetup{pdfurl={https://ctan.org/pkg/\thepkg/}}
 \hypersetup{pdfcopyright={Copyright \thecopyright/.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
@@ -88,11 +91,14 @@
 \edef\itemize{\unexpanded\expandafter{\itemize}\parskip0pt}
 
 \newcommand{\markpkg}[1]{\textsf{#1}}
+\newcommand{\markdate}[1]{\textsf{#1}}
 \newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
 \newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
 \newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\markpkg{#1}}}
 
-\def\textvert{\texttt{\char"7C}}
+\def\verbbar{\texttt{\char"7C}}
+\def\verbpkg{\texttt{\thepkg/}}
+\def\thepkgctan/{\ctanpkg{\thepkg/}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1215,7 +1221,9 @@ Otherwise the \textit{filled code} is executed.
 
 The package defines numerous layout configuration options.
 They are listed along with their original definition
-and a brief description in \secref{sec:imp-config}.
+and a brief description
+in the configuration section of the source code documentation.
+%in \secref{sec:imp-config}.
 Some particular aspects are described in more detail
 in \secref{sec:guides}.
 The configuration includes options to:
@@ -1354,7 +1362,9 @@ some essential exercise and sheet data:
 |course|, |institution|, |instructor|, |period| (optional), sheet |title|,
 see \secref{sec:metadata};
 the line below the header, font styles and spaces can be adjusted,
-see the definition in \secref{sec:imp-styles}.
+see the definition
+in the styles section of the source code documentation.
+%in \secref{sec:imp-styles}.
 
 \item |contents| --
 display sheets and problems in the table of contents
@@ -1433,7 +1443,9 @@ define some more advanced styles.
 (no value implies |true|, initially set to |false|) --
 load \ctanpkg{metastr} package and use to handle pdf metadata
 and basic internationalisation,
-see \secref{sec:imp-metastr} for details.
+see the metastr interaction section of the source code documentation
+%see \secref{sec:imp-metastr}
+for details.
 
 \item |problemenv=|\textit{name} --
 redefine environment name |problem|.
@@ -1641,7 +1653,8 @@ The following paragraphs provide guidance on aspects of the
 public framework. There is no complete manual for the framework,
 but a skilled \LaTeX\ tinkerer can find further information
 and pieces of code ready for tweaking in the implementation notes
-in \secref{sec:imp-config} and \secref{sec:imp-styles}.
+the configuration and styles sections of the source code documentation.
+%in \secref{sec:imp-config} and \secref{sec:imp-styles}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Labels for Problems and Sheets.}
@@ -1806,7 +1819,7 @@ This section contains some sample customisations of the default (plain) layout
 which can be realised with moderate effort
 using the various tools provided by the package.
 Additional applications are shown in the sample files
-|exfsamp.tex| and |exfserm.tex|.
+\verbpkg|-samp.tex| and \verbpkg|-ser.tex|.
 Suggestions for further applications are welcome.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1833,8 +1846,9 @@ described in \secref{sec:metadata}.
 Likewise |\exercisedataempty| and |\sheetdataempty|
 can be used to display default values or alternative data
 if some particular data is not provided.
-An example is given by the |plainheader| extended style option
-defined in \secref{sec:imp-styles}.
+An example is given by the |plainheader| extended style option defined
+in the styles section of the source code documentation.
+%in \secref{sec:imp-styles}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Problem Title.}
@@ -1966,7 +1980,7 @@ to the package \ctanpkg{marginnote}:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-Copyright \copyright{} 2011--2026 Niklas Beisert
+Copyright \copyright{} \thecopyright/
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
@@ -1980,88 +1994,90 @@ This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainer of this work is Niklas Beisert.
 
-This work consists of the files |README.txt|, |exframe.ins| and |exframe.dtx|
-as well as the derived files |exframe.sty|, |exfsamp.tex|,
-|exfser|\textit{x}|.tex| (\textit{x}=|m|, |e|, |f|, |01|, |02|, |03|, |aa|),
-|exfsermk.sh|, |exfsermk.mak|
-and |exframe.pdf|.
+This work consists of the files
+|README.txt|, \verbpkg|.ins| and \verbpkg|.dtx|
+as well as the derived files listed below.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Files and Installation}
 
 The package consists of the files:
 %
-\begin{center}
-\begin{tabular}{ll}
+\begin{longtable}{ll}
     |README.txt|   & readme file \\
-    |exframe.ins|  & installation file \\
-    |exframe.dtx|  & source file \\
-    |exframe.sty|  & package file \\
-    |exfsamp.tex|  & sample file \\
-    |exfserm.tex|  & multipart sample main file \\
-    |exfser0|\textit{n}|.tex| & multipart sample sheet
+    \verbpkg|.ins| & installation file \\
+    \verbpkg|.dtx| & source file \\
+    \verbpkg|.sty| & package file \\
+    \verbpkg|.tex| & reference manual file \\
+    \verbpkg|.pdf| & reference manual \\
+    \verbpkg|-src.tex|    & source code documentation file \\
+    \verbpkg|-src.pdf|    & source code documentation \\
+    \verbpkg|-samp.tex|   & sample file \\
+    \verbpkg|-ser.tex|    & multipart sample main file \\
+    \verbpkg|-ser-0|\textit{n}|.tex| & multipart sample sheet
                                 \textit{n}=|1|, |2|, |3| \\
-    |exfseraa.tex| & multipart sample unused problems \\
-    |exfserp|\textit{x}|.tex| & multipart sample problem \textit{x}=|e|, |f| \\
-    |exfsermk.sh|  & multipart sample compile script \\
-    |exfsermk.mak| & multipart sample makefile \\
-    |exframe.pdf|  & manual
-\end{tabular}
-\end{center}
+    \verbpkg|-ser-aa.tex| & multipart sample unused problems \\
+    \verbpkg|-ser-p|\textit{x}|.tex| & multipart sample problem
+                                \textit{x}=|e|, |f| \\
+    \verbpkg|-ser.sh|     & multipart sample compile script \\
+    \verbpkg|-ser.mak|    & multipart sample makefile \\
+\end{longtable}
 %
 The distribution consists of the files
-|README.txt|, |exframe.ins| and |exframe.dtx|.
+|README.txt|, \verbpkg|.ins| and \verbpkg|.dtx|.
 %
 \begin{itemize}
 \item
-Run (pdf)\LaTeX{} on |exframe.dtx|
-to compile the manual |exframe.pdf| (this file).
+Run \LaTeX{} on \verbpkg|.ins| to create the package \verbpkg|.sty|
+and further documentation files.
 \item
-Run \LaTeX{} on |exframe.ins| to create the package |exframe.sty|
-and the samples consisting of |exfsamp.tex|,
-|exfser|\textit{x}|.tex| (\textit{x}=|m|, |e|, |f|, |01|, |02|, |03|, |aa|),
-|exfsermk.sh|, |exfsermk.mak|.
-Copy the file |exframe.sty| to an appropriate directory of your \LaTeX{}
-distribution, e.g.\ \textit{texmf-root}|/tex/latex/exframe|.
+Copy the file \verbpkg|.sty| to an appropriate directory of your \LaTeX{}
+distribution, e.g.\ \textit{texmf-root}|/tex/latex/|\verbpkg.
+\item
+Alternatively, you may copy \verbpkg|.sty| to your project directory.
+\item
+Run (pdf)\LaTeX{} on \verbpkg|.dtx|
+to compile the documentation \verbpkg|.pdf| (this file).
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Related Packages}
 
 The package makes use of other packages available at CTAN:
+%
 \begin{itemize}
 \item
 This package relies on some functionality of the package \ctanpkg{verbatim}
 to read verbatim code from the \LaTeX{} source without expansion of macros.
 Compatibility with the \ctanpkg{verbatim} package
-has been tested with v1.5q (2014/10/28).
+has been tested with v1.5q (\markdate{2014-10-28}).
 \item
 This package uses the package \ctanpkg{xkeyval}
 to process the options for the package, environments and macros.
 Compatibility with the \ctanpkg{xkeyval} package
-has been tested with v2.7a (2014/12/03).
+has been tested with v2.7a (\markdate{2014-12-03}).
 \item
 This package can use the package \ctanpkg{hyperref}
 to include hyperlinks between problems and solutions.
 Compatibility with the \ctanpkg{hyperref} package
-has been tested with v6.88e (2018/11/30).
+has been tested with v6.88e (\markdate{2018-11-30}).
 \item
 This package can use the package \ctanpkg{amstext}
 (which is automatically loaded by \ctanpkg{amsmath})
 to display text within equations.
 Compatibility with the \ctanpkg{amstext} package
-has been tested with v2.01 (2000/06/29).
+has been tested with v2.01 (\markdate{2000-06-29}).
 \item
 This package uses the command |\currfilename|
 provided by the package \ctanpkg{currfile} (if available and loaded)
 to indicate the \LaTeX{} source file in the generated metapost file.
 Compatibility with the \ctanpkg{currfile} package
-has been tested with v0.7c (2015/04/23).
+has been tested with v0.7c (\markdate{2015-04-23}).
 \item
 This package can use the package \ctanpkg{metastr}
 to write pdf metadata and to handle basic translations.
 Compatibility with the \ctanpkg{metastr} package
-has been tested with v1.0 (2020/02/06).
+has been tested with v1.0 (\markdate{2020-02-06}).
 \end{itemize}
 
 There are several other \LaTeX{} packages
@@ -2170,18 +2186,30 @@ then read solutions from different document.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \iffalse
-\paragraph{vN.N.N+:} 20YY/MM/NN
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{vN.N.N+:} \markdate{20YY-MM-DD}
 
 \begin{itemize}
 \item
 \ldots
 \end{itemize}
+
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v3.5.2:} 2026/01/22
+\paragraph{v3.5.3:} \markdate{2026-03-23}
+
+\begin{itemize}
+\item
+split off source code documentation into separate document \verbpkg|-src|
+\item
+package maintenance
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v3.5.2:} \markdate{2026-01-22}
 
 \begin{itemize}
 \item
@@ -2190,7 +2218,7 @@ for display of points in margin
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v3.5.1:} 2025/03/25
+\paragraph{v3.5.1:} \markdate{2025-03-25}
 
 \begin{itemize}
 \item
@@ -2198,7 +2226,7 @@ maintenance and manual update
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v3.5:} 2024/10/18
+\paragraph{v3.5:} \markdate{2024-10-18}
 
 \begin{itemize}
 \item
@@ -2231,7 +2259,7 @@ handling of first solutions within a problem block
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v3.4:} 2020/02/24
+\paragraph{v3.4:} \markdate{2020-02-24}
 
 \begin{itemize}
 \item
@@ -2246,7 +2274,7 @@ minor fixes
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v3.31:} 2020/01/11
+\paragraph{v3.31:} \markdate{2020-01-11}
 
 \begin{itemize}
 \item
@@ -2256,7 +2284,7 @@ sample multipart setup streamlined
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v3.3:} 2019/06/15
+\paragraph{v3.3:} \markdate{2019-06-15}
 
 \begin{itemize}
 \item
@@ -2287,7 +2315,7 @@ filename extensions configurable
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v3.2:} 2019/05/01
+\paragraph{v3.2:} \markdate{2019-05-01}
 
 \begin{itemize}
 \item
@@ -2301,7 +2329,7 @@ multipart sample added
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v3.11:} 2019/04/15
+\paragraph{v3.11:} \markdate{2019-04-15}
 
 \begin{itemize}
 \item
@@ -2318,7 +2346,7 @@ fix spacing for [|sub|]|problempointsat=margin|
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v3.1:} 2019/01/21
+\paragraph{v3.1:} \markdate{2019-01-21}
 
 \begin{itemize}
 \item
@@ -2330,11 +2358,11 @@ reset font size for problem text
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v3.0:} 2019/01/16
+\paragraph{v3.0:} \markdate{2019-01-16}
 
 \begin{itemize}
 \item
-renamed to |exframe.sty|
+renamed to \verbpkg|.sty|
 \item
 first version published on CTAN
 \item
@@ -2356,7 +2384,7 @@ manual, example and installation package added
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v2.0 -- v2.6:} 2014/10/03 -- 2018/11/05
+\paragraph{v2.0 -- v2.6:} \markdate{2014-10-03} -- \markdate{2018-11-05}
 
 \begin{itemize}
 \item
@@ -2374,7 +2402,7 @@ add and remember points
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.1 -- v1.6:} 2014/08/07 -- 2014/09/14
+\paragraph{v1.1 -- v1.6:} \markdate{2014-08-07} -- \markdate{2014-09-14}
 
 \begin{itemize}
 \item
@@ -2390,7 +2418,7 @@ removed specific macros
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.0 -- v1.02:} 2011/09/23 -- 2013/03/17
+\paragraph{v1.0 -- v1.02:} \markdate{2011-09-23} -- \markdate{2013-03-17}
 
 \begin{itemize}
 \item
@@ -2411,7 +2439,7 @@ dedicated layout and macros for author's exercise sheets
 \raggedright
 \settowidth\MacroIndent{\rmfamily\scriptsize 0000\ }
 
-\DocInput{exframe.dtx}
+\DocInput{\thepkg/.dtx}
 %</main|source>
 
 \end{document}
@@ -2926,7 +2954,7 @@ value
 %<*samplemultimain>
 % \fi
 %
-% The main source file is called |exfserm.tex|.
+% The main source file is called \verbpkg|-ser.tex|.
 % It is referenced at several places within the setup,
 % and when changing the name they need to be adjusted accordingly.
 %
@@ -3308,15 +3336,15 @@ enddef;
 %
 % Include problem sheets:
 %    \begin{macrocode}
-\include{exfser01}
-\include{exfser02}
-\include{exfser03}
+\include{exframe-ser-01}
+\include{exframe-ser-02}
+\include{exframe-ser-03}
 %    \end{macrocode}
 
 % Include sheet to collect unused problems
 % (only process for individual sheets, i.e.\ itself):
 %    \begin{macrocode}
-\def\jobnameunused{exfseraa}
+\def\jobnameunused{exframe-ser-aa}
 \ifx\childdocname\jobnameunused\include{\jobnameunused}\fi
 %    \end{macrocode}
 
@@ -3341,7 +3369,8 @@ enddef;
 % \fi
 %
 % Provide some source files
-% |exfser01.tex|, |exfser02.tex|, |exfser03.tex|, |exfseraa.tex|
+% \verbpkg|-ser-01.tex|, \verbpkg|-ser-02.tex|,
+% \verbpkg|-ser-03.tex|, \verbpkg|-ser-aa.tex|
 % for problem sheets.
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3352,16 +3381,16 @@ enddef;
 %    \begin{macrocode}
 %%\providecommand{\printsol}{n}
 \input{childdoc.def}
-\childdocof{exfserm}
+\childdocof{exframe-ser}
 %    \end{macrocode}
 % \iffalse
 %</samplemultisheet1|samplemultisheet2|samplemultisheet3|samplemultisheeta>
 %<samplemultiprobleme|samplemultiproblemf>%%\providecommand{\printsol}{n}
 %<samplemultiprobleme|samplemultiproblemf>\input{childdoc.def}
-%<samplemultiprobleme|samplemultiproblemf>\childdocby{exfserm}
+%<samplemultiprobleme|samplemultiproblemf>\childdocby{exframe-ser}
 %<*samplemultisheet1>
 % \fi
-% The parameter of |\childdocof| must match the main file name |exfserm|.
+% The parameter of |\childdocof| must match the main file name \verbpkg|-ser|.
 % Uncommenting the commented line suppressed printing of the solution.
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3372,7 +3401,7 @@ enddef;
 \begin{sheet}[due={2019-04-29}]
 %    \end{macrocode}
 % Adjust due date for each sheet.
-% For sheet containing unused problems |exfseraa.tex|,
+% For sheet containing unused problems \verbpkg|-ser-aa.tex|,
 % declare a sheet |title={unused problems}| instead of due date.
 % \iffalse
 %</samplemultisheet1>
@@ -3393,7 +3422,7 @@ enddef;
 % \iffalse
 %</samplemultisheet1>
 %<samplemultisheet2>\begin{problem}[title={Sample C}]
-%<samplemultisheet3>\input{exfserpe}
+%<samplemultisheet3>\input{exframe-ser-pe}
 %<samplemultisheeta>\begin{problem}[title={Sample X}]
 %<samplemultiprobleme>\begin{problem}[title={Sample E}]
 %<*samplemultisheet1|samplemultisheet2|samplemultisheeta|samplemultiprobleme>
@@ -3492,7 +3521,7 @@ fillshape(paths[3], 0.7white) pensize(1pt);
 % \iffalse
 %</samplemultisheet1>
 %<samplemultisheet2>\begin{problem}[title={Sample D}]
-%<samplemultisheet3>\input{exfserpf}
+%<samplemultisheet3>\input{exframe-ser-pf}
 %<samplemultisheeta>\begin{problem}[title={Sample Y}]
 %<samplemultiproblemf>\begin{problem}[title={Sample F}]
 %<*samplemultisheet1|samplemultisheet2|samplemultisheeta|samplemultiproblemf>
@@ -3553,21 +3582,21 @@ fillshape(paths[3], 0.7white) pensize(1pt);
 % In such a setup, the \ctanpkg{childdoc} mechanism
 % allows to compile each problem individually.
 %
-% To that end, prepare a file |exfserp|\textit{nn}|.tex|
+% To that end, prepare a file \verbpkg|-ser-p|\textit{nn}|.tex|
 % containing the |problem| environment.
 % This file should start with:
 %    \begin{macrocode}
 %%\providecommand{\printsol}{n}
 \input{childdoc.def}
-\childdocby{exfserm}
+\childdocby{exframe-ser}
 %    \end{macrocode}
 % and end with |\endinput|.
 % Then compose the problem sheet
 % by including the appropriate set of problem files
-% via |\input{exfserp|\textit{nn}|}|.
+% via |\input{exframe-ser-p|\textit{nn}|}|.
 %
-% In the example, a sheet file |exfser03.tex|
-% includes two problem files |exfserpe.tex| and |exfserpf.tex|.
+% In the example, a sheet file \verbpkg|-ser-03.tex|
+% includes two problem files \verbpkg|-ser-pe.tex| and \verbpkg|-ser-pf.tex|.
 %
 % \iffalse
 %</discard>
@@ -3592,7 +3621,7 @@ fillshape(paths[3], 0.7white) pensize(1pt);
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Compile Script.}
 %
-% The |bash| shell script |exfsermk.sh| compiles one part of
+% The |bash| shell script \verbpkg|-ser.sh| compiles one part of
 % the collection of problem sheets in a given mode.
 %
 % Shebang for |bash| script:
@@ -3607,8 +3636,8 @@ fillshape(paths[3], 0.7white) pensize(1pt);
 % |trgsol| defines the target modes;
 % |sheets| is a list of allowable sheet identifiers \textit{nn}:
 %    \begin{macrocode}
-srcmain="exfserm"
-srcsec="exfser"
+srcmain="exframe-ser"
+srcsec="exframe-ser-"
 trglist=(Problems Solutions)
 trgsol=(n y)
 secnum="01 02 03 aa"
@@ -3772,20 +3801,20 @@ echo
 %
 % \catcode9=13\def^^I{~~~~~~~~}
 %
-% Define a make file |exfsermk.mak| for the project.
+% Define a make file \verbpkg|-ser.mak| for the project.
 % The compilation is then started by
-% |make -f exfsermk.mak| \ldots.
+% |make -f exframe-ser.mak| \ldots.
 % More conveniently, in a single-project setup within the directory,
 % this file would be called |Makefile| in which case it suffices
 % to just run |make| \ldots.
 %
 % Configuration definitions:
 %    \begin{macrocode}
-SRCMAIN = exfserm
-SRCSEC = exfser
-SRCPRB = exfserp
-SCRIPT = exfsermk.sh
-MAKEFILE = exfsermk.mak
+SRCMAIN = exframe-ser
+SRCSEC = exframe-ser-
+SRCPRB = exframe-ser-p
+SCRIPT = exframe-ser.sh
+MAKEFILE = exframe-ser.mak
 TRGLIST = Problems Solutions
 SECNUM = 01 02 03 aa
 PREREQS = $(SRCMAIN).tex
@@ -3811,7 +3840,7 @@ sources: $(GENFILES) ;
 %    \end{macrocode}
 % \iffalse$\fi
 
-% Compile particular files via |exfsermk.sh| bash script.
+% Compile particular files via \verbpkg|-ser.sh| bash script.
 % Note that command lines have to start with a tab character
 % (represented by 8 spaces here):
 %    \begin{macrocode}
@@ -3873,7 +3902,7 @@ clean-all:  clean
 %<*package>
 % \fi
 %
-% This section describes the package |exframe.sty|.
+% This section describes the package \verbpkg|.sty|.
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{General Definitions}
@@ -7409,12 +7438,10 @@ clean-all:  clean
 % This can facilitate internationalisation,
 % and suitable words for English, German, French and Spanish are provided.
 % \item
-% Metadata as described in \secref{sec:metadata}
-% should be filled via |\metaset| rather than |\exercisedata|.
+% Metadata should be filled via |\metaset| rather than |\exercisedata|.
 % The present package will read it from the \ctanpkg{metastr} registers.
 % \item
-% Basic pdf metadata is written automatically or manually
-% as described in \secref{sec:metadata}.
+% Basic pdf metadata is written automatically or manually.
 % This is done via |\metawritepdfinfo|,
 % consequently, automatic writing of these basic metadata
 % is disabled in \ctanpkg{metastr}.
