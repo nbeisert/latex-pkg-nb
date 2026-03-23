@@ -1,5 +1,5 @@
-mathfixs v1.1.3
-Copyright 2018-2025 Niklas Beisert
+mathfixs v1.2: 2026-03-23
+Copyright 2018-2026 Niklas Beisert
 
 mathfixs is a LaTeX2e package to fix some odd behaviour in math mode
 such as spacing around fractions and roots, math symbols within bold
@@ -8,22 +8,24 @@ macros.
 
 The package consists of the files
 
-    README.txt    readme file
-    mathfixs.ins  installation file
-    mathfixs.dtx  source file
-    mathfixs.sty  package file
-    mafxsamp.tex  sample latex file
-    mathfixs.pdf  manual
+    README.txt         readme file
+    mathfixs.ins       installation file
+    mathfixs.dtx       source file
+    mathfixs.sty       package file
+    mathfixs-samp.tex  sample file
+    mathfixs.pdf       documentation
 
 The distribution consists of the files
 README.txt, mathfixs.ins and mathfixs.dtx.
 
-Run "(pdf)latex mathfixs.dtx" to compile the manual mathfixs.pdf.
-
 Run "latex mathfixs.ins" to create the package mathfixs.sty
-and the sample mafxsamp.tex.
+and further documentation files.
+
 Copy the file mathfixs.sty to an appropriate directory
 of your LaTeX distribution, e.g. texmf-root/tex/latex/mathfixs.
+Alternatively, you may copy mathfixs.sty to your project directory.
+
+Run "pdflatex mathfixs.dtx" to compile the documentation mathfixs.pdf.
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3

@@ -3,8 +3,8 @@
 
 #include relevant files
 !/.gitignore
-!/mathfixs.dtx
-!/mathfixs.ins
 !/Makefile
 !/README.txt
 !/mathfixs.sty
+!/mathfixs.dtx
+!/mathfixs.ins

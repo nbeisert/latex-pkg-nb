@@ -1,7 +1,7 @@
 %
 % \iffalse meta-comment
 %
-% mathfixs.dtx Copyright (C) 2018-2025 Niklas Beisert
+% mathfixs.dtx Copyright (C) 2018-2026 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -16,14 +16,19 @@
 % The Current Maintainer of this work is Niklas Beisert.
 %
 % This work consists of the files mathfixs.dtx and mathfixs.ins
-% and the derived files mathfixs.sty and mafxsamp.tex.
+% and the derived files mathfixs.sty and mathfixs-samp.tex.
 %
-%<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{mathfixs}[2025/03/25 v1.1.3 various fixes for math mode]
-%<sample>\ProvidesFile{mafxsamp.tex}[2025/03/25 v1.1.3 sample for mathfixs]
-%<*driver>
-\def\thedate#1{2025/03/25}\def\theversion#1{v1.1.3}
-\ProvidesFile{mathfixs.dtx}[\thedate{} \theversion{} mathfixs reference manual file]
+%<package|sample>\NeedsTeXFormat{LaTeX2e}[1996-12-01]
+%<package>\ProvidesPackage{mathfixs}[2026-03-23 v1.2 various fixes for math mode]
+%<sample>\ProvidesFile{mathfixs-samp.tex}[2026-03-23 v1.2 sample for mathfixs]
+%<source>\ProvidesFile{mathfixs-src.tex}[2026-03-23 v1.2 mathfixs source code documentation]
+%<manual>\ProvidesFile{mathfixs.tex}[2026-03-23 v1.2 mathfixs reference manual]
+%<*main|manual|source>
+\def\thepkg/{mathfixs}\def\thedate/{2026-03-23}\def\theversion/{v1.2}
+\def\thecopyright/{2018\texorpdfstring{--}{-}2026 Niklas Beisert}
+%<*main>
+\ProvidesFile{\thepkg/.dtx}[\thedate/ \theversion/ \thepkg/ package main file]
+%</main>
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -31,17 +36,40 @@
 \usepackage[hyperindex=false]{hyperref}
 \usepackage{hyperxmp}
 \usepackage[usenames]{color}
-\usepackage{amssymb}
+\usepackage{longtable}
 
-\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
-\hypersetup{urlbordercolor={.5 1 1}}
-\hypersetup{linkbordercolor={1 .7 .7}}
-\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
-\hypersetup{keeppdfinfo=true}
-\hypersetup{pdfsource={}}
+\usepackage{amssymb,bbm,dsfont}
+\IfFileExists{bbold.sty}{}{\GenericWarning{please install package `bbold'}}
+\DeclareMathAlphabet{\mathbbold}{U}{bbold}{m}{n}
+\DeclareMathAlphabet{\mathdss}{U}{dsss}{m}{n}
+\IfFileExists{upgreek.sty}{\usepackage[Symbolsmallscale]{upgreek}}{%
+  \def\uppi{\mathrm{\pi}}}
+
+%<*main>
+\title{The \markpkg{\thepkg/} Package}
+\hypersetup{pdftitle={The \thepkg/ Package}}
+\hypersetup{pdfsubject={Documentation for the LaTeX2e Package \thepkg/}}
+%</main>
+%<manual>\title{The \markpkg{\thepkg/} Package\\Reference Manual}
+%<manual>\hypersetup{pdftitle={The \thepkg/ Package -- Reference Manual}}
+%<manual>\hypersetup{pdfsubject={Reference Manual for the LaTeX2e Package \thepkg/}}
+%<source>\title{The \markpkg{\thepkg/} Package\\Source Code Documentation}
+%<source>\hypersetup{pdftitle={The \thepkg/ Package -- Source Code Documentation}}
+%<source>\hypersetup{pdfsubject={Documented Source for the LaTeX2e Package \thepkg/}}
+\author{Niklas Beisert\\[2ex]
+  Institut f\"ur Theoretische Physik\\
+  Eidgen\"ossische Technische Hochschule Z\"urich\\
+  Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
+  \href{mailto:nbeisert@itp.phys.ethz.ch}
+  {\texttt{nbeisert@itp.phys.ethz.ch}}}
+\hypersetup{pdfauthor={Niklas Beisert}}
+\date{\theversion/: \markdate{\thedate/}\\[1ex]
+\url{https://ctan.org/pkg/\thepkg/}\\[0.5ex]
+\url{https://github.com/nbeisert/latex-pkg-nb}}
+
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfurl={https://ctan.org/pkg/mathfixs}}
-\hypersetup{pdfcopyright={Copyright 2018-2025 Niklas Beisert.
+\hypersetup{pdfurl={https://ctan.org/pkg/\thepkg/}}
+\hypersetup{pdfcopyright={Copyright \thecopyright/.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
@@ -54,32 +82,32 @@
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
 \hypersetup{pdfcontacturl={https://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
+\hypersetup{keeppdfinfo=true}
+\hypersetup{pdfsource={}}
+\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
+\hypersetup{urlbordercolor={.5 1 1}}
+\hypersetup{linkbordercolor={1 .7 .7}}
+\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
+
+\parskip1ex
+\parindent0pt
+\edef\itemize{\unexpanded\expandafter{\itemize}\parskip0pt}
+
 \newcommand{\markpkg}[1]{\textsf{#1}}
+\newcommand{\markdate}[1]{\textsf{#1}}
 \newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
 \newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
 \newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\markpkg{#1}}}
 
-\def\textvert{\texttt{\char"7C}}
+\def\verbbar{\texttt{\char"7C}}
+\def\verbpkg{\texttt{\thepkg/}}
+\def\thepkgctan/{\ctanpkg{\thepkg/}}
 
-\parskip1ex
-\parindent0pt
-\let\olditemize\itemize
-\def\itemize{\olditemize\parskip0pt}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
-\title{The \markpkg{mathfixs} Package}
-\hypersetup{pdftitle={The mathfixs Package}}
-\author{Niklas Beisert\\[2ex]
-  Institut f\"ur Theoretische Physik\\
-  Eidgen\"ossische Technische Hochschule Z\"urich\\
-  Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
-  \href{mailto:nbeisert@itp.phys.ethz.ch}
-  {\texttt{nbeisert@itp.phys.ethz.ch}}}
-\hypersetup{pdfauthor={Niklas Beisert}}
-\hypersetup{pdfsubject={Manual for the LaTeX2e Package mathfixs}}
-\date{\thedate{}, \theversion{}\\[1ex]
-\url{https://ctan.org/pkg/mathfixs}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -97,6 +125,8 @@ It also adds some related macros.
 \tableofcontents
 \endgroup
 
+
+%<*main|manual>
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
@@ -154,15 +184,13 @@ which may modify the default behaviour in an unintended fashion.
 \DescribeMacro{\ProvideMathFix}
 Features and options can be selected by the commands:
 %
-\begin{center}
-\begin{tabular}{rl}
+\begin{longtable}{rl}
 &|\usepackage[|\textit{opts}|]{mathfixs}|
 \\
 or&|\PassOptionsToPackage{|\textit{opts}|}{mathfixs}|
 \\
 or&|\ProvideMathFix{|\textit{opts}|}|
-\end{tabular}
-\end{center}
+\end{longtable}
 %
 |\PassOptionsToPackage| must be used before |\usepackage|;
 |\ProvideMathFix| must be used afterwards.
@@ -288,7 +316,7 @@ to any desired command \textit{class} accepting
 the expression for the fraction as its single parameter.
 Likewise, the option |fracdelimclass=|\textit{class}
 customises the math class of fractions with delimiters
-generated by |\genfrac| such as |\|[|d|\textvert|t|]|binom|.
+generated by |\genfrac| such as |\|[|d|\verbbar|t|]|binom|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Feature \texttt{rfrac}.}
@@ -599,21 +627,18 @@ All of them are overwritten by \ctanpkg{amsopn} within \ctanpkg{amsmath}.
 
 Exponential and logarithm functions:
 %
-\begin{center}
-\begin{tabular}{lll}
+\begin{longtable}{lll}
 macro & output & description \\
 \hline
 |\exp| & $\exp$ & exponential function \\
 |\log| & $\log$ & logarithm function \\
 |\lg| & $\lg$ & common logarithm function \\
 |\ln| & $\ln$ & natural logarithm function \\
-\end{tabular}
-\end{center}
+\end{longtable}
 
 Trigonometric functions:
 %
-\begin{center}
-\begin{tabular}{lll}
+\begin{longtable}{lll}
 macro & output & description \\
 \hline
 |\sin| & $\sin$ & sine function \\
@@ -625,39 +650,33 @@ macro & output & description \\
 |\arcsin| & $\arcsin$ & inverse sine function \\
 |\arccos| & $\arccos$ & inverse cosine function \\
 |\arctan| & $\arctan$ & inverse tangent function \\
-\end{tabular}
-\end{center}
+\end{longtable}
 
 Hyperbolic functions:
 %
-\begin{center}
-\begin{tabular}{lll}
+\begin{longtable}{lll}
 macro & output & description \\
 \hline
 |\sinh| & $\sinh$ & hyperbolic sine function \\
 |\cosh| & $\cosh$ & hyperbolic cosine function \\
 |\tanh| & $\tanh$ & hyperbolic tangent function \\
 |\coth| & $\coth$ & hyperbolic cotangent function \\
-\end{tabular}
-\end{center}
+\end{longtable}
 
 Extremal values:
 %
-\begin{center}
-\begin{tabular}{lll}
+\begin{longtable}{lll}
 macro & output & description \\
 \hline
 |\max| & $\max$ & maximum of a set \\
 |\min| & $\min$ & minimum of a set \\
 |\sup| & $\sup$ & supremum of a set \\
 |\inf| & $\inf$ & infimum of a set \\
-\end{tabular}
-\end{center}
+\end{longtable}
 
 Limits:
 %
-\begin{center}
-\begin{tabular}{lll}
+\begin{longtable}{lll}
 macro & output & description \\
 \hline
 |\lim| & $\lim$ & limit operator \\
@@ -665,13 +684,11 @@ macro & output & description \\
 |\liminf| & $\liminf$ & limit inferior operator \\
 |\injlim| & inj\,lim & ? (\ctanpkg{amsopn}/\ctanpkg{amsmath} only) \\
 |\projlim| & proj\,lim & ? (\ctanpkg{amsopn}/\ctanpkg{amsmath} only) \\
-\end{tabular}
-\end{center}
+\end{longtable}
 
 Assorted functions and operators:
 %
-\begin{center}
-\begin{tabular}{lll}
+\begin{longtable}{lll}
 macro & output & description \\
 \hline
 |\arg| & $\arg$ & argument of a complex number \\
@@ -682,21 +699,18 @@ macro & output & description \\
 |\gcd| & $\gcd$ & greatest common divisor \\
 |\hom| & $\hom$ & ? \\
 |\Pr| & $\Pr$ & ? \\
-\end{tabular}
-\end{center}
+\end{longtable}
 
 Modulo statements:
 %
-\begin{center}
-\begin{tabular}{lll}
+\begin{longtable}{lll}
 macro & output & description \\
 \hline
 |\bmod| & $X \bmod Y$ & modulo statement \\
 |\pmod| & $X \pmod Y$ & modulo statement in parentheses \\
 |\mod| & $X\mkern18mu \bmod Y$ & modulo statement with space
 (\ctanpkg{amsmath} only) \\
-\end{tabular}
-\end{center}
+\end{longtable}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Feature \texttt{genop}.}
@@ -723,8 +737,7 @@ individually select the desired definitions
 from the assorted section
 with optionally defined macro names:
 %
-\begin{center}
-\begin{tabular}{llll}
+\begin{longtable}{llll}
 feature & macro & output & description \\
 \hline
 |sgn| & |\sgn| & sgn & signum function \\
@@ -736,21 +749,21 @@ feature & macro & output & description \\
 |const| & |\const| & const & anything constant \\
 \hline
 |genop| & & & all of the above
-\end{tabular}
-\end{center}
+\end{longtable}
 %
 The following two-letter operators
+and some additional ones
 are not included in the above class
 and must be implemented individually:
 %
-\begin{center}
-\begin{tabular}{llll}
+\begin{longtable}{llll}
 feature & macro & output & description \\
 \hline
 |id| & |\id| & id & identity map \\
 |tr| & |\tr| & tr & trace \\
-\end{tabular}
-\end{center}
+|ad| & |\ad| & ad & adjoint (action) \\
+|Vol| & |\Vol| & Vol & Volume \\
+\end{longtable}
 %
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -766,18 +779,17 @@ Another established representation for these projectors is given by
 The feature |reim| overwrites the predefined macros |\Re| and |\Im|
 with a textual representation:
 %
-\begin{center}
-\begin{tabular}{lll}
+\begin{longtable}{lll}
 macro & output & description \\
 \hline
 |\Re| & Re & real part of a complex number \\
 |\Im| & Im & imaginary part of a complex number \\
-\end{tabular}
-\end{center}
+\end{longtable}
 %
 The optional argument |reim={\|\textit{cmdr}|\|\textit{cmdi}|}| specifies
 alternative command names |\|\textit{cmdr} and |\|\textit{cmdi}
 for |\Re| and |\Im|.
+The feature |reim*| restores the predefined representation for |\Re| and |\Im|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Feature \texttt{trig}.}
@@ -790,15 +802,13 @@ for |\Re| and |\Im|.
 like $\sin$, $\cos$ and $\arctan$, but three of their inverses are omitted.
 The feature |trig| supplies the remaining
 three inverse trigonometric functions:
-\begin{center}
-\begin{tabular}{lll}
+\begin{longtable}{lll}
 macro & output & description \\
 \hline
 |\arccot| & arccot & inverse cotangent function \\
 |\arcsec| & arcsec & inverse secant function \\
 |\arccsc| & arccsc & inverse cosecant function \\
-\end{tabular}
-\end{center}
+\end{longtable}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Feature \texttt{hyp}.}
@@ -811,8 +821,7 @@ macro & output & description \\
 but two of them and all inverses are omitted.
 The feature |hyp| supplies the remaining two hyperbolic functions
 along with all inverse hypberbolic functions:
-\begin{center}
-\begin{tabular}{lll}
+\begin{longtable}{lll}
 macro & output & description \\
 \hline
 |\sech| & sech & hyperbolic secant function \\
@@ -823,23 +832,15 @@ macro & output & description \\
 |\arcoth| & arcoth & inverse hyperbolic cotangent function \\
 |\arsech| & arsech & inverse hyperbolic secant function \\
 |\arcsch| & arcsch & inverse hyperbolic cosecant function \\
-\end{tabular}
-\end{center}
+\end{longtable}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Feature \texttt{mapchar}.}
 \DescribeMacro{mapchar}
-\DescribeMacro{\dom}
-\DescribeMacro{\codom}
-\DescribeMacro{\supp}
-\DescribeMacro{\im}
-\DescribeMacro{\coker}
-\DescribeMacro{\rank}
 %
 The feature |mapchar| supplies further characteristics of maps:
 %
-\begin{center}
-\begin{tabular}{lll}
+\begin{longtable}{lll}
 macro & output & description \\
 \hline
 |\dom| & dom & domain \\
@@ -848,8 +849,7 @@ macro & output & description \\
 |\im| & im & image \\
 |\coker| & coker & cokernel \\
 |\rank| & rank & rank \\
-\end{tabular}
-\end{center}
+\end{longtable}
 %
 The optional argument |mapchar={\|\textit{cmdim}|}| specifies
 an alternative command name |\|\textit{cmdim} for |\im|
@@ -858,46 +858,36 @@ which has only two letters and might easily clash with other definitions.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Feature \texttt{mapclass}.}
 \DescribeMacro{mapclass}
-\DescribeMacro{\Hom}
-\DescribeMacro{\End}
-\DescribeMacro{\Isom}
-\DescribeMacro{\Aut}
 %
 The feature |mapclass| supplies symbols for the sets of
 homomorphisms, endomorphisms, isomorphisms and automorphisms
 as classes/categories of structure-preserving maps:
 %
-\begin{center}
-\begin{tabular}{lll}
+\begin{longtable}{lll}
 macro & output & description \\
 \hline
 |\Hom| & Hom & homomorphisms \\
 |\End| & End & endomorphisms \\
 |\Isom| & Isom & isomorphisms \\
 |\Aut| & Aut & automorphisms
-\end{tabular}
-\end{center}
+\end{longtable}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Feature \texttt{vecdiff}.}
 \DescribeMacro{vecdiff}
 \DescribeMacro{vecrot}
-\DescribeMacro{\grad}
-\DescribeMacro{\div}
-\DescribeMacro{\curl}
 %
 The feature |vecdiff| supplies the three common differential operators
 gradient, divergence and curl for vectors:
 %
-\begin{center}
-\begin{tabular}{llll}
+\begin{longtable}{llll}
 macro & output & description \\
 \hline
 |\grad| & grad & gradient \\
 |\div| & div & divergence \\
-|\curl| & curl (rot) & curl (alternative form)
-\end{tabular}
-\end{center}
+|\curl| & curl & curl \\
+|\curl| & rot & curl (alternative form using |vecdiff*| or |vecrot|) \\
+\end{longtable}
 %
 The feature |vecrot|[|={\|\textit{cmd}|}|]
 supplies the alternative form `rot' for curl/rotor on top of |\curl|
@@ -917,32 +907,84 @@ Nevertheless, here we go \ldots
 \DescribeMacro{econst}
 \DescribeMacro{iunit}
 \DescribeMacro{piconst}
+\DescribeMacro{unitel}
 %
 Three of the most relevant mathematical constants are Euler's number $e$,
 the imaginary unit $i$ and the circle's constant $\pi$
 (with the relation $e^{i\pi}=-1$).
+The unit element of some algebraic structure similarly deserves mention
+as it could be typeset in various forms.
 The package provides macros for these
-with either upright or math italic representations:
+with diverse representations:
 %
-\begin{center}
-\begin{tabular}{llll}
+\begin{longtable}{llll}
 feature & macro & output & description \\
 \hline
 |econst| & |\econst| & e & Euler's number (upright) \\
-|econst*| & |\econst| & $e$ & Euler's number (math italic) \\
-|iunit| & |\iunit| & i & imaginary unit (upright) \\
-|iunit*| & |\iunit| & $i$ & imaginary unit (math italic) \\
-|iunit*nb| & |\iunit| & $\mathring{\imath}$ & imaginary unit
-                        (NB's silly circle version) \\
-|piconst| & |\piconst| & $\mathrm{\pi}$ & circle constant $\pi$
-                         (upright, if only \ldots)\\
-|piconst*| & |\piconst| & $\pi$ & circle constant $\pi$ (math italic)
-\end{tabular}
-\end{center}
+|econst*| & & $e$ & \quad (math italic) \\
+|iunit| & |\iunit|   & i & imaginary unit (upright) \\
+|iunit*| & & $i$ & \quad (math italic) \\
+|iunit*nb| & & $\mathring{\imath}$ & \quad  (NB's silly circle version) \\
+|piconst| & |\piconst| & $\uppi$ & circle constant $\pi$
+                         (upright, if only \ldots) \\
+|piconst*| & & $\pi$ & \quad (math italic) \\
+|unitel1| & |\unitel| & $\mathds{1}$ & unit element (doublestroke `1')\\
+|unitel1*| & & $1$ & \quad (plain `1') \\
+|unitel|\textit{var} &  &  & \quad (variants, see table below) \\
+\end{longtable}
 %
 Each macro and representation is provided as an individual feature
 \textit{feature}[|={\|\textit{cmd}|}|]
-which offers the option to customise the macro name to |\|\textit{cmd}.
+which offers the option to customise the macro name to |\|\textit{cmd}
+(or use several representations side-by-side).
+The following table lists variants for the unit element representation.
+%
+\begin{longtable}{l@{\hspace{2em}}c@{\hspace{0.5em}}l@%
+  {\hspace{2em}}c@{\hspace{0.5em}}l@{\hspace{2em}}c@{\hspace{0.5em}}l}
+& \multicolumn{2}{l}{output/\textit{var}}
+& \multicolumn{2}{l}{output/\textit{var}}
+& \multicolumn{2}{l}{output/\textit{var}}
+\\\hline
+\markpkg{dsfont} `$\mathds{1}$' &
+$\mathds{1}$ & |1ds| (default) &
+$\mathds{1}$ & |1dsr| (serif) &
+$\mathdss{1}$ & |1dss| (sans)
+\\
+\markpkg{bbm} `$\mathbbm{1}$' &
+$\mathbbm{1}$ & |1bbm| (serif) &
+$\mathbbmss{1}$ & |1bbmss| (sans) &
+$\mathbbmtt{1}$ & |1bbmtt| (typewriter)
+\\
+\markpkg{bbold} `$\mathbbold{1}$' &
+$\mathbbold{1}$ & |1bbold| (sans)
+\\
+bold `1' &
+$\mathbf{1}$ & |1bf| (extended) &
+\def\bfdefault{b}\textbf{1} & |1bfb| (narrower) &
+\def\bfdefault{bx}\textbf{1} & |1bfbx| (extended)
+\\
+letter `e' &
+$\mathrm{e}$ & |e| &
+$e$ & |e*|
+\\
+letter `E' &
+$\mathrm{E}$ & |E| &
+$E$ & |E*|
+\\
+`I' / `id' &
+$\mathrm{I}$ & |I| &
+$I$ & |I*| &
+id & |id|
+\end{longtable}
+%
+The doublestroke/blackboard bold representations
+require installation of the further packages
+\markpkg{dsfont}/\ctanpkg{doublestroke},
+\ctanpkg{bbm}/\ctanpkg{bbm-macros} and/or \ctanpkg{bbold}.
+Inclusion of the packages in your document is not required,
+as \ctanpkg{mathfixs} will try to include the fonts anyway.
+The default form |unitel1| will pick the first available form
+from the above packages and resort to the bold form otherwise.
 
 \DescribeMacro{econstclass}
 As Euler's number is commonly used within exponentiation
@@ -966,21 +1008,19 @@ with the feature |greeklower|.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Derivative Symbols.}
-\DescribeMacro{\der}
-\DescribeMacro{\diff}
+\DescribeMacro{der}
+\DescribeMacro{diff}
 %
 The package provides some assorted elementary symbols and compounds:
 %
-\begin{center}
-\begin{tabular}{llll}
+\begin{longtable}{llll}
 feature & macro & output & description \\
 \hline
 |der| & |\der| & d & derivative symbol (upright) \\
 |der*| & |\der| & $d$ & derivative symbol (math italic) \\
 |diff| & |\diff{|$x$|}| & d$x$ & coordinate differential (upright) \\
 |diff*| & |\diff{|$x$|}| & $dx$ & coordinate differential (math italic) \\
-\end{tabular}
-\end{center}
+\end{longtable}
 %
 Each macro and representation is provided as an individual feature
 \textit{feature}[|={\|\textit{cmd}|}|]
@@ -995,17 +1035,50 @@ Therefore |\diff{|$x$|}| is declared as |\mathinner|
 which adds spacing where needed.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Conjugation Operations.}
+\DescribeMacro{trans}
+\DescribeMacro{hconj}
+\DescribeMacro{conj}
+%
+The package provides macros for the matrix and vector operations
+transposition, hermitian conjugation, complex conjugation and dualisation
+in various representations:
+%
+\begin{longtable}{llll}
+feature & macro & output & description \\
+\hline
+|trans|   & |\trans| & $^\top{}$ & transposition (|\top|) \\
+|trans*|  &          & $^\intercal$ &
+  \quad alternate symbol (|\intercal|, requires \markpkg{amssymb})\\
+|transT|  &          & $^\mathsf{T}$ & \quad letter `T' \\
+|transT*| &          & $^\mathsf{\scriptscriptstyle T}$ &
+  \quad letter `T' (|\scriptscriptsize|) \\
+|transt|  &          & $^\mathsf{t}$ & \quad letter `t' \\
+|hconj|   & |\hconj| & $^\dagger$ & hermitian conjugation (|\dagger|) \\
+|hconjH|  &          & $^\mathsf{H}$ & \quad letter `H' \\
+|hconjH*| &          & $^\mathsf{\scriptscriptstyle H}$ &
+   \quad letter `H' (|\scriptscriptsize|) \\
+|hconjh|  &          & $^\mathsf{h}$ & \quad letter `h' \\
+|conj|    & |\conj|  & $^*$ & complex conjugation (|\ast|) \\
+|dual|    & |\dual|  & $^*$ & dualisation (|\ast|) \\
+\end{longtable}
+%
+The macros are intended to be used within superscripts.
+Each macro and representation is provided as an individual feature
+\textit{feature}[|={\|\textit{cmd}|}|]
+which offers the option to customise the macro name to |\|\textit{cmd}.
+
+\DescribeMacro{transfont}
+The default font for letter representations of transposition
+and hermitian conjugation is |\mathsf|;
+it can be adjusted by |transfont={|\textit{mathfont}|}|.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Assorted Symbols.}
-\DescribeMacro{\order}
-\DescribeMacro{\Order}
-\DescribeMacro{\lapl}
-\DescribeMacro{\defeq}
-\DescribeMacro{\eqdef}
 %
 The package provides some assorted elementary symbols and compounds:
 %
-\begin{center}
-\begin{tabular}{llll}
+\begin{longtable}{llll}
 feature & macro & output & description \\
 \hline
 |order| & |\order| & $o$ & anything of order less than \\
@@ -1015,8 +1088,9 @@ feature & macro & output & description \\
 |lapl| & |\lapl| & $\mathnormal{\Delta}$ & Laplace operator \\
 |defeq| & |\defeq| & $\mathrel{\mathop:}=$ & is defined as \\
 |eqdef| & |\eqdef| & $=\mathrel{\mathop:}$ & defines \\
-\end{tabular}
-\end{center}
+|dualop| & |\dualop| & $\star$ & dual operator (e.g.\ Hodge) \\
+|dualop*| & |\dualop| & $\ast$ & dual operator (alternative form) \\
+\end{longtable}
 %
 Each macro and representation is provided as an individual feature
 \textit{feature}[|={\|\textit{cmd}|}|]
@@ -1026,10 +1100,9 @@ The defining symbols |\defeq| and |\eqdef| both typeset
 the colon to be vertically aligned with the equation sign.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Feature \texttt{numset}.}
+\paragraph{Number Sets.}
 \DescribeMacro{numset}
 \DescribeMacro{numsetfont}
-\DescribeMacro{\numset}
 %
 The feature |numset| provides the macro |\numset|
 to typeset a number set such as the integers
@@ -1045,8 +1118,7 @@ it can be adjusted by |numsetfont={|\textit{mathfont}|}|.
 The standard number fields are provided by the feature |numsets|
 as follows:
 %
-\begin{center}
-\begin{tabular}{llll}
+\begin{longtable}{llll}
 macro & output & description \\
 \hline
 |\Natural| & $\mathbb{N}$ & set of natural numbers \\
@@ -1056,8 +1128,75 @@ macro & output & description \\
 |\Complex| & $\mathbb{C}$ & field of complex numbers \\
 |\Quaternion| & $\mathbb{H}$ & skew field of quaternions \\
 |\Octonion| & $\mathbb{O}$ & division algebra of octonions \\
-\end{tabular}
-\end{center}
+\end{longtable}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Standard Groups.}
+\DescribeMacro{grp}
+%
+The feature |grp| provides the macro |\grp|
+to typeset a group name
+which is commonly denoted by upright (mostly capital) letters
+such as $\mathrm{GL}$ or $\mathrm{SO}$.
+The feature |grp={\|\textit{cmd}|}|
+offers the option to customise the macro name to |\|\textit{cmd}.
+The feature |groups| defines a couple of common group names.
+
+\DescribeMacro{grpfin}
+The basic finite groups are provided by the feature |grpfin|
+as follows:
+%
+\begin{longtable}{llll}
+macro & output & description \\
+\hline
+|\grpcyc| & Z & cyclic group \\
+|\grpcyc| & C & cyclic group (alternative form using |grpcycC| or |grpfin*|) \\
+|\grpdih| & D & dihedral group \\
+|\grpperm| & S & permutation group \\
+|\grpalt| & A & alternating group \\
+\end{longtable}
+%
+\DescribeMacro{grplie}
+The basic groups of Lie type are provided by the feature |grplie|
+as follows:
+%
+\begin{longtable}{llll}
+macro & output & description \\
+\hline
+|\grpGL| & GL & general linear group \\
+|\grpSL| & SL & special linear group \\
+|\grpPGL| & PGL & projective linear group \\
+|\grpPSL| & PSL & projective special linear group \\
+|\grpU| & U & unitary group \\
+|\grpSU| & SU & special unitary group \\
+|\grpPU| & PU & projective unitary group \\
+|\grpPSU| & PSU & projective special unitary group \\
+|\grpO| & O & orthogonal group \\
+|\grpSO| & SO & special orthogonal group \\
+|\grpPSO| & PSO & projective special orthogonal group \\
+|\grpSpin| & Spin & spin group \\
+|\grpPin| & Pin & pin group \\
+|\grpSp| & Sp & symplectic group \\
+|\grpMp| & Mp & metaplectic group \\
+\end{longtable}
+%
+\DescribeMacro{grpdynkin}
+The seven classes of groups associated to Dynkin diagrams
+are provided by the feature |grpdynkin|
+as follows:
+%
+\begin{longtable}{llll}
+macro & output & description \\
+\hline
+|\grpA| & A & group of type A \\
+|\grpB| & B & group of type B \\
+|\grpC| & C & group of type C \\
+|\grpD| & D & group of type D \\
+|\grpE| & E & group of (exceptional) type E \\
+|\grpF| & F & group of (exceptional) type F \\
+|\grpG| & G & group of (exceptional) type G \\
+\end{longtable}
 %
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1067,7 +1206,7 @@ macro & output & description \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-Copyright \copyright{} 2018--2025 Niklas Beisert
+Copyright \copyright{} \thecopyright/
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
@@ -1081,59 +1220,62 @@ This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainer of this work is Niklas Beisert.
 
-This work consists of the files |README.txt|, |mathfixs.ins| and |mathfixs.dtx|
-as well as the derived files |mathfixs.sty|, |mafxsamp.tex| and |mathfixs.pdf|.
+This work consists of the files
+|README.txt|, \verbpkg|.ins| and \verbpkg|.dtx|
+as well as the derived files listed below.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Files and Installation}
 
 The package consists of the files:
 %
-\begin{center}
-\begin{tabular}{ll}
+\begin{longtable}{ll}
     |README.txt|   & readme file \\
-    |mathfixs.ins| & installation file \\
-    |mathfixs.dtx| & source file \\
-    |mathfixs.sty| & package file \\
-    |mafxsamp.tex| & sample file \\
-    |mathfixs.pdf| & manual
-\end{tabular}
-\end{center}
+    \verbpkg|.ins| & installation file \\
+    \verbpkg|.dtx| & source file \\
+    \verbpkg|.sty| & package file \\
+    \verbpkg|-samp.tex| & sample file \\
+    \verbpkg|.pdf| & documentation \\
+\end{longtable}
 %
 The distribution consists of the files
-|README.txt|, |mathfixs.ins| and |mathfixs.dtx|.
+|README.txt|, \verbpkg|.ins| and \verbpkg|.dtx|.
 %
 \begin{itemize}
 \item
-Run (pdf)\LaTeX{} on |mathfixs.dtx|
-to compile the manual |mathfixs.pdf| (this file).
+Run \LaTeX{} on \verbpkg|.ins| to create the package \verbpkg|.sty|
+and further documentation files.
 \item
-Run \LaTeX{} on |mathfixs.ins| to create the package |mathfixs.sty|
-and the sample |mafxsamp.tex|.
-Copy the file |mathfixs.sty| to an appropriate directory of your \LaTeX{}
-distribution, e.g.\ \textit{texmf-root}|/tex/latex/mathfixs|.
+Copy the file \verbpkg|.sty| to an appropriate directory of your \LaTeX{}
+distribution, e.g.\ \textit{texmf-root}|/tex/latex/|\verbpkg.
+\item
+Alternatively, you may copy \verbpkg|.sty| to your project directory.
+\item
+Run (pdf)\LaTeX{} on \verbpkg|.dtx|
+to compile the documentation \verbpkg|.pdf| (this file).
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Related CTAN Packages}
 
 The package is related to other packages available at CTAN:
+%
 \begin{itemize}
 \item
 This package uses the package \ctanpkg{keyval}
 to process the options for the package, environments and macros.
 Compatibility with the \ctanpkg{keyval} package
-has been tested with v1.15 (2014/10/28).
+has been tested with v1.15 (\markdate{2014-10-28}).
 \item
 This package is designed to be compatible with
 the package \ctanpkg{amsmath}.
 To prevent \ctanpkg{amsmath} from overwriting some features,
 it should be loaded \emph{before} the present package.
 Compatibility with the \ctanpkg{amsmath} package
-has been tested with v2.17a (2017/09/02).
+has been tested with v2.17a (\markdate{2017-09-02}).
 \item
 This package reproduces the functionality of the
-package \ctanpkg{fixmath} v0.9 (2000/04/11)
+package \ctanpkg{fixmath} v0.9 (\markdate{2000-04-11})
 from the bundle \ctanpkg{was}.
 \item
 Functionality to typeset common fractions is also provided by
@@ -1141,44 +1283,73 @@ the packages \ctanpkg{nicefrac}
 from the bundle \ctanpkg{units}
 and \ctanpkg{xfrac}
 offering a more advanced implementation.
+\item
+This package cooperates with the package \ctanpkg{beamer}
+in not changing colours for the root exponent.
+Compatibility with the \ctanpkg{beamer} package
+has been tested with v3.77 (\markdate{2026-01-22}).
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Feature Suggestions}
+\iffalse
+\subsection{Feature Suggestions}
+
+The following is a list of features which may be useful for future
+versions of this package:
 %
-%The following is a list of features which may be useful for future
-%versions of this package:
-%%
-%\begin{itemize}
-%\item
-% set of elliptic functions and constants
-%\item
-% improvement for vector accent plancement
-%\item
-% transpose sign
-%\item
-% \mathup: no need as \mathrm does just that in whatever font
-%\item
-% standard classes of Lie groups
-%\item
-% alternative representations for some operators
-%\end{itemize}
+\begin{itemize}
+\item
+ set of elliptic functions and constants
+\item
+ improvement for vector accent plancement
+\item
+ \mathup: no need as \mathrm does just that in whatever font
+\item
+ alternative representations for some operators
+\end{itemize}
+
+\fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \iffalse
-\paragraph{vN.N.N+:} 20YY/MM/NN
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{vN.N.N+:} \markdate{20YY-MM-DD}
 
 \begin{itemize}
 \item
 \ldots
 \end{itemize}
+
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.1.3:} 2025/03/25
+\paragraph{v1.2:} \markdate{2026-03-23}
+
+\begin{itemize}
+\item
+added unit element |\unitel| in various representations
+\item
+adjoint action |\ad|, volume |\Vol| and dual operator |\dualop|
+\item
+added transposition |\trans|, hermitian conjugation |\hconj|,
+complex conjugation |\conj| and dualisation |\dual|
+\item
+added standard finite and Lie groups |\grp|\ldots
+\item
+fix for not applying |math text| colour for root exponent in \ctanpkg{beamer}
+\item
+use |\muexpr| to protect muskip expressions
+\item
+use elementary register manipulations
+\item
+package maintenance
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1.3:} \markdate{2025-03-25}
 
 \begin{itemize}
 \item
@@ -1189,7 +1360,7 @@ maintenance and manual update
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.12:} 2024/11/18
+\paragraph{v1.12:} \markdate{2024-11-18}
 
 \begin{itemize}
 \item
@@ -1197,7 +1368,7 @@ fixed loading without \ctanpkg{amsmath}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.11:} 2024/10/25
+\paragraph{v1.11:} \markdate{2024-10-25}
 
 \begin{itemize}
 \item
@@ -1205,7 +1376,7 @@ fixed misspelled definition |\End|
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.1:} 2024/10/23
+\paragraph{v1.1:} \markdate{2024-10-23}
 
 \begin{itemize}
 \item
@@ -1233,7 +1404,7 @@ added feature |numset| and |numset| to represent number sets
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.01:} 2018/12/30
+\paragraph{v1.01:} \markdate{2018-12-30}
 
 \begin{itemize}
 \item
@@ -1241,32 +1412,46 @@ fix for |\vfrac| in aligned math
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.0:} 2018/01/17
+\paragraph{v1.0:} \markdate{2018-01-17}
 
 \begin{itemize}
 \item
 first version published on CTAN
 \end{itemize}
 
+%</main|manual>
+%<*main>
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\appendix
 
+\appendix
+%</main>
+%<*main|source>
+\raggedright
 \settowidth\MacroIndent{\rmfamily\scriptsize 000\ }
 
- \DocInput{mathfixs.dtx}
+\DocInput{\thepkg/.dtx}
+%</main|source>
 
 \end{document}
-%</driver>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%</main|manual|source>
 % \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Sample File}
-%\iffalse
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Sample}
+% \iffalse
 %<*sample>
-%\fi
+% \fi
 %
 % In this section we provide an example of how to use
 % some of the \ctanpkg{mathfixs} features.
@@ -1506,18 +1691,18 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 %    \begin{macrocode}
 \end{document}
 %    \end{macrocode}
-%\iffalse
+% \iffalse
 %</sample>
-%\fi
+% \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Implementation}
-%\iffalse
+% \iffalse
 %<*package>
-%\fi
+% \fi
 %
-% In this section we describe the package |mathfixs.sty|.
+% In this section we describe the package \verbpkg|.sty|.
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Required Packages.}
@@ -1528,6 +1713,19 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % \ctanpkg{keyval} is used for extended options processing:
 %    \begin{macrocode}
 \RequirePackage{keyval}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{General Definitions.}
+%
+% \macro{\mafx@letcs}
+% \macro{\mafx@mathopfont}
+% Define some auxiliary macros for the package.
+% |\mafx@letcs| makes a |\let| assignment on the csname |#1|.
+% |\mafx@mathopfont| encapsules |\operator@font| within a block.
+%    \begin{macrocode}
+\def\mafx@letcs#1{\expandafter\let\csname#1\endcsname}
+\DeclareRobustCommand{\mafx@mathopfont}[1]{{\operator@font#1}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1669,9 +1867,10 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % Define a vulgar representation of a rational number, e.g.: $^1\!/\!_2$.
 % Automatically switch to math mode if in text mode:
 %    \begin{macrocode}
-\DeclareRobustCommand{\mafx@vfrac}[2]{\ifmmode%
-  \mafx@vfrac@class{\textstyle%
-    ^{#1}\mkern-\mafx@vfrac@preskip/\mkern-\mafx@vfrac@postskip_{#2}}%
+\DeclareRobustCommand{\mafx@vfrac}[2]{\ifmmode
+  \mafx@vfrac@class{\textstyle
+    ^{#1}\mkern-\muexpr\mafx@vfrac@preskip\relax
+    /\mkern-\muexpr\mafx@vfrac@postskip\relax_{#2}}%
   \else$\mafx@vfrac{#1}{#2}$\fi}
 %    \end{macrocode}
 
@@ -1689,6 +1888,17 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 \define@key{mafx@}{vfracclass}{\def\mafx@vfrac@class{#1}}
 \define@key{mafx@}{vfracskippre}{\def\mafx@vfrac@preskip{#1}}
 \define@key{mafx@}{vfracskippost}{\def\mafx@vfrac@postskip{#1}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Interaction with \markpkg{beamerbasecolor}.}
+%
+% Suppress changing colors in inner math structures
+% when \ctanpkg{beamer} class is loaded:
+%    \begin{macrocode}
+\let\mafx@beamerbasecolor@fix\@empty
+\AddToHook{package/beamerbasecolor/after}{%
+  \def\mafx@beamerbasecolor@fix{\donotcoloroutermaths}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1730,7 +1940,7 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % with |\mathpalette|:
 %    \begin{macrocode}
 \def\mafx@root#1\of{%
-  \setbox\rootbox\hbox{$\m@th\scriptscriptstyle{%
+  \setbox\rootbox\hbox{\mafx@beamerbasecolor@fix$\m@th\scriptscriptstyle{%
     \gdef\mafx@gleftroot{0}\gdef\mafx@guproot{0}%
     \def\leftroot##1{\gdef\mafx@gleftroot{##1}}%
     \def\uproot##1{\gdef\mafx@guproot{##1}}%
@@ -1758,43 +1968,42 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % for subsequent measurements:
 %    \begin{macrocode}
   \sbox\z@{$\m@th#1\nulldelimiterspace=\z@\radical\z@{#2}$}%
-  \setlength\dimen@{\ht\z@}%
+  \dimen@\ht\z@
   \ifx#1\displaystyle
-    \addtolength\dimen@{-\fontdimen8\textfont3}%
-    \addtolength\dimen@{-0.25\fontdimen5\textfont2}%
+    \advance\dimen@-\fontdimen8\textfont3\relax
+    \advance\dimen@-0.25\fontdimen5\textfont2\relax
   \else
-    \addtolength\dimen@{-1.25\fontdimen8\mafx@tmp@fontsel3}%
+    \advance\dimen@-1.25\fontdimen8\mafx@tmp@fontsel3\relax
   \fi
   \setbox\z@=\hbox{$\m@th#1\sqrtsign{%
-    \vrule width0pt height\dimen@ depth\dp\z@}$}%
+    \vrule width\z@ height\dimen@ depth\dp\z@}$}%
 %    \end{macrocode}
 % Shift to start of exponent box such that end
 % will reside at 60\% of radical sign.
 % Do not shift if exponent box is sufficiently wide:
 %    \begin{macrocode}
-  \setlength\dimen@{-\wd\rootbox}%
-  \addtolength\dimen@{0.6\wd\z@}%
-  \ifdim\dimen@>0pt\else\setlength\dimen@{0pt}\fi%
-  \kern\dimen@%
+  \dimen@\dimexpr0.6\wd\z@-\wd\rootbox\relax
+  \ifdim\dimen@>\z@\else\dimen@\z@\fi
+  \kern\dimen@
 %    \end{macrocode}
 % Compute elevation of exponent box as 60\% of radical sign.
 % Add length specified by |\uproot|:
 %    \begin{macrocode}
-  \setlength\dimen@{0.6\ht\z@}\addtolength\dimen@{-0.6\dp\z@}%
-  \setbox\@ne\hbox{$\m@th#1\mskip\mafx@uproot mu$}%
-  \addtolength\dimen@{\wd\@ne}%
+  \setbox\@ne=\hbox{$\m@th#1\mskip\muexpr\mafx@uproot mu\relax$}%
+  \dimen@\dimexpr0.6\ht\z@-0.6\dp\z@+\wd\@ne\relax
 %    \end{macrocode}
 % Place exponent box and return to intended start of radical sign:
 %    \begin{macrocode}
-  \mkern-\mafx@leftroot mu%
+  \mkern-\muexpr\mafx@leftroot mu\relax
   \raise\dimen@\copy\rootbox
-  \mkern\mafx@leftroot mu%
-  \kern-0.6\wd\z@%
+  \mkern\muexpr\mafx@leftroot mu\relax
+  \kern-0.6\wd\z@
 %    \end{macrocode}
 % Place radical adding extra kernings |\mafx@root@preskip| and
 % |\mafx@root@endskip|:
 %    \begin{macrocode}
-  \mkern\mafx@root@preskip\sqrtsign{#2\mskip\mafx@root@endskip}%
+  \mkern\muexpr\mafx@root@preskip\relax
+  \sqrtsign{#2\mskip\muexpr\mafx@root@endskip\relax}%
 %    \end{macrocode}
 % Add a closing bar to the radical,
 % see \url{http://en.wikibooks.org/wiki/LaTeX/Mathematics}.
@@ -1804,10 +2013,10 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % of the radical:
 %    \begin{macrocode}
   \ifx\mafx@root@close\@empty\else
-  \setlength\dimen@{\fontdimen8\mafx@tmp@fontsel3}%
+  \dimen@\fontdimen8\mafx@tmp@fontsel3\relax
   \lower\dimen@\hbox{%
     \vrule width\dimen@ height\ht\z@ depth -\mafx@root@close\ht\z@}%
-  \fi%
+  \fi
 %    \end{macrocode}
 % Finally, add kerning |\mafx@root@postskip|:
 %    \begin{macrocode}
@@ -1851,7 +2060,7 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 %    \begin{macrocode}
 \let\mafx@old@dot=\.
 \def\mafx@dot@skip{\thinmuskip}
-\def\mafx@dot{\mskip\mafx@dot@skip}
+\def\mafx@dot{\mskip\muexpr\mafx@dot@skip\relax}
 \DeclareRobustCommand{\mafx@per@dot}{%
   \ifmmode\expandafter\mafx@dot\else\expandafter\mafx@old@dot\fi}
 %    \end{macrocode}
@@ -1892,17 +2101,17 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % The optional argument is used as a prefix for the definitions:
 %    \begin{macrocode}
 \define@key{mafx@}{greekcaps}[]{%
-  \expandafter\let\csname #1Gamma\endcsname=\mafx@Gamma
-  \expandafter\let\csname #1Delta\endcsname=\mafx@Delta
-  \expandafter\let\csname #1Theta\endcsname=\mafx@Theta
-  \expandafter\let\csname #1Lambda\endcsname=\mafx@Lambda
-  \expandafter\let\csname #1Xi\endcsname=\mafx@Xi
-  \expandafter\let\csname #1Pi\endcsname=\mafx@Pi
-  \expandafter\let\csname #1Sigma\endcsname=\mafx@Sigma
-  \expandafter\let\csname #1Upsilon\endcsname=\mafx@Upsilon
-  \expandafter\let\csname #1Phi\endcsname=\mafx@Phi
-  \expandafter\let\csname #1Psi\endcsname=\mafx@Psi
-  \expandafter\let\csname #1Omega\endcsname=\mafx@Omega
+  \mafx@letcs{#1Gamma}=\mafx@Gamma
+  \mafx@letcs{#1Delta}=\mafx@Delta
+  \mafx@letcs{#1Theta}=\mafx@Theta
+  \mafx@letcs{#1Lambda}=\mafx@Lambda
+  \mafx@letcs{#1Xi}=\mafx@Xi
+  \mafx@letcs{#1Pi}=\mafx@Pi
+  \mafx@letcs{#1Sigma}=\mafx@Sigma
+  \mafx@letcs{#1Upsilon}=\mafx@Upsilon
+  \mafx@letcs{#1Phi}=\mafx@Phi
+  \mafx@letcs{#1Psi}=\mafx@Psi
+  \mafx@letcs{#1Omega}=\mafx@Omega
 }
 %    \end{macrocode}
 
@@ -1951,35 +2160,35 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % The optional argument is used as a prefix for the definitions:
 %    \begin{macrocode}
 \define@key{mafx@}{greeklower}[]{%
-  \expandafter\let\csname #1alpha\endcsname=\mafx@alpha
-  \expandafter\let\csname #1beta\endcsname=\mafx@beta
-  \expandafter\let\csname #1gamma\endcsname=\mafx@gamma
-  \expandafter\let\csname #1delta\endcsname=\mafx@delta
-  \expandafter\let\csname #1epsilon\endcsname=\mafx@epsilon
-  \expandafter\let\csname #1zeta\endcsname=\mafx@zeta
-  \expandafter\let\csname #1eta\endcsname=\mafx@eta
-  \expandafter\let\csname #1theta\endcsname=\mafx@theta
-  \expandafter\let\csname #1iota\endcsname=\mafx@iota
-  \expandafter\let\csname #1kappa\endcsname=\mafx@kappa
-  \expandafter\let\csname #1lambda\endcsname=\mafx@lambda
-  \expandafter\let\csname #1mu\endcsname=\mafx@mu
-  \expandafter\let\csname #1nu\endcsname=\mafx@nu
-  \expandafter\let\csname #1xi\endcsname=\mafx@xi
-  \expandafter\let\csname #1pi\endcsname=\mafx@pi
-  \expandafter\let\csname #1rho\endcsname=\mafx@rho
-  \expandafter\let\csname #1sigma\endcsname=\mafx@sigma
-  \expandafter\let\csname #1tau\endcsname=\mafx@tau
-  \expandafter\let\csname #1upsilon\endcsname=\mafx@upsilon
-  \expandafter\let\csname #1phi\endcsname=\mafx@phi
-  \expandafter\let\csname #1chi\endcsname=\mafx@chi
-  \expandafter\let\csname #1psi\endcsname=\mafx@psi
-  \expandafter\let\csname #1omega\endcsname=\mafx@omega
-  \expandafter\let\csname #1varepsilon\endcsname=\mafx@varepsilon
-  \expandafter\let\csname #1vartheta\endcsname=\mafx@vartheta
-  \expandafter\let\csname #1varpi\endcsname=\mafx@varpi
-  \expandafter\let\csname #1varphi\endcsname=\mafx@varphi
-  \expandafter\let\csname #1varrho\endcsname=\mafx@varrho
-  \expandafter\let\csname #1varsigma\endcsname=\mafx@varsigma
+  \mafx@letcs{#1alpha}=\mafx@alpha
+  \mafx@letcs{#1beta}=\mafx@beta
+  \mafx@letcs{#1gamma}=\mafx@gamma
+  \mafx@letcs{#1delta}=\mafx@delta
+  \mafx@letcs{#1epsilon}=\mafx@epsilon
+  \mafx@letcs{#1zeta}=\mafx@zeta
+  \mafx@letcs{#1eta}=\mafx@eta
+  \mafx@letcs{#1theta}=\mafx@theta
+  \mafx@letcs{#1iota}=\mafx@iota
+  \mafx@letcs{#1kappa}=\mafx@kappa
+  \mafx@letcs{#1lambda}=\mafx@lambda
+  \mafx@letcs{#1mu}=\mafx@mu
+  \mafx@letcs{#1nu}=\mafx@nu
+  \mafx@letcs{#1xi}=\mafx@xi
+  \mafx@letcs{#1pi}=\mafx@pi
+  \mafx@letcs{#1rho}=\mafx@rho
+  \mafx@letcs{#1sigma}=\mafx@sigma
+  \mafx@letcs{#1tau}=\mafx@tau
+  \mafx@letcs{#1upsilon}=\mafx@upsilon
+  \mafx@letcs{#1phi}=\mafx@phi
+  \mafx@letcs{#1chi}=\mafx@chi
+  \mafx@letcs{#1psi}=\mafx@psi
+  \mafx@letcs{#1omega}=\mafx@omega
+  \mafx@letcs{#1varepsilon}=\mafx@varepsilon
+  \mafx@letcs{#1vartheta}=\mafx@vartheta
+  \mafx@letcs{#1varpi}=\mafx@varpi
+  \mafx@letcs{#1varphi}=\mafx@varphi
+  \mafx@letcs{#1varrho}=\mafx@varrho
+  \mafx@letcs{#1varsigma}=\mafx@varsigma
 }
 %    \end{macrocode}
 
@@ -2002,6 +2211,8 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 \DeclareMathOperator{\mafx@const}{const}
 \DeclareMathOperator{\mafx@id}{id}
 \DeclareMathOperator{\mafx@tr}{tr}
+\DeclareMathOperator{\mafx@ad}{ad}
+\DeclareMathOperator{\mafx@Vol}{Vol}
 %    \end{macrocode}
 
 % Implement assorted functions, operators and symbols individually
@@ -2016,6 +2227,8 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 \define@key{mafx@}{const}[\const]{\let#1=\mafx@const}
 \define@key{mafx@}{id}[\id]{\let#1=\mafx@id}
 \define@key{mafx@}{tr}[\tr]{\let#1=\mafx@tr}
+\define@key{mafx@}{ad}[\ad]{\let#1=\mafx@ad}
+\define@key{mafx@}{Vol}[\Vol]{\let#1=\mafx@Vol}
 %    \end{macrocode}
 %
 % \macro{genop}
@@ -2034,6 +2247,8 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % Define a different notation for real and imaginary part projectors are the
 % textual symbols `Re' and `Im':
 %    \begin{macrocode}
+\let\mafx@orgRe=\Re
+\let\mafx@orgIm=\Im
 \DeclareMathOperator{\mafx@Re}{Re}
 \DeclareMathOperator{\mafx@Im}{Im}
 %    \end{macrocode}
@@ -2044,6 +2259,10 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 \define@key{mafx@}{reim}[\Re\Im]{%
   \expandafter\let\@firstoftwo#1=\mafx@Re
   \expandafter\let\@secondoftwo#1=\mafx@Im
+}
+\define@key{mafx@}{reim*}[\Re\Im]{%
+  \expandafter\let\@firstoftwo#1=\mafx@orgRe
+  \expandafter\let\@secondoftwo#1=\mafx@orgIm
 }
 %    \end{macrocode}
 
@@ -2174,6 +2393,8 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 %    \end{macrocode}
 
 % \macro{vecdiff}
+% \macro{vecdiff*}
+% \macro{vecrot}
 % Implement differential operators for vectors individually
 % with the option to adjust their macro names.
 % Implement alternative rot for curl/rotor
@@ -2183,6 +2404,11 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
   \let\grad=\mafx@grad
   \let\div=\mafx@div
   \let\curl=\mafx@curl
+}
+\define@key{mafx@}{vecdiff*}[]{%
+  \let\grad=\mafx@grad
+  \let\div=\mafx@div
+  \let\curl=\mafx@rot
 }
 \define@key{mafx@}{vecrot}[\curl]{\let#1=\mafx@rot}
 %    \end{macrocode}
@@ -2195,12 +2421,54 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Mathematical Constants.}
 %
+% Try to declare upright and italic lowercase pi.
+% Use |\uppi| for upright |\pi| if available at the time of loading,
+% otherwise use plain |\pi| hoping for availability of an upright version:
+%    \begin{macrocode}
+\ifdefined\uppi
+\def\mafx@piup{\uppi}
+\else\ifdefined\symup
+\def\mafx@piup{\symup{\pi}}
+\else
+\def\mafx@piup{\operator@font\pi}
+\fi
+\ifdefined\symit
+\def\mafx@piit{\symit{\pi}}
+\else
+\def\mafx@piit{\mathnormal{\pi}}
+\fi
+%    \end{macrocode}
+%
+% Declare some math alphabets for blackboard bold unit element:
+%    \begin{macrocode}
+\DeclareMathAlphabet{\mafx@mathbfb}{OT1}{cmr}{b}{n}
+\DeclareMathAlphabet{\mafx@mathbfbx}{OT1}{cmr}{bx}{n}
+\ifdefined\bbfamily\let\mafx@mathbbold=\mathbb\else\IfFileExists{bbold.sty}{%
+  \DeclareMathAlphabet{\mafx@mathbbold}{U}{bbold}{m}{n}}{}\fi
+\ifdefined\mathds\let\mafx@mathds=\mathds\else\IfFileExists{dsfont.sty}{%
+  \DeclareMathAlphabet{\mafx@mathds}{U}{dsrom}{m}{n}}\fi
+\IfFileExists{dsfont.sty}{%
+  \DeclareMathAlphabet{\mafx@mathdsr}{U}{dsrom}{m}{n}
+  \DeclareMathAlphabet{\mafx@mathdss}{U}{dsss}{m}{n}
+}{}
+\ifdefined\mathbbm\let\mafx@mathds=\mathds\else\IfFileExists{bbm.sty}{%
+  \DeclareMathAlphabet{\mafx@mathbbm}{U}{bbm}{m}{n}
+  \SetMathAlphabet\mafx@mathbbm{bold}{U}{bbm}{bx}{n}
+  \DeclareMathAlphabet{\mafx@mathbbmss}{U}{bbmss}{m}{n}
+  \SetMathAlphabet\mafx@mathbbmss{bold}{U}{bbmss}{bx}{n}
+  \DeclareMathAlphabet{\mafx@mathbbmtt}{U}{bbmtt}{m}{n}
+}{}\fi
+\ifdefined\mafx@mathds\let\mafx@mathbb=\mafx@mathds
+\else\ifdefined\mafx@mathbbm\let\mafx@mathbb=\mafx@mathbbm
+\else\ifdefined\mafx@mathbbold\let\mafx@mathbb=\mafx@mathbold
+\else\let\mafx@mathbb=\mathbf\fi\fi\fi
+%    \end{macrocode}
+
 % \macro{\econst}
 % \macro{\iunit}
 % \macro{\piconst}
-% Define macros for mathematical constants.
-% Use |\uppi| for upright |\pi| if available at the time of loading,
-% otherwise use plain |\pi| hoping for availability of an upright version:
+% \macro{\unitel}
+% Define macros for mathematical constants:
 %    \begin{macrocode}
 \let\mafx@econst@class=\mathinner
 \DeclareRobustCommand{\mafx@econstup}{\mafx@econst@class{\operator@font e}}
@@ -2208,24 +2476,34 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 \DeclareRobustCommand{\mafx@iunitup}{{\operator@font i}}
 \DeclareRobustCommand{\mafx@iunitit}{{\mathnormal{i}}}
 \DeclareRobustCommand{\mafx@iunitnb}{{\mathnormal{\mathring\imath}}}
-\ifdefined\uppi
-\DeclareRobustCommand{\mafx@piconstup}{{\uppi}}
-\else\ifdefined\symup
-\DeclareRobustCommand{\mafx@piconstup}{{\symup{\pi}}}
-\else
-\DeclareRobustCommand{\mafx@piconstup}{{\operator@font\pi}}
-\fi\fi
-\ifdefined\symit
-\DeclareRobustCommand{\mafx@piconstit}{{\symit{\pi}}}
-\else
-\DeclareRobustCommand{\mafx@piconstit}{{\mathnormal{\pi}}}
-\fi
+\DeclareRobustCommand{\mafx@piconstup}{{\mafx@piup}}
+\DeclareRobustCommand{\mafx@piconstit}{{\mafx@piit}}
+\DeclareRobustCommand{\mafx@unitelbb}{{\mafx@mathbb{1}}}
+\DeclareRobustCommand{\mafx@unitelds}{{\mafx@mathds{1}}}
+\DeclareRobustCommand{\mafx@uniteldsr}{{\mafx@mathdsr{1}}}
+\DeclareRobustCommand{\mafx@uniteldss}{{\mafx@mathdss{1}}}
+\DeclareRobustCommand{\mafx@unitelbbold}{{\mafx@mathbbold{1}}}
+\DeclareRobustCommand{\mafx@unitelbbm}{{\mafx@mathbbm{1}}}
+\DeclareRobustCommand{\mafx@unitelbbmss}{{\mafx@mathbbmss{1}}}
+\DeclareRobustCommand{\mafx@unitelbbmtt}{{\mafx@mathbbmtt{1}}}
+\DeclareRobustCommand{\mafx@unitelbf}{{\mathbf{1}}}
+\DeclareRobustCommand{\mafx@unitelbfb}{{\mafx@mathbfb{1}}}
+\DeclareRobustCommand{\mafx@unitelbfbx}{{\mafx@mathbfbx{1}}}
+\DeclareRobustCommand{\mafx@uniteleup}{{\operator@font e}}
+\DeclareRobustCommand{\mafx@uniteleit}{{\mathnormal{e}}}
+\DeclareRobustCommand{\mafx@unitelEup}{{\operator@font E}}
+\DeclareRobustCommand{\mafx@unitelEit}{{\mathnormal{E}}}
+\DeclareRobustCommand{\mafx@unitelIup}{{\operator@font I}}
+\DeclareRobustCommand{\mafx@unitelIit}{{\mathnormal{I}}}
+\DeclareRobustCommand{\mafx@unitelid}{{\operator@font id}}
+\DeclareRobustCommand{\mafx@unitels}{{\operator@font1}}
 %    \end{macrocode}
 
 % \macro{econst}
 % \macro{numsetclass}
 % \macro{iunit}
 % \macro{piconst}
+% \macro{unitel}
 % Implement mathematical constants individually
 % with the option to adjust their macro names:
 %    \begin{macrocode}
@@ -2237,6 +2515,25 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 \define@key{mafx@}{iunit*nb}[\iunit]{\let#1=\mafx@iunitnb}
 \define@key{mafx@}{piconst}[\piconst]{\let#1=\mafx@piconstup}
 \define@key{mafx@}{piconst*}[\piconst]{\let#1=\mafx@piconstit}
+\define@key{mafx@}{unitel1}[\unitel]{\let#1=\mafx@unitelbb}
+\define@key{mafx@}{unitel1ds}[\unitel]{\let#1=\mafx@unitelds}
+\define@key{mafx@}{unitel1dsr}[\unitel]{\let#1=\mafx@uniteldsr}
+\define@key{mafx@}{unitel1dss}[\unitel]{\let#1=\mafx@uniteldss}
+\define@key{mafx@}{unitel1bbm}[\unitel]{\let#1=\mafx@unitelbbm}
+\define@key{mafx@}{unitel1bbmss}[\unitel]{\let#1=\mafx@unitelbbmss}
+\define@key{mafx@}{unitel1bbmtt}[\unitel]{\let#1=\mafx@unitelbbmtt}
+\define@key{mafx@}{unitel1bbold}[\unitel]{\let#1=\mafx@unitelbbold}
+\define@key{mafx@}{unitel1bf}[\unitel]{\let#1=\mafx@unitelbf}
+\define@key{mafx@}{unitel1bfb}[\unitel]{\let#1=\mafx@unitelbfb}
+\define@key{mafx@}{unitel1bfbx}[\unitel]{\let#1=\mafx@unitelbfbx}
+\define@key{mafx@}{unitel1*}[\unitel]{\let#1=\mafx@unitels}
+\define@key{mafx@}{unitele}[\unitel]{\let#1=\mafx@uniteleup}
+\define@key{mafx@}{unitele*}[\unitel]{\let#1=\mafx@uniteleit}
+\define@key{mafx@}{unitelE}[\unitel]{\let#1=\mafx@unitelEup}
+\define@key{mafx@}{unitelE*}[\unitel]{\let#1=\mafx@unitelEit}
+\define@key{mafx@}{unitelI}[\unitel]{\let#1=\mafx@unitelIup}
+\define@key{mafx@}{unitelI*}[\unitel]{\let#1=\mafx@unitelIit}
+\define@key{mafx@}{unitelid}[\unitel]{\let#1=\mafx@unitelid}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2270,6 +2567,7 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 \DeclareRobustCommand{\mafx@defeq}{\mathrel{\mathop:}=}
 \DeclareRobustCommand{\mafx@eqdef}{=\mathrel{\mathop:}}
 \DeclareRobustCommand{\mafx@lapl}{\mathnormal{\Delta}}
+\DeclareRobustCommand{\mafx@dualop}{\star}
 %    \end{macrocode}
 
 % Implement assorted symbols individually
@@ -2281,6 +2579,7 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 \define@key{mafx@}{defeq}[\defeq]{\let#1=\mafx@defeq}
 \define@key{mafx@}{eqdef}[\eqdef]{\let#1=\mafx@eqdef}
 \define@key{mafx@}{lapl}[\lapl]{\let#1=\mafx@lapl}
+\define@key{mafx@}{dualop}[\dualop]{\let#1=\mafx@dualop}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2324,6 +2623,149 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Groups.}
+%
+% \macro{\grp}
+% Define macros for Lie groups.
+% Use oeprator font |\operator@font|:
+%    \begin{macrocode}
+\DeclareRobustCommand{\mafx@grp}[1]{\mafx@mathopfont{#1}}
+%    \end{macrocode}
+
+% Define macros for basic finite groups.
+% Use oeprator font |\operator@font|:
+%    \begin{macrocode}
+\DeclareRobustCommand{\mafx@grp@perm}{\mafx@grp{S}}
+\DeclareRobustCommand{\mafx@grp@alt}{\mafx@grp{A}}
+\DeclareRobustCommand{\mafx@grp@dih}{\mafx@grp{D}}
+\DeclareRobustCommand{\mafx@grp@cycZ}{\mafx@grp{Z}}
+\DeclareRobustCommand{\mafx@grp@cycC}{\mafx@grp{C}}
+%    \end{macrocode}
+
+% Define macros for groups of Lie type:
+%    \begin{macrocode}
+\DeclareRobustCommand{\mafx@grp@GL}{\mafx@grp{GL}}
+\DeclareRobustCommand{\mafx@grp@SL}{\mafx@grp{SL}}
+\DeclareRobustCommand{\mafx@grp@PGL}{\mafx@grp{PGL}}
+\DeclareRobustCommand{\mafx@grp@PSL}{\mafx@grp{PSL}}
+\DeclareRobustCommand{\mafx@grp@U}{\mafx@grp{U}}
+\DeclareRobustCommand{\mafx@grp@SU}{\mafx@grp{SU}}
+\DeclareRobustCommand{\mafx@grp@PU}{\mafx@grp{PU}}
+\DeclareRobustCommand{\mafx@grp@PSU}{\mafx@grp{PSU}}
+\DeclareRobustCommand{\mafx@grp@O}{\mafx@grp{O}}
+\DeclareRobustCommand{\mafx@grp@SO}{\mafx@grp{SO}}
+\DeclareRobustCommand{\mafx@grp@PSO}{\mafx@grp{PSO}}
+\DeclareRobustCommand{\mafx@grp@Spin}{\mafx@grp{Spin}}
+\DeclareRobustCommand{\mafx@grp@Pin}{\mafx@grp{Pin}}
+\DeclareRobustCommand{\mafx@grp@Sp}{\mafx@grp{Sp}}
+\DeclareRobustCommand{\mafx@grp@Mp}{\mafx@grp{Mp}}
+%    \end{macrocode}
+
+% Define macros for groups related to Dynkin diagrams:
+%    \begin{macrocode}
+\DeclareRobustCommand{\mafx@grp@A}{\mafx@grp{A}}
+\DeclareRobustCommand{\mafx@grp@B}{\mafx@grp{B}}
+\DeclareRobustCommand{\mafx@grp@C}{\mafx@grp{C}}
+\DeclareRobustCommand{\mafx@grp@D}{\mafx@grp{D}}
+\DeclareRobustCommand{\mafx@grp@E}{\mafx@grp{E}}
+\DeclareRobustCommand{\mafx@grp@F}{\mafx@grp{F}}
+\DeclareRobustCommand{\mafx@grp@G}{\mafx@grp{G}}
+%    \end{macrocode}
+
+% \macro{grp}
+% \macro{grpfin}
+% \macro{grpcycC}
+% \macro{grplie}
+% \macro{grpdynkin}
+% Implement Lie group and a collection of standard Lie groups by name:
+%    \begin{macrocode}
+\define@key{mafx@}{grp}[\grp]{\let#1=\mafx@grp}
+\define@key{mafx@}{grpfin}[]{%
+  \let\grpperm=\mafx@grp@perm
+  \let\grpalt=\mafx@grp@alt
+  \let\grpdih=\mafx@grp@dih
+  \let\grpcyc=\mafx@grp@cycZ
+}
+\define@key{mafx@}{grpfin*}[]{%
+  \let\grpperm=\mafx@grp@perm
+  \let\grpalt=\mafx@grp@alt
+  \let\grpdih=\mafx@grp@dih
+  \let\grpcyc=\mafx@grp@cycC
+}
+\define@key{mafx@}{grpcycC}[\grpcyc]{\let#1=\mafx@grp@cycC}
+\define@key{mafx@}{grplie}[]{%
+  \let\grpGL=\mafx@grp@GL
+  \let\grpSL=\mafx@grp@SL
+  \let\grpPGL=\mafx@grp@PGL
+  \let\grpPSL=\mafx@grp@PSL
+  \let\grpU=\mafx@grp@U
+  \let\grpSU=\mafx@grp@SU
+  \let\grpPU=\mafx@grp@PU
+  \let\grpPSU=\mafx@grp@PSU
+  \let\grpO=\mafx@grp@U
+  \let\grpSO=\mafx@grp@SO
+  \let\grpPSO=\mafx@grp@PSO
+  \let\grpSpin=\mafx@grp@Spin
+  \let\grpPin=\mafx@grp@Pin
+  \let\grpSp=\mafx@grp@Sp
+  \let\grpMp=\mafx@grp@Mp
+}
+\define@key{mafx@}{grpdynkin}[]{%
+  \let\grpA=\mafx@grp@A
+  \let\grpB=\mafx@grp@B
+  \let\grpC=\mafx@grp@C
+  \let\grpD=\mafx@grp@D
+  \let\grpE=\mafx@grp@E
+  \let\grpF=\mafx@grp@F
+  \let\grpG=\mafx@grp@G
+}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Conjugation Operations.}
+%
+% \macro{\trans}
+% \macro{\hconj}
+% \macro{\conj}
+% Define macros for conjugation operations:
+%    \begin{macrocode}
+\def\mafx@miniscript#1{\mathchoice%
+  {\textstyle#1}{\textstyle#1}{\scriptscriptstyle#1}{\scriptscriptstyle#1}}
+\let\mafx@trans@font=\mathsf
+\DeclareRobustCommand{\mafx@transt}{{\mafx@trans@font{t}}}
+\DeclareRobustCommand{\mafx@transT}{{\mafx@trans@font{T}}}
+\DeclareRobustCommand{\mafx@transTs}{{\mafx@trans@font{\mafx@miniscript T}}}
+\DeclareRobustCommand{\mafx@hconjh}{{\mafx@trans@font{h}}}
+\DeclareRobustCommand{\mafx@hconjH}{{\mafx@trans@font{H}}}
+\DeclareRobustCommand{\mafx@hconjHs}{{\mafx@trans@font{\mafx@miniscript H}}}
+\DeclareRobustCommand{\mafx@trans}{\top}
+\DeclareRobustCommand{\mafx@transi}{\intercal}
+\DeclareRobustCommand{\mafx@hconj}{\dagger}
+\DeclareRobustCommand{\mafx@conj}{\ast}
+\DeclareRobustCommand{\mafx@dual}{\ast}
+%    \end{macrocode}
+
+% \macro{trans}
+% \macro{hconj}
+% \macro{conj}
+% Implement conjugation operations individually
+% with the option to adjust their macro names:
+%    \begin{macrocode}
+\define@key{mafx@}{transfont}{\let\mafx@trans@font=#1}
+\define@key{mafx@}{trans}[\trans]{\let#1=\mafx@trans}
+\define@key{mafx@}{trans*}[\trans]{\let#1=\mafx@transi}
+\define@key{mafx@}{transT}[\trans]{\let#1=\mafx@transT}
+\define@key{mafx@}{transT*}[\trans]{\let#1=\mafx@transTs}
+\define@key{mafx@}{transt}[\trans]{\let#1=\mafx@transt}
+\define@key{mafx@}{hconj}[\hconj]{\let#1=\mafx@hconj}
+\define@key{mafx@}{hconjH}[\hconj]{\let#1=\mafx@hconjH}
+\define@key{mafx@}{hconjH*}[\hconj]{\let#1=\mafx@hconjHs}
+\define@key{mafx@}{hconjh}[\hconj]{\let#1=\mafx@hconjh}
+\define@key{mafx@}{conj}[\conj]{\let#1=\mafx@conj}
+\define@key{mafx@}{dual}[\dual]{\let#1=\mafx@dual}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Package Options.}
 %
 % \macro{\ProvideMathFix}
@@ -2342,8 +2784,11 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 \ProcessOptions
 %    \end{macrocode}
 
-%\iffalse
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \iffalse
 %</package>
-%\fi
+% \fi
 %
 \endinput
