@@ -1,33 +1,32 @@
-all: delimset.pdf delimset.sty dlmssamp.pdf
+PKG = delimset
+SAMP = $(PKG)-samp
 
-delimset.pdf: delimset.dtx
-	pdflatex delimset.dtx
-	pdflatex delimset.dtx
+all: $(PKG).sty $(PKG).pdf $(SAMP).pdf
 
-delimset.sty: delimset.dtx delimset.ins
-	latex delimset.ins
-dlmssamp.tex: delimset.dtx delimset.ins
-	latex delimset.ins
+$(PKG).sty $(SAMP).tex: $(PKG).dtx $(PKG).ins
+	latex $(PKG).ins
 
-dlmssamp.pdf: dlmssamp.tex delimset.sty
-	pdflatex dlmssamp.tex
-	pdflatex dlmssamp.tex
+$(PKG).pdf: $(PKG).dtx $(PKG).sty
+	pdflatex $(PKG).dtx
+	pdflatex $(PKG).dtx
+
+$(SAMP).pdf: $(SAMP).tex $(PKG).sty
+	pdflatex $(SAMP).tex
+	pdflatex $(SAMP).tex
 
 touch:
-	touch delimset.dtx
+	touch $(PKG).dtx
 
 clean:
-	rm -f dlmssamp.aux
-	rm -f dlmssamp*.mps dlmssamp*.eps mpxerr.tex
-	rm -f dlmssamp*.mp dlmssamp*.mpx dlmssamp*.log
-	rm -f delimset.aux delimset.log delimset.out delimset.toc delimset.hd
+	rm -f $(PKG).aux $(PKG).log $(PKG).out $(PKG).toc $(PKG).hd
+	rm -f $(SAMP).aux $(SAMP).log $(SAMP).out
 
 clean-all: clean
-	rm -f delimset.sty dlmssamp.tex
-	rm -f dlmssamp.pdf delimset.pdf
+	rm -f $(PKG).sty
+	rm -f $(PKG).pdf
+	rm -f $(SAMP).tex $(SAMP).pdf
 
 clean-bak: clean-all
-	rm -f delimset.dtx.bak delimset.sty.bak delimset.ins.bak
-	rm -f delimset.dtx~ delimset.sty~ delimset.ins~
-	rm -f README.txt.bak Makefile.bak
-	rm -f README.txt~ Makefile~
+	rm -f $(PKG).dtx.bak $(PKG).sty.bak $(PKG).ins.bak
+	rm -f $(PKG).dtx~ $(PKG).sty~ $(PKG).ins~
+	rm -f README.txt.bak README.txt~ Makefile.bak Makefile~

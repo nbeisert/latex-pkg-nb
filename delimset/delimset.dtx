@@ -1,7 +1,7 @@
 %
 % \iffalse meta-comment
 %
-% delimset.dtx Copyright (C) 2016-2025 Niklas Beisert
+% delimset.dtx Copyright (C) 2016-2026 Niklas Beisert
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -16,14 +16,19 @@
 % The Current Maintainer of this work is Niklas Beisert.
 %
 % This work consists of the files delimset.dtx and delimset.ins
-% and the derived files delimset.sty and dlmssamp.tex.
+% and the derived files delimset.sty and delimset-samp.tex.
 %
-%<package|sample>\NeedsTeXFormat{LaTeX2e}[1996/12/01]
-%<package>\ProvidesPackage{delimset}[2025/03/27 v2.2.2 convenient size control for delimiter sets]
-%<sample>\ProvidesFile{dlmssamp.tex}[2025/03/27 v2.2.2 sample for delimset]
-%<*driver>
-\def\thedate#1{2025/03/27}\def\theversion#1{v2.2.2}
-\ProvidesFile{delimset.dtx}[\thedate{} \theversion{} delimset reference manual file]
+%<package|sample>\NeedsTeXFormat{LaTeX2e}[1996-12-01]
+%<package>\ProvidesPackage{delimset}[2026-03-23 v2.3 convenient size control for delimiter sets]
+%<sample>\ProvidesFile{delimset-samp.tex}[2026-03-23 v2.3 sample for delimset]
+%<source>\ProvidesFile{delimset-src.tex}[2026-03-23 v2.3 delimset source code documentation]
+%<manual>\ProvidesFile{delimset.tex}[2026-03-23 v2.3 delimset reference manual]
+%<*main|manual|source>
+\def\thepkg/{delimset}\def\thedate/{2026-03-23}\def\theversion/{v2.3}
+\def\thecopyright/{2016\texorpdfstring{--}{-}2026 Niklas Beisert}
+%<*main>
+\ProvidesFile{\thepkg/.dtx}[\thedate/ \theversion/ \thepkg/ package main file]
+%</main>
 \PassOptionsToClass{10pt,a4paper}{article}
 \documentclass{ltxdoc}
 
@@ -31,17 +36,36 @@
 \usepackage[hyperindex=false]{hyperref}
 \usepackage{hyperxmp}
 \usepackage[usenames]{color}
-\usepackage{amsmath,amsfonts}
+\usepackage{longtable}
 
-\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
-\hypersetup{urlbordercolor={.5 1 1}}
-\hypersetup{linkbordercolor={1 .7 .7}}
-\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
-\hypersetup{keeppdfinfo=true}
-\hypersetup{pdfsource={}}
+\usepackage{amsmath,amsfonts}
+\usepackage{delimset}
+
+%<*main>
+\title{The \markpkg{\thepkg/} Package}
+\hypersetup{pdftitle={The \thepkg/ Package}}
+\hypersetup{pdfsubject={Documentation for the LaTeX2e Package \thepkg/}}
+%</main>
+%<manual>\title{The \markpkg{\thepkg/} Package\\Reference Manual}
+%<manual>\hypersetup{pdftitle={The \thepkg/ Package -- Reference Manual}}
+%<manual>\hypersetup{pdfsubject={Reference Manual for the LaTeX2e Package \thepkg/}}
+%<source>\title{The \markpkg{\thepkg/} Package\\Source Code Documentation}
+%<source>\hypersetup{pdftitle={The \thepkg/ Package -- Source Code Documentation}}
+%<source>\hypersetup{pdfsubject={Documented Source for the LaTeX2e Package \thepkg/}}
+\author{Niklas Beisert\\[2ex]
+  Institut f\"ur Theoretische Physik\\
+  Eidgen\"ossische Technische Hochschule Z\"urich\\
+  Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
+  \href{mailto:nbeisert@itp.phys.ethz.ch}
+  {\texttt{nbeisert@itp.phys.ethz.ch}}}
+\hypersetup{pdfauthor={Niklas Beisert}}
+\date{\theversion/: \markdate{\thedate/}\\[1ex]
+\url{https://ctan.org/pkg/\thepkg/}\\[0.5ex]
+\url{https://github.com/nbeisert/latex-pkg-nb}}
+
 \hypersetup{pdflang={en-UK}}
-\hypersetup{pdfurl={https://ctan.org/pkg/delimset}}
-\hypersetup{pdfcopyright={Copyright 2016-2025 Niklas Beisert.
+\hypersetup{pdfurl={https://ctan.org/pkg/\thepkg/}}
+\hypersetup{pdfcopyright={Copyright \thecopyright/.
   This work may be distributed and/or modified under the
   conditions of the LaTeX Project Public License, either version 1.3
   of this license or (at your option) any later version.}}
@@ -54,32 +78,34 @@
 \hypersetup{pdfcontactemail={nbeisert@itp.phys.ethz.ch}}
 \hypersetup{pdfcontacturl={https://people.phys.ethz.ch/\xmptilde nbeisert/}}
 
+\hypersetup{keeppdfinfo=true}
+\hypersetup{pdfsource={}}
+\AddToHook{begindocument/before}{\hypersetup{colorlinks=false}}
+\hypersetup{urlbordercolor={.5 1 1}}
+\hypersetup{linkbordercolor={1 .7 .7}}
+\AddToHook{begindocument/before}{\hypersetup{pdfstartview=FitH}}
+
+\parskip1ex
+\parindent0pt
+\edef\itemize{\unexpanded\expandafter{\itemize}\parskip0pt}
+\def\longtablestr{\def\arraystretch{1.2}\tabcolsep1em\longtable}
+\def\endlongtablestr{\endlongtable\prevdepth\baselineskip\vskip-\parskip}
+
 \newcommand{\markpkg}[1]{\textsf{#1}}
+\newcommand{\markdate}[1]{\textsf{#1}}
 \newcommand{\secref}[1]{\hyperref[#1]{section \ref*{#1}}}
 \newcommand{\ctanref}[2]{\href{https://ctan.org/#1}{#2}}
 \newcommand{\ctanpkg}[1]{\ctanref{pkg/#1}{\markpkg{#1}}}
 
-\def\textvert{\texttt{\char"7C}}
+\def\verbbar{\texttt{\char"7C}}
+\def\verbpkg{\texttt{\thepkg/}}
+\def\thepkgctan/{\ctanpkg{\thepkg/}}
 
-\parskip1ex
-\parindent0pt
-\let\olditemize\itemize
-\def\itemize{\olditemize\parskip0pt}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
-\title{The \markpkg{delimset} Package}
-\hypersetup{pdftitle={The delimset Package}}
-\author{Niklas Beisert\\[2ex]
-  Institut f\"ur Theoretische Physik\\
-  Eidgen\"ossische Technische Hochschule Z\"urich\\
-  Wolfgang-Pauli-Strasse 27, 8093 Z\"urich, Switzerland\\[1ex]
-  \href{mailto:nbeisert@itp.phys.ethz.ch}
-  {\texttt{nbeisert@itp.phys.ethz.ch}}}
-\hypersetup{pdfauthor={Niklas Beisert}}
-\hypersetup{pdfsubject={Manual for the LaTeX2e Package delimset}}
-\date{\thedate{}, \theversion{}\\[1ex]
-\url{https://ctan.org/pkg/delimset}}
 \maketitle
 
 \begin{abstract}\noindent
@@ -93,6 +119,8 @@ whose size can be adjusted conveniently.
 \tableofcontents
 \endgroup
 
+
+%<*main|manual>
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
@@ -112,10 +140,10 @@ For example:
 \\
 |(v,w)| &\to (v,w)
 \\
-|\langle\psi|\textvert|M|\textvert|\psi\rangle|
+|\langle\psi|\verbbar|M|\verbbar|\psi\rangle|
 &\to \langle\psi\vert M\vert\psi\rangle
 \\
-|(x^2+px+q)|\textvert|_{-p/2}| &\to (x^2+px+q)\vert_{-p/2}
+|(x^2+px+q)|\verbbar|_{-p/2}| &\to (x^2+px+q)\vert_{-p/2}
 \\&\ldots
 \end{aligned}
 \]
@@ -220,13 +248,13 @@ e.g.:
 \[
 \begin{aligned}
 |\delim<>{ax+b}|
-&\to\langle ax+b\rangle
+&\to \delim<>{ax+b}
 \\
-|\delimpair[{*,}[!{a}{b}|
-&\to \bigl[a, b\bigr[
+|\delimpair[{[p]*,}[!{a}{b}|
+&\to \delimpair[{[p]*,}[!{a}{b}
 \\
-|\delimtriple<|\textvert\textvert|>*{\psi}{A^\dagger}{\psi}|
-&\to\left\langle\psi\middle\vert A^\dagger\middle\vert \psi\right\rangle
+|\delimtriple<|\verbbar\verbbar|>*{\psi}{A^\dagger}{\psi}|
+&\to \delimtriple<\vert\vert>*{\psi}{A^\dagger}{\psi}
 \end{aligned}
 \]
 %
@@ -234,7 +262,7 @@ The command |\delim| can be used on the fly, but also
 in definitions of custom delimiter sets such as:
 %
 \[
-|\newcommand{\comm}{\delimpair{[}{*,}{]}}|
+|\newcommand{\comm}{\delimpair{[}{[p]*,}{]}}|
 \]
 %
 Note that the definition of |\comm| does not specify any arguments.
@@ -245,20 +273,18 @@ enables the correct parsing of the optional size specifier flag,
 e.g.:
 %
 \[
-|\comm!{P}{\psi(x)}| \to \bigl[P,\psi(x)\bigr]
+|\comm!{P}{\psi(x)}| \to \delimpair{[}{[p]*,}{]}!{P}{\psi(x)}
 \]
 %
 The package also provides a mechanism to declare
 delimited sets more flexibly.
 The above definition could be written as follows:
 %
-\[
-\begin{aligned}
-&|\DeclareMathDelimiterSet{\comm}[2]|
+\begin{longtablestr}{l}
+|\DeclareMathDelimiterSet{\comm}[2]|
 \\
-&\qquad |{\selectdeliml{[}{#1},{#2}\selectdelimr{]}}|
-\end{aligned}
-\]
+|  {\selectdeliml{[}{#1},{#2}\selectdelimr{]}}|
+\end{longtablestr}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Delimiter Sizes for Math Styles}
@@ -284,7 +310,9 @@ to avoid complicated expressions in sub/superscripts in the first place),
 they come out way too big:
 %
 \[
-|e^{\big(ax+b\big)}| \to e^{\big(ax+b\big)}
+\def\obig#1{\hbox{$\left#1\vbox to8.5pt{}\right.\nulldelimiterspace0pt$}}
+|e^{\big(ax+b\big)}| \to
+e^{\obig(ax+b\obig)}
 \]
 %
 This package modifies the definitions of
@@ -293,9 +321,7 @@ to automatically adjust to sub/superscripts
 (subject to availability in the font):
 %
 \[
-\makeatletter
-|e^{\big(ax+b\big)}| \to e^{\left(\vcenter to 0.7\big@size{}ax+b\right)}
-\makeatother
+|e^{\big(ax+b\big)}| \to e^{\big(ax+b\big)}
 \]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -363,19 +389,19 @@ e.g.:
 %
 \[
 \begin{aligned}
-|\bigl<\psi\big|\textvert|\psi\bigr>|
+|\bigl<\psi\big|\verbbar|\psi\bigr>|
 &\to \bigl<\psi\big\vert\psi\bigr>
 \\
-|\bigl<\psi\mathpunct\big|\textvert|\psi\bigr>|
+|\bigl<\psi\mathpunct\big|\verbbar|\psi\bigr>|
 &\to \bigl\langle\psi\mathpunct\big\vert\psi\bigr>
 \\
-|\bigl<\psi\mathinner\big|\textvert|\psi\bigr>|
+|\bigl<\psi\mathinner\big|\verbbar|\psi\bigr>|
 &\to \bigl\langle\psi\mathinner\big\vert\psi\bigr>
 \\
-|\bigl<\psi\mathbin\big|\textvert|\psi\bigr>|
+|\bigl<\psi\mathbin\big|\verbbar|\psi\bigr>|
 &\to \bigl\langle\psi\mathbin\big\vert\psi\bigr>
 \\
-|\bigl<\psi\bigm|\textvert|\psi\bigr>|
+|\bigl<\psi\bigm|\verbbar|\psi\bigr>|
 &\to \bigl\langle\psi\bigm\vert\psi\bigr>
 \end{aligned}
 \]
@@ -407,8 +433,8 @@ by specifying appropriate flags,
 for example:
 %
 \[
-|\brk(|\to{(},\qquad
-|\brk)|\to{)}
+|\brk(|\to{\brk(},\qquad
+|\brk)|\to{\brk)}
 \]
 %
 These flags can be combined with the size specifier
@@ -416,8 +442,8 @@ or other bracket modifiers,
 e.g.:
 %
 \[
-|\brk^3(|\to{\biggl(},\qquad
-|\brk[s]^2)|\to{\Bigr]}
+|\brk^3(|\to{\brk^3(},\qquad
+|\brk[s]^2)|\to{\brk[s]^2)}
 \]
 %
 This enables to conveniently split delimited expressions over blocks of code,
@@ -426,7 +452,7 @@ e.g.:
 \[
 |\brk[s]^3(\frac{A}{B}|\ldots\Big/\mkern-9mu\Big/\ldots|\frac{C}{D}\brk[s]^3)|
 \to
-\biggl[\frac{A}{B}\cdots\bigg/\mkern-12mu\bigg/\cdots\frac{C}{D}\biggr]
+\brk[s]^3(\frac{A}{B}\cdots\bigg/\mkern-12mu\bigg/\cdots\frac{C}{D}\brk[s]^3)
 \]
 %
 Here, the type and modifiers specifying the delimiter set
@@ -524,8 +550,8 @@ to typeset delimiters on the fly,
 e.g.:
 %
 \[
-|\delim<|\textvert|>!{\psi}{\psi}|
-\to\bigl<\psi\big\vert\psi\bigr>
+|\delimpair<|\verbbar|>!{\psi}{\psi}|
+\to\delimpair<\vert>!{\psi}{\psi}
 \]
 %
 The mechanism to specify the size is leaner in the sense that it uses
@@ -536,7 +562,11 @@ only a single character and a single command.
 \section{Usage}
 
 To use the package \ctanpkg{delimset} add the command
-\begin{center}|\usepackage{delimset}|\end{center}
+%
+\[
+|\usepackage{delimset}|
+\]
+%
 to the preamble of your \LaTeX{} document.
 If not yet present,
 the package \ctanpkg{amsmath} will be loaded automatically.
@@ -562,31 +592,26 @@ The \emph{flags} are described as follows:
 First, a size modifier flag controls the size of the delimiters
 to be displayed. It can take one of the following values:
 %
-\[
-\begin{aligned}
-|0|&\qquad \text{default size}
-\text{ (0.96 times default line height)}
+\begin{longtablestr}{rl}
+|0|& default size (0.96 times default line height)
 \\
-|!|, |+|, |^1|&\qquad \text{size }|\big|
-\text{ (1.2 times default line height)}
+|!|, |+|& increase size by one step
 \\
-|^2|&\qquad \text{size }|\Big|
-\text{ (1.8 times default line height)}
+|^1|& size |\big| (1.2 times default line height)
 \\
-|^3|&\qquad \text{size }|\bigg|
-\text{ (2.4 times default line height)}
+|^2|& size |\Big| (1.8 times default line height)
 \\
-|^4|&\qquad \text{size }|\Bigg|
-\text{ (3.0 times default line height)}
+|^3|& size |\bigg| (2.4 times default line height)
 \\
-|^|\emph{n}, |^{|\emph{x}|}|&\qquad \text{flexible size adjustment
-(\emph{n}=|0|\ldots|9|; \emph{x}: decimal number)}
+|^4|& size |\Bigg| (3.0 times default line height)
 \\
-|_{|\emph{h}|}|&\qquad \text{adjustment to absolute height \emph{h} (centred)}
+|^|\emph{n}, |^{|\emph{x}|}|& flexible size adjustment
+(\emph{n}=|0|\ldots|9|; \emph{x}: decimal number)
 \\
-|*|&\qquad \text{variable size }|\left...\right|
-\end{aligned}
-\]
+|_{|\emph{h}|}|& adjustment to absolute height \emph{h} (centred)
+\\
+|*|& variable size |\left|\ \ldots|\right|
+\end{longtablestr}
 %
 The intended delimiter size is stored as the dimension variable:
 %
@@ -618,36 +643,32 @@ Second, a delimiter selection flag is used to pick out
 and display just one individual delimiter within the set.
 It can take one of the following values:
 %
-\[
-\begin{aligned}
-|(|&\qquad \text{left delimiter}
+\begin{longtablestr}{rl}
+|(|& left delimiter
 \\
-\textvert, |,|&\qquad \text{first intermediate delimiter}
+\verbbar, |,|& first intermediate delimiter
 \\
-|?|\emph{n}&\qquad \text{\emph{n}-th delimiter (starting with |0|: left)}
+|?|\emph{n}& \emph{n}-th delimiter (starting with |0|: left)
 \\
-|)|&\qquad \text{right delimiter}
-\end{aligned}
-\]
+|)|& right delimiter
+\end{longtablestr}
 
 Third, register flags store and retrieve delimiter sets
 for splitting them across blocks or lines:
 %
-\[
-\begin{aligned}
-|[|&\qquad \text{push delimiter type to register stack, display left delimiter
-(similar to `|>.(|')}
+\begin{longtablestr}{@{}rl@{}}
+|[|& push delimiter type to register stack, display left delimiter
+(similar to `|>.(|')
 \\
-|]|&\qquad \text{pop delimiter type from stack, display right delimiter
-(similar to `|<.)|')}
+|]|& pop delimiter type from stack, display right delimiter
+(similar to `|<.)|')
 \\
-|>|\emph{r}, |>{|\emph{reg}|}|&\qquad \text{store delimiter type
-to register \emph{r} or \emph{reg}}
+|>|\emph{r}, |>{|\emph{reg}|}|& store delimiter type
+to register \emph{r} or \emph{reg}
 \\
-|<|\emph{r}, |<{|\emph{reg}|}|&\qquad \text{retrieve delimiter type
-from register \emph{r} or \emph{reg}}
-\end{aligned}
-\]
+|<|\emph{r}, |<{|\emph{reg}|}|& retrieve delimiter type
+from register \emph{r} or \emph{reg}
+\end{longtablestr}
 %
 A register stores the type of delimiter set (|\|\emph{name}),
 the desired size (except for variable size `|*|')
@@ -656,36 +677,33 @@ The register stack enables convenient access to nested delimiter sets,
 and the special register `|.|' points to the top of the stack.
 A stored register can be retrieved and displayed by the macro:
 %
-\[
+\begin{longtablestr}{l}
 |\usedelim|\,\emph{r}\ \emph{flags}\ \emph{sel}
 \quad\text{or}\quad
 |\usedelim|\{\emph{reg}\}\,\emph{flags}\ \emph{sel}
 \quad\text{or}\quad
 |\usedelim|\,\emph{sel}
-\]
+\end{longtablestr}
 %
 Here, \emph{sel}
 is a flag to select an individual delimiter
-(`|(|', `\textvert', `|,|', `|?|\emph{n}', `|)|' or `|]|'), see above.
+(`|(|', `\verbbar', `|,|', `|?|\emph{n}', `|)|' or `|]|'), see above.
 The abbreviated form without register specification operates
 on the top of the register stack.
 
 In addition, there are some general purpose flags:
 %
-\[
-\begin{aligned}
-|.|&\qquad \text{terminates flag processing}
+\begin{longtablestr}{rl}
+|.|& terminates flag processing
 \\
-|:|&\qquad \text{enclose delimiter set in block
-(for using total box dimensions)}
+|:|& enclose delimiter set in block (for using total box dimensions)
 \\
-|'|&\qquad \text{render delimiter set as }|\mathopen|\text{ and }|\mathclose|
+|'|& render delimiter set as |\mathopen| and |\mathclose|
 \\
-|"|&\qquad \text{render delimiter set as }|\mathinner|
+|"|& render delimiter set as |\mathinner|
 \\
-|-|&\qquad \text{display phantom delimiters (for individual delimiters)}
-\end{aligned}
-\]
+|-|& display phantom delimiters (for individual delimiters)
+\end{longtablestr}
 
 Please note the following:
 %
@@ -758,31 +776,29 @@ to enable access to intermediate delimiters.
 The package provides three general purpose commands
 to compose delimiter sets with one, two or three encapsulated expressions:
 %
-\[
-\begin{aligned}
-&|\delim{|\emph{l}|}{|\emph{r}|}|\emph{flags}|{|\emph{expr}|}|
+\begin{longtablestr}{l}
+|\delim{|\emph{l}|}{|\emph{r}|}|\emph{flags}|{|\emph{expr}|}|
 \\
-&|\delimpair{|\emph{l}|}{|\emph{m}|}{|\emph{r}|}|
+|\delimpair{|\emph{l}|}{|\emph{m}|}{|\emph{r}|}|
 \emph{flags}|{|\emph{expr1}|}{|\emph{expr2}|}|
 \\
-&|\delimtriple{|\emph{l}|}{|\emph{m}|}{|\emph{n}|}{|\emph{r}|}|
+|\delimtriple{|\emph{l}|}{|\emph{m}|}{|\emph{n}|}{|\emph{r}|}|
 \emph{flags}|{|\emph{expr1}|}{|\emph{expr2}|}{|\emph{expr3}|}|
-\end{aligned}
-\]
+\end{longtablestr}
 %
 The expression(s) \emph{expr(n)} will be surrounded by the
 delimiters \emph{l} and \emph{r}
 and, in the case of more than one expression,
 they will be separated by the delimiters \emph{m}, \emph{n}:
 %
-\[
-\emph{l}\ \emph{expr}\ \emph{r},
+\begin{longtablestr}{l}
+\emph{l} \emph{expr} \emph{r},
 \qquad
-\emph{l}\ \emph{expr1}\ \emph{m}\ \emph{expr2}\ \emph{r},
+\emph{l} \emph{expr1} \emph{m} \emph{expr2} \emph{r},
 \qquad
-\emph{l}\ \emph{expr1}\ \emph{m}\ \emph{expr2}\
-\emph{n}\ \emph{expr3}\ \emph{r}
-\]
+\emph{l} \emph{expr1} \emph{m} \emph{expr2}
+\emph{n} \emph{expr3} \emph{r}
+\end{longtablestr}
 
 Here, \emph{l}, \emph{r}, \emph{m}, \emph{n}
 should be math delimiters \emph{delim}
@@ -804,7 +820,10 @@ This allows to use an arbitrary \emph{token}
 or a compound expression \emph{expr} in place of a delimiter \emph{delim}.
 This is useful when a delimiter character should not adjust in size
 (e.g.\ commas), or if a flexible-size version of the character
-is not available. One might also use a compound expression
+is not available.
+Compounds can be used to design size-adjusting delimiters
+more flexibly using |\selectdelim| and |\doubledelim| (see below).
+One might also use a compound expression
 to create a null delimiter with non-zero width
 (the width may be specified by |\kerndelim|
 to make it proportional to the delimiter size).
@@ -817,35 +836,32 @@ Here, \emph{class} specifies
 the intended math class of the delimiter \emph{delim}
 according to:
 %
-\[
-\begin{aligned}
-\left.\begin{array}{r}
+\begin{longtablestr}{rl}
+$\left.\begin{tabular}[c]{r}
 \emph{delim}\\|{|\emph{delim}|}|
-\end{array}\right\}
-&\qquad
-\left\{\begin{array}{l}
+\end{tabular}\right\}$
+&
+$\left\{\begin{tabular}[c]{l}
 \text{no glue for size-adjusted delimiters (same as }|[o]|\text{)}
 \\
 \text{determined by expression for unadjusted size (}|*|\text{ variant)}
-\end{array}\right.
+\end{tabular}\right.$
 \\
-|{[o]|\emph{delim}|}|
-&\qquad
-\text{no glue, similar to }|\big|, |\mathord|, |\mathopen|, |\mathclose|
+|{[o]|\emph{delim}|}|&
+no glue, similar to |\big|, |\mathord|, |\mathopen|, |\mathclose|
 \\
-|{[p]|\emph{delim}|}|&\qquad
-\text{followed by }|\thinmuskip|\text{, similar to }|\bigp|, |\mathpunct|
+|{[p]|\emph{delim}|}|&
+followed by |\thinmuskip|, similar to |\bigp|, |\mathpunct|
 \\
-|{[i]|\emph{delim}|}|&\qquad
-\text{surrounded by }|\thinmuskip|\text{, similar to }|\bigi|, |\mathinner|
+|{[i]|\emph{delim}|}|&
+surrounded by |\thinmuskip|, similar to |\bigi|, |\mathinner|
 \\
-|{[b]|\emph{delim}|}|&\qquad
-\text{surrounded by }|\medmuskip|\text{, similar to }|\bigb|, |\mathbin|
+|{[b]|\emph{delim}|}|&
+surrounded by |\medmuskip|, similar to |\bigb|, |\mathbin|
 \\
-|{[m]|\emph{delim}|}|&\qquad
-\text{surrounded by }|\thickmuskip|\text{, similar to }|\bigm|, |\mathrel|
-\end{aligned}
-\]
+|{[m]|\emph{delim}|}|&
+surrounded by |\thickmuskip|, similar to |\bigm|, |\mathrel|
+\end{longtablestr}
 
 Please note the following:
 %
@@ -889,18 +905,16 @@ rather than `|[|'.
 
 The above constructs can be used to define new delimiter commands via:
 %
-\[
-\begin{aligned}
-&|\newcommand{\|\emph{name}|}{\delim{|\emph{l}|}{|\emph{r}|}|
+\begin{longtablestr}{l}
+|\newcommand{\|\emph{name}|}{\delim{|\emph{l}|}{|\emph{r}|}|
 \emph{flags}|}|
 \\
-&|\newcommand{\|\emph{name}|}{\delimpair{|\emph{l}|}{|\emph{m}|}{|\emph{r}|}|
+|\newcommand{\|\emph{name}|}{\delimpair{|\emph{l}|}{|\emph{m}|}{|\emph{r}|}|
 \emph{flags}|}|
 \\
-&|\newcommand{\|\emph{name}|}{\delimtriple{|\emph{l}|}{|\emph{m}|}|
+|\newcommand{\|\emph{name}|}{\delimtriple{|\emph{l}|}{|\emph{m}|}|
 |{|\emph{n}|}{|\emph{r}|}|\emph{flags}|}|
-\end{aligned}
-\]
+\end{longtablestr}
 %
 Here it makes sense to drop all arguments
 starting at the optional \emph{flags} argument from the definition.
@@ -937,15 +951,13 @@ at the level of the current group.
 It should also contain the desired math delimiters
 specified by:
 %
-\[
-\begin{aligned}
-&|\selectdeliml|[|*|]|{|\emph{delim}|}|
+\begin{longtablestr}{l}
+|\selectdeliml|[|*|]|{|\emph{delim}|}|
 \\
-&|\selectdelim[|\emph{class}|]|[|*|]|{|\emph{delim}|}|
+|\selectdelim[|\emph{class}|]|[|*|]|{|\emph{delim}|}|
 \\
-&|\selectdelimr|[|*|]|{|\emph{delim}|}|
-\end{aligned}
-\]
+|\selectdelimr|[|*|]|{|\emph{delim}|}|
+\end{longtablestr}
 %
 The three commands must be in proper sequence
 starting with |\selectdeliml| followed by arbitrarily many
@@ -954,76 +966,73 @@ The math classes \emph{class} and starred variants
 are defined analogously to \secref{sec:inline}.
 Here, the sizes are adjusted automatically
 according to the previously specified modifier.
+Note that the expressions for the starred forms may contain
+|\selectdelim| to produce delimiters in the desired size.
+Compounds of two identical delimiters
+with horizontal kerning adjustment \emph{width} (default |-2|)
+are produced by:
+%
+\[
+|\doubledelim[|\emph{width}|]|\emph{delim}
+\]
 
 Picking out individual delimiters from a set
 declared by |\DeclareMathDelimiterSet|
 cannot be achieved automatically.
 Instead, a selector method may be specified manually (where needed) by:
 %
-\[
-\begin{aligned}
-&|\DeclareMathDelimiterSel{\|\emph{name}|}|
+\begin{longtablestr}{l}
+|\DeclareMathDelimiterSel{\|\emph{name}|}|
 \\
-&|  {\selectdeliml{|\emph{l}|}|[|\||or\selectdelim{|\emph{m}|}|\ldots]|}|
+|  {\selectdeliml{|\emph{l}|}|[|\||or\selectdelim{|\emph{m}|}|\ldots]|}|
 \\
-&|  {\selectdelimr{|\emph{r}|}}|
-\end{aligned}
-\]
+|  {\selectdelimr{|\emph{r}|}}|
+\end{longtablestr}
 %
 As many intermediate delimiters as needed can be specified
 at the end of the first argument; each one must start with `|\||or|'.
 
-\makeatletter
 For example, one might declare a set of double square brackets
-$[\kern-0.06\big@size[*]\kern-0.06\big@size]$ using:
-\makeatother
+$\brk[S]{*}$ using:
 %
-\[
-\begin{aligned}
-&|\DeclareMathDelimiterSet{\dsb}[1]|
+\begin{longtablestr}{l}
+|\DeclareMathDelimiterSet{\dsb}[1]|
 \\
-&|  {\selectdeliml{[}\kerndelim{-1.75}\selectdelim[o]{[}{#1}|
+|  {\selectdeliml{[}\kerndelim{-1.75}\selectdelim[o]{[}{#1}|
 \\
-&|  \selectdelim[o]{]}\kerndelim{-1.75}\selectdelimr{]}}|
-\end{aligned}
-\]
+|  \selectdelim[o]{]}\kerndelim{-1.75}\selectdelimr{]}}|
+\end{longtablestr}
 %
 Here, the command |\kerndelim{-1.75}| reduces the spacing
 between the two square brackets by approximately 1.75\,mu in default size.
 This could be used for:
 %
 \[
-\makeatletter
 |\dsb^4{\dsb^3{\dsb^2{\dsb^1{\dsb{*}}}}}|
 \to
-\Biggl[\kern-0.20\big@size\Biggl[
-\biggl[\kern-0.16\big@size\biggl[
-\Bigl[\kern-0.12\big@size\Bigl[
-\bigl[\kern-0.08\big@size\bigl[
-[\kern-0.06\big@size[*
-]\kern-0.06\big@size]
-\bigr]\kern-0.08\big@size\bigr]
-\Bigr]\kern-0.12\big@size\Bigr]
-\biggr]\kern-0.16\big@size\biggr]
-\Biggr]\kern-0.20\big@size\Biggr],
+\brk[S]^4{\brk[S]^3{\brk[S]^2{\brk[S]^1{\brk[S]{*}}}}}
 \quad
 |\dsb*|\ldots\to
-\left[\kern-0.12\big@size\middle[\frac{x}{y}
-\middle]\kern-0.12\big@size\right]
-\makeatother
+\brk[S]*{\frac{x}{y}}
 \]
 %
 An appropriate selector method for displaying individual
 delimiters reads:
 %
+\begin{longtablestr}{l}
+|\DeclareMathDelimiterSel{\dsb}|
+\\
+|  {\selectdeliml{[}\kerndelim{-1.75}\selectdelim[o]{[}}|
+\\
+|  {\selectdelim[o]]\kerndelim{-1.75}\selectdelimr{]}}|
+\end{longtablestr}
+%
+An inline version of the above definitions
+using compound expressions with manual resizing of the delimiters
+(via |\selectdelim| and |\doubledelim|) is achieved by:
+%
 \[
-\begin{aligned}
-&|\DeclareMathDelimiterSel{\dsb}|
-\\
-&|  {\selectdeliml{[}\kerndelim{-1.75}\selectdelim[o]{[}}|
-\\
-&|  {\selectdelim[o]]\kerndelim{-1.75}\selectdelimr{]}}|
-\end{aligned}
+|\delim{*{\doubledelim[-1.75](}}{*{\doubledelim[-1.75])}}|
 \]
 
 Finally, towards a very flexible manual composition
@@ -1052,14 +1061,16 @@ The package predefines four commonly used sets of delimiters:
 |\brk[|\emph{type}|]|\emph{flags}|{|\emph{expr}|}| represents
 a standard bracket around a single expression \emph{expr}.
 The type of bracket can be specified by the optional
-argument \emph{type}:
+argument \emph{type} (default |r|):
 %
-\[
-\text{\emph{empty} or |[r]|: round }(x),\quad
-\text{|[s]|: square }[x],\quad
-\text{|[c]|: curly }\{x\},\quad
-\text{|[a]|: angle }\langle x\rangle
-\]
+\begin{longtablestr}{rc@{\ }cc@{\ }c}
+       & \multicolumn{2}{c}{single}  & \multicolumn{2}{c}{double} \\
+round  & |r|:& $\brk[r]{x}$ & |R|: & $\brk[R]{x}$ \\
+square & |s|:& $\brk[s]{x}$ & |S|: & $\brk[S]{x}$ \\
+curly  & |c|:& $\brk[c]{x}$ & |C|: & $\brk[C]{x}$ \\
+angle  & |a|:& $\brk[a]{x}$ & |A|: & $\brk[A]{x}$ \\
+bar    & |v|:& $\brk[v]{x}$ & |V|: & $\brk[V]{x}$ \\
+\end{longtablestr}
 %
 \item
 |\eval[|\emph{type}|]|\emph{flags}|{|\emph{expr}|}| represents
@@ -1067,10 +1078,10 @@ evaluation of a functional expression \emph{expr}.
 The type of bracket can be specified by the optional
 argument \emph{type}:
 %
-\[
-\text{\emph{empty} or |[v]|: }f(x)\vert_{a},\qquad
-\text{|[s]|: }[f(x)]_{a}^{b}
-\]
+\begin{longtablestr}{l}
+\emph{empty} or |[v]|: $\eval[v]{f(x)}_{a}$,\qquad
+|[s]|: $\eval[s]{f(x)}_{a}^{b}$
+\end{longtablestr}
 %
 \item
 |\abs|\emph{flags}|{|\emph{expr}|}| represents
@@ -1087,8 +1098,13 @@ The package also defines some extended sets of delimiters as follows:
 %
 \begin{itemize}
 \item
-|\pair|\emph{flags}|{|\emph{expr1}|}{|\emph{expr2}|}| represents
-a pair(ing) $(\emph{expr1},\emph{expr2})$.
+|\pair[|\emph{type}\,\emph{sep}|]|\emph{flags}|{|\emph{expr1}|}{|\emph{expr2}|}|
+represents a pair(ing) $(\emph{expr1},\emph{expr2})$.
+The type of bracket can be altered by the optional argument \emph{type}
+as for |\brk|.
+The separator \emph{sep} can be adjusted to `|,|' (default) for comma,
+`|;|' for semi-colon and `\verbbar' for vertical bar.
+%
 \item
 |\set|\emph{flags}|{|\emph{expr}|}| represents
 the set $\{\emph{expr}\}$.
@@ -1101,15 +1117,15 @@ an interval from \emph{expr1} to \emph{expr2}.
 The in/\hspace{0pt}exclusion of the bounds can be specified by the optional
 argument \emph{type}:
 %
-\[
-\text{\emph{empty} or |[c]|: closed }[a,b],\qquad
-\text{|[o]|: open }]a,b[,\qquad
-\begin{array}{l}
-\text{|[l]|: left-open }]a,b]
+\begin{longtablestr}{l}
+\emph{empty} or |[c]|: closed $[a,b]$,\qquad
+|[o]|: open $]a,b[$,\qquad
+\begin{tabular}{l}
+|[l]|: left-open $]a,b]$
 \\
-\text{|[r]|: right-open }[a,b[
-\end{array}
-\]
+|[r]|: right-open $[a,b[$
+\end{tabular}
+\end{longtablestr}
 %
 \item
 |\avg|\emph{flags}|{|\emph{expr}|}| represents
@@ -1203,66 +1219,70 @@ If no value is given |true| is assumed; initially set to |true|.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Copyright}
 
-Copyright \copyright{} 2016--2025 Niklas Beisert
+Copyright \copyright{} \thecopyright/
 
 This work may be distributed and/or modified under the
 conditions of the \LaTeX{} Project Public License, either version 1.3
 of this license or (at your option) any later version.
 The latest version of this license is in
   \url{https://www.latex-project.org/lppl.txt}
-and version 1.3 or later is part of all distributions of \LaTeX{}
-version 2005/12/01 or later.
+and version 1.3c or later is part of all distributions of \LaTeX{}
+version 2008 or later.
 
 This work has the LPPL maintenance status `maintained'.
 
 The Current Maintainer of this work is Niklas Beisert.
 
-This work consists of the files |README.txt|, |delimset.ins| and |delimset.dtx|
-as well as the derived files |delimset.sty|, |dlmssamp.tex| and |delimset.pdf|.
+This work consists of the files
+|README.txt|, \verbpkg|.ins| and \verbpkg|.dtx|
+as well as the derived files listed below.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Files and Installation}
 
-The package consists of the files
+The package consists of the files:
 %
-\begin{center}
-\begin{tabular}{ll}
+\begin{longtable}{ll}
     |README.txt|   & readme file \\
-    |delimset.ins| & installation file \\
-    |delimset.dtx| & source file \\
-    |delimset.sty| & package file \\
-    |dlmssamp.tex| & sample file \\
-    |delimset.pdf| & manual
-\end{tabular}
-\end{center}
+    \verbpkg|.ins| & installation file \\
+    \verbpkg|.dtx| & source file \\
+    \verbpkg|.sty| & package file \\
+    \verbpkg|-samp.tex| & sample file \\
+    \verbpkg|.pdf| & documentation \\
+\end{longtable}
 %
 The distribution consists of the files
-|README.txt|, |delimset.ins| and |delimset.dtx|.
+|README.txt|, \verbpkg|.ins| and \verbpkg|.dtx|.
 %
 \begin{itemize}
 \item
-Run (pdf)\LaTeX{} on |delimset.dtx|
-to compile the manual |delimset.pdf| (this file).
+Run \LaTeX{} on \verbpkg|.ins| to create the package \verbpkg|.sty|
+and further documentation files.
 \item
-Run \LaTeX{} on |delimset.ins| to create the package |delimset.sty|
-and the sample |dlmssamp.tex|.
-Copy the file |delimset.sty| to an appropriate directory of your \LaTeX{}
-distribution, e.g.\ \textit{texmf-root}|/tex/latex/delimset|.
+Copy the file \verbpkg|.sty| to an appropriate directory of your \LaTeX{}
+distribution, e.g.\ \textit{texmf-root}|/tex/latex/|\verbpkg.
+\item
+Alternatively, you may copy \verbpkg|.sty| to your project directory.
+\item
+Run (pdf)\LaTeX{} on \verbpkg|.dtx|
+to compile the documentation \verbpkg|.pdf| (this file).
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Interaction with CTAN Packages}
 
 The package is related to other packages available at CTAN:
+%
 \begin{itemize}
 \item
 Compatibility with the \ctanpkg{amsmath} package
-has been tested with v2.15d (2016/06/28) and v2.17t (2024/11/05).
+has been tested with v2.15d (\markdate{2016-06-28})
+and v2.17t (\markdate{2024-11-05}).
 \item
 This package uses the package \ctanpkg{keyval} from the
 \ctanpkg{graphics} bundle to process optional arguments to the package options.
 Compatibility with the \ctanpkg{keyval} package
-has been tested with v1.15 (2014/10/28).
+has been tested with v1.15 (\markdate{2014-10-28}).
 \item
 The package \ctanpkg{icomma} modifies the spacing behaviour
 of the comma character in math mode
@@ -1271,35 +1291,71 @@ To achieve proper spacing in sample code,
 use |{[p]*,}| rather than |{*,}|.
 The extended commands |\intv|, |\comm|, |\acomm| and |\pair|
 are compatible with the \ctanpkg{icomma} package
-has been tested with v2.0+ (2002/03/10).
+has been tested with v2.0 (\markdate{2002-03-10}).
+\item
+This package cooperates with the package \ctanpkg{beamer}
+in not changing colours for delimiters.
+Compatibility with the \ctanpkg{beamer} package
+has been tested with v3.77 (\markdate{2026-01-22}).
 \end{itemize}
-%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Feature Suggestions}
+\iffalse
+\subsection{Feature Suggestions}
 
-% make optional arguments work for DeclareMathDelimiterSet?
-%  (must go before parsing, but how to process and react?)
-% make unadjusted size have right height
-% automatic nesting of bracket types? -> depth stack?
-% handle cramped style properly (perhaps impossible in older tex engines)
-% semantic definition for () as argument of a function
+The following is a list of features which may be useful for future
+versions of this package:
+%
+\begin{itemize}
+\item parse flags without space
+\item make optional arguments work for DeclareMathDelimiterSet?
+  (must go before parsing, but how to process and react?)
+\item make unadjusted size have right height
+\item automatic nesting of bracket types? -> depth stack?
+\item handle cramped style properly (perhaps impossible in older tex engines)
+\item semantic definition for () as argument of a function
+\item more elaborate options for lfrac (brackets for numerator/denominator?!)
+\end{itemize}
+
+\fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Revision History}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \iffalse
-\paragraph{vN.N.N+:} 20YY/MM/NN
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{vN.N.N+:} \markdate{20YY-MM-DD}
 
 \begin{itemize}
 \item
 \ldots
 \end{itemize}
+
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v2.2.2:} 2025/03/27
+\paragraph{v2.3:} \markdate{2026-03-23}
+
+\begin{itemize}
+\item
+added more types to |\brk| and |\pair| including double delimiters
+\item
+added |\doubledelim| for compounds of two identical delimiters
+\item
+modifiers `|!|'/`|+|' can accumulate to increase size further
+\item
+provide new |\big|, |\Big|, |\bigg|, |\Bigg| if |scriptstyle| is active
+\item
+fix for not applying |math text| colour for delimiters in \ctanpkg{beamer}
+\item
+modifier `|[|' now throws an error when used with variable size
+\item
+package maintenance
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v2.2.2:} \markdate{2025-03-27}
 
 \begin{itemize}
 \item
@@ -1307,7 +1363,7 @@ parameter fetching mechanism for |\usedelim| changed
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v2.2.1:} 2025/03/25
+\paragraph{v2.2.1:} \markdate{2025-03-25}
 
 \begin{itemize}
 \item
@@ -1315,7 +1371,7 @@ maintenance and manual update
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v2.2:} 2025/02/27
+\paragraph{v2.2:} \markdate{2025-02-27}
 
 \begin{itemize}
 \item
@@ -1325,7 +1381,7 @@ be independent of \ctanpkg{amsmath}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v2.1:} 2025/01/05
+\paragraph{v2.1:} \markdate{2025-01-05}
 
 \begin{itemize}
 \item
@@ -1336,7 +1392,7 @@ syntax of |\usedelim| extended for direct access to top of register stack
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v2.0:} 2024/07/17
+\paragraph{v2.0:} \markdate{2024-07-17}
 
 \begin{itemize}
 \item
@@ -1368,7 +1424,7 @@ compatibility with \ctanpkg{icomma} package
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.1:} 2018/12/30
+\paragraph{v1.1:} \markdate{2018-12-30}
 
 \begin{itemize}
 \item
@@ -1376,7 +1432,7 @@ classes added, class and size selection mechanism simplified
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.01:} 2018/01/17
+\paragraph{v1.01:} \markdate{2018-01-17}
 
 \begin{itemize}
 \item
@@ -1384,7 +1440,7 @@ manual rearranged
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v1.0:} 2016/11/01
+\paragraph{v1.0:} \markdate{2016-11-01}
 
 \begin{itemize}
 \item
@@ -1396,7 +1452,7 @@ first version published on CTAN
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{v0.5--0.7:} 2016/05/08 -- 2016/09/04
+\paragraph{v0.5--0.7:} \markdate{2016-05-08} -- \markdate{2016-09-04}
 
 \begin{itemize}
 \item
@@ -1405,26 +1461,39 @@ basic functionality
 standard definitions
 \end{itemize}
 
+%</main|manual>
+%<*main>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
-
+%</main>
+%<*main|source>
+\raggedright
 \settowidth\MacroIndent{\rmfamily\scriptsize 000\ }
 
- \DocInput{delimset.dtx}
+\DocInput{\thepkg/.dtx}
+%</main|source>
 
 \end{document}
-%</driver>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%</main|manual|source>
 % \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Sample File}
-%\iffalse
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Sample}
+% \iffalse
 %<*sample>
-%\fi
+% \fi
 %
 % In this section we provide a \LaTeX{} example how to use
 % some of the \ctanpkg{delimset} features.
@@ -1465,7 +1534,7 @@ styles for default brackets:
 nested brackets:
 %    \begin{macrocode}
 \[
-\brk[c]^2{\brk[s]!{\brk{ax+b}x+c}x+d}
+\brk[c]!!{\brk[s]!{\brk{ax+b}x+c}x+d}
 \]
 %    \end{macrocode}
 
@@ -1547,7 +1616,7 @@ conditional set, alternative layouts with variable size:
 
 delimiter definition:
 %    \begin{macrocode}
-\newcommand{\comm}{\delimpair[{*,}]}
+\newcommand{\comm}{\delimpair[{[p]*,}]}
 \[
 \comm!{\comm{A}{B}}{C}
 +\comm!{\comm{B}{C}}{A}
@@ -1558,7 +1627,7 @@ delimiter definition:
 
 alternative representation:
 %    \begin{macrocode}
-\renewcommand{\comm}{\delimpair[{*;}]}
+\renewcommand{\comm}{\delimpair[{[p]*;}]}
 \[
 \comm!{\comm{A}{B}}{C}
 +\comm!{\comm{B}{C}}{A}
@@ -1598,18 +1667,18 @@ the final size is not available for the enclosed expressions):
 %    \begin{macrocode}
 \end{document}
 %    \end{macrocode}
-%\iffalse
+% \iffalse
 %</sample>
-%\fi
+% \fi
 %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \section{Implementation}
-%\iffalse
+% \iffalse
 %<*package>
-%\fi
+% \fi
 %
-% In this section we describe the package |delimset.sty|.
+% In this section we describe the package \verbpkg|.sty|.
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Required Packages.}
@@ -1637,15 +1706,27 @@ the final size is not available for the enclosed expressions):
 \define@key{\dlm@group}{extdef}[true]{\csname dlm@ext#1\endcsname}
 \define@key{\dlm@group}{scriptstyle}[true]{\csname dlm@script#1\endcsname}
 
-\DeclareOption*{\expandafter\setkeys\expandafter\dlm@group%
+\DeclareOption*{\expandafter\setkeys\expandafter\dlm@group
   \expandafter{\CurrentOption}}
 \ProcessOptions
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Interaction with \markpkg{beamerbasecolor}.}
+%
+% Suppress changing colors in inner math structures
+% when \ctanpkg{beamer} is loaded:
+%    \begin{macrocode}
+\let\dlm@beamerbasecolor@fix\@empty
+\AddToHook{package/beamerbasecolor/after}{%
+  \def\dlm@beamerbasecolor@fix{\donotcoloroutermaths}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Improved Size Adjustments.}
 %
-% Overwrite the \ctanpkg{amsmath} command |\bBigg@|
+% Overwrite the macros |\big|, |\Big|, |\bigg|, |\Bigg|
+% and the \ctanpkg{amsmath} command |\bBigg@|
 % to select the size according to the present math style
 % (uses the \ctanpkg{amsmath} definitions |\@mathmeasure| and |\big@size|).
 % This code is activated only if
@@ -1653,12 +1734,17 @@ the final size is not available for the enclosed expressions):
 %
 %    \begin{macrocode}
 \ifdlm@script
+\def\dlm@big@s#1#2{{\delimsize#1\dlm@size\dlm@big@{#2}}}
+\DeclareRobustCommand{\big}{\dlm@big@s{}}
+\DeclareRobustCommand{\Big}{\dlm@big@s{1.5}}
+\DeclareRobustCommand{\bigg}{\dlm@big@s{2}}
+\DeclareRobustCommand{\Bigg}{\dlm@big@s{2.5}}
 \ifdefined\bBigg@
 \def\bBigg@choice#1#2#3#4{%
-  {\@mathmeasure\z@{\nulldelimiterspace\z@}%
+  {\dlm@beamerbasecolor@fix\@mathmeasure\z@{\nulldelimiterspace\z@}%
      {#1\left#4\vcenter to#3\dimexpr#2\big@size\relax{}\right.}%
    \box\z@}}
-\def\bBigg@#1#2{\leavevmode@ifvmode{\mathchoice%
+\def\bBigg@#1#2{\leavevmode@ifvmode{\mathchoice
   {\bBigg@choice{\displaystyle}{1}{#1}{#2}}%
   {\bBigg@choice{\textstyle}{1}{#1}{#2}}%
   {\bBigg@choice{\scriptstyle}{0.7}{#1}{#2}}%
@@ -1672,18 +1758,18 @@ the final size is not available for the enclosed expressions):
 % and inner class (|\bigi|, etc.).
 %
 %    \begin{macrocode}
-\providecommand{\bigp}{\mathpunct\big}
-\providecommand{\Bigp}{\mathpunct\Big}
-\providecommand{\biggp}{\mathpunct\bigg}
-\providecommand{\Biggp}{\mathpunct\Bigg}
-\providecommand{\bigb}{\mathbin\big}
-\providecommand{\Bigb}{\mathbin\Big}
-\providecommand{\biggb}{\mathbin\bigg}
-\providecommand{\Biggb}{\mathbin\Bigg}
-\providecommand{\bigi}{\mathinner\big}
-\providecommand{\Bigi}{\mathinner\Big}
-\providecommand{\biggi}{\mathinner\bigg}
-\providecommand{\Biggi}{\mathinner\Bigg}
+\DeclareRobustCommand{\bigp}{\mathpunct\big}
+\DeclareRobustCommand{\Bigp}{\mathpunct\Big}
+\DeclareRobustCommand{\biggp}{\mathpunct\bigg}
+\DeclareRobustCommand{\Biggp}{\mathpunct\Bigg}
+\DeclareRobustCommand{\bigb}{\mathbin\big}
+\DeclareRobustCommand{\Bigb}{\mathbin\Big}
+\DeclareRobustCommand{\biggb}{\mathbin\bigg}
+\DeclareRobustCommand{\Biggb}{\mathbin\Bigg}
+\DeclareRobustCommand{\bigi}{\mathinner\big}
+\DeclareRobustCommand{\Bigi}{\mathinner\Big}
+\DeclareRobustCommand{\biggi}{\mathinner\bigg}
+\DeclareRobustCommand{\Biggi}{\mathinner\Bigg}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1711,8 +1797,8 @@ the final size is not available for the enclosed expressions):
 % The macro |\dlm@size@get| computes 1.2 times the vertical height of `(':
 %    \begin{macrocode}
 \def\dlm@size@get#1#2{%
-  \dlm@size\fontcharht\textfont"#1"#2\relax%
-  \advance\dlm@size\fontchardp\textfont"#1"#2\relax%
+  \dlm@size\fontcharht\textfont"#1"#2\relax
+  \advance\dlm@size\fontchardp\textfont"#1"#2\relax
   \global\dlm@size1.2\dlm@size}
 %    \end{macrocode}
 % The macro |\dlm@size@reset| updates |\dlm@size|:
@@ -1740,18 +1826,25 @@ the final size is not available for the enclosed expressions):
 %    \begin{macrocode}
 \newlength\delimsize
 \newcommand{\dlm@setvar}{\let\dlm@ifvar\@firstoftwo\delimsize1.5\dlm@size}
-\newcommand{\dlm@setsize}[1]{\let\dlm@ifvar\@secondoftwo%
-  \delimsize#1\dlm@size\advance\delimsize\dlm@size\delimsize0.5\delimsize}
-\newcommand{\dlm@setabssize}[1]{\let\dlm@ifvar\@secondoftwo\delimsize#1\relax}
-\newcommand{\dlm@big@}[1]{{\mathchoice%
+\newcommand{\dlm@resetsize}{\let\dlm@ifvar\@secondoftwo\delimsize0.8\dlm@size}
+\newcommand{\dlm@setsize}[1]{\let\dlm@ifvar\@secondoftwo
+  \delimsize\dimexpr(#1\dlm@size+\dlm@size)/2\relax}
+\newcommand{\dlm@addsize}[1]{%
+  \ifx\dlm@ifvar\@firstoftwo\delimsize0.8\dlm@size\fi
+  \ifdim\delimsize=0.8\dlm@size\delimsize0.5\dlm@size\fi
+  \advance\delimsize\dimexpr(#1\dlm@size)/2\relax}
+\newcommand{\dlm@setabssize}[1]{\let\dlm@ifvar\@secondoftwo
+  \delimsize\glueexpr#1\relax}
+\newcommand{\dlm@big@}[1]{{\mathchoice
   {\dlm@big@choice\displaystyle{1}{#1}}%
   {\dlm@big@choice\textstyle{1}{#1}}%
   {\dlm@big@choice\scriptstyle{0.7}{#1}}%
   {\dlm@big@choice\scriptscriptstyle{0.5}{#1}}}}
-\newcommand{\dlm@big@choice}[3]{\hbox{$\m@th\nulldelimiterspace\z@%
+\newcommand{\dlm@big@choice}[3]{\hbox{\dlm@beamerbasecolor@fix%
+  $\m@th\nulldelimiterspace\z@
   #1\left#3\vcenter to#2\delimsize{}\right.$}}
-\newcommand{\kerndelim}[1]{{\delimsize#1\delimsize%
-  \mkern\muexpr1.2mu*\delimsize/\dlm@size\relax}}
+\newcommand{\kerndelim}[1]{\mkern#1\muexpr\ifdim\delimsize>2.5\dlm@size3mu%
+  \else1.2mu*\delimsize/\dlm@size\fi\relax}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1788,11 +1881,11 @@ the final size is not available for the enclosed expressions):
 \let\dlm@var@o\dlm@var@
 \let\dlm@var@c\dlm@var@
 \newcommand{\dlm@var@p}[1]{\dlm@var@#1\dlm@var@kern\thinmuskip}
-\newcommand{\dlm@var@i}[1]{\dlm@var@kern\thinmuskip%
+\newcommand{\dlm@var@i}[1]{\dlm@var@kern\thinmuskip
   \dlm@var@#1\dlm@var@kern\thinmuskip}
-\newcommand{\dlm@var@b}[1]{\dlm@var@kern\medmuskip%
+\newcommand{\dlm@var@b}[1]{\dlm@var@kern\medmuskip
   \dlm@var@#1\dlm@var@kern\medmuskip}
-\newcommand{\dlm@var@m}[1]{\dlm@var@kern\thickmuskip%
+\newcommand{\dlm@var@m}[1]{\dlm@var@kern\thickmuskip
   \dlm@var@#1\dlm@var@kern\thickmuskip}
 %    \end{macrocode}
 
@@ -1831,8 +1924,8 @@ the final size is not available for the enclosed expressions):
 \newcommand{\dlm@big@r}[1]{\dlm@plain@r{\dlm@big@#1}}
 \newcommand{\dlm@var@l}[1]{\dlm@inner\bgroup\dlm@var@null#1\left#1}
 \newcommand{\dlm@var@r}[1]{\right#1\dlm@var@null#1\egroup}
-\newcommand{\dlm@var@pl}[1]{\dlm@var@l.\mathopen{#1}}
-\newcommand{\dlm@var@pr}[1]{\mathclose{#1}\dlm@var@r.}
+\newcommand{\dlm@var@pl}[1]{\dlm@var@l.#1\mathclose{}\mathopen{}}
+\newcommand{\dlm@var@pr}[1]{\mathclose{}\mathopen{}#1\dlm@var@r.}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1844,16 +1937,16 @@ the final size is not available for the enclosed expressions):
 \newcount\dlm@reg@lvl
 \dlm@reg@lvl\z@
 \def\dlm@reg@dot{.}
-\newcommand{\dlm@reg@set}[1]{\edef\dlm@reg@cur{#1}\ifx\dlm@reg@cur\dlm@reg@dot%
+\newcommand{\dlm@reg@set}[1]{\edef\dlm@reg@cur{#1}\ifx\dlm@reg@cur\dlm@reg@dot
   \edef\dlm@reg@cur{\dlm@reg@dot\the\dlm@reg@lvl}\fi}
 \newcommand{\dlm@reg@step}[1]{\global\advance\dlm@reg@lvl#1%
   \ifnum\dlm@reg@lvl<\z@\PackageError{delimset}{register stack exhausted}{}%
   \dlm@reg@lvl\z@\fi}
 \newcommand{\dlm@reg@save@init}[1]{%
-  \xdef#1{\delimsize\the\delimsize}\ifx\dlm@inner\mathinner%
+  \xdef#1{\delimsize\the\delimsize}\ifx\dlm@inner\mathinner
   \expandafter\gdef\expandafter#1\expandafter{#1\dlm@enclose@inner}\fi}
 \newcommand{\dlm@reg@save}[2]{\dlm@reg@set{#1}%
-  \expandafter\dlm@reg@save@init\csname dlm@reg@init@\dlm@reg@cur\endcsname%
+  \expandafter\dlm@reg@save@init\csname dlm@reg@init@\dlm@reg@cur\endcsname
   \expandafter\gdef\csname dlm@reg@sel@\dlm@reg@cur\endcsname{#2}}
 \newcommand{\dlm@reg@init}[1]{\dlm@reg@set{#1}%
   \csname dlm@reg@init@\dlm@reg@cur\endcsname}
@@ -1873,13 +1966,13 @@ the final size is not available for the enclosed expressions):
 % Unknown flags produce an error message.
 %
 %    \begin{macrocode}
-\newcommand{\parsedelimflags}{\dlm@setsize{0.6}\let\dlm@phantom\@firstofone%
+\newcommand{\parsedelimflags}{\dlm@resetsize\let\dlm@phantom\@firstofone
   \dlm@enclose@openclose\dlm@enclose@inline\dlm@parseflags}
 \newcommand{\dlm@parseflags}[2]{%
   \@ifnextchar\bgroup{#1}{\dlm@parseflag{#1}{#2}}}
-\newcommand{\dlm@parseflag}[3]{\begingroup%
-  \ifcsname dlm@parseflag@\string#3\endcsname%
-  \def\dlm@do{\csname dlm@parseflag@\string#3\endcsname{#1}{#2}}\else%
+\newcommand{\dlm@parseflag}[3]{\begingroup
+  \ifcsname dlm@parseflag@\string#3\endcsname
+  \def\dlm@do{\csname dlm@parseflag@\string#3\endcsname{#1}{#2}}\else
   \def\dlm@do{\PackageError{delimset}%
   {unknown delimiter set flag `\string#3'}{}#1}%
   \fi\expandafter\endgroup\dlm@do}
@@ -1895,9 +1988,9 @@ the final size is not available for the enclosed expressions):
 % the current empty math box height.
 %
 %    \begin{macrocode}
-\dlm@parsedef{!}{}{\dlm@setsize{1}\dlm@parseflags{#1}{#2}}
-\dlm@parsedef{+}{}{\dlm@setsize{1}\dlm@parseflags{#1}{#2}}
-\dlm@parsedef{0}{}{\dlm@setsize{0.6}\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{!}{}{\dlm@addsize{1}\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{+}{}{\dlm@addsize{1}\dlm@parseflags{#1}{#2}}
+\dlm@parsedef{0}{}{\dlm@resetsize\dlm@parseflags{#1}{#2}}
 \dlm@parsedef{1}{}{\dlm@setsize{1}\dlm@parseflags{#1}{#2}}
 \dlm@parsedef{2}{}{\dlm@setsize{2}\dlm@parseflags{#1}{#2}}
 \dlm@parsedef{3}{}{\dlm@setsize{3}\dlm@parseflags{#1}{#2}}
@@ -1920,12 +2013,13 @@ the final size is not available for the enclosed expressions):
 % Flags to access registers.
 %
 %    \begin{macrocode}
-\dlm@parsedef{[}{}{\dlm@reg@step\@ne\dlm@reg@save\dlm@reg@dot{#2}%
-  \def\selecteddelim{0}#2}
-\dlm@parsedef{]}{}{\dlm@reg@init\dlm@reg@dot\dlm@reg@step\m@ne%
+\dlm@parsedef{[}{}{\dlm@ifvar{%
+  \PackageError{delimset}{cannot use variable size with '['}{}}{%
+  \dlm@reg@step\@ne\dlm@reg@save\dlm@reg@dot{#2}\def\selecteddelim{0}#2}}
+\dlm@parsedef{]}{}{\dlm@reg@init\dlm@reg@dot\dlm@reg@step\m@ne
   \def\selecteddelim{9}\dlm@reg@sel}
 \dlm@parsedef{>}{#3}{\dlm@reg@save{#3}{#2}}
-\dlm@parsedef{<}{#3}{\dlm@reg@init{#3}\dlm@parseflags%
+\dlm@parsedef{<}{#3}{\dlm@reg@init{#3}\dlm@parseflags
   {\PackageError{delimset}{must select delimiter}{}}{\dlm@reg@sel}}
 %    \end{macrocode}
 
@@ -1940,6 +2034,29 @@ the final size is not available for the enclosed expressions):
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Choice Processing.}
+%
+% Delimiter definitions may accommodate different representations
+% via optional argument. The following commands define the options
+% and select the chosen one.
+%
+%    \begin{macrocode}
+\newcommand{\dlm@choicedef}[3]{%
+  \expandafter\def\csname dlm@#1@\string#2@\endcsname{#3}}
+\newcommand{\dlm@choicelet}[3]{%
+  \expandafter\let\csname dlm@#1@\string#2@\expandafter\endcsname
+  \csname dlm@#1@\string#3@\endcsname}
+\newcommand{\dlm@choice}[1]{%
+  \@ifnextchar[{\dlm@choice@opt{#1}}{\csname dlm@#1@@@\endcsname}}
+\def\dlm@choice@opt#1[#2]{\csname dlm@#1@%
+  \ifcsname dlm@#1@\string#2@\endcsname\string#2@\else @@\fi\endcsname}
+\newcommand{\dlm@choice@arg}[2]{\begingroup
+  \expandafter\let\expandafter\dlm@do\csname dlm@#1@\string#2@\endcsname
+  \ifx\dlm@do\relax\def\dlm@do{\csname dlm@#1@@@\endcsname{#2}}\fi
+  \expandafter\endgroup\dlm@do}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Delimiter Display.}
 %
 % The command |\selectdelim| reproduces the delimiter in argument |#2|
@@ -1947,15 +2064,19 @@ the final size is not available for the enclosed expressions):
 % If the class identifier is `|.|', just return the delimiter argument as is.
 % The commands |\selectdeliml| and |\selectdelimr|
 % implement the left and right delimiter classes, respectively.
+% The command |\doubledelim| displays a compound
+% of two identical delimiters with optional kerning adjustment.
 %
 %    \begin{macrocode}
 \newcommand{\selectdelim}[1][]{\begingroup\def\dlm@do{\@ifstar{\dlm@plain{#1}}%
   {\dlm@ifvar{\dlm@var{#1}}{\dlm@big{#1}}}}%
   \if.#1\let\dlm@do\@empty\fi\expandafter\endgroup\dlm@do}
-\newcommand{\selectdeliml}{\@ifstar%
+\newcommand{\selectdeliml}{\@ifstar
   {\dlm@ifvar\dlm@var@pl\dlm@plain@l}{\dlm@ifvar\dlm@var@l\dlm@big@l}}
-\newcommand{\selectdelimr}{\@ifstar%
+\newcommand{\selectdelimr}{\@ifstar
   {\dlm@ifvar\dlm@var@pr\dlm@plain@r}{\dlm@ifvar\dlm@var@r\dlm@big@r}}
+\newcommand{\doubledelim}[2][-2]{%
+  \selectdelim{#2}\kerndelim{#1}\selectdelim{#2}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1972,14 +2093,14 @@ the final size is not available for the enclosed expressions):
 % such that it produces the desired delimiter number |\selecteddelim|.
 %
 %    \begin{macrocode}
-\newcommand{\DeclareMathDelimiterSet}[1]{\expandafter\dlm@declare%
+\newcommand{\DeclareMathDelimiterSet}[1]{\expandafter\dlm@declare
   \csname dlm@dcl@\expandafter\@gobble\string#1\endcsname{#1}}
-\def\dlm@declare#1#2{\expandafter\dlm@declare@%
+\def\dlm@declare#1#2{\expandafter\dlm@declare@
   \csname dlm@sel@\expandafter\@gobble\string#2\endcsname{#1}{#2}}
 \def\dlm@declare@#1#2#3{\newcommand{#3}{\parsedelimflags{#2}{#1}}%
   \providecommand{#1}{}\newcommand{#2}}
-\newcommand{\DeclareMathDelimiterSel}[3]{\expandafter\def%
-  \csname dlm@sel@\expandafter\@gobble\string#1\endcsname%
+\newcommand{\DeclareMathDelimiterSel}[3]{\expandafter\def
+  \csname dlm@sel@\expandafter\@gobble\string#1\endcsname
   {\ifcase\selecteddelim#2\else#3\fi}}
 %    \end{macrocode}
 
@@ -2029,21 +2150,32 @@ the final size is not available for the enclosed expressions):
 %    \end{macrocode}
 
 % |\usedelim| retrieves a stored delimiter type.
-% The arguments `|]|', `|(|', `\textvert', `|,|', `|?|\emph{n}', `|)|'
+% The arguments `|]|', `|(|', `\verbbar', `|,|', `|?|\emph{n}', `|)|'
 % immediately select the delimiter using the stack register.
 % Otherwise the desired register must be followed
 % by the delimiter selection flag.
 %
 %    \begin{macrocode}
-\newcommand{\usedelim}[1]{\begingroup%
-  \def\dlm@use{\parsedelimflags{}{}<{#1}}%
-  \if]#1\def\dlm@use{\parsedelimflags{}{}]}\fi%
-  \if(#1\def\dlm@use{\parsedelimflags{}{}<.(}\fi%
-  \if|#1\def\dlm@use{\parsedelimflags{}{}<.|}\fi%
-  \if,#1\def\dlm@use{\parsedelimflags{}{}<.,}\fi%
-  \if)#1\def\dlm@use{\parsedelimflags{}{}<.)}\fi%
-  \if?#1\def\dlm@use{\parsedelimflags{}{}<.?}\fi%
-  \expandafter\endgroup\dlm@use}
+\dlm@choicedef{usedelim}{]}{\parsedelimflags{}{}]}
+\dlm@choicedef{usedelim}{(}{\parsedelimflags{}{}<.(}
+\dlm@choicedef{usedelim}{|}{\parsedelimflags{}{}<.|}
+\dlm@choicedef{usedelim}{,}{\parsedelimflags{}{}<.,}
+\dlm@choicedef{usedelim}{)}{\parsedelimflags{}{}<.)}
+\dlm@choicedef{usedelim}{?}{\parsedelimflags{}{}<.?}
+\dlm@choicedef{usedelim}{@}{\parsedelimflags{}{}<}
+\newcommand{\usedelim}{\dlm@choice@arg{usedelim}}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Vertical Bar Definitions.}
+%
+% Define macros for left/right vertical bars if available.
+%
+%    \begin{macrocode}
+\ifdefined\lvert\let\dlm@lvert\lvert\else\let\dlm@lvert\vert\fi
+\ifdefined\rvert\let\dlm@rvert\rvert\else\let\dlm@rvert\vert\fi
+\ifdefined\lVert\let\dlm@lVert\lVert\else\let\dlm@lVert\Vert\fi
+\ifdefined\rVert\let\dlm@rVert\rVert\else\let\dlm@rVert\Vert\fi
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2055,33 +2187,27 @@ the final size is not available for the enclosed expressions):
 %
 %    \begin{macrocode}
 \ifdlm@std
-\providecommand{\brk}[1][r]{\begingroup\def\dlm@use{\delim()}%
-  \if r#1\def\dlm@use{\delim()}\fi%
-  \if s#1\def\dlm@use{\delim[]}\fi%
-  \if c#1\def\dlm@use{\delim\{\}}\fi%
-  \if a#1\def\dlm@use{\delim<>}\fi%
-  \expandafter\endgroup\dlm@use}
-\ifdefined\rvert
-\providecommand{\eval}[1][v]{\begingroup\def\dlm@use{\delim.\rvert}%
-  \if v#1\def\dlm@use{\delim.\rvert}\fi%
-  \if s#1\def\dlm@use{\delim[]}\fi%
-  \expandafter\endgroup\dlm@use}
-\else
-\providecommand{\eval}[1][v]{\begingroup\def\dlm@use{\delim.\vert}%
-  \if v#1\def\dlm@use{\delim.\vert}\fi%
-  \if s#1\def\dlm@use{\delim[]}\fi%
-  \expandafter\endgroup\dlm@use}
-\fi
-\ifdefined\lvert
-\providecommand{\abs}{\delim\lvert\rvert}
-\else
-\providecommand{\abs}{\delim\vert\vert}
-\fi
-\ifdefined\lVert
-\providecommand{\norm}{\delim\lVert\rVert}
-\else
-\providecommand{\norm}{\delim\Vert\Vert}
-\fi
+\dlm@choicedef{brk}{r}{\delim()}
+\dlm@choicedef{brk}{s}{\delim[]}
+\dlm@choicedef{brk}{c}{\delim\{\}}
+\dlm@choicedef{brk}{a}{\delim<>}
+\dlm@choicedef{brk}{v}{\delim\dlm@lvert\dlm@rvert}
+\dlm@choicedef{brk}{R}{\delim{*{\doubledelim(}}{*{\doubledelim)}}}
+\dlm@choicedef{brk}{S}{%
+  \delim{*{\doubledelim[-1.75][}}{*{\doubledelim[-1.75]]}}}
+\ifdefined\llbracket\dlm@choicedef{brk}{S}{\delim\llbracket\rrbracket}\fi
+\dlm@choicedef{brk}{C}{%
+  \delim{*{\doubledelim[-2.5]\{}}{*{\doubledelim[-2.5]\}}}}
+\dlm@choicedef{brk}{A}{\delim{*{\doubledelim<}}{*{\doubledelim>}}}
+\dlm@choicedef{brk}{V}{\delim\dlm@lVert\dlm@rVert}
+\dlm@choicelet{brk}{@}{r}
+\providecommand{\brk}{\dlm@choice{brk}}
+\dlm@choicedef{eval}{v}{\delim.\dlm@rvert}
+\dlm@choicedef{eval}{s}{\delim[]}
+\dlm@choicelet{eval}{@}{v}
+\providecommand{\eval}{\dlm@choice{eval}}
+\providecommand{\abs}{\delim\dlm@lvert\dlm@rvert}
+\providecommand{\norm}{\delim\dlm@lVert\dlm@rVert}
 \fi
 %    \end{macrocode}
 
@@ -2093,35 +2219,93 @@ the final size is not available for the enclosed expressions):
 %
 %    \begin{macrocode}
 \ifdlm@ext
-\providecommand{\pair}{\delimpair({[p]*,})}
+\dlm@choicedef{pair}{r,}{\delimpair({[p]*,})}
+\dlm@choicedef{pair}{r;}{\delimpair({[p]*;})}
+\dlm@choicedef{pair}{r|}{\delimpair(|)}
+\dlm@choicedef{pair}{s,}{\delimpair[{[p]*,}]}
+\dlm@choicedef{pair}{s;}{\delimpair[{[p]*;}]}
+\dlm@choicedef{pair}{s|}{\delimpair[|]}
+\dlm@choicedef{pair}{c,}{\delimpair\{{[p]*,}\}}
+\dlm@choicedef{pair}{c;}{\delimpair\{{[p]*;}\}}
+\dlm@choicedef{pair}{c|}{\delimpair\{|\}}
+\dlm@choicedef{pair}{a,}{\delimpair<{[p]*,}>}
+\dlm@choicedef{pair}{a;}{\delimpair<{[p]*;}>}
+\dlm@choicedef{pair}{a|}{\delimpair<|>}
+\dlm@choicedef{pair}{v,}{\delimpair\dlm@lvert{[p]*,}\dlm@rvert}
+\dlm@choicedef{pair}{v;}{\delimpair\dlm@lvert{[p]*;}\dlm@rvert}
+\dlm@choicedef{pair}{v|}{\delimpair\dlm@lvert|\dlm@rvert}
+\dlm@choicedef{pair}{R,}{\delimpair{*{\doubledelim(}}{[p]*,}{*{\doubledelim)}}}
+\dlm@choicedef{pair}{R;}{\delimpair{*{\doubledelim(}}{[p]*;}{*{\doubledelim)}}}
+\dlm@choicedef{pair}{R|}{\delimpair{*{\doubledelim(}}\Vert{*{\doubledelim)}}}
+\dlm@choicedef{pair}{S,}{%
+  \delimpair{*{\doubledelim[-1.75][}}{[p]*,}{*{\doubledelim[-1.75]]}}}
+\dlm@choicedef{pair}{S;}{%
+  \delimpair{*{\doubledelim[-1.75][}}{[p]*;}{*{\doubledelim[-1.75]]}}}
+\dlm@choicedef{pair}{S|}{%
+  \delimpair{*{\doubledelim[-1.75][}}\Vert{*{\doubledelim[-1.75]]}}}
+\ifdefined\llbracket
+  \dlm@choicedef{pair}{S,}{\delimpair\llbracket{[p]*,}\rrbracket}
+  \dlm@choicedef{pair}{S;}{\delimpair\llbracket{[p]*;}\rrbracket}
+  \dlm@choicedef{pair}{S|}{\delimpair\llbracket\Vert\rrbracket}
+\fi
+\dlm@choicedef{pair}{C,}{%
+  \delimpair{*{\doubledelim[-2.5]\{}}{[p]*,}{*{\doubledelim[-2.5]\}}}}
+\dlm@choicedef{pair}{C;}{%
+  \delimpair{*{\doubledelim[-2.5]\{}}{[p]*;}{*{\doubledelim[-2.5]\}}}}
+\dlm@choicedef{pair}{C|}{%
+  \delimpair{*{\doubledelim[-2.5]\{}}\Vert{*{\doubledelim[-2.5]\}}}}
+\dlm@choicedef{pair}{A,}{\delimpair{*{\doubledelim<}}{[p]*,}{*{\doubledelim>}}}
+\dlm@choicedef{pair}{A;}{\delimpair{*{\doubledelim<}}{[p]*;}{*{\doubledelim>}}}
+\dlm@choicedef{pair}{A|}{\delimpair{*{\doubledelim<}}\Vert{*{\doubledelim>}}}
+\dlm@choicedef{pair}{V,}{\delimpair\dlm@lVert{[p]*,}\dlm@rVert}
+\dlm@choicedef{pair}{V;}{\delimpair\dlm@lVert{[p]*;}\dlm@rVert}
+\dlm@choicedef{pair}{V|}{\delimpair\dlm@lVert\Vert\dlm@rVert}
+\dlm@choicelet{pair}{r}{r,}
+\dlm@choicelet{pair}{s}{s,}
+\dlm@choicelet{pair}{c}{c,}
+\dlm@choicelet{pair}{a}{a,}
+\dlm@choicelet{pair}{v}{v,}
+\dlm@choicelet{pair}{R}{R,}
+\dlm@choicelet{pair}{S}{S,}
+\dlm@choicelet{pair}{C}{C,}
+\dlm@choicelet{pair}{A}{A,}
+\dlm@choicelet{pair}{V}{V,}
+\dlm@choicelet{pair}{,}{r,}
+\dlm@choicelet{pair}{;}{r;}
+\dlm@choicelet{pair}{|}{r|}
+\dlm@choicelet{pair}{@}{r}
+\providecommand{\pair}{\dlm@choice{pair}}
 \providecommand{\set}{\delim\{\}}
 \providecommand{\setcond}{\delimpair\{|\}}
-\providecommand{\intv}[1][c]{\begingroup%
-  \def\dlm@use{\delimpair[{[p]*,}]}%
-  \if c#1\def\dlm@use{\delimpair[{[p]*,}]}\fi%
-  \if l#1\def\dlm@use{\delimpair]{[p]*,}]}\fi%
-  \if r#1\def\dlm@use{\delimpair[{[p]*,}[}\fi%
-  \if o#1\def\dlm@use{\delimpair]{[p]*,}[}\fi%
-  \expandafter\endgroup\dlm@use}
+\dlm@choicedef{intv}{c}{\delimpair[{[p]*,}]}
+\dlm@choicedef{intv}{l}{\delimpair]{[p]*,}]}
+\dlm@choicedef{intv}{r}{\delimpair[{[p]*,}[}
+\dlm@choicedef{intv}{o}{\delimpair]{[p]*,}[}
+\dlm@choicelet{intv}{@}{c}
+\providecommand{\intv}{\dlm@choice{intv}}
 \providecommand{\avg}{\delim<>}
 \providecommand{\corr}{\delim<>}
 \providecommand{\comm}{\delimpair[{[p]*,}]}
 \providecommand{\acomm}{\delimpair\{{[p]*,}\}}
-\providecommand{\bra}{\delim<|}
-\providecommand{\ket}{\delim|>}
+\providecommand{\bra}{\delim<\dlm@rvert}
+\providecommand{\ket}{\delim\dlm@lvert>}
 \providecommand{\braket}{\delimpair<|>}
-\providecommand{\lfrac}[1][]{\begingroup%
-  \def\dlm@use{\delimpair./.}%
-  \if r#1\def\dlm@use{\delimpair(/)}\fi%
-  \if s#1\def\dlm@use{\delimpair[/]}\fi%
-  \if c#1\def\dlm@use{\delimpair\{/\}}\fi%
-  \if a#1\def\dlm@use{\delimpair</>}\fi%
-  \expandafter\endgroup\dlm@use}
+\dlm@choicedef{lfrac}{.}{\delimpair./.}
+\dlm@choicedef{lfrac}{r}{\delimpair(/)}
+\dlm@choicedef{lfrac}{s}{\delimpair[/]}
+\dlm@choicedef{lfrac}{c}{\delimpair\{/\}}
+\dlm@choicedef{lfrac}{a}{\delimpair</>}
+\dlm@choicelet{lfrac}{}{.}
+\dlm@choicelet{lfrac}{@}{.}
+\providecommand{\lfrac}{\dlm@choice{lfrac}}
 \fi
 %    \end{macrocode}
 
-%\iffalse
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \iffalse
 %</package>
-%\fi
+% \fi
 %
 \endinput
