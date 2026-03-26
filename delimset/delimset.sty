@@ -17,7 +17,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996-12-01]
-\ProvidesPackage{delimset}[2026-03-23 v2.3 convenient size control for delimiter sets]
+\ProvidesPackage{delimset}[2026-03-26 v2.3.1 convenient size control for delimiter sets]
 
 \RequirePackage{keyval}
 
@@ -292,10 +292,14 @@
 \dlm@choicedef{usedelim}{@}{\parsedelimflags{}{}<}
 \newcommand{\usedelim}{\dlm@choice@arg{usedelim}}
 
-\ifdefined\lvert\let\dlm@lvert\lvert\else\let\dlm@lvert\vert\fi
-\ifdefined\rvert\let\dlm@rvert\rvert\else\let\dlm@rvert\vert\fi
-\ifdefined\lVert\let\dlm@lVert\lVert\else\let\dlm@lVert\Vert\fi
-\ifdefined\rVert\let\dlm@rVert\rVert\else\let\dlm@rVert\Vert\fi
+\def\dlm@lvert{\vert}\let\dlm@rvert\dlm@lvert
+\def\dlm@lVert{\Vert}\let\dlm@rVert\dlm@lVert
+\AddToHook{begindocument/end}{%
+  \ifdefined\lvert\def\dlm@lvert{\lvert}\fi
+  \ifdefined\rvert\def\dlm@rvert{\rvert}\fi
+  \ifdefined\lVert\def\dlm@lVert{\lVert}\fi
+  \ifdefined\rVert\def\dlm@rVert{\rVert}\fi
+}
 
 \ifdlm@std
 \dlm@choicedef{brk}{r}{\delim()}

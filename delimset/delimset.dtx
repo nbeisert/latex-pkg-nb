@@ -19,12 +19,12 @@
 % and the derived files delimset.sty and delimset-samp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996-12-01]
-%<package>\ProvidesPackage{delimset}[2026-03-23 v2.3 convenient size control for delimiter sets]
-%<sample>\ProvidesFile{delimset-samp.tex}[2026-03-23 v2.3 sample for delimset]
-%<source>\ProvidesFile{delimset-src.tex}[2026-03-23 v2.3 delimset source code documentation]
-%<manual>\ProvidesFile{delimset.tex}[2026-03-23 v2.3 delimset reference manual]
+%<package>\ProvidesPackage{delimset}[2026-03-26 v2.3.1 convenient size control for delimiter sets]
+%<sample>\ProvidesFile{delimset-samp.tex}[2026-03-26 v2.3.1 sample for delimset]
+%<source>\ProvidesFile{delimset-src.tex}[2026-03-26 v2.3.1 delimset source code documentation]
+%<manual>\ProvidesFile{delimset.tex}[2026-03-26 v2.3.1 delimset reference manual]
 %<*main|manual|source>
-\def\thepkg/{delimset}\def\thedate/{2026-03-23}\def\theversion/{v2.3}
+\def\thepkg/{delimset}\def\thedate/{2026-03-26}\def\theversion/{v2.3.1}
 \def\thecopyright/{2016\texorpdfstring{--}{-}2026 Niklas Beisert}
 %<*main>
 \ProvidesFile{\thepkg/.dtx}[\thedate/ \theversion/ \thepkg/ package main file]
@@ -1335,6 +1335,15 @@ versions of this package:
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v2.3.1:} \markdate{2026-03-26}
+
+\begin{itemize}
+\item
+fixed vertical bars in conjunction with \ctanpkg{unicode-math}
+(thanks to Ulrike Fischer for pointing out the issue)
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v2.3:} \markdate{2026-03-23}
 
 \begin{itemize}
@@ -2169,13 +2178,18 @@ the final size is not available for the enclosed expressions):
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \paragraph{Vertical Bar Definitions.}
 %
-% Define macros for left/right vertical bars if available.
+% Define basic macros for left/right vertical bars
+% and overwrite them later if defined otherwise.
 %
 %    \begin{macrocode}
-\ifdefined\lvert\let\dlm@lvert\lvert\else\let\dlm@lvert\vert\fi
-\ifdefined\rvert\let\dlm@rvert\rvert\else\let\dlm@rvert\vert\fi
-\ifdefined\lVert\let\dlm@lVert\lVert\else\let\dlm@lVert\Vert\fi
-\ifdefined\rVert\let\dlm@rVert\rVert\else\let\dlm@rVert\Vert\fi
+\def\dlm@lvert{\vert}\let\dlm@rvert\dlm@lvert
+\def\dlm@lVert{\Vert}\let\dlm@rVert\dlm@lVert
+\AddToHook{begindocument/end}{%
+  \ifdefined\lvert\def\dlm@lvert{\lvert}\fi
+  \ifdefined\rvert\def\dlm@rvert{\rvert}\fi
+  \ifdefined\lVert\def\dlm@lVert{\lVert}\fi
+  \ifdefined\rVert\def\dlm@rVert{\rVert}\fi
+}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
