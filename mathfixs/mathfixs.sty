@@ -17,7 +17,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996-12-01]
-\ProvidesPackage{mathfixs}[2026-03-23 v1.2 various fixes for math mode]
+\ProvidesPackage{mathfixs}[2026-04-08 v1.2.1 various fixes for math mode]
 
 \RequirePackage{keyval}
 
@@ -374,24 +374,19 @@
 
 \fi
 
-\ifdefined\uppi
-\def\mafx@piup{\uppi}
-\else\ifdefined\symup
-\def\mafx@piup{\symup{\pi}}
-\else
 \def\mafx@piup{\operator@font\pi}
-\fi
-\ifdefined\symit
-\def\mafx@piit{\symit{\pi}}
-\else
 \def\mafx@piit{\mathnormal{\pi}}
-\fi
+\AddToHook{begindocument/end}{%
+  \ifdefined\uppi\def\mafx@piup{\uppi}%
+  \else\ifdefined\symup\def\mafx@piup{\symup{\pi}}\fi\fi
+  \ifdefined\symit\def\mafx@piit{\symit{\pi}}\fi
+}
 \DeclareMathAlphabet{\mafx@mathbfb}{OT1}{cmr}{b}{n}
 \DeclareMathAlphabet{\mafx@mathbfbx}{OT1}{cmr}{bx}{n}
 \ifdefined\bbfamily\let\mafx@mathbbold=\mathbb\else\IfFileExists{bbold.sty}{%
   \DeclareMathAlphabet{\mafx@mathbbold}{U}{bbold}{m}{n}}{}\fi
 \ifdefined\mathds\let\mafx@mathds=\mathds\else\IfFileExists{dsfont.sty}{%
-  \DeclareMathAlphabet{\mafx@mathds}{U}{dsrom}{m}{n}}\fi
+  \DeclareMathAlphabet{\mafx@mathds}{U}{dsrom}{m}{n}}{}\fi
 \IfFileExists{dsfont.sty}{%
   \DeclareMathAlphabet{\mafx@mathdsr}{U}{dsrom}{m}{n}
   \DeclareMathAlphabet{\mafx@mathdss}{U}{dsss}{m}{n}
