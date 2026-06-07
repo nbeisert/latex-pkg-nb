@@ -24,11 +24,11 @@
 % eqnlines.tex, eqnlines.pdf, eqnlines-src.tex, eqnlines-src.pdf.
 %
 %<package>\NeedsTeXFormat{LaTeX2e}[2020-10-01]
-%<package>\ProvidesPackage{eqnlines}[2026-03-23 v1.0.1 Single- and multi-line equations]
-%<source>\ProvidesFile{eqnlines-src.tex}[2026-03-23 v1.0.1 eqnlines source code documentation]
-%<manual>\ProvidesFile{eqnlines.tex}[2026-03-23 v1.0.1 eqnlines reference manual]
+%<package>\ProvidesPackage{eqnlines}[2026-06-07 v1.1 Single- and multi-line equations]
+%<source>\ProvidesFile{eqnlines-src.tex}[2026-06-07 v1.1 eqnlines source code documentation]
+%<manual>\ProvidesFile{eqnlines.tex}[2026-06-07 v1.1 eqnlines reference manual]
 %<*main|manual|source>
-\def\thepkg/{eqnlines}\def\thedate/{2026-03-23}\def\theversion/{v1.0.1}
+\def\thepkg/{eqnlines}\def\thedate/{2026-06-07}\def\theversion/{v1.1}
 \def\thecopyright/{2024\texorpdfstring{--}{-}2026 Niklas Beisert}
 %<*main>
 \ProvidesFile{\thepkg/.dtx}[\thedate/ \theversion/ \thepkg/ package main file]
@@ -1442,9 +1442,11 @@ For stacks of equations including single equations,
 there is just a single alignment column
 whose horizontal alignment can be adjusted via a shape scheme or
 by manually adjusting individual lines.
+\DescribeKey{shape}
+\DescribeMod{@}
 A shape scheme determines the horizontal alignment for each line
-and it is specified by the optional argument
-|shape=|\textit{mode} as follows:
+and it is specified by the optional argument |shape=|\textit{mode}
+(or via the modifier `|@{|\textit{mode}|}|) as follows:
 %
 \begin{center}
 \begin{tabular}{llll}
@@ -1456,9 +1458,9 @@ name & alt. & shape & alignment \\
 |center| & |c| & uniform & central \\
 |right| & |r| & & right \\
 \hline
-|first| & |indent|, |rc|  & first/rest & first line indented \\
-|hanging| & |outdent|, |lc| & first/rest & first line hanging \\
-|steps| & |lcr| & first/intermediate/last & left/centre\ldots centre/right\\
+|first| & |indent|, |rc|, |f|  & first/rest & first line indented \\
+|hanging| & |outdent|, |lc|, |h| & first/rest & first line hanging \\
+|steps| & |lcr|, |s| & first/intermediate/last & left/centre\ldots centre/right\\
 \end{tabular}
 \end{center}
 %
@@ -2308,9 +2310,12 @@ with a dedicated amount of glue |belowparskip|.
 An environment can also be made to end in vertical mode
 without interline skip (value |top|)
 using the glue |belowtopskip|.
-The key |par| can be used for situations when vertical mode is preferred,
-e.g.\ for lists following equations
-where the vertical space above the list is excessive.
+The key |par| can be used for situations when vertical mode
+avoids the insertion of an undesired blank line,
+e.g.\ when an equation terminates an enumeration item
+or when a list follows an equation.
+\DescribeMod{/}
+For convenience, the key |par| can be specified as a trailing modifier `|/|'.
 In the following example,
 |\hrule| will leave an empty line when not in vertical mode.
 
@@ -2319,7 +2324,7 @@ In the following example,
 \hrule some text
 \[ \mbox{cont} \]
 \hrule some text
-\[[par] \mbox{par} \]
+\[ \mbox{par} \]/
 \hrule
 \end{scanexample}
 \showexampleh
@@ -2483,10 +2488,11 @@ to terminate punctuation with the top punctuation for the block.
 
 \DescribeEnv{cases}
 \DescribeKey{cases}
+\DescribeMod{?}
 \DescribeKey{condsep}
 The |cases| environment is reimplemented
-using the special mode |cases| of |equationsbox|
-with two left-aligned cells
+using the special mode |cases| (with modifier shortcut `|?|')
+of |equationsbox| with two left-aligned cells
 whose separation may be adjusted by the option |condsep|.
 \DescribeKey{braces}
 The equations box is wrapped by a left brace by default;
@@ -2516,7 +2522,7 @@ whereas the right column uses |punctline|.
 \end{scanexample}
 \showexampleh[0.7]
 \begin{scanexample}
-\[`{,.} x = \<[cases,textcond]
+\[`{,.} x = \<?[textcond]
 \cos\phi & one way \\
 (z+z^{-1})/2 & or the other \>! \]
 \end{scanexample}
@@ -2524,7 +2530,7 @@ whereas the right column uses |punctline|.
 \end{example}
 
 \DescribeEnv{?matrix}
-The set of |matrix| environments is reimplemented
+The set of |?matrix| environments is reimplemented
 using particular combinations of options for |equationsbox|:
 The matrix is arranged in |lines| mode
 with centred cells |shape=center|.
@@ -2542,11 +2548,13 @@ Finally, the equations box is wrapped by a pair of delimiters
 \textit{l} and \textit{r}
 using the option |delim={|\textit{l}\textit{r}|}|.
 Again, all features of |equationsbox|
-are equally available for the |matrix| environments.
+are equally available for the |?matrix| environments.
 \DescribeKey{matrix}
-Altogether, the combination is achieved by the shortcut option
-|matrix={|\textit{l}\textit{r}|}|,
-where \textit{l}\textit{r} may take the following abbreviations:
+\DescribeMod{*}
+Alternatively, the above combination of settings
+is activated in |equationsbox| by the shortcut option |matrix={|\textit{lr}|}|,
+where \textit{lr} may take the following common abbreviations
+(the plain modifier `|*|' invokes a standard |pmatrix|):
 %
 \begin{center}
 \begin{tabular}{cccccccc}
@@ -2561,14 +2569,14 @@ result & $\ldots$ & $(\ldots)$ & $[\ldots]$ & $\langle\ldots\rangle$
 
 \begin{example}
 \begin{scanexample}
-\[ \begin{pmatrix}
+\[ \<*
 \cos\phi & -\sin\phi \\
 \sin\phi & \cos\phi
-\end{pmatrix} \]
+\> \]
 \end{scanexample}
 \showexampleh
 \begin{scanexample}
-\[ \<[matrix=v,shape=r]
+\[ \<[matrix=v]@r
 \cos\phi & -\sin\phi &  0 \\
 \sin\phi &  \cos\phi &  0 \\
 0        &  0        & -1
@@ -3336,6 +3344,24 @@ change bool registers to |char| 0 and 1 and |\||ifodd|
 \end{itemize}
 
 \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1:} \markdate{2026-06-07}
+
+\begin{itemize}
+\item
+allow optional argument `|[|\,\ldots|]|' for closing statement of equations
+\item
+added trailing modifier `|/|' as a shortcut for |par|
+to end an equation in vertical mode
+\item
+added |equationsbox| modifiers `|?|', `|*|' and `|@|'
+for |cases|, |pmatrix| and |shape|, respectively
+\item
+start continued line (`|\\;|') in lines modes with class |\mathord{}|
+\item
+fix |scan| switch for single-line equation
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.0.1:} \markdate{2026-03-23}
@@ -4343,6 +4369,7 @@ thanks to Till Bargheer for testing and reports
 %
 %   \macro{\eql@nextopt}
 %   \macro{\eql@nextopt@process}
+%   \macro{\eql@nextopt@apply}
 % It can be convenient to add arguments to the following
 % equations environment, e.g.\ towards defining
 % modifier macros:
@@ -4352,6 +4379,10 @@ thanks to Till Bargheer for testing and reports
   \eql@setkeys{#1}\eql@nextopt
   \let\eql@tagging@opt\eql@nextopt
   \global\let\eql@nextopt\@empty
+}
+\def\eql@nextopt@apply#1{%
+  \eql@setkeys{#1}\eql@nextopt
+  \let\eql@nextopt\@empty
 }
 %    \end{macrocode}
 %
@@ -8694,10 +8725,13 @@ thanks to Till Bargheer for testing and reports
 \let\eql@shape@tab@r\eql@shape@tab@right
 \let\eql@shape@tab@rc\eql@shape@tab@first
 \let\eql@shape@tab@indent\eql@shape@tab@first
+\let\eql@shape@tab@f\eql@shape@tab@first
 \let\eql@shape@tab@hang\eql@shape@tab@hanging
 \let\eql@shape@tab@lc\eql@shape@tab@hanging
 \let\eql@shape@tab@outdent\eql@shape@tab@hanging
+\let\eql@shape@tab@h\eql@shape@tab@hanging
 \let\eql@shape@tab@lcr\eql@shape@tab@steps
+\let\eql@shape@tab@s\eql@shape@tab@steps
 %    \end{macrocode}
 %
 %   \macro{\eql@shape@mode}
@@ -10803,6 +10837,18 @@ thanks to Till Bargheer for testing and reports
   \ifx\eql@parseopt@token>%
     \let\eql@parseopt@next\eql@parseopt@eqamp
   \fi
+  \ifx\eql@parseopt@token*%
+    \let\eql@parseopt@next\eql@parseopt@matrix
+  \fi
+  \ifx\eql@parseopt@token?%
+    \let\eql@parseopt@next\eql@parseopt@cases
+  \fi
+  \ifx\eql@parseopt@token\eql@atxi
+    \let\eql@parseopt@next\eql@parseopt@shape
+  \fi
+  \ifx\eql@parseopt@token\eql@atxii
+    \let\eql@parseopt@next\eql@parseopt@shape
+  \fi
 }
 \def\eql@box@parse@punctterm#1{\eqnaddopt{punctterm}\eql@parseopt@peek}
 %    \end{macrocode}
@@ -10898,8 +10944,7 @@ thanks to Till Bargheer for testing and reports
 %   \macro{\eql@box@call}
 %    \begin{macrocode}
 \def\eql@box@call{\eql@box@main\eql@scan@end}
-\def\eql@box@call@test{%
-  \eql@ampprotect\eql@box@end@testall\eql@box@call}
+\def\eql@box@call@test{\eql@ampprotect\eql@box@end@testall\eql@box@call}
 \def\eql@box@call@set{%
   \ifdefined\eql@box@end@modifier
     \let\eql@scan@call\eql@box@call@test
@@ -10990,6 +11035,7 @@ thanks to Till Bargheer for testing and reports
 % \TODO describe
 %    \begin{macrocode}
 \def\eql@single@end@native{%
+  \eql@nextopt@apply{equations}%
   \eql@tags@container
   \eql@numbering@single@eval
   \if@eqnsw
@@ -11037,12 +11083,18 @@ thanks to Till Bargheer for testing and reports
 %
 %    \begin{macrocode}
 \def\eql@single@end@print{%
+    \global\let\eql@nextopt@tmp\eql@nextopt
     \eql@tagging@mathsave
     $%$
     \hfil
     \kern\z@
   \egroup
   \prevgraf\numexpr\prevgraf-\@ne\relax
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+  \let\eql@nextopt\eql@nextopt@tmp
+  \eql@nextopt@apply{equations}%
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -12137,6 +12189,9 @@ thanks to Till Bargheer for testing and reports
 \def\eql@equations@end@testall{%
   \eql@parseopt@env\eql@equations@end@testall@parse}
 \def\eql@equations@end@testall@parse{%
+  \ifx\eql@parseopt@token[%]
+    \let\eql@parseopt@next\eql@parseopt@opt
+  \fi
   \ifx\eql@parseopt@token.%
     \let\eql@parseopt@next\eql@parseopt@punctpass
   \fi
@@ -12148,6 +12203,9 @@ thanks to Till Bargheer for testing and reports
   \fi
   \ifx\eql@parseopt@token`%
     \let\eql@parseopt@next\eql@parseopt@punctblock
+  \fi
+  \ifx\eql@parseopt@token/%
+    \let\eql@parseopt@next\eql@parseopt@par
   \fi
 }
 %    \end{macrocode}
@@ -12462,7 +12520,8 @@ thanks to Till Bargheer for testing and reports
 %    \begin{macrocode}
 \def\eql@equations@call{\eql@equations@main\eql@scan@end}
 \def\eql@equations@call@test{%
-  \eql@ampprotect\eql@equations@end@testall\eql@equations@call}
+  \eql@ampprotect\eql@equations@end@testall\eql@equations@call@apply}
+\def\eql@equations@call@apply{\eql@nextopt@apply{equations}\eql@equations@call}
 \def\eql@equations@call@set{%
   \ifdefined\eql@equations@end@modifier
     \let\eql@scan@call\eql@equations@call@test
@@ -12522,7 +12581,7 @@ thanks to Till Bargheer for testing and reports
 %
 %   \macro{\eql@equations@sqr@close}
 % Definition for `|\]|'.
-% Parse modifiers following `|\]|'
+% Parse modifiers following `|\]|' if not yet processed during scanning
 % and hand on to |\eql@equations@sqr@end|:
 %    \begin{macrocode}
 \protected\def\eql@equations@sqr@close{%
@@ -12691,7 +12750,7 @@ thanks to Till Bargheer for testing and reports
 \eql@define@key{box}{cases}[]{%
   \eql@box@cases@set\eql@box@ldelim\lbrace%
   \def\eql@box@colsep{\eql@box@condsep}}
-\eql@define@key{box}{matrix}[r]{%
+\eql@define@key{box}{matrix,pmatrix}[r]{%
   \eql@box@lines@set\eql@shape@set{center}%
   \let\eql@spread@reset\eql@true\def\eql@spread@val{\z@}%
   \def\eql@box@colsep{\eql@box@matrixsep}%
@@ -12748,7 +12807,8 @@ thanks to Till Bargheer for testing and reports
 \eql@define@key{setup}{scanequation}[true]{%
   \eql@decide@bool{#3}{#2}{#1}\eql@single@doscan}
 \eql@define@key{equations}{scan}[true]{%
-  \eql@decide@bool{#3}{#2}{#1}\eql@single@doscan}
+  \eql@decide@bool{#3}{#2}{#1}\eql@single@doscan
+  \ifx\eql@equations@main\eql@multi@main\else\eql@equations@single@set\fi}
 \eql@define@key{setup}{sqropt}[]{%
   \def\eql@equations@sqr@opt{equation,#1}}
 \eql@define@key{setup}{angopt}[]{%
@@ -13403,7 +13463,7 @@ thanks to Till Bargheer for testing and reports
 % \TODO describe
 %    \begin{macrocode}
 \def\eql@shape@rel{\eqncontrol{align=left}}
-\def\eql@shape@cont{\eqncontrol{align=left,shift=*}}
+\def\eql@shape@cont{\eqncontrol{align=left,shift=*}{}}
 \eql@define@key\eql@keyall{shaperel}[]{\def\eql@shape@rel{#1}}
 \eql@define@key\eql@keyall{shapecont}[]{\def\eql@shape@cont{#1}}
 %    \end{macrocode}
@@ -13693,10 +13753,14 @@ thanks to Till Bargheer for testing and reports
 \def\eql@parseopt@donumber#1{\eqnaddopt{donumber}\eql@parseopt@peek}
 \def\eql@parseopt@single#1{\eqnaddopt{single}\eql@parseopt@peek}
 \def\eql@parseopt@lines#1{\eqnaddopt{lines}\eql@parseopt@peek}
-\def\eql@parseopt@eqamp#1{\eqnaddopt{eqamp}\eql@parseopt@peek}
-\def\eql@parseopt@ampeq#1{\eqnaddopt{ampeq}\eql@parseopt@peek}
+\def\eql@parseopt@matrix#1{\eqnaddopt{matrix}\eql@parseopt@peek}
+\def\eql@parseopt@cases#1{\eqnaddopt{cases}\eql@parseopt@peek}
+\def\eql@parseopt@shape#1#2{\eqnaddopt{shape={#2}}\eql@parseopt@peek}
 \def\eql@parseopt@columns#1{\eqnaddopt{columns}\eql@parseopt@peek}
 \def\eql@parseopt@transpose#1{\eqnaddopt{columns,transpose}\eql@parseopt@peek}
+\def\eql@parseopt@eqamp#1{\eqnaddopt{eqamp}\eql@parseopt@peek}
+\def\eql@parseopt@ampeq#1{\eqnaddopt{ampeq}\eql@parseopt@peek}
+\def\eql@parseopt@par#1{\eqnaddopt{par}\eql@parseopt@peek}
 \def\eql@parseopt@opt[#1]{\eqnaddopt{#1}\eql@parseopt@peek}
 \def\eql@parseopt@label#1#2{\eqnaddopt{label={#2}}\eql@parseopt@peek}
 \def\eql@parseopt@punctpass{\eql@parseopt@peek`}
