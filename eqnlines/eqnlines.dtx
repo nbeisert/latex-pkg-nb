@@ -24,11 +24,11 @@
 % eqnlines.tex, eqnlines.pdf, eqnlines-src.tex, eqnlines-src.pdf.
 %
 %<package>\NeedsTeXFormat{LaTeX2e}[2020-10-01]
-%<package>\ProvidesPackage{eqnlines}[2026-06-07 v1.1 Single- and multi-line equations]
-%<source>\ProvidesFile{eqnlines-src.tex}[2026-06-07 v1.1 eqnlines source code documentation]
-%<manual>\ProvidesFile{eqnlines.tex}[2026-06-07 v1.1 eqnlines reference manual]
+%<package>\ProvidesPackage{eqnlines}[2026-06-09 v1.1.1 Single- and multi-line equations]
+%<source>\ProvidesFile{eqnlines-src.tex}[2026-06-09 v1.1.1 eqnlines source code documentation]
+%<manual>\ProvidesFile{eqnlines.tex}[2026-06-09 v1.1.1 eqnlines reference manual]
 %<*main|manual|source>
-\def\thepkg/{eqnlines}\def\thedate/{2026-06-07}\def\theversion/{v1.1}
+\def\thepkg/{eqnlines}\def\thedate/{2026-06-09}\def\theversion/{v1.1.1}
 \def\thecopyright/{2024\texorpdfstring{--}{-}2026 Niklas Beisert}
 %<*main>
 \ProvidesFile{\thepkg/.dtx}[\thedate/ \theversion/ \thepkg/ package main file]
@@ -1443,10 +1443,10 @@ there is just a single alignment column
 whose horizontal alignment can be adjusted via a shape scheme or
 by manually adjusting individual lines.
 \DescribeKey{shape}
-\DescribeMod{@}
+\DescribeMod{+}
 A shape scheme determines the horizontal alignment for each line
 and it is specified by the optional argument |shape=|\textit{mode}
-(or via the modifier `|@{|\textit{mode}|}|) as follows:
+(or via the modifier `|+{|\textit{mode}|}|) as follows:
 %
 \begin{center}
 \begin{tabular}{llll}
@@ -2576,7 +2576,7 @@ result & $\ldots$ & $(\ldots)$ & $[\ldots]$ & $\langle\ldots\rangle$
 \end{scanexample}
 \showexampleh
 \begin{scanexample}
-\[ \<[matrix=v]@r
+\[ \<[matrix=v]+r
 \cos\phi & -\sin\phi &  0 \\
 \sin\phi &  \cos\phi &  0 \\
 0        &  0        & -1
@@ -3346,6 +3346,14 @@ change bool registers to |char| 0 and 1 and |\||ifodd|
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.1.1:} \markdate{2026-06-09}
+
+\begin{itemize}
+\item
+reassigned |shape| modifier to `|+|' (replaces `|@|' for |equationsbox|)
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.1:} \markdate{2026-06-07}
 
 \begin{itemize}
@@ -3952,6 +3960,7 @@ thanks to Till Bargheer for testing and reports
 %    \end{macrocode}
 %
 % \TODO describe
+% available special characters: |,.:;!?`'"@~()[]<>*+-=/|\verbbar
 %    \begin{macrocode}
 \def\eql@parseopt#1#2{%
   \def\eql@parseopt@case{#1}%
@@ -10804,6 +10813,7 @@ thanks to Till Bargheer for testing and reports
 \def\eql@box@testopt@set#1[#2]{\eqnaddopt{#2}#1}
 %    \end{macrocode}
 %
+% \TODO remaining special characters: |:;'"@()-/|
 %    \begin{macrocode}
 \def\eql@box@testall{\eql@parseopt@env\eql@box@testall@parse}
 \def\eql@box@testall@parse{%
@@ -10828,6 +10838,9 @@ thanks to Till Bargheer for testing and reports
   \ifx\eql@parseopt@token=%
     \let\eql@parseopt@next\eql@parseopt@lines
   \fi
+  \ifx\eql@parseopt@token+%
+    \let\eql@parseopt@next\eql@parseopt@shape
+  \fi
   \ifx\eql@parseopt@token|%
     \let\eql@parseopt@next\eql@parseopt@columns
   \fi
@@ -10842,12 +10855,6 @@ thanks to Till Bargheer for testing and reports
   \fi
   \ifx\eql@parseopt@token?%
     \let\eql@parseopt@next\eql@parseopt@cases
-  \fi
-  \ifx\eql@parseopt@token\eql@atxi
-    \let\eql@parseopt@next\eql@parseopt@shape
-  \fi
-  \ifx\eql@parseopt@token\eql@atxii
-    \let\eql@parseopt@next\eql@parseopt@shape
   \fi
 }
 \def\eql@box@parse@punctterm#1{\eqnaddopt{punctterm}\eql@parseopt@peek}
@@ -12126,6 +12133,7 @@ thanks to Till Bargheer for testing and reports
 % stop the scanning and such that any alignment markers `|&|'
 % cannot interfere:
 % \TODO update
+% \TODO remaining special characters: |:;?'"()|
 %    \begin{macrocode}
 \def\eql@equations@testall{\eql@parseopt@env\eql@equations@testall@parse}
 \def\eql@equations@testall@parse{%
@@ -12164,6 +12172,9 @@ thanks to Till Bargheer for testing and reports
   \fi
   \ifx\eql@parseopt@token=%
     \let\eql@parseopt@next\eql@parseopt@lines
+  \fi
+  \ifx\eql@parseopt@token+%
+    \let\eql@parseopt@next\eql@parseopt@shape
   \fi
   \ifx\eql@parseopt@token|%
     \let\eql@parseopt@next\eql@parseopt@columns

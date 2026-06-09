@@ -21,7 +21,7 @@
 %% version 2008 or later.
 %% 
 \NeedsTeXFormat{LaTeX2e}[2020-10-01]
-\ProvidesPackage{eqnlines}[2026-06-07 v1.1 Single- and multi-line equations]
+\ProvidesPackage{eqnlines}[2026-06-09 v1.1.1 Single- and multi-line equations]
 \def\eql@verbose@on{%
   \def\eql@verbose@info##1{\PackageInfo{eqnlines}{##1}}%
   \def\eql@verbose@infoarg##1##2{\eql@verbose@info{##1##2}}%
@@ -4246,6 +4246,9 @@
   \ifx\eql@parseopt@token=%
     \let\eql@parseopt@next\eql@parseopt@lines
   \fi
+  \ifx\eql@parseopt@token+%
+    \let\eql@parseopt@next\eql@parseopt@shape
+  \fi
   \ifx\eql@parseopt@token|%
     \let\eql@parseopt@next\eql@parseopt@columns
   \fi
@@ -4260,12 +4263,6 @@
   \fi
   \ifx\eql@parseopt@token?%
     \let\eql@parseopt@next\eql@parseopt@cases
-  \fi
-  \ifx\eql@parseopt@token\eql@atxi
-    \let\eql@parseopt@next\eql@parseopt@shape
-  \fi
-  \ifx\eql@parseopt@token\eql@atxii
-    \let\eql@parseopt@next\eql@parseopt@shape
   \fi
 }
 \def\eql@box@parse@punctterm#1{\eqnaddopt{punctterm}\eql@parseopt@peek}
@@ -5165,6 +5162,9 @@
   \fi
   \ifx\eql@parseopt@token=%
     \let\eql@parseopt@next\eql@parseopt@lines
+  \fi
+  \ifx\eql@parseopt@token+%
+    \let\eql@parseopt@next\eql@parseopt@shape
   \fi
   \ifx\eql@parseopt@token|%
     \let\eql@parseopt@next\eql@parseopt@columns
