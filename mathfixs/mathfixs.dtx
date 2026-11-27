@@ -19,12 +19,12 @@
 % and the derived files mathfixs.sty and mathfixs-samp.tex.
 %
 %<package|sample>\NeedsTeXFormat{LaTeX2e}[1996-12-01]
-%<package>\ProvidesPackage{mathfixs}[2026-04-08 v1.2.1 various fixes for math mode]
-%<sample>\ProvidesFile{mathfixs-samp.tex}[2026-04-08 v1.2.1 sample for mathfixs]
-%<source>\ProvidesFile{mathfixs-src.tex}[2026-04-08 v1.2.1 mathfixs source code documentation]
-%<manual>\ProvidesFile{mathfixs.tex}[2026-04-08 v1.2.1 mathfixs reference manual]
+%<package>\ProvidesPackage{mathfixs}[2026-11-27 v1.2.2 various fixes for math mode]
+%<sample>\ProvidesFile{mathfixs-samp.tex}[2026-11-27 v1.2.2 sample for mathfixs]
+%<source>\ProvidesFile{mathfixs-src.tex}[2026-11-27 v1.2.2 mathfixs source code documentation]
+%<manual>\ProvidesFile{mathfixs.tex}[2026-11-27 v1.2.2 mathfixs reference manual]
 %<*main|manual|source>
-\def\thepkg/{mathfixs}\def\thedate/{2026-04-08}\def\theversion/{v1.2.1}
+\def\thepkg/{mathfixs}\def\thedate/{2026-11-27}\def\theversion/{v1.2.2}
 \def\thecopyright/{2018\texorpdfstring{--}{-}2026 Niklas Beisert}
 %<*main>
 \ProvidesFile{\thepkg/.dtx}[\thedate/ \theversion/ \thepkg/ package main file]
@@ -349,6 +349,27 @@ and it will not produce surrounding space
 when the feature |frac| is used.
 The optional argument |rfrac={\|\textit{cmd}|}| specifies
 an alternative command name |\|\textit{cmd} for |\rfrac|.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{Feature \texttt{halves}.}
+\DescribeMacro{halves}
+%
+The fractions $^1\!/\!_2$ and $^1\!/\!_4$ appear frequently as prefactors,
+sometimes in combination with the imaginary unit,
+and dedicated macros for them can be convenient:
+\DescribeMacro{\half}
+\DescribeMacro{\quarter}
+\DescribeMacro{\ihalf}
+\DescribeMacro{\iquarter}
+%
+\[
+( |\half|, |\quarter|, |\ihalf|, |\iquarter| )
+\quad\longrightarrow\quad
+{\textstyle (\frac{1}{2}, \frac{1}{4}, \frac{i}{2}, \frac{i}{4})}
+\]
+%
+These macros use |\rfrac| to display rational numbers
+in text style or smaller.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Feature \texttt{vfrac}.}
@@ -1301,7 +1322,7 @@ versions of this package:
 \item
  set of elliptic functions and constants
 \item
- improvement for vector accent plancement
+ improvement for vector accent placement
 \item
  \mathup: no need as \mathrm does just that in whatever font
 \item
@@ -1324,6 +1345,18 @@ versions of this package:
 \end{itemize}
 
 \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{v1.2.2:} \markdate{2026-11-27}
+
+\begin{itemize}
+\item
+feature |halves| for basic common fractions |\half|, |\quarter|, \ldots
+\item
+fixed |\grpO| assignment
+\item
+changed internal |\DeclareRobustCommand|'s to |\protected\def|
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{v1.2.1:} \markdate{2026-04-08}
@@ -1735,7 +1768,7 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % |\mafx@mathopfont| encapsules |\operator@font| within a block.
 %    \begin{macrocode}
 \def\mafx@letcs#1{\expandafter\let\csname#1\endcsname}
-\DeclareRobustCommand{\mafx@mathopfont}[1]{{\operator@font#1}}
+\protected\def\mafx@mathopfont#1{{\operator@font#1}}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1747,7 +1780,9 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % Define replacements for |\bfseries|, |\mdseries| and |\normalfont|
 % by appending |\boldmath| or |\unboldmath|
 % (if not already in math mode where font selection works differently).
-% The chain of |\expandafter| directives fills in the original definition:
+% The chain of |\expandafter| directives fills in the original definition.
+% The commands are originally defined by |\DeclareRobustCommand|
+% and it seems safest to use this construction again:
 %    \begin{macrocode}
 \expandafter\DeclareRobustCommand\expandafter\mafx@bfseries\expandafter
   {\bfseries\ifmmode\else\boldmath\fi}
@@ -1807,7 +1842,7 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % Define replacement for |\frac| which uses a configurable
 % math class selector:
 %    \begin{macrocode}
-\DeclareRobustCommand{\mafx@frac}[2]{%
+\protected\def\mafx@frac#1#2{%
   \mafx@frac@class{\begingroup#1\endgroup\@@over#2}}
 %    \end{macrocode}
 
@@ -1817,10 +1852,10 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % If the package \ctanpkg{amsmath} is not loaded, this definition will
 % have no impact:
 %    \begin{macrocode}
-\DeclareRobustCommand{\mafx@@genfrac}[5]{\begingroup
-  \ifx#2\@@overwithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi
-  \ifx#2\@@abovewithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi
-  \ifx#2\@@atopwithdelims\let\mafx@frac@class\mafx@frac@delimclass\fi
+\def\mafx@@genfrac#1#2#3#4#5{\begingroup
+  \ifx#2\@@overwithdelims\let\mafx@frac@class=\mafx@frac@delimclass\fi
+  \ifx#2\@@abovewithdelims\let\mafx@frac@class=\mafx@frac@delimclass\fi
+  \ifx#2\@@atopwithdelims\let\mafx@frac@class=\mafx@frac@delimclass\fi
   \mafx@frac@class{#1{\begingroup#4\endgroup#2#3\relax#5}}%
   \endgroup}
 %    \end{macrocode}
@@ -1849,7 +1884,7 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % Define a fraction in text style or smaller
 % using the ordinary math class (no surrounding space), e.g.: $\frac{1}{2}$:
 %    \begin{macrocode}
-\DeclareRobustCommand{\mafx@rfrac}[2]{{\mathchoice
+\protected\def\mafx@rfrac#1#2{{\mathchoice
   {\textstyle{\begingroup#1\endgroup\@@over#2}}%
   {\begingroup#1\endgroup\@@over#2}%
   {\begingroup#1\endgroup\@@over#2}%
@@ -1860,6 +1895,33 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % Implement |\rfrac| (or alternative macro name):
 %    \begin{macrocode}
 \define@key{mafx@}{rfrac}[\rfrac]{\let#1=\mafx@rfrac}
+%    \end{macrocode}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \paragraph{Common Fractions.}
+%
+% \macro{\half}
+% \macro{\quarter}
+% \macro{\ihalf}
+% \macro{\iquarter}
+% Define common fractions one-half and one-quarter
+% (as well as times imaginary unit) for use as prefactors:
+%    \begin{macrocode}
+\protected\def\mafx@half{\mafx@rfrac{1}{2}}
+\protected\def\mafx@quarter{\mafx@rfrac{1}{4}}
+\protected\def\mafx@ihalf{\mafx@rfrac{\mafx@iunit}{2}}
+\protected\def\mafx@iquarter{\mafx@rfrac{\mafx@iunit}{4}}
+%    \end{macrocode}
+
+% \macro{halves}
+% Implement |\half|, |\quarter|, |\ihalf|, |\iquarter|:
+%    \begin{macrocode}
+\define@key{mafx@}{halves}[]{%
+  \let\half=\mafx@half
+  \let\quarter=\mafx@quarter
+  \let\ihalf=\mafx@ihalf
+  \let\iquarter=\mafx@iquarter
+}
 %    \end{macrocode}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1877,7 +1939,7 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % Define a vulgar representation of a rational number, e.g.: $^1\!/\!_2$.
 % Automatically switch to math mode if in text mode:
 %    \begin{macrocode}
-\DeclareRobustCommand{\mafx@vfrac}[2]{\ifmmode
+\protected\def\mafx@vfrac#1#2{\ifmmode
   \mafx@vfrac@class{\textstyle
     ^{#1}\mkern-\muexpr\mafx@vfrac@preskip\relax
     /\mkern-\muexpr\mafx@vfrac@postskip\relax_{#2}}%
@@ -1906,7 +1968,7 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % Suppress changing colors in inner math structures
 % when \ctanpkg{beamer} class is loaded:
 %    \begin{macrocode}
-\let\mafx@beamerbasecolor@fix\@empty
+\let\mafx@beamerbasecolor@fix=\@empty
 \AddToHook{package/beamerbasecolor/after}{%
   \def\mafx@beamerbasecolor@fix{\donotcoloroutermaths}}
 %    \end{macrocode}
@@ -1935,7 +1997,7 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % Replacement for |\sqrt| which passes an
 % empty first argument instead of calling |\sqrtsign|:
 %    \begin{macrocode}
-\DeclareRobustCommand\mafx@sqrt{\@ifnextchar[\@sqrt{\@sqrt[]}}
+\protected\def\mafx@sqrt{\@ifnextchar[\@sqrt{\@sqrt[]}}
 \def\mafx@@sqrt[#1]{\root#1\of}
 %    \end{macrocode}
 
@@ -2071,7 +2133,7 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 \let\mafx@old@dot=\.
 \def\mafx@dot@skip{\thinmuskip}
 \def\mafx@dot{\mskip\muexpr\mafx@dot@skip\relax}
-\DeclareRobustCommand{\mafx@per@dot}{%
+\protected\def\mafx@per@dot{%
   \ifmmode\expandafter\mafx@dot\else\expandafter\mafx@old@dot\fi}
 %    \end{macrocode}
 
@@ -2476,32 +2538,33 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % Define macros for mathematical constants:
 %    \begin{macrocode}
 \let\mafx@econst@class=\mathinner
-\DeclareRobustCommand{\mafx@econstup}{\mafx@econst@class{\operator@font e}}
-\DeclareRobustCommand{\mafx@econstit}{\mafx@econst@class{\mathnormal{e}}}
-\DeclareRobustCommand{\mafx@iunitup}{{\operator@font i}}
-\DeclareRobustCommand{\mafx@iunitit}{{\mathnormal{i}}}
-\DeclareRobustCommand{\mafx@iunitnb}{{\mathnormal{\mathring\imath}}}
-\DeclareRobustCommand{\mafx@piconstup}{{\mafx@piup}}
-\DeclareRobustCommand{\mafx@piconstit}{{\mafx@piit}}
-\DeclareRobustCommand{\mafx@unitelbb}{{\mafx@mathbb{1}}}
-\DeclareRobustCommand{\mafx@unitelds}{{\mafx@mathds{1}}}
-\DeclareRobustCommand{\mafx@uniteldsr}{{\mafx@mathdsr{1}}}
-\DeclareRobustCommand{\mafx@uniteldss}{{\mafx@mathdss{1}}}
-\DeclareRobustCommand{\mafx@unitelbbold}{{\mafx@mathbbold{1}}}
-\DeclareRobustCommand{\mafx@unitelbbm}{{\mafx@mathbbm{1}}}
-\DeclareRobustCommand{\mafx@unitelbbmss}{{\mafx@mathbbmss{1}}}
-\DeclareRobustCommand{\mafx@unitelbbmtt}{{\mafx@mathbbmtt{1}}}
-\DeclareRobustCommand{\mafx@unitelbf}{{\mathbf{1}}}
-\DeclareRobustCommand{\mafx@unitelbfb}{{\mafx@mathbfb{1}}}
-\DeclareRobustCommand{\mafx@unitelbfbx}{{\mafx@mathbfbx{1}}}
-\DeclareRobustCommand{\mafx@uniteleup}{{\operator@font e}}
-\DeclareRobustCommand{\mafx@uniteleit}{{\mathnormal{e}}}
-\DeclareRobustCommand{\mafx@unitelEup}{{\operator@font E}}
-\DeclareRobustCommand{\mafx@unitelEit}{{\mathnormal{E}}}
-\DeclareRobustCommand{\mafx@unitelIup}{{\operator@font I}}
-\DeclareRobustCommand{\mafx@unitelIit}{{\mathnormal{I}}}
-\DeclareRobustCommand{\mafx@unitelid}{{\operator@font id}}
-\DeclareRobustCommand{\mafx@unitels}{{\operator@font1}}
+\protected\def\mafx@econstup{\mafx@econst@class{\operator@font e}}
+\protected\def\mafx@econstit{\mafx@econst@class{\mathnormal{e}}}
+\protected\def\mafx@iunitup{{\operator@font i}}
+\protected\def\mafx@iunitit{{\mathnormal{i}}}
+\protected\def\mafx@iunitnb{{\mathnormal{\mathring\imath}}}
+\let\mafx@iunit=\mafx@iunitit
+\protected\def\mafx@piconstup{{\mafx@piup}}
+\protected\def\mafx@piconstit{{\mafx@piit}}
+\protected\def\mafx@unitelbb{{\mafx@mathbb{1}}}
+\protected\def\mafx@unitelds{{\mafx@mathds{1}}}
+\protected\def\mafx@uniteldsr{{\mafx@mathdsr{1}}}
+\protected\def\mafx@uniteldss{{\mafx@mathdss{1}}}
+\protected\def\mafx@unitelbbold{{\mafx@mathbbold{1}}}
+\protected\def\mafx@unitelbbm{{\mafx@mathbbm{1}}}
+\protected\def\mafx@unitelbbmss{{\mafx@mathbbmss{1}}}
+\protected\def\mafx@unitelbbmtt{{\mafx@mathbbmtt{1}}}
+\protected\def\mafx@unitelbf{{\mathbf{1}}}
+\protected\def\mafx@unitelbfb{{\mafx@mathbfb{1}}}
+\protected\def\mafx@unitelbfbx{{\mafx@mathbfbx{1}}}
+\protected\def\mafx@uniteleup{{\operator@font e}}
+\protected\def\mafx@uniteleit{{\mathnormal{e}}}
+\protected\def\mafx@unitelEup{{\operator@font E}}
+\protected\def\mafx@unitelEit{{\mathnormal{E}}}
+\protected\def\mafx@unitelIup{{\operator@font I}}
+\protected\def\mafx@unitelIit{{\mathnormal{I}}}
+\protected\def\mafx@unitelid{{\operator@font id}}
+\protected\def\mafx@unitels{{\operator@font1}}
 %    \end{macrocode}
 
 % \macro{econst}
@@ -2515,9 +2578,9 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 \define@key{mafx@}{econst}[\econst]{\let#1=\mafx@econstup}
 \define@key{mafx@}{econst*}[\econst]{\let#1=\mafx@econstit}
 \define@key{mafx@}{econstclass}{\let\mafx@econst@class=#1}
-\define@key{mafx@}{iunit}[\iunit]{\let#1=\mafx@iunitup}
-\define@key{mafx@}{iunit*}[\iunit]{\let#1=\mafx@iunitit}
-\define@key{mafx@}{iunit*nb}[\iunit]{\let#1=\mafx@iunitnb}
+\define@key{mafx@}{iunit}[\iunit]{\let#1=\mafx@iunitup\let\mafx@iunit=#1}
+\define@key{mafx@}{iunit*}[\iunit]{\let#1=\mafx@iunitit\let\mafx@iunit=#1}
+\define@key{mafx@}{iunit*nb}[\iunit]{\let#1=\mafx@iunitnb\let\mafx@iunit=#1}
 \define@key{mafx@}{piconst}[\piconst]{\let#1=\mafx@piconstup}
 \define@key{mafx@}{piconst*}[\piconst]{\let#1=\mafx@piconstit}
 \define@key{mafx@}{unitel1}[\unitel]{\let#1=\mafx@unitelbb}
@@ -2546,10 +2609,10 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 %
 % Define macros for derivative symbols:
 %    \begin{macrocode}
-\DeclareRobustCommand{\mafx@derup}{{\operator@font d}}
-\DeclareRobustCommand{\mafx@derit}{{\mathnormal{d}}}
-\DeclareRobustCommand{\mafx@diffup}[1]{\mathinner{\mafx@derup#1}}
-\DeclareRobustCommand{\mafx@diffit}[1]{\mathinner{\mafx@derit#1}}
+\protected\def\mafx@derup{{\operator@font d}}
+\protected\def\mafx@derit{{\mathnormal{d}}}
+\protected\def\mafx@diffup#1{\mathinner{\mafx@derup#1}}
+\protected\def\mafx@diffit#1{\mathinner{\mafx@derit#1}}
 %    \end{macrocode}
 
 % Implement derivative symbols individually
@@ -2566,13 +2629,13 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 %
 % Define macros for assorted symbols:
 %    \begin{macrocode}
-\DeclareRobustCommand{\mafx@order}{\mathnormal{o}}
-\DeclareRobustCommand{\mafx@Order}{\mathnormal{O}}
-\DeclareRobustCommand{\mafx@OrderCal}{\mathcal{O}}
-\DeclareRobustCommand{\mafx@defeq}{\mathrel{\mathop:}=}
-\DeclareRobustCommand{\mafx@eqdef}{=\mathrel{\mathop:}}
-\DeclareRobustCommand{\mafx@lapl}{\mathnormal{\Delta}}
-\DeclareRobustCommand{\mafx@dualop}{\star}
+\protected\def\mafx@order{\mathnormal{o}}
+\protected\def\mafx@Order{\mathnormal{O}}
+\protected\def\mafx@OrderCal{\mathcal{O}}
+\protected\def\mafx@defeq{\mathrel{\mathop:}=}
+\protected\def\mafx@eqdef{=\mathrel{\mathop:}}
+\protected\def\mafx@lapl{\mathnormal{\Delta}}
+\protected\def\mafx@dualop{\star}
 %    \end{macrocode}
 
 % Implement assorted symbols individually
@@ -2599,14 +2662,14 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 \else
 \let\mafx@numset@font=\mathbf
 \fi
-\DeclareRobustCommand{\mafx@numset}{\mafx@numset@font}
-\DeclareRobustCommand{\mafx@numsetZ}{\mafx@numset{Z}}
-\DeclareRobustCommand{\mafx@numsetQ}{\mafx@numset{Q}}
-\DeclareRobustCommand{\mafx@numsetR}{\mafx@numset{R}}
-\DeclareRobustCommand{\mafx@numsetC}{\mafx@numset{C}}
-\DeclareRobustCommand{\mafx@numsetH}{\mafx@numset{H}}
-\DeclareRobustCommand{\mafx@numsetN}{\mafx@numset{N}}
-\DeclareRobustCommand{\mafx@numsetO}{\mafx@numset{O}}
+\protected\def\mafx@numset{\mafx@numset@font}
+\protected\def\mafx@numsetZ{\mafx@numset{Z}}
+\protected\def\mafx@numsetQ{\mafx@numset{Q}}
+\protected\def\mafx@numsetR{\mafx@numset{R}}
+\protected\def\mafx@numsetC{\mafx@numset{C}}
+\protected\def\mafx@numsetH{\mafx@numset{H}}
+\protected\def\mafx@numsetN{\mafx@numset{N}}
+\protected\def\mafx@numsetO{\mafx@numset{O}}
 %    \end{macrocode}
 
 % \macro{numset}
@@ -2634,47 +2697,47 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 % Define macros for Lie groups.
 % Use oeprator font |\operator@font|:
 %    \begin{macrocode}
-\DeclareRobustCommand{\mafx@grp}[1]{\mafx@mathopfont{#1}}
+\protected\def\mafx@grp#1{\mafx@mathopfont{#1}}
 %    \end{macrocode}
 
 % Define macros for basic finite groups.
 % Use oeprator font |\operator@font|:
 %    \begin{macrocode}
-\DeclareRobustCommand{\mafx@grp@perm}{\mafx@grp{S}}
-\DeclareRobustCommand{\mafx@grp@alt}{\mafx@grp{A}}
-\DeclareRobustCommand{\mafx@grp@dih}{\mafx@grp{D}}
-\DeclareRobustCommand{\mafx@grp@cycZ}{\mafx@grp{Z}}
-\DeclareRobustCommand{\mafx@grp@cycC}{\mafx@grp{C}}
+\protected\def\mafx@grp@perm{\mafx@grp{S}}
+\protected\def\mafx@grp@alt{\mafx@grp{A}}
+\protected\def\mafx@grp@dih{\mafx@grp{D}}
+\protected\def\mafx@grp@cycZ{\mafx@grp{Z}}
+\protected\def\mafx@grp@cycC{\mafx@grp{C}}
 %    \end{macrocode}
 
 % Define macros for groups of Lie type:
 %    \begin{macrocode}
-\DeclareRobustCommand{\mafx@grp@GL}{\mafx@grp{GL}}
-\DeclareRobustCommand{\mafx@grp@SL}{\mafx@grp{SL}}
-\DeclareRobustCommand{\mafx@grp@PGL}{\mafx@grp{PGL}}
-\DeclareRobustCommand{\mafx@grp@PSL}{\mafx@grp{PSL}}
-\DeclareRobustCommand{\mafx@grp@U}{\mafx@grp{U}}
-\DeclareRobustCommand{\mafx@grp@SU}{\mafx@grp{SU}}
-\DeclareRobustCommand{\mafx@grp@PU}{\mafx@grp{PU}}
-\DeclareRobustCommand{\mafx@grp@PSU}{\mafx@grp{PSU}}
-\DeclareRobustCommand{\mafx@grp@O}{\mafx@grp{O}}
-\DeclareRobustCommand{\mafx@grp@SO}{\mafx@grp{SO}}
-\DeclareRobustCommand{\mafx@grp@PSO}{\mafx@grp{PSO}}
-\DeclareRobustCommand{\mafx@grp@Spin}{\mafx@grp{Spin}}
-\DeclareRobustCommand{\mafx@grp@Pin}{\mafx@grp{Pin}}
-\DeclareRobustCommand{\mafx@grp@Sp}{\mafx@grp{Sp}}
-\DeclareRobustCommand{\mafx@grp@Mp}{\mafx@grp{Mp}}
+\protected\def\mafx@grp@GL{\mafx@grp{GL}}
+\protected\def\mafx@grp@SL{\mafx@grp{SL}}
+\protected\def\mafx@grp@PGL{\mafx@grp{PGL}}
+\protected\def\mafx@grp@PSL{\mafx@grp{PSL}}
+\protected\def\mafx@grp@U{\mafx@grp{U}}
+\protected\def\mafx@grp@SU{\mafx@grp{SU}}
+\protected\def\mafx@grp@PU{\mafx@grp{PU}}
+\protected\def\mafx@grp@PSU{\mafx@grp{PSU}}
+\protected\def\mafx@grp@O{\mafx@grp{O}}
+\protected\def\mafx@grp@SO{\mafx@grp{SO}}
+\protected\def\mafx@grp@PSO{\mafx@grp{PSO}}
+\protected\def\mafx@grp@Spin{\mafx@grp{Spin}}
+\protected\def\mafx@grp@Pin{\mafx@grp{Pin}}
+\protected\def\mafx@grp@Sp{\mafx@grp{Sp}}
+\protected\def\mafx@grp@Mp{\mafx@grp{Mp}}
 %    \end{macrocode}
 
 % Define macros for groups related to Dynkin diagrams:
 %    \begin{macrocode}
-\DeclareRobustCommand{\mafx@grp@A}{\mafx@grp{A}}
-\DeclareRobustCommand{\mafx@grp@B}{\mafx@grp{B}}
-\DeclareRobustCommand{\mafx@grp@C}{\mafx@grp{C}}
-\DeclareRobustCommand{\mafx@grp@D}{\mafx@grp{D}}
-\DeclareRobustCommand{\mafx@grp@E}{\mafx@grp{E}}
-\DeclareRobustCommand{\mafx@grp@F}{\mafx@grp{F}}
-\DeclareRobustCommand{\mafx@grp@G}{\mafx@grp{G}}
+\protected\def\mafx@grp@A{\mafx@grp{A}}
+\protected\def\mafx@grp@B{\mafx@grp{B}}
+\protected\def\mafx@grp@C{\mafx@grp{C}}
+\protected\def\mafx@grp@D{\mafx@grp{D}}
+\protected\def\mafx@grp@E{\mafx@grp{E}}
+\protected\def\mafx@grp@F{\mafx@grp{F}}
+\protected\def\mafx@grp@G{\mafx@grp{G}}
 %    \end{macrocode}
 
 % \macro{grp}
@@ -2707,7 +2770,7 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
   \let\grpSU=\mafx@grp@SU
   \let\grpPU=\mafx@grp@PU
   \let\grpPSU=\mafx@grp@PSU
-  \let\grpO=\mafx@grp@U
+  \let\grpO=\mafx@grp@O
   \let\grpSO=\mafx@grp@SO
   \let\grpPSO=\mafx@grp@PSO
   \let\grpSpin=\mafx@grp@Spin
@@ -2737,17 +2800,17 @@ z\defeq x+\iunit y=r\econst^{\iunit\theta}\in\Complex,
 \def\mafx@miniscript#1{\mathchoice%
   {\textstyle#1}{\textstyle#1}{\scriptscriptstyle#1}{\scriptscriptstyle#1}}
 \let\mafx@trans@font=\mathsf
-\DeclareRobustCommand{\mafx@transt}{{\mafx@trans@font{t}}}
-\DeclareRobustCommand{\mafx@transT}{{\mafx@trans@font{T}}}
-\DeclareRobustCommand{\mafx@transTs}{{\mafx@trans@font{\mafx@miniscript T}}}
-\DeclareRobustCommand{\mafx@hconjh}{{\mafx@trans@font{h}}}
-\DeclareRobustCommand{\mafx@hconjH}{{\mafx@trans@font{H}}}
-\DeclareRobustCommand{\mafx@hconjHs}{{\mafx@trans@font{\mafx@miniscript H}}}
-\DeclareRobustCommand{\mafx@trans}{\top}
-\DeclareRobustCommand{\mafx@transi}{\intercal}
-\DeclareRobustCommand{\mafx@hconj}{\dagger}
-\DeclareRobustCommand{\mafx@conj}{\ast}
-\DeclareRobustCommand{\mafx@dual}{\ast}
+\protected\def\mafx@transt{{\mafx@trans@font{t}}}
+\protected\def\mafx@transT{{\mafx@trans@font{T}}}
+\protected\def\mafx@transTs{{\mafx@trans@font{\mafx@miniscript T}}}
+\protected\def\mafx@hconjh{{\mafx@trans@font{h}}}
+\protected\def\mafx@hconjH{{\mafx@trans@font{H}}}
+\protected\def\mafx@hconjHs{{\mafx@trans@font{\mafx@miniscript H}}}
+\protected\def\mafx@trans{\top}
+\protected\def\mafx@transi{\intercal}
+\protected\def\mafx@hconj{\dagger}
+\protected\def\mafx@conj{\ast}
+\protected\def\mafx@dual{\ast}
 %    \end{macrocode}
 
 % \macro{trans}
